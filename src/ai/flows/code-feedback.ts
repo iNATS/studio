@@ -1,4 +1,4 @@
-// This file uses server-side code, and must have the `'use server'` directive.
+// This file uses server-side code, and must have the 'use server' directive.
 'use server';
 
 /**
@@ -33,8 +33,14 @@ const prompt = ai.definePrompt({
   output: {schema: CodeFeedbackOutputSchema},
   prompt: `You are an AI code reviewer that provides constructive feedback on code snippets based on industry standards.
 
-  Analyze the following code snippet and provide specific suggestions for improvements, focusing on code quality, efficiency, and best practices. Consider the language provided if it is not empty, otherwise infer the language from the code.
-  \n  Code:\n  ```{{language}}\n  {{{code}}}\n  ```\n  \n  Feedback:`,
+Analyze the following code snippet and provide specific suggestions for improvements, focusing on code quality, efficiency, and best practices. Consider the language provided if it is not empty, otherwise infer the language from the code.
+
+Code:
+\`\`\`{{language}}
+{{{code}}}
+\`\`\`
+
+Feedback:`,
 });
 
 const codeFeedbackFlow = ai.defineFlow(
