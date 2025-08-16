@@ -68,7 +68,7 @@ export default function AdminLayout({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="flex items-center justify-center">{children}</SidebarInset>
     </SidebarProvider>
   );
 }
