@@ -1,3 +1,243 @@
+'use client';
+
+import Image from 'next/image';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { SocialFab } from '@/components/SocialFab';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Code, Film, Palette } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+
+const portfolioItems = [
+  {
+    title: 'E-commerce Platform',
+    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'online store',
+    tags: ['Web', 'React', 'Node.js'],
+    category: 'web',
+  },
+  {
+    title: 'Mobile Banking App',
+    description: 'Secure and intuitive mobile banking application for iOS and Android.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'mobile banking',
+    tags: ['Mobile', 'Flutter', 'Firebase'],
+    category: 'mobile',
+  },
+  {
+    title: 'Corporate Branding',
+    description: 'Complete brand identity design for a major tech startup, including logo and style guides.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'brand design',
+    tags: ['Design', 'Branding'],
+    category: 'design',
+  },
+  {
+    title: 'Project Management Tool',
+    description: 'A collaborative project management tool to streamline team workflows.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'team collaboration',
+    tags: ['Web', 'Vue.js', 'GraphQL'],
+    category: 'web',
+  },
+  {
+    title: 'Fitness Tracker App',
+    description: 'A mobile app to track workouts, nutrition, and progress with social features.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'fitness app',
+    tags: ['Mobile', 'React Native'],
+    category: 'mobile',
+  },
+  {
+    title: 'SaaS Dashboard UI Kit',
+    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
+    image: 'https://placehold.co/600x400.png',
+    hint: 'dashboard interface',
+    tags: ['Design', 'UI/UX'],
+    category: 'design',
+  },
+];
+
+const PortfolioGrid = () => {
+  const [filter, setFilter] = useState('all');
+
+  const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
+
+  return (
+    <section id="projects" className="container py-24 sm:py-32">
+      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
+      <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
+        A selection of projects that I'm proud of.
+      </p>
+      <div className="flex justify-center gap-2 mt-8">
+        <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>
+          All
+        </Button>
+        <Button variant={filter === 'web' ? 'default' : 'outline'} onClick={() => setFilter('web')}>
+          Web
+        </Button>
+        <Button variant={filter === 'mobile' ? 'default' : 'outline'} onClick={() => setFilter('mobile')}>
+          Mobile
+        </Button>
+        <Button variant={filter === 'design' ? 'default' : 'outline'} onClick={() => setFilter('design')}>
+          Design
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+        {filteredItems.map((item, index) => (
+          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <CardHeader className="p-0">
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={600}
+                height={400}
+                className="w-full h-auto object-cover"
+                data-ai-hint={item.hint}
+              />
+            </CardHeader>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold font-headline">{item.title}</h3>
+              <p className="mt-2 text-muted-foreground">{item.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {item.tags.map((tag, i) => (
+                  <Badge key={i} variant="secondary">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const ContactForm = () => {
+  return (
+    <form className="grid gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Input placeholder="Your Name" />
+        <Input type="email" placeholder="Your Email" />
+      </div>
+      <Textarea placeholder="Your Message" rows={5} />
+      <Button type="submit" size="lg" className="w-full sm:w-auto justify-self-start bg-accent hover:bg-accent/90">
+        Send Message
+      </Button>
+    </form>
+  );
+};
+
 export default function Home() {
-  return <></>;
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <section className="w-full py-24 md:py-32 lg:py-40">
+          <div className="container px-4 md:px-6">
+            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
+                    Mohamed Aref
+                  </h1>
+                  <p className="text-2xl font-medium text-primary">Creative Developer & Designer</p>
+                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                    I build beautiful, functional, and user-centric digital experiences. Let's create something
+                    amazing together.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                  <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                    <a href="#contact">Get in Touch</a>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link href="/vibe-check">
+                      Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+              <Image
+                src="https://placehold.co/600x600.png"
+                width="600"
+                height="600"
+                alt="Hero"
+                className="mx-auto aspect-square overflow-hidden rounded-full object-cover sm:w-full"
+                data-ai-hint="man portrait"
+              />
+            </div>
+          </div>
+        </section>
+
+        <PortfolioGrid />
+
+        <section id="about" className="w-full py-24 sm:py-32 bg-secondary">
+          <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
+            <div className="space-y-3">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
+              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                I am a passionate developer and designer with a knack for crafting elegant solutions to complex problems.
+                With expertise in front-end frameworks, mobile development, and UI/UX principles, I bring ideas to life
+                from concept to launch. My goal is to create products that are not only visually appealing but also
+                highly usable and performant.
+              </p>
+            </div>
+            <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-primary/10 p-4 rounded-full">
+                  <Code className="h-10 w-10 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold font-headline">Web Development</h3>
+                <p className="text-muted-foreground text-center">
+                  Building responsive and scalable web applications with modern technologies.
+                </p>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-primary/10 p-4 rounded-full">
+                  <Film className="h-10 w-10 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
+                <p className="text-muted-foreground text-center">
+                  Creating cross-platform mobile experiences that engage and delight users.
+                </p>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-primary/10 p-4 rounded-full">
+                  <Palette className="h-10 w-10 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>
+                <p className="text-muted-foreground text-center">
+                  Designing intuitive and beautiful interfaces that focus on user experience.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="w-full py-24 sm:py-32">
+          <div className="container">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
+              <p className="mt-4 text-muted-foreground md:text-xl/relaxed">
+                Have a project in mind or just want to say hello? Drop me a line.
+              </p>
+            </div>
+            <div className="mx-auto mt-12 max-w-2xl">
+              <ContactForm />
+            </div>
+          </div>
+        </section>
+      </main>
+      <SocialFab />
+      <Footer />
+    </div>
+  );
 }
