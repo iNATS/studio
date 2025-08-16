@@ -230,7 +230,7 @@ export default function Home() {
                 Have a project in mind or just want to say hello? Drop me a line.
               </p>
             </div>
-            <div className="mx-auto mt-12 max-w-2xl">
+            <div className="mx-auto mt-12 max-w-2xl px-4 sm:px-0">
               <ContactForm />
             </div>
           </div>
