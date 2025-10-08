@@ -130,7 +130,7 @@ const PortfolioGrid = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         {filteredItems.map((item, index) => (
-          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white/5 backdrop-blur-lg border border-white/10">
             <CardHeader className="p-0">
               <Image
                 src={item.image}
@@ -179,8 +179,8 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden backdrop-blur-sm shadow-lg bg-white/5">
-          <div className="absolute inset-0 w-full h-full">
+        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
+          <div className="absolute inset-0 w-full h-full bg-black/30 backdrop-blur-2xl">
             <div className="absolute w-[300px] h-[300px] bg-primary/20 rounded-full blur-3xl animate-blob-1" />
             <div className="absolute w-[250px] h-[250px] bg-accent/20 rounded-full blur-3xl animate-blob-2" />
           </div>
@@ -208,10 +208,10 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="p-4 md:p-6">
+        <div className="p-4 md:p-6 lg:p-12">
           <PortfolioGrid />
 
-          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5 my-16">
+          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16">
             <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
               <div className="space-y-3">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
