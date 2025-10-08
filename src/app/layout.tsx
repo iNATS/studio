@@ -24,7 +24,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans')}>
+      <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans pt-24 md:pt-28')}>
         {children}
         <Toaster />
       </body>
