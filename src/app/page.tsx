@@ -198,7 +198,7 @@ export default function Home() {
 
         <PortfolioGrid />
 
-        <section id="about" className="w-full py-24 sm:py-32 bg-secondary">
+        <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5 my-16">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
             <div className="space-y-3">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
@@ -260,3 +260,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
