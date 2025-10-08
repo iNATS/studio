@@ -178,8 +178,8 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 p-4 md:p-6">
-        <section className="relative w-full min-h-[80vh] flex items-center justify-center text-center overflow-hidden rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5">
+      <main className="flex-1">
+        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden backdrop-blur-sm shadow-lg bg-white/5">
           <div className="absolute inset-0 w-full h-full">
             <div className="absolute w-[300px] h-[300px] bg-primary/20 rounded-full blur-3xl animate-blob-1" />
             <div className="absolute w-[250px] h-[250px] bg-accent/20 rounded-full blur-3xl animate-blob-2" />
@@ -208,64 +208,66 @@ export default function Home() {
           </div>
         </section>
 
-        <PortfolioGrid />
+        <div className="p-4 md:p-6">
+          <PortfolioGrid />
 
-        <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5 my-16">
-          <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                I am a passionate developer and designer with a knack for crafting elegant solutions to complex problems.
-                With expertise in front-end frameworks, mobile development, and UI/UX principles, I bring ideas to life
-                from concept to launch. My goal is to create products that are not only visually appealing but also
-                highly usable and performant.
-              </p>
+          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5 my-16">
+            <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
+              <div className="space-y-3">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
+                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  I am a passionate developer and designer with a knack for crafting elegant solutions to complex problems.
+                  With expertise in front-end frameworks, mobile development, and UI/UX principles, I bring ideas to life
+                  from concept to launch. My goal is to create products that are not only visually appealing but also
+                  highly usable and performant.
+                </p>
+              </div>
+              <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="bg-primary/10 p-4 rounded-full">
+                    <Code className="h-10 w-10 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold font-headline">Web Development</h3>
+                  <p className="text-muted-foreground text-center">
+                    Building responsive and scalable web applications with modern technologies.
+                  </p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="bg-primary/10 p-4 rounded-full">
+                    <Film className="h-10 w-10 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
+                  <p className="text-muted-foreground text-center">
+                    Creating cross-platform mobile experiences that engage and delight users.
+                  </p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="bg-primary/10 p-4 rounded-full">
+                    <Palette className="h-10 w-10 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>
+                  <p className="text-muted-foreground text-center">
+                    Designing intuitive and beautiful interfaces that focus on user experience.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-              <div className="flex flex-col items-center gap-2">
-                <div className="bg-primary/10 p-4 rounded-full">
-                  <Code className="h-10 w-10 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold font-headline">Web Development</h3>
-                <p className="text-muted-foreground text-center">
-                  Building responsive and scalable web applications with modern technologies.
-                </p>
-              </div>
-              <div className="flex flex-col items-center gap-2">
-                <div className="bg-primary/10 p-4 rounded-full">
-                  <Film className="h-10 w-10 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
-                <p className="text-muted-foreground text-center">
-                  Creating cross-platform mobile experiences that engage and delight users.
-                </p>
-              </div>
-              <div className="flex flex-col items-center gap-2">
-                <div className="bg-primary/10 p-4 rounded-full">
-                  <Palette className="h-10 w-10 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>
-                <p className="text-muted-foreground text-center">
-                  Designing intuitive and beautiful interfaces that focus on user experience.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="contact" className="w-full py-24 sm:py-32">
-          <div className="container px-4 sm:px-0">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
-              <p className="mt-4 text-muted-foreground md:text-xl/relaxed">
-                Have a project in mind or just want to say hello? Drop me a line.
-              </p>
+          <section id="contact" className="w-full py-24 sm:py-32">
+            <div className="container px-4 sm:px-0">
+              <div className="mx-auto max-w-2xl text-center">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
+                <p className="mt-4 text-muted-foreground md:text-xl/relaxed">
+                  Have a project in mind or just want to say hello? Drop me a line.
+                </p>
+              </div>
+              <div className="mx-auto mt-12 max-w-2xl px-4 sm:px-0">
+                <ContactForm />
+              </div>
             </div>
-            <div className="mx-auto mt-12 max-w-2xl px-4 sm:px-0">
-              <ContactForm />
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
       <SocialFab />
       <Footer />
