@@ -26,7 +26,7 @@ export function Header() {
 
         <nav className="flex items-center gap-1 text-sm font-medium">
           {navLinks.map((link) => (
-            <Button key={link.href} variant="ghost" asChild>
+            <Button key={link.href} variant="ghost" asChild className="rounded-full">
               <Link href={link.href} className="transition-colors hover:text-primary px-4 py-2">
                 {link.label}
               </Link>
