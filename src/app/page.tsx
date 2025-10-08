@@ -180,41 +180,39 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
-          <div className="absolute inset-0 w-full h-full bg-black/50">
-            <Image
-              src="https://picsum.photos/seed/hero-bg/1920/1080"
-              alt="Hero Background"
-              fill
-              className="object-cover blur-2xl scale-110"
-              quality={90}
-            />
-            <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/50 to-transparent" />
-            <div className="absolute w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl animate-blob-1" />
-            <div className="absolute w-[400px] h-[400px] bg-accent/10 rounded-full blur-3xl animate-blob-2 right-0 bottom-0" />
-          </div>
-          <div className="container relative z-10 px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-6">
-              <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-                <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
-                <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-primary justify-center mt-2" stagger={20} />
-              </div>
-              <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-500">
-                I build beautiful, functional, and user-centric digital experiences. Let's create something
-                amazing together.
-              </p>
-              <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
-                <Button asChild size="lg" className="bg-primary/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105">
-                  <a href="#contact">Get in Touch</a>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
-                  <Link href="/vibe-check">
-                    Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+        <div className="absolute inset-0 w-full h-full bg-black/50">
+          <Image
+            src="https://picsum.photos/seed/hero-bg/1920/1080"
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            quality={90}
+          />
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20" />
+        </div>
+        <div className="container relative z-10 px-4 md:px-6">
+          <div className="flex flex-col items-center space-y-6">
+            <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl transition-all duration-300 hover:shadow-primary/20 hover:border-white/30">
+              <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
+              <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-primary justify-center mt-2" stagger={20} />
+            </div>
+            <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-500">
+              I build beautiful, functional, and user-centric digital experiences. Let's create something
+              amazing together.
+            </p>
+            <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
+              <Button asChild size="lg" className="bg-primary/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105">
+                <a href="#contact">Get in Touch</a>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
+                <Link href="/vibe-check">
+                  Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
         <div className="p-4 md:p-6 lg:p-12">
           <PortfolioGrid />
