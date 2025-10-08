@@ -65,6 +65,26 @@ const portfolioItems = [
   },
 ];
 
+const AnimatedChar = ({ char, delay }: { char: string; delay: number }) => (
+  <span
+    className="animate-char-in"
+    style={{ animationDelay: `${delay}ms` }}
+  >
+    {char === ' ' ? '\u00A0' : char}
+  </span>
+);
+
+const AnimatedText = ({ text, el: El = 'p', className, stagger = 30 }: { text: string, el?: keyof JSX.IntrinsicElements, className?: string, stagger?: number }) => {
+  return (
+    <El className={cn("flex", className)}>
+      {text.split('').map((char, i) => (
+        <AnimatedChar key={`${char}-${i}`} char={char} delay={i * stagger} />
+      ))}
+    </El>
+  );
+};
+
+
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
 
@@ -159,39 +179,31 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1 p-4 md:p-6">
-        <section className="w-full py-24 md:py-32 lg:py-40 rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
-                    Mohamed Aref
-                  </h1>
-                  <p className="text-2xl font-medium text-primary">Creative Developer & Designer</p>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    I build beautiful, functional, and user-centric digital experiences. Let's create something
-                    amazing together.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-                    <a href="#contact">Get in Touch</a>
-                  </Button>
-                  <Button asChild variant="outline" size="lg">
-                    <Link href="/vibe-check">
-                      Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
+        <section className="relative w-full min-h-[80vh] flex items-center justify-center text-center overflow-hidden rounded-3xl backdrop-blur-sm border border-white/10 shadow-lg bg-white/5">
+          <div className="absolute inset-0 w-full h-full">
+            <div className="absolute w-[300px] h-[300px] bg-primary/20 rounded-full blur-3xl animate-blob-1" />
+            <div className="absolute w-[250px] h-[250px] bg-accent/20 rounded-full blur-3xl animate-blob-2" />
+          </div>
+          <div className="container relative z-10 px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="space-y-4">
+                <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
+                <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-primary justify-center" stagger={20} />
+                <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-500">
+                  I build beautiful, functional, and user-centric digital experiences. Let's create something
+                  amazing together.
+                </p>
               </div>
-              <Image
-                src="https://picsum.photos/seed/hero/600/600"
-                width="600"
-                height="600"
-                alt="Hero"
-                className="mx-auto aspect-square overflow-hidden rounded-full object-cover sm:w-full"
-                data-ai-hint="man portrait"
-              />
+              <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
+                <Button asChild size="lg" className="bg-primary hover:bg-primary/90 transition-transform hover:scale-105">
+                  <a href="#contact">Get in Touch</a>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="transition-transform hover:scale-105">
+                  <Link href="/vibe-check">
+                    Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
