@@ -179,8 +179,8 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
-          <div className="absolute inset-0 w-full h-full bg-black/30 backdrop-blur-2xl">
+      <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
+          <div className="absolute inset-0 w-full h-full bg-black/50 backdrop-blur-2xl">
             <div className="absolute w-[300px] h-[300px] bg-primary/20 rounded-full blur-3xl animate-blob-1" />
             <div className="absolute w-[250px] h-[250px] bg-accent/20 rounded-full blur-3xl animate-blob-2" />
           </div>
@@ -224,7 +224,7 @@ export default function Home() {
               </div>
               <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="bg-primary/10 p-4 rounded-full">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Code className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">Web Development</h3>
@@ -233,7 +233,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                  <div className="bg-primary/10 p-4 rounded-full">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Film className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
@@ -242,7 +242,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                  <div className="bg-primary/10 p-4 rounded-full">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Palette className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>
