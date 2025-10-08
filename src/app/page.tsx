@@ -145,7 +145,7 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
            </div>
         </CardContent>
       </Card>
-      <div className="absolute -inset-1 border-2 border-primary/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none animate-pulse" />
+      <div className="absolute -inset-1 border-2 border-primary/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
   );
 };
