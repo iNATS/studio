@@ -26,8 +26,13 @@ export function Header() {
 
         <nav className="flex items-center gap-1 text-sm font-medium">
           {navLinks.map((link) => (
-            <Button key={link.href} variant="ghost" asChild className="rounded-full">
-              <Link href={link.href} className="transition-colors hover:text-primary px-4 py-2">
+            <Button
+              key={link.href}
+              variant="ghost"
+              asChild
+              className="rounded-full text-foreground/80 hover:bg-white/10 hover:text-foreground"
+            >
+              <Link href={link.href} className="transition-colors px-4 py-2">
                 {link.label}
               </Link>
             </Button>
@@ -37,7 +42,7 @@ export function Header() {
         <div className="flex items-center gap-1 pl-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:bg-white/10 hover:text-foreground">
                 <Globe className="h-5 w-5" />
                 <span className="sr-only">Change language</span>
               </Button>
