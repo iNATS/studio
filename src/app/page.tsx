@@ -17,7 +17,7 @@ const portfolioItems = [
   {
     title: 'E-commerce Platform',
     description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/1/600/400',
     hint: 'online store',
     tags: ['Web', 'React', 'Node.js'],
     category: 'web',
@@ -25,7 +25,7 @@ const portfolioItems = [
   {
     title: 'Mobile Banking App',
     description: 'Secure and intuitive mobile banking application for iOS and Android.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/2/600/400',
     hint: 'mobile banking',
     tags: ['Mobile', 'Flutter', 'Firebase'],
     category: 'mobile',
@@ -33,7 +33,7 @@ const portfolioItems = [
   {
     title: 'Corporate Branding',
     description: 'Complete brand identity design for a major tech startup, including logo and style guides.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/3/600/400',
     hint: 'brand design',
     tags: ['Design', 'Branding'],
     category: 'design',
@@ -41,7 +41,7 @@ const portfolioItems = [
   {
     title: 'Project Management Tool',
     description: 'A collaborative project management tool to streamline team workflows.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/4/600/400',
     hint: 'team collaboration',
     tags: ['Web', 'Vue.js', 'GraphQL'],
     category: 'web',
@@ -49,7 +49,7 @@ const portfolioItems = [
   {
     title: 'Fitness Tracker App',
     description: 'A mobile app to track workouts, nutrition, and progress with social features.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/5/600/400',
     hint: 'fitness app',
     tags: ['Mobile', 'React Native'],
     category: 'mobile',
@@ -57,7 +57,7 @@ const portfolioItems = [
   {
     title: 'SaaS Dashboard UI Kit',
     description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://picsum.photos/seed/6/600/400',
     hint: 'dashboard interface',
     tags: ['Design', 'UI/UX'],
     category: 'design',
@@ -139,7 +139,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 p-4 md:p-6">
         <section className="w-full py-24 md:py-32 lg:py-40">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
@@ -166,7 +166,7 @@ export default function Home() {
                 </div>
               </div>
               <Image
-                src="https://placehold.co/600x600.png"
+                src="https://picsum.photos/seed/hero/600/600"
                 width="600"
                 height="600"
                 alt="Hero"
@@ -223,7 +223,7 @@ export default function Home() {
         </section>
 
         <section id="contact" className="w-full py-24 sm:py-32">
-          <div className="container">
+          <div className="container px-4 sm:px-0">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
               <p className="mt-4 text-muted-foreground md:text-xl/relaxed">

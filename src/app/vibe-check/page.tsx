@@ -9,7 +9,7 @@ export default function VibeCheckPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 py-12 sm:py-16">
+      <main className="flex-1 p-4 md:p-6 py-12 sm:py-16">
         <div className="container max-w-4xl">
           <Button asChild variant="ghost" className="mb-8 -ml-4">
             <Link href="/">
