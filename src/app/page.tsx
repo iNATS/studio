@@ -12,12 +12,13 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Code, Film, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const portfolioItems = [
   {
     title: 'E-commerce Platform',
     description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
-    image: 'https://picsum.photos/seed/1/600/400',
+    image: 'https://picsum.photos/seed/ecom/600/400',
     hint: 'online store',
     tags: ['Web', 'React', 'Node.js'],
     category: 'web',
@@ -25,7 +26,7 @@ const portfolioItems = [
   {
     title: 'Mobile Banking App',
     description: 'Secure and intuitive mobile banking application for iOS and Android.',
-    image: 'https://picsum.photos/seed/2/600/400',
+    image: 'https://picsum.photos/seed/bank/600/400',
     hint: 'mobile banking',
     tags: ['Mobile', 'Flutter', 'Firebase'],
     category: 'mobile',
@@ -33,7 +34,7 @@ const portfolioItems = [
   {
     title: 'Corporate Branding',
     description: 'Complete brand identity design for a major tech startup, including logo and style guides.',
-    image: 'https://picsum.photos/seed/3/600/400',
+    image: 'https://picsum.photos/seed/brand/600/400',
     hint: 'brand design',
     tags: ['Design', 'Branding'],
     category: 'design',
@@ -41,7 +42,7 @@ const portfolioItems = [
   {
     title: 'Project Management Tool',
     description: 'A collaborative project management tool to streamline team workflows.',
-    image: 'https://picsum.photos/seed/4/600/400',
+    image: 'https://picsum.photos/seed/pm/600/400',
     hint: 'team collaboration',
     tags: ['Web', 'Vue.js', 'GraphQL'],
     category: 'web',
@@ -49,7 +50,7 @@ const portfolioItems = [
   {
     title: 'Fitness Tracker App',
     description: 'A mobile app to track workouts, nutrition, and progress with social features.',
-    image: 'https://picsum.photos/seed/5/600/400',
+    image: 'https://picsum.photos/seed/fit/600/400',
     hint: 'fitness app',
     tags: ['Mobile', 'React Native'],
     category: 'mobile',
@@ -57,7 +58,7 @@ const portfolioItems = [
   {
     title: 'SaaS Dashboard UI Kit',
     description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
-    image: 'https://picsum.photos/seed/6/600/400',
+    image: 'https://picsum.photos/seed/saas/600/400',
     hint: 'dashboard interface',
     tags: ['Design', 'UI/UX'],
     category: 'design',
@@ -69,6 +70,12 @@ const PortfolioGrid = () => {
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
+  const filterButtonStyle =
+    'rounded-full backdrop-blur-sm border-white/20 shadow-lg transition-all duration-300';
+  const activeFilterButtonStyle = 'bg-primary/80 text-primary-foreground';
+  const inactiveFilterButtonStyle =
+    'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white';
+
   return (
     <section id="projects" className="container py-24 sm:py-32">
       <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
@@ -76,16 +83,28 @@ const PortfolioGrid = () => {
         A selection of projects that I'm proud of.
       </p>
       <div className="flex justify-center gap-2 mt-8">
-        <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>
+        <Button
+          className={cn(filterButtonStyle, filter === 'all' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
+          onClick={() => setFilter('all')}
+        >
           All
         </Button>
-        <Button variant={filter === 'web' ? 'default' : 'outline'} onClick={() => setFilter('web')}>
+        <Button
+          className={cn(filterButtonStyle, filter === 'web' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
+          onClick={() => setFilter('web')}
+        >
           Web
         </Button>
-        <Button variant={filter === 'mobile' ? 'default' : 'outline'} onClick={() => setFilter('mobile')}>
+        <Button
+          className={cn(filterButtonStyle, filter === 'mobile' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
+          onClick={() => setFilter('mobile')}
+        >
           Mobile
         </Button>
-        <Button variant={filter === 'design' ? 'default' : 'outline'} onClick={() => setFilter('design')}>
+        <Button
+          className={cn(filterButtonStyle, filter === 'design' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
+          onClick={() => setFilter('design')}
+        >
           Design
         </Button>
       </div>
