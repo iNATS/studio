@@ -179,8 +179,8 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full bg-black/50">
+        <section className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
           <Image
             src="https://picsum.photos/seed/hero-bg/1920/1080"
             alt="Hero Background"
@@ -188,11 +188,11 @@ export default function Home() {
             className="object-cover"
             quality={90}
           />
-          <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20" />
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-black/50" />
         </div>
         <div className="container relative z-10 px-4 md:px-6">
           <div className="flex flex-col items-center space-y-6">
-            <div className="p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl transition-all duration-300 hover:shadow-primary/20 hover:border-white/30">
+            <div className="p-8 rounded-3xl">
               <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
               <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-primary justify-center mt-2" stagger={20} />
             </div>
