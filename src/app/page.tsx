@@ -179,7 +179,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-      <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
+        <section className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden">
           <div className="absolute inset-0 w-full h-full bg-black/50 backdrop-blur-2xl">
             <div className="absolute w-[300px] h-[300px] bg-primary/20 rounded-full blur-3xl animate-blob-1" />
             <div className="absolute w-[250px] h-[250px] bg-accent/20 rounded-full blur-3xl animate-blob-2" />
