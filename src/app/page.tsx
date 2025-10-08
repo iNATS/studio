@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Code, Film, Palette } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef, MouseEvent } from 'react';
 import { cn } from '@/lib/utils';
 
 const portfolioItems = [
@@ -85,6 +85,72 @@ const AnimatedText = ({ text, el: El = 'p', className, stagger = 30 }: { text: s
 };
 
 
+const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], index: number }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const { left, top, width, height } = card.getBoundingClientRect();
+    const x = e.clientX - left - width / 2;
+    const y = e.clientY - top - height / 2;
+
+    const rotateX = (y / height) * -30;
+    const rotateY = (x / width) * 30;
+
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+  };
+
+  const onMouseLeave = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="group relative transition-transform duration-300 ease-out"
+      style={{ transformStyle: 'preserve-3d' }}
+    >
+      <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <CardHeader className="p-0 relative">
+          <Image
+            src={item.image}
+            alt={item.title}
+            width={600}
+            height={400}
+            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+            data-ai-hint={item.hint}
+          />
+           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+        </CardHeader>
+        <CardContent className="p-6 absolute bottom-0 left-0 right-0">
+           <div style={{ transform: 'translateZ(50px)' }}>
+            <h3 className="text-xl font-bold font-headline text-white drop-shadow-md">{item.title}</h3>
+            <p className="mt-2 text-white/80 text-sm drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto">
+              {item.description}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {item.tags.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="bg-white/20 text-white border-none">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+           </div>
+        </CardContent>
+      </Card>
+      <div className="absolute -inset-1 border-2 border-primary/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none animate-pulse" />
+    </div>
+  );
+};
+
+
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
 
@@ -128,31 +194,9 @@ const PortfolioGrid = () => {
           Design
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 [perspective:2000px]">
         {filteredItems.map((item, index) => (
-          <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white/5 backdrop-blur-lg border border-white/10">
-            <CardHeader className="p-0">
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover"
-                data-ai-hint={item.hint}
-              />
-            </CardHeader>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold font-headline">{item.title}</h3>
-              <p className="mt-2 text-muted-foreground">{item.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {item.tags.map((tag, i) => (
-                  <Badge key={i} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <PortfolioCard key={index} item={item} index={index} />
         ))}
       </div>
     </section>
@@ -175,12 +219,40 @@ const ContactForm = () => {
 };
 
 export default function Home() {
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const { clientWidth: width, clientHeight: height } = hero;
+    const { clientX, clientY } = e;
+
+    const x = (clientX - width / 2) / (width / 2);
+    const y = (clientY - height / 2) / (height / 2);
+
+    const bgLayer = hero.querySelector('.bg-layer') as HTMLElement;
+    const textLayer = hero.querySelector('.text-layer') as HTMLElement;
+
+    if (bgLayer) {
+        bgLayer.style.transform = `translateX(${-x * 20}px) translateY(${-y * 20}px) scale(1.1)`;
+    }
+    if (textLayer) {
+        textLayer.style.transform = `translateX(${x * 40}px) translateY(${y * 40}px)`;
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
+        <section 
+          ref={heroRef}
+          onMouseMove={onMouseMove}
+          className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
+          style={{paddingTop: 0, marginTop: 0}}
+        >
+        <div className="absolute inset-0 w-full h-full bg-layer transition-transform duration-300 ease-out" >
           <Image
             src="https://picsum.photos/seed/hero-bg/1920/1080"
             alt="Hero Background"
@@ -190,7 +262,7 @@ export default function Home() {
           />
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-black/50" />
         </div>
-        <div className="container relative z-10 px-4 md:px-6">
+        <div className="container relative z-10 px-4 md:px-6 text-layer transition-transform duration-300 ease-out">
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
               <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
@@ -280,3 +352,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
