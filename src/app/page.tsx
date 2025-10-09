@@ -239,7 +239,7 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
 
   return (
-    <section ref={sectionRef} id={id} className={cn(className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
+    <section ref={sectionRef} id={id} className={cn("container py-24 sm:py-32 pr-0", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
       {children}
     </section>
   )
@@ -297,7 +297,7 @@ export default function Home() {
         <div className="space-y-24 sm:space-y-32 my-24 sm:my-32">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" className="container" threshold={0.4}>
+          <AnimatedSection id="about" threshold={0.4}>
             <div className="grid gap-8 md:grid-cols-3 items-center">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
@@ -336,7 +336,7 @@ export default function Home() {
           </AnimatedSection>
 
 
-          <AnimatedSection id="contact" className="container" threshold={0.4}>
+          <AnimatedSection id="contact" threshold={0.4}>
               <ContactForm />
           </AnimatedSection>
         </div>
@@ -346,5 +346,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
