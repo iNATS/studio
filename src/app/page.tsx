@@ -149,13 +149,13 @@ const PortfolioGrid = () => {
   return (
     <>
     <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
-       <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
+       <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
+      <div className={cn("flex justify-center flex-wrap mt-8 gap-2 px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
@@ -239,7 +239,7 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
 
   return (
-    <section ref={sectionRef} id={id} className={cn("container py-24 sm:py-32", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
+    <section ref={sectionRef} id={id} className={cn("py-24 sm:py-32 px-4 md:px-6", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
       {children}
     </section>
   )
@@ -247,32 +247,32 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
 
 const processSteps = [
   {
-    icon: <MessageCircle className="w-10 h-10 text-primary" />,
+    icon: <MessageCircle className="w-8 h-8 text-primary" />,
     title: "1. Let's Talk",
     description: "We'll start with a friendly chat to understand your vision and project goals.",
   },
   {
-    icon: <Lightbulb className="w-10 h-10 text-primary" />,
+    icon: <Lightbulb className="w-8 h-8 text-primary" />,
     title: "2. Big Ideas",
     description: "I'll craft a unique strategy and creative proposal tailored just for you.",
   },
   {
-    icon: <PencilRuler className="w-10 h-10 text-primary" />,
+    icon: <PencilRuler className="w-8 h-8 text-primary" />,
     title: "3. Creative Design",
     description: "I'll design beautiful mockups and interactive prototypes to bring your vision to life.",
   },
   {
-    icon: <Code className="w-10 h-10 text-primary" />,
+    icon: <Code className="w-8 h-8 text-primary" />,
     title: "4. Magic Code",
     description: "I'll build your project with clean, efficient code using the latest tech.",
   },
   {
-    icon: <Combine className="w-10 h-10 text-primary" />,
+    icon: <Combine className="w-8 h-8 text-primary" />,
     title: "5. Polish & Perfect",
     description: "We'll test everything to ensure a bug-free, seamless experience on all devices.",
   },
   {
-    icon: <Rocket className="w-10 h-10 text-primary" />,
+    icon: <Rocket className="w-8 h-8 text-primary" />,
     title: "6. Liftoff!",
     description: "After your final approval, we'll launch your project for the world to see.",
   },
@@ -281,34 +281,95 @@ const processSteps = [
 const ProcessSection = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
     const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
+    const timelineRef = useRef<HTMLDivElement>(null);
+    const [lineHeight, setLineHeight] = useState(0);
+
+    useEffect(() => {
+        if (inView && timelineRef.current) {
+            const handleScroll = () => {
+                const timelineRect = timelineRef.current!.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const scrollableHeight = timelineRect.height - viewportHeight;
+                
+                // Calculate how far down the timeline we've scrolled
+                let scrollFraction = 0;
+                if (timelineRect.top < 0) {
+                    scrollFraction = Math.min(1, Math.abs(timelineRect.top) / scrollableHeight);
+                }
+                setLineHeight(scrollFraction * 100);
+            };
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Initial check
+
+            return () => window.removeEventListener('scroll', handleScroll);
+        }
+    }, [inView]);
 
     return (
-        <section ref={sectionRef} id="process" className="container py-24 sm:py-32">
+        <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 md:px-6">
             <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
                     A streamlined journey from a spark of an idea to a stunning final product.
                 </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                {processSteps.map((step, index) => (
+            <div ref={timelineRef} className="relative max-w-3xl mx-auto">
+                <div className="absolute left-9 md:left-1/2 top-0 h-full w-0.5 bg-border/50 -translate-x-1/2" aria-hidden="true">
                     <div
-                        key={step.title}
-                        className={cn(
-                            "group flex flex-col items-center text-center p-6 rounded-2xl transition-all duration-300",
-                            "bg-card/50 dark:bg-white/5 backdrop-blur-xl border border-card-border dark:border-white/10",
-                            "hover:bg-card/70 dark:hover:bg-white/10 hover:border-border/80 dark:hover:border-white/20",
-                            inView ? 'animate-fade-in-up' : 'opacity-0'
-                        )}
-                        style={{ animationDelay: `${200 + index * 100}ms` }}
-                    >
-                        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                           {step.icon}
+                        className="absolute top-0 w-full bg-primary transition-all duration-300"
+                        style={{ height: `${lineHeight}%` }}
+                    />
+                </div>
+                {processSteps.map((step, index) => {
+                    const itemRef = useRef<HTMLDivElement>(null);
+                    const itemInView = useInView(itemRef, { triggerOnce: false, threshold: 0.5 });
+                    const isEven = index % 2 === 0;
+
+                    return (
+                        <div
+                            key={step.title}
+                            ref={itemRef}
+                            className={cn(
+                                "relative mb-12 flex items-start",
+                                "md:w-1/2",
+                                isEven ? "md:pr-8" : "md:self-end md:pl-8"
+                            )}
+                        >
+                            <div
+                                className={cn(
+                                    "absolute left-9 top-0 -translate-x-1/2 -translate-y-1/2 md:hidden",
+                                )}
+                            >
+                                <div
+                                    className={cn(
+                                        "w-5 h-5 rounded-full transition-colors duration-500",
+                                        itemInView ? "bg-primary" : "bg-border"
+                                    )}
+                                />
+                            </div>
+                            <div
+                                className={cn(
+                                    "hidden md:flex absolute top-0 items-center justify-center w-8 h-8 rounded-full transition-colors duration-500 -translate-y-1/2",
+                                    itemInView ? "bg-primary" : "bg-card",
+                                    isEven ? "right-0 -translate-x-1/2" : "left-0 translate-x-1/2"
+                                )}
+                            >
+                               {step.icon}
+                            </div>
+                            <div
+                                className={cn(
+                                    "pl-16 md:pl-0 w-full transition-all duration-700",
+                                    isEven ? "md:text-right" : "md:text-left",
+                                    itemInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                                )}
+                            >
+                                <h3 className="text-xl font-bold font-headline mb-2">{step.title}</h3>
+                                <p className="text-muted-foreground">{step.description}</p>
+                            </div>
                         </div>
-                        <h3 className="text-xl font-bold font-headline mb-2">{step.title}</h3>
-                        <p className="text-muted-foreground">{step.description}</p>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </section>
     );
@@ -422,4 +483,3 @@ export default function Home() {
     
 
     
-
