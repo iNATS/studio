@@ -189,7 +189,7 @@ const PortfolioGrid = () => {
             Design
           </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 md:px-6">
         {filteredItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
@@ -239,7 +239,7 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
 
   return (
-    <section ref={sectionRef} id={id} className={cn("container py-24 sm:py-32 pr-0", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
+    <section ref={sectionRef} id={id} className={cn("container py-24 sm:py-32", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
       {children}
     </section>
   )
