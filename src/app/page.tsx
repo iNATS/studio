@@ -77,54 +77,28 @@ const portfolioItems: PortfolioItem[] = [
 ];
 
 const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioItem, index: number, isVisible: boolean, onClick: () => void }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const { left, top, width, height } = card.getBoundingClientRect();
-    const x = e.clientX - left - width / 2;
-    const y = e.clientY - top - height / 2;
-
-    const rotateX = (y / height) * -10; // Reduced rotation
-    const rotateY = (x / width) * 10; // Reduced rotation
-
-    card.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-  };
-
-  const onMouseLeave = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.transform = 'perspective(1500px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-  };
-
   return (
     <div
-      ref={cardRef}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
       onClick={onClick}
       className={cn(
-        "group relative transition-transform duration-500 ease-out cursor-pointer will-change-transform",
+        "group relative rounded-lg transition-all duration-700 ease-in-out cursor-pointer overflow-hidden",
         isVisible ? 'animate-fade-in-up' : 'opacity-0'
       )}
-      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 150}ms` }}
+      style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full group-hover:bg-white/10 group-hover:border-white/20">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
+      <Card className="overflow-hidden transition-all duration-500 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full group-hover:bg-white/10 group-hover:border-white/20 group-hover:scale-105">
         <CardHeader className="p-0 relative">
           <Image
             src={item.image}
             alt={item.title}
             width={600}
             height={400}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-48 object-cover transition-transform duration-500"
             data-ai-hint={item.hint}
           />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </CardHeader>
-        <CardContent className="p-4" style={{ transform: 'translateZ(20px)' }}>
+        <CardContent className="p-4">
           <h3 className="text-lg font-bold font-headline text-white">{item.title}</h3>
           <p className="mt-2 text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
             {item.description}
@@ -138,7 +112,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
           </div>
         </CardContent>
       </Card>
-      <div className="absolute -inset-px border border-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ transform: 'translateZ(40px)' }} />
+      <div className="absolute inset-0 border-2 border-transparent rounded-lg group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
     </div>
   );
 };
@@ -211,7 +185,7 @@ const PortfolioGrid = () => {
           Design
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 [perspective:2000px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         {filteredItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
@@ -363,3 +337,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
