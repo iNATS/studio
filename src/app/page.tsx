@@ -24,7 +24,7 @@ export type PortfolioItem = {
   image: string;
   hint: string;
   tags: string[];
-  category: string;
+  category:string;
 };
 
 const portfolioItems: PortfolioItem[] = [
@@ -202,7 +202,7 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <>
+    <div className="w-full max-w-4xl mx-auto">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
         <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
@@ -230,7 +230,7 @@ const ContactForm = () => {
           </Button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 
@@ -280,26 +280,36 @@ const processSteps = [
 
 const ProcessSection = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
+    const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.1 });
     const timelineRef = useRef<HTMLDivElement>(null);
     const [lineHeight, setLineHeight] = useState(0);
 
     useEffect(() => {
         if (inView && timelineRef.current) {
             const handleScroll = () => {
-                const timelineRect = timelineRef.current!.getBoundingClientRect();
+                if (!timelineRef.current) return;
+                const timelineRect = timelineRef.current.getBoundingClientRect();
                 const viewportHeight = window.innerHeight;
-                const scrollableHeight = timelineRect.height - viewportHeight;
+
+                const startPoint = viewportHeight * 0.2; // When the top of the timeline is 20% from the top of viewport
+                const endPoint = viewportHeight * 0.8; // When the bottom of the timeline is 20% from the bottom of viewport
                 
-                // Calculate how far down the timeline we've scrolled
+                const scrollableHeight = timelineRect.height - (endPoint-startPoint)
+                
                 let scrollFraction = 0;
-                if (timelineRect.top < 0) {
-                    scrollFraction = Math.min(1, Math.abs(timelineRect.top) / scrollableHeight);
+                // Check if the timeline is in the "active" scroll area
+                if (timelineRect.top < startPoint && timelineRect.bottom > endPoint) {
+                    scrollFraction = Math.min(1, (startPoint - timelineRect.top) / scrollableHeight);
+                } else if (timelineRect.top >= startPoint) {
+                    scrollFraction = 0;
+                } else {
+                    scrollFraction = 1;
                 }
+
                 setLineHeight(scrollFraction * 100);
             };
 
-            window.addEventListener('scroll', handleScroll);
+            window.addEventListener('scroll', handleScroll, { passive: true });
             handleScroll(); // Initial check
 
             return () => window.removeEventListener('scroll', handleScroll);
@@ -317,7 +327,7 @@ const ProcessSection = () => {
             <div ref={timelineRef} className="relative max-w-3xl mx-auto">
                 <div className="absolute left-9 md:left-1/2 top-0 h-full w-0.5 bg-border/50 -translate-x-1/2" aria-hidden="true">
                     <div
-                        className="absolute top-0 w-full bg-primary transition-all duration-300"
+                        className="absolute top-0 w-full bg-primary transition-all duration-100 ease-linear"
                         style={{ height: `${lineHeight}%` }}
                     />
                 </div>
@@ -350,9 +360,10 @@ const ProcessSection = () => {
                             </div>
                             <div
                                 className={cn(
-                                    "hidden md:flex absolute top-0 items-center justify-center w-8 h-8 rounded-full transition-colors duration-500 -translate-y-1/2",
-                                    itemInView ? "bg-primary" : "bg-card",
-                                    isEven ? "right-0 -translate-x-1/2" : "left-0 translate-x-1/2"
+                                    "hidden md:flex absolute top-0 items-center justify-center w-12 h-12 rounded-full transition-all duration-500 -translate-y-1/2",
+                                    "bg-background/80 backdrop-blur-sm border-2",
+                                    itemInView ? "border-primary/80 shadow-lg shadow-primary/20" : "border-border",
+                                    isEven ? "right-0 translate-x-1/2" : "left-0 -translate-x-1/2"
                                 )}
                             >
                                {step.icon}
@@ -425,11 +436,11 @@ export default function Home() {
         </div>
       </section>
 
-        <div className="space-y-24 sm:space-y-32 my-24 sm:my-32">
+        <div className="flex flex-col items-center">
           <PortfolioGrid />
 
           <AnimatedSection id="about" threshold={0.4}>
-            <div className="grid gap-8 md:grid-cols-3 items-center">
+             <div className="grid gap-8 md:grid-cols-3 items-center max-w-4xl mx-auto">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
                   <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
