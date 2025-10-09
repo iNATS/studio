@@ -16,7 +16,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-background/50 dark:bg-black/50 backdrop-blur-2xl border-border dark:border-white/20 text-foreground dark:text-white sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
+      <DialogContent className="bg-background/80 dark:bg-black/50 backdrop-blur-2xl border-border/50 dark:border-white/20 text-foreground dark:text-white sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
         <div className="relative h-64 md:h-80 w-full">
           <Image
             src={project.image}
