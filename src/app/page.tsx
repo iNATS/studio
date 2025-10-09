@@ -157,28 +157,28 @@ const PortfolioGrid = () => {
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-white/5 data-[variant=outline]:text-white/80"
+            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('web')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-white/5 data-[variant=outline]:text-white/80"
+            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('mobile')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-white/5 data-[variant=outline]:text-white/80"
+            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('design')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-white/5 data-[variant=outline]:text-white/80"
+            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
           >
             Design
           </Button>
@@ -284,18 +284,21 @@ export default function Home() {
                                         alt="Mohamed Aref"
                                         width={120}
                                         height={120}
-                                        className="rounded-full border-4 border-white/20 shadow-lg mb-6"
+                                        className="rounded-full border-4 border-white/20 shadow-lg mb-4"
                                         data-ai-hint="profile picture"
                                     />
-                                    <h2 className="text-3xl font-bold tracking-tighter font-headline">About Me</h2>
-                                    <p className="text-white/70 mt-2">Creative Developer & Designer</p>
+                                    <h2 className="text-2xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
+                                    <p className="text-white/70 mt-1">Creative Developer & Designer</p>
                                 </div>
                                 <div className="md:col-span-2 space-y-6">
-                                    <p className="text-white/80 text-lg leading-relaxed">
-                                        I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. For me, it's not just about writing code—it's about building experiences that are intuitive, engaging, and beautiful. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. Whether it's a responsive web app, a sleek mobile interface, or an eye-catching design, my goal is always the same: to create something that people love to use.
-                                    </p>
+                                   <div className="space-y-4">
+                                     <h3 className="text-xl font-bold tracking-tighter font-headline">About Me</h3>
+                                      <p className="text-white/80 text-lg leading-relaxed">
+                                          I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. 
+                                      </p>
+                                   </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
+                                        <h3 className="text-xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
                                         <div className="flex flex-wrap gap-3">
                                             {[
                                                 'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
