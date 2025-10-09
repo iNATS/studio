@@ -16,12 +16,12 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-background/80 dark:bg-black/50 backdrop-blur-2xl border-border/50 dark:border-white/20 text-foreground dark:text-white sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
+      <DialogContent className="bg-white/60 dark:bg-neutral-900/60 backdrop-blur-2xl border-white/20 dark:border-white/10 text-foreground dark:text-neutral-100 sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
         <div className="relative h-64 md:h-80 w-full">
           <Image
             src={project.image}
             alt={project.title}
-            layout="fill"
+            fill
             objectFit="cover"
             className="rounded-t-2xl"
           />
@@ -31,7 +31,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
           <DialogTitle className="text-3xl font-bold font-headline text-foreground dark:text-white">{project.title}</DialogTitle>
           <div className="flex flex-wrap gap-2 py-4">
             {project.tags.map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-secondary dark:bg-white/20 text-secondary-foreground dark:text-white border-none text-sm">
+              <Badge key={i} variant="secondary" className="bg-secondary/70 dark:bg-white/10 text-secondary-foreground dark:text-white/80 border-none text-sm">
                 {tag}
               </Badge>
             ))}
