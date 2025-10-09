@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
+import { CursorGlow } from '@/components/CursorGlow';
 
 export const metadata: Metadata = {
   title: 'Mohamed Aref | Portfolio',
@@ -25,6 +26,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans')}>
+        <CursorGlow />
         {children}
         <Toaster />
       </body>
