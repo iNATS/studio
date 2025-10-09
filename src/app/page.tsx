@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Code, Smartphone, Palette } from 'lucide-react';
+import { ArrowRight, Code, Smartphone, Palette, BrainCircuit, Bot, FunctionSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -273,43 +273,70 @@ export default function Home() {
           <PortfolioGrid />
 
           <AnimatedSection id="about" className="w-full py-24 sm:py-32 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl my-16">
-            <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
-              <div className="space-y-3">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
-                <p className="mx-auto max-w-[700px] text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  I am a passionate developer and designer with a knack for crafting elegant solutions to complex problems.
-                  With expertise in front-end frameworks, mobile development, and UI/UX principles, I bring ideas to life
-                  from concept to launch. My goal is to create products that are not only visually appealing but also
-                  highly usable and performant.
-                </p>
-              </div>
-              <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                <div className={cn("flex flex-col items-center gap-4 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '200ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-5 rounded-2xl border border-white/20">
-                    <Code className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold font-headline">Web Development</h3>
-                  <p className="text-white/70 text-center">
-                    Building responsive and scalable web applications with modern technologies.
+            <div className="container px-4 md:px-6">
+              <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center lg:text-left">About Me</h2>
+                  <p className="text-white/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed text-center lg:text-left">
+                    I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. For me, it's not just about writing code—it's about building experiences that are intuitive, engaging, and beautiful. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. Whether it's a responsive web app, a sleek mobile interface, or an eye-catching design, my goal is always the same: to create something that people love to use.
                   </p>
                 </div>
-                <div className={cn("flex flex-col items-center gap-4 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '400ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-5 rounded-2xl border border-white/20">
-                    <Smartphone className="h-10 w-10 text-white" />
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <h3 className="text-2xl font-bold tracking-tighter font-headline text-center lg:text-left">My Skills</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                       <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">Frontend</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>React / Next.js</li>
+                          <li>Vue.js</li>
+                          <li>TypeScript</li>
+                          <li>Tailwind CSS</li>
+                        </ul>
+                      </div>
+                       <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">Backend</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>Node.js</li>
+                          <li>GraphQL</li>
+                          <li>PostgreSQL</li>
+                          <li>Firebase</li>
+                        </ul>
+                      </div>
+                       <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">Mobile</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>React Native</li>
+                          <li>Flutter</li>
+                          <li>Swift</li>
+                        </ul>
+                      </div>
+                       <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">Design</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>Figma</li>
+                          <li>Illustrator</li>
+                          <li>UI/UX Principles</li>
+                        </ul>
+                      </div>
+                      <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">AI / ML</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>Genkit</li>
+                          <li>TensorFlow</li>
+                          <li>Python</li>
+                        </ul>
+                      </div>
+                       <div className="flex flex-col items-center sm:items-start gap-2">
+                        <h4 className="font-semibold text-lg">Other</h4>
+                        <ul className="space-y-1 text-white/70 text-center sm:text-left">
+                          <li>Git & GitHub</li>
+                          <li>CI/CD</li>
+                          <li>Agile</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
-                  <p className="text-white/70 text-center">
-                    Creating cross-platform mobile experiences that engage and delight users.
-                  </p>
-                </div>
-                <div className={cn("flex flex-col items-center gap-4 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '600ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-5 rounded-2xl border border-white/20">
-                    <Palette className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>
-                  <p className="text-white/70 text-center">
-                    Designing intuitive and beautiful interfaces that focus on user experience.
-                  </p>
                 </div>
               </div>
             </div>
@@ -335,5 +362,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
