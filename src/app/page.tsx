@@ -87,16 +87,16 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
     const x = e.clientX - left - width / 2;
     const y = e.clientY - top - height / 2;
 
-    const rotateX = (y / height) * -20;
-    const rotateY = (x / width) * 20;
+    const rotateX = (y / height) * -10; // Reduced rotation
+    const rotateY = (x / width) * 10; // Reduced rotation
 
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    card.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
   };
 
   const onMouseLeave = () => {
     const card = cardRef.current;
     if (!card) return;
-    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+    card.style.transform = 'perspective(1500px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
   };
 
   return (
@@ -105,39 +105,40 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
-      className={cn("group relative transition-transform duration-300 ease-out cursor-pointer", isVisible ? 'animate-fade-in-up' : 'opacity-0')}
-      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 200}ms` }}
+      className={cn(
+        "group relative transition-transform duration-500 ease-out cursor-pointer will-change-transform",
+        isVisible ? 'animate-fade-in-up' : 'opacity-0'
+      )}
+      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
-        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      <Card className="overflow-hidden transition-all duration-500 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full group-hover:bg-white/10 group-hover:border-white/20">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
         <CardHeader className="p-0 relative">
           <Image
             src={item.image}
             alt={item.title}
             width={600}
             height={400}
-            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
             data-ai-hint={item.hint}
           />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
         </CardHeader>
-        <CardContent className="p-6 absolute bottom-0 left-0 right-0">
-           <div style={{ transform: 'translateZ(50px)' }}>
-            <h3 className="text-xl font-bold font-headline text-white drop-shadow-md">{item.title}</h3>
-            <p className="mt-2 text-white/80 text-sm drop-shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto">
-              {item.description}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {item.tags.map((tag, i) => (
-                <Badge key={i} variant="secondary" className="bg-white/20 text-white border-none">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-           </div>
+        <CardContent className="p-4" style={{ transform: 'translateZ(20px)' }}>
+          <h3 className="text-lg font-bold font-headline text-white">{item.title}</h3>
+          <p className="mt-2 text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
+            {item.description}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {item.tags.slice(0, 3).map((tag, i) => (
+              <Badge key={i} variant="secondary" className="bg-white/10 text-white/80 border-none transition-colors duration-300 group-hover:bg-white/20">
+                {tag}
+              </Badge>
+            ))}
+          </div>
         </CardContent>
       </Card>
-      <div className="absolute -inset-1 border-2 border-primary/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      <div className="absolute -inset-px border border-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ transform: 'translateZ(40px)' }} />
     </div>
   );
 };
