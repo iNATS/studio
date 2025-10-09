@@ -86,7 +86,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       )}
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-card/50 dark:bg-white/5 backdrop-blur-lg border border-border dark:border-white/10 w-full h-full group-hover:bg-card/60 dark:group-hover:bg-white/10 group-hover:border-border dark:group-hover:border-white/20 group-hover:scale-105">
+      <Card className="overflow-hidden transition-all duration-500 bg-card/50 dark:bg-white/5 backdrop-blur-lg border border-border dark:border-white/10 w-full h-full group-hover:bg-card/60 dark:group-hover:bg-white/10 group-hover:border-border dark:group-hover:border-white/20">
         <CardHeader className="p-0 relative">
           <Image
             src={item.image}
