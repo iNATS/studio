@@ -93,8 +93,8 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className="group relative transition-transform duration-300 ease-out"
-      style={{ transformStyle: 'preserve-3d' }}
+      className="group relative transition-transform duration-300 ease-out animate-fade-in-up"
+      style={{ transformStyle: 'preserve-3d', animationDelay: `${index * 150}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -144,11 +144,13 @@ const PortfolioGrid = () => {
 
   return (
     <section id="projects" className="container py-24 sm:py-32">
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
-      <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
-        A selection of projects that I'm proud of.
-      </p>
-      <div className="flex justify-center gap-2 mt-8">
+      <div className="animate-fade-in-up">
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
+        <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
+          A selection of projects that I'm proud of.
+        </p>
+      </div>
+      <div className="flex justify-center gap-2 mt-8 animate-fade-in-up animation-delay-200">
         <Button
           className={cn(filterButtonStyle, filter === 'all' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
           onClick={() => setFilter('all')}
@@ -228,10 +230,10 @@ export default function Home() {
               amazing together.
             </p>
             <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-600">
-              <Button asChild size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
+              <Button asChild size="lg" className="bg-background/20 backdrop-blur-lg border border-white/10 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
                 <a href="#contact">Get in Touch</a>
               </Button>
-              <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
+              <Button asChild variant="outline" size="lg" className="bg-background/20 backdrop-blur-lg border border-white/10 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
                 <Link href="/vibe-check">
                   Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -244,7 +246,7 @@ export default function Home() {
         <div className="p-4 md:p-6 lg:p-12">
           <PortfolioGrid />
 
-          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16">
+          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16 animate-fade-in-up">
             <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
               <div className="space-y-3">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
@@ -256,7 +258,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-200">
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Code className="h-10 w-10 text-primary" />
                   </div>
@@ -265,7 +267,7 @@ export default function Home() {
                     Building responsive and scalable web applications with modern technologies.
                   </p>
                 </div>
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-400">
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Film className="h-10 w-10 text-primary" />
                   </div>
@@ -274,7 +276,7 @@ export default function Home() {
                     Creating cross-platform mobile experiences that engage and delight users.
                   </p>
                 </div>
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-600">
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Palette className="h-10 w-10 text-primary" />
                   </div>
@@ -287,7 +289,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section id="contact" className="w-full py-24 sm:py-32">
+          <section id="contact" className="w-full py-24 sm:py-32 animate-fade-in-up">
             <div className="container px-4 sm:px-0">
               <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
