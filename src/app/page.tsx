@@ -11,8 +11,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Code, Film, Palette } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useRef, MouseEvent } from 'react';
+import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { useInView } from '@/hooks/use-in-view';
 
 const portfolioItems = [
   {
@@ -67,6 +68,7 @@ const portfolioItems = [
 
 const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(cardRef, { triggerOnce: true });
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
@@ -93,8 +95,8 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className="group relative transition-transform duration-300 ease-out animate-fade-in-up"
-      style={{ transformStyle: 'preserve-3d', animationDelay: `${index * 150}ms` }}
+      className={cn("group relative transition-transform duration-300 ease-out", inView ? 'animate-fade-in-up' : 'opacity-0')}
+      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 150}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -133,6 +135,8 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
 
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
@@ -143,14 +147,14 @@ const PortfolioGrid = () => {
     'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white';
 
   return (
-    <section id="projects" className="container py-24 sm:py-32">
-      <div className="animate-fade-in-up">
+    <section id="projects" ref={sectionRef} className="container py-24 sm:py-32">
+      <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className="flex justify-center gap-2 mt-8 animate-fade-in-up animation-delay-200">
+      <div className={cn("flex justify-center gap-2 mt-8", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
         <Button
           className={cn(filterButtonStyle, filter === 'all' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
           onClick={() => setFilter('all')}
@@ -200,7 +204,24 @@ const ContactForm = () => {
   );
 };
 
+const AnimatedSection = ({ id, children, className }: { id?: string, children: React.ReactNode, className?: string }) => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
+
+  return (
+    <section ref={sectionRef} id={id} className={cn(className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
+      {children}
+    </section>
+  )
+}
+
 export default function Home() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -219,17 +240,17 @@ export default function Home() {
           />
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-black/50" />
         </div>
-        <div className="container relative z-10 px-4 md:px-6 text-layer">
+        <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline animate-fade-in-up">Mohamed Aref</h1>
-              <p className="text-xl md:text-2xl font-medium text-white/70 mt-2 animate-fade-in-up animation-delay-200">Creative Developer & Designer</p>
+              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <p className={cn("text-xl md:text-2xl font-medium text-white/70 mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
-            <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-400">
+            <p className={cn("max-w-[700px] text-muted-foreground md:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
-            <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-600">
+            <div className={cn("flex flex-col gap-4 min-[400px]:flex-row transition-all duration-1000 delay-600", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               <Button asChild size="lg" className="bg-background/20 backdrop-blur-lg border border-white/10 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
                 <a href="#contact">Get in Touch</a>
               </Button>
@@ -246,7 +267,7 @@ export default function Home() {
         <div className="p-4 md:p-6 lg:p-12">
           <PortfolioGrid />
 
-          <section id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16 animate-fade-in-up">
+          <AnimatedSection id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16">
             <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
               <div className="space-y-3">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
@@ -258,7 +279,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-200">
+                <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '200ms'}}>
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Code className="h-10 w-10 text-primary" />
                   </div>
@@ -267,7 +288,7 @@ export default function Home() {
                     Building responsive and scalable web applications with modern technologies.
                   </p>
                 </div>
-                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-400">
+                <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '400ms'}}>
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Film className="h-10 w-10 text-primary" />
                   </div>
@@ -276,7 +297,7 @@ export default function Home() {
                     Creating cross-platform mobile experiences that engage and delight users.
                   </p>
                 </div>
-                <div className="flex flex-col items-center gap-2 animate-fade-in-up animation-delay-600">
+                <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '600ms'}}>
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
                     <Palette className="h-10 w-10 text-primary" />
                   </div>
@@ -287,9 +308,9 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
+          </AnimatedSection>
 
-          <section id="contact" className="w-full py-24 sm:py-32 animate-fade-in-up">
+          <AnimatedSection id="contact" className="w-full py-24 sm:py-32">
             <div className="container px-4 sm:px-0">
               <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
@@ -301,7 +322,7 @@ export default function Home() {
                 <ContactForm />
               </div>
             </div>
-          </section>
+          </AnimatedSection>
         </div>
       </main>
       <SocialFab />
