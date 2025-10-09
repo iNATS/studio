@@ -153,37 +153,35 @@ const PortfolioGrid = () => {
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className={cn("flex justify-center mt-8", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
-        <div className="p-1 rounded-full bg-background/60 backdrop-blur-sm border border-border/40 shadow-lg flex items-center gap-1">
+      <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
             variant={filter === 'all' ? 'default' : 'ghost'}
-            className="rounded-full"
+            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
             onClick={() => handleFilterChange('all')}
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'ghost'}
-            className="rounded-full"
+            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
             onClick={() => handleFilterChange('web')}
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'ghost'}
-            className="rounded-full"
+            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
             onClick={() => handleFilterChange('mobile')}
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'ghost'}
-            className="rounded-full"
+            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
             onClick={() => handleFilterChange('design')}
           >
             Design
           </Button>
-        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         {filteredItems.map((item, index) => (
@@ -337,9 +335,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
-
-    
