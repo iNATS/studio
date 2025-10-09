@@ -102,7 +102,4 @@ body {
     animation-delay: 800ms;
   }
   
-  .container {
-    @apply w-full pr-0;
-  }
 }
