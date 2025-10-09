@@ -15,6 +15,7 @@ import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export type PortfolioItem = {
   title: string;
@@ -274,51 +275,47 @@ export default function Home() {
 
           <AnimatedSection id="about" className="w-full py-24 sm:py-32 my-16">
             <div className="container px-4 md:px-6">
-                <div className="mx-auto max-w-4xl">
-                    <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl overflow-hidden">
-                        <CardContent className="p-8 md:p-12">
-                            <div className="grid gap-8 md:grid-cols-3">
-                                <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                                    <Image
-                                        src="https://picsum.photos/seed/avatar/200/200"
-                                        alt="Mohamed Aref"
-                                        width={120}
-                                        height={120}
-                                        className="rounded-full border-4 border-white/20 shadow-lg mb-4"
-                                        data-ai-hint="profile picture"
-                                    />
-                                    <h2 className="text-2xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
-                                    <p className="text-white/70 mt-1">Creative Developer & Designer</p>
-                                </div>
-                                <div className="md:col-span-2 space-y-6">
-                                   <div className="space-y-4">
-                                     <h3 className="text-xl font-bold tracking-tighter font-headline">About Me</h3>
-                                      <p className="text-white/80 text-lg leading-relaxed">
-                                          I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. 
-                                      </p>
-                                   </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
-                                        <div className="flex flex-wrap gap-3">
-                                            {[
-                                                'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
-                                                'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
-                                                'React Native', 'Flutter', 'Swift',
-                                                'Figma', 'Illustrator', 'UI/UX',
-                                                'Genkit', 'TensorFlow', 'Python',
-                                                'Git', 'CI/CD', 'Agile'
-                                            ].map(skill => (
-                                                <Badge key={skill} variant="secondary" className="bg-white/10 text-white/80 border-none text-sm py-1 px-3">
-                                                    {skill}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+              <div className="mx-auto">
+                <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
+                  <CardContent className="p-8 md:p-12">
+                    <div className="grid gap-8 md:grid-cols-3">
+                      <div className="flex flex-col items-center text-center">
+                        <Avatar className="w-32 h-32 border-4 border-white/20 shadow-lg mb-4">
+                          <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
+                          <AvatarFallback>MA</AvatarFallback>
+                        </Avatar>
+                        <h2 className="text-2xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
+                        <p className="text-white/70 mt-1">Creative Developer & Designer</p>
+                      </div>
+                      <div className="md:col-span-2 space-y-6">
+                        <div className="space-y-4">
+                          <h3 className="text-xl font-bold tracking-tighter font-headline">About Me</h3>
+                          <p className="text-white/80 text-lg leading-relaxed">
+                            I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
+                          </p>
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
+                              'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
+                              'React Native', 'Flutter', 'Swift',
+                              'Figma', 'Illustrator', 'UI/UX',
+                              'Genkit', 'TensorFlow', 'Python',
+                              'Git', 'CI/CD', 'Agile'
+                            ].map(skill => (
+                              <Badge key={skill} variant="secondary" className="bg-white/10 text-white/80 border-none text-sm py-1 px-3">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </AnimatedSection>
 
