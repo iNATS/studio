@@ -14,59 +14,69 @@ import Link from 'next/link';
 import { useState, useRef, MouseEvent, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
+import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 
-const portfolioItems = [
+export type PortfolioItem = {
+  title: string;
+  description: string;
+  image: string;
+  hint: string;
+  tags: string[];
+  category: string;
+};
+
+const portfolioItems: PortfolioItem[] = [
   {
     title: 'E-commerce Platform',
-    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
+    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration. This project involved building a robust backend with Node.js and a dynamic front-end with React, ensuring a seamless user experience from browsing to checkout.',
     image: 'https://picsum.photos/seed/ecom/600/400',
     hint: 'online store',
-    tags: ['Web', 'React', 'Node.js'],
+    tags: ['Web', 'React', 'Node.js', 'PostgreSQL', 'Stripe'],
     category: 'web',
   },
   {
     title: 'Mobile Banking App',
-    description: 'Secure and intuitive mobile banking application for iOS and Android.',
+    description: 'A secure and intuitive mobile banking application for iOS and Android, built with Flutter. It features biometric authentication, real-time transaction updates, and a user-friendly interface for managing accounts and payments.',
     image: 'https://picsum.photos/seed/bank/600/400',
     hint: 'mobile banking',
-    tags: ['Mobile', 'Flutter', 'Firebase'],
+    tags: ['Mobile', 'Flutter', 'Firebase', 'Security'],
     category: 'mobile',
   },
   {
     title: 'Corporate Branding',
-    description: 'Complete brand identity design for a major tech startup, including logo and style guides.',
+    description: 'A complete brand identity design for a major tech startup. This included logo design, a comprehensive style guide, marketing collateral, and UI mockups to ensure a consistent and powerful brand presence across all platforms.',
     image: 'https://picsum.photos/seed/brand/600/400',
     hint: 'brand design',
-    tags: ['Design', 'Branding'],
+    tags: ['Design', 'Branding', 'Illustrator', 'Figma'],
     category: 'design',
   },
   {
     title: 'Project Management Tool',
-    description: 'A collaborative project management tool to streamline team workflows.',
+    description: 'A collaborative project management tool designed to streamline team workflows. Built with Vue.js and GraphQL, it offers features like task tracking, team communication, and file sharing to enhance productivity.',
     image: 'https://picsum.photos/seed/pm/600/400',
     hint: 'team collaboration',
-    tags: ['Web', 'Vue.js', 'GraphQL'],
+    tags: ['Web', 'Vue.js', 'GraphQL', 'Apollo'],
     category: 'web',
   },
   {
     title: 'Fitness Tracker App',
-    description: 'A mobile app to track workouts, nutrition, and progress with social features.',
+    description: 'A mobile app to track workouts, nutrition, and progress with social features. Using React Native, it provides a cross-platform solution with a focus on user engagement and data visualization.',
     image: 'https://picsum.photos/seed/fit/600/400',
     hint: 'fitness app',
-    tags: ['Mobile', 'React Native'],
+    tags: ['Mobile', 'React Native', 'HealthKit'],
     category: 'mobile',
   },
   {
     title: 'SaaS Dashboard UI Kit',
-    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
+    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards. This kit, created in Figma, includes a wide range of components, templates, and styles to accelerate the design process for data-heavy applications.',
     image: 'https://picsum.photos/seed/saas/600/400',
     hint: 'dashboard interface',
-    tags: ['Design', 'UI/UX'],
+    tags: ['Design', 'UI/UX', 'Figma', 'Component Library'],
     category: 'design',
   },
 ];
 
-const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItems)[0], index: number, isVisible: boolean }) => {
+const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioItem, index: number, isVisible: boolean, onClick: () => void }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -94,7 +104,8 @@ const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItem
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={cn("group relative transition-transform duration-300 ease-out", isVisible ? 'animate-fade-in-up' : 'opacity-0')}
+      onClick={onClick}
+      className={cn("group relative transition-transform duration-300 ease-out cursor-pointer", isVisible ? 'animate-fade-in-up' : 'opacity-0')}
       style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 200}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
@@ -137,6 +148,7 @@ const PortfolioGrid = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
   const [cardsVisible, setCardsVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
 
   useEffect(() => {
     if (inView) {
@@ -164,6 +176,7 @@ const PortfolioGrid = () => {
     'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white';
 
   return (
+    <>
     <section id="projects" ref={sectionRef} className="container py-24 sm:py-32">
        <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
@@ -199,10 +212,12 @@ const PortfolioGrid = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 [perspective:2000px]">
         {filteredItems.map((item, index) => (
-          <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} />
+          <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
       </div>
     </section>
+    <ProjectDetailModal isOpen={!!selectedProject} onOpenChange={(isOpen) => !isOpen && setSelectedProject(null)} project={selectedProject} />
+    </>
   );
 };
 
