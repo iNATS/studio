@@ -145,10 +145,11 @@ const PortfolioGrid = () => {
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
   const filterButtonStyle =
-    'rounded-full backdrop-blur-sm border-border dark:border-white/20 shadow-lg transition-all duration-300';
-  const activeFilterButtonStyle = 'bg-primary text-primary-foreground';
+    'rounded-full backdrop-blur-sm shadow-lg transition-all duration-300 border';
+  const activeFilterButtonStyle = 'bg-primary text-primary-foreground border-transparent';
   const inactiveFilterButtonStyle =
-    'bg-secondary text-secondary-foreground dark:bg-white/10 dark:text-white/80 hover:bg-secondary/80 dark:hover:bg-white/20 dark:hover:text-white';
+    'bg-background/50 border-border hover:bg-accent hover:text-accent-foreground dark:bg-white/10 dark:border-white/20 dark:text-white/80 dark:hover:bg-white/20 dark:hover:text-white';
+
 
   return (
     <>
@@ -337,5 +338,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
