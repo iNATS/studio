@@ -155,29 +155,29 @@ const PortfolioGrid = () => {
       </div>
       <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
-            variant={filter === 'all' ? 'default' : 'ghost'}
-            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
+            variant={filter === 'all' ? 'default' : 'outline'}
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('all')}
           >
             All
           </Button>
           <Button
-             variant={filter === 'web' ? 'default' : 'ghost'}
-            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
+             variant={filter === 'web' ? 'default' : 'outline'}
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('web')}
           >
             Web
           </Button>
           <Button
-             variant={filter === 'mobile' ? 'default' : 'ghost'}
-            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
+             variant={filter === 'mobile' ? 'default' : 'outline'}
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('mobile')}
           >
             Mobile
           </Button>
           <Button
-            variant={filter === 'design' ? 'default' : 'ghost'}
-            className="rounded-full backdrop-blur-sm bg-background/60 dark:bg-white/10 border border-border dark:border-white/20 shadow-lg"
+            variant={filter === 'design' ? 'default' : 'outline'}
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('design')}
           >
             Design
