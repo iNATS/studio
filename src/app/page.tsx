@@ -148,7 +148,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="container py-24 sm:py-32 pr-0">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
        <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
