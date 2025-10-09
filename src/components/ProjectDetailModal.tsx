@@ -31,7 +31,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
           <DialogTitle className="text-3xl font-bold font-headline text-foreground dark:text-white">{project.title}</DialogTitle>
           <div className="flex flex-wrap gap-2 py-4">
             {project.tags.map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-secondary/70 dark:bg-white/10 text-secondary-foreground dark:text-white/80 border-none text-sm">
+              <Badge key={i} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm">
                 {tag}
               </Badge>
             ))}

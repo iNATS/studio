@@ -87,7 +87,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       )}
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-white/5 backdrop-blur-xl border border-white/10 w-full h-full group-hover:bg-white/10 group-hover:border-white/20">
+      <Card className="overflow-hidden transition-all duration-500 bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 w-full h-full group-hover:bg-card/80 dark:group-hover:bg-white/10 group-hover:border-border/80 dark:group-hover:border-white/20">
         <CardHeader className="p-0 relative overflow-hidden">
           <Image
             src={item.image}
@@ -100,20 +100,20 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </CardHeader>
         <CardContent className="p-4">
-          <h3 className="text-lg font-bold font-headline text-white">{item.title}</h3>
-          <p className="mt-2 text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
+          <h3 className="text-lg font-bold font-headline text-foreground dark:text-white">{item.title}</h3>
+          <p className="mt-2 text-foreground/70 dark:text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
             {item.description}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-white/10 text-white/80 border-none transition-colors duration-300 group-hover:bg-white/20">
+              <Badge key={i} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none transition-colors duration-300 group-hover:bg-foreground/20 dark:group-hover:bg-white/20">
                 {tag}
               </Badge>
             ))}
           </div>
         </CardContent>
       </Card>
-      <div className="absolute inset-0 border-2 border-transparent rounded-2xl group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
+      <div className="absolute inset-0 border-2 border-transparent rounded-2xl group-hover:border-black/20 dark:group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
     </div>
   );
 };
@@ -158,28 +158,28 @@ const PortfolioGrid = () => {
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('web')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('mobile')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('design')}
-            className="rounded-full text-base transition-all duration-300 backdrop-blur-xl border-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground bg-white/5 text-white/80"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Design
           </Button>
@@ -276,21 +276,21 @@ export default function Home() {
           <AnimatedSection id="about" className="w-full py-24 sm:py-32 my-16">
             <div className="container px-4 md:px-6">
               <div className="mx-auto">
-                <Card className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
+                <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
                   <CardContent className="p-8 md:p-12">
                     <div className="grid gap-8 md:grid-cols-3">
                       <div className="flex flex-col items-center text-center">
-                        <Avatar className="w-32 h-32 border-4 border-white/20 shadow-lg mb-4">
+                        <Avatar className="w-32 h-32 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
                           <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
                           <AvatarFallback>MA</AvatarFallback>
                         </Avatar>
                         <h2 className="text-2xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
-                        <p className="text-white/70 mt-1">Creative Developer & Designer</p>
+                        <p className="text-foreground/70 dark:text-white/70 mt-1">Creative Developer & Designer</p>
                       </div>
                       <div className="md:col-span-2 space-y-6">
                         <div className="space-y-4">
                           <h3 className="text-xl font-bold tracking-tighter font-headline">About Me</h3>
-                          <p className="text-white/80 text-lg leading-relaxed">
+                          <p className="text-foreground/80 dark:text-white/80 text-lg leading-relaxed">
                             I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
                           </p>
                         </div>
@@ -305,7 +305,7 @@ export default function Home() {
                               'Genkit', 'TensorFlow', 'Python',
                               'Git', 'CI/CD', 'Agile'
                             ].map(skill => (
-                              <Badge key={skill} variant="secondary" className="bg-white/10 text-white/80 border-none text-sm py-1 px-3">
+                              <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1 px-3">
                                 {skill}
                               </Badge>
                             ))}
