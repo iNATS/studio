@@ -202,7 +202,7 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <div className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full p-8 md:p-12">
+    <>
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
         <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
@@ -230,7 +230,7 @@ const ContactForm = () => {
           </Button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 
@@ -294,10 +294,10 @@ export default function Home() {
         </div>
       </section>
 
-        <div className="container space-y-24 sm:space-y-32 my-24 sm:my-32">
+        <div className="space-y-24 sm:space-y-32 my-24 sm:my-32">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" className="w-full">
+          <AnimatedSection id="about" className="container" threshold={0.4}>
             <div className="grid gap-8 md:grid-cols-3 items-center">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
@@ -336,7 +336,7 @@ export default function Home() {
           </AnimatedSection>
 
 
-          <AnimatedSection id="contact" className="w-full" threshold={0.4}>
+          <AnimatedSection id="contact" className="container" threshold={0.4}>
               <ContactForm />
           </AnimatedSection>
         </div>
