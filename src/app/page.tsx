@@ -95,7 +95,7 @@ const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItem
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       className={cn("group relative transition-transform duration-300 ease-out", isVisible ? 'animate-fade-in-up' : 'opacity-0')}
-      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 150}ms` }}
+      style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 200}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -347,5 +347,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
