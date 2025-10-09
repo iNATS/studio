@@ -77,8 +77,8 @@ const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItem
     const x = e.clientX - left - width / 2;
     const y = e.clientY - top - height / 2;
 
-    const rotateX = (y / height) * -30;
-    const rotateY = (x / width) * 30;
+    const rotateX = (y / height) * -20;
+    const rotateY = (x / width) * 20;
 
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
   };
@@ -135,18 +135,16 @@ const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItem
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.2 });
+  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
   const [cardsVisible, setCardsVisible] = useState(false);
 
   useEffect(() => {
-    setCardsVisible(false);
     if (inView) {
-      const timer = setTimeout(() => {
         setCardsVisible(true);
-      }, 100); // A small delay to allow re-triggering the animation
-      return () => clearTimeout(timer);
+    } else {
+        setCardsVisible(false);
     }
-  }, [inView, filter]);
+  }, [inView]);
 
   const handleFilterChange = (newFilter: string) => {
     if (filter === newFilter) return;
@@ -154,7 +152,7 @@ const PortfolioGrid = () => {
     setTimeout(() => {
       setFilter(newFilter);
       setCardsVisible(true);
-    }, 300); // Corresponds to animation duration
+    }, 150); // A short delay for the animations to reset
   };
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
@@ -167,7 +165,7 @@ const PortfolioGrid = () => {
 
   return (
     <section id="projects" ref={sectionRef} className="container py-24 sm:py-32">
-      <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
+       <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
           A selection of projects that I'm proud of.
@@ -201,7 +199,7 @@ const PortfolioGrid = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 [perspective:2000px]">
         {filteredItems.map((item, index) => (
-          <PortfolioCard key={`${filter}-${index}`} item={item} index={index} isVisible={cardsVisible} />
+          <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} />
         ))}
       </div>
     </section>
@@ -223,9 +221,9 @@ const ContactForm = () => {
   );
 };
 
-const AnimatedSection = ({ id, children, className }: { id?: string, children: React.ReactNode, className?: string }) => {
+const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: string, children: React.ReactNode, className?: string, threshold?: number }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.2 });
+  const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
 
   return (
     <section ref={sectionRef} id={id} className={cn(className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
@@ -329,7 +327,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
 
-          <AnimatedSection id="contact" className="w-full py-24 sm:py-32">
+          <AnimatedSection id="contact" className="w-full py-24 sm:py-32" threshold={0.4}>
             <div className="container px-4 sm:px-0">
               <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
@@ -349,3 +347,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
