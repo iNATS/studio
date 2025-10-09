@@ -202,37 +202,35 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
-      <CardHeader className="text-center p-8 md:p-12">
-        <CardTitle className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</CardTitle>
-        <CardDescription className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
+    <div className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full p-8 md:p-12">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
+        <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
           Have a project in mind or just want to say hello? Drop me a line.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-8 md:px-12 pb-8 md:pb-12 max-w-2xl mx-auto w-full">
-        <form className="grid gap-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-foreground/80 dark:text-white/80">Your Name</Label>
-              <Input id="name" placeholder="John Doe" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground/80 dark:text-white/80">Your Email</Label>
-              <Input id="email" type="email" placeholder="john.doe@example.com" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
-            </div>
+        </p>
+      </div>
+      <form className="grid gap-6 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-foreground/80 dark:text-white/80">Your Name</Label>
+            <Input id="name" placeholder="John Doe" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="message" className="text-foreground/80 dark:text-white/80">Your Message</Label>
-            <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+            <Label htmlFor="email" className="text-foreground/80 dark:text-white/80">Your Email</Label>
+            <Input id="email" type="email" placeholder="john.doe@example.com" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
           </div>
-          <div className="flex justify-end">
-            <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
-              Send Message
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="message" className="text-foreground/80 dark:text-white/80">Your Message</Label>
+          <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+        </div>
+        <div className="flex justify-end">
+          <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+            Send Message
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
 
@@ -296,57 +294,49 @@ export default function Home() {
         </div>
       </section>
 
-        <div className="lg:p-12">
+        <div className="container space-y-24 sm:space-y-32 my-24 sm:my-32">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" className="w-full py-24 sm:py-32 my-16 px-4 md:px-6">
-            <div className="container px-0">
-              <div className="mx-auto">
-                <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
-                  <CardContent className="p-8 md:p-12">
-                    <div className="grid gap-8 md:grid-cols-3">
-                      <div className="flex flex-col items-center text-center">
-                        <Avatar className="w-32 h-32 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
-                          <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
-                          <AvatarFallback>MA</AvatarFallback>
-                        </Avatar>
-                        <h2 className="text-2xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
-                        <p className="text-foreground/70 dark:text-white/70 mt-1">Creative Developer & Designer</p>
-                      </div>
-                      <div className="md:col-span-2 space-y-6">
-                        <div className="space-y-4">
-                          <h3 className="text-xl font-bold tracking-tighter font-headline">About Me</h3>
-                          <p className="text-foreground/80 dark:text-white/80 text-lg leading-relaxed">
-                            I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
-                          </p>
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
-                          <div className="flex flex-wrap gap-3">
-                            {[
-                              'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
-                              'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
-                              'React Native', 'Flutter', 'Swift',
-                              'Figma', 'Illustrator', 'UI/UX',
-                              'Genkit', 'TensorFlow', 'Python',
-                              'Git', 'CI/CD', 'Agile'
-                            ].map(skill => (
-                              <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1 px-3">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+          <AnimatedSection id="about" className="w-full">
+            <div className="grid gap-8 md:grid-cols-3 items-center">
+              <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
+                  <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
+                  <AvatarFallback>MA</AvatarFallback>
+                </Avatar>
+                <h2 className="text-3xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
+                <p className="text-foreground/70 dark:text-white/70 mt-1 text-lg">Creative Developer & Designer</p>
+              </div>
+              <div className="md:col-span-2 space-y-8">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold tracking-tighter font-headline">About Me</h3>
+                  <p className="text-foreground/80 dark:text-white/80 text-lg leading-relaxed">
+                    I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
+                      'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
+                      'React Native', 'Flutter', 'Swift',
+                      'Figma', 'Illustrator', 'UI/UX',
+                      'Genkit', 'TensorFlow', 'Python',
+                      'Git', 'CI/CD', 'Agile'
+                    ].map(skill => (
+                      <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1.5 px-4">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </AnimatedSection>
 
 
-          <AnimatedSection id="contact" className="w-full py-24 sm:py-32" threshold={0.4}>
+          <AnimatedSection id="contact" className="w-full" threshold={0.4}>
               <ContactForm />
           </AnimatedSection>
         </div>
