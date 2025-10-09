@@ -294,12 +294,15 @@ const ProcessSection = () => {
                 {processSteps.map((step, index) => (
                     <div
                         key={step.title}
-                        className={cn("flex flex-col items-center text-center p-6 rounded-2xl transition-all duration-300 hover:bg-card/80 dark:hover:bg-white/10",
+                        className={cn(
+                            "group flex flex-col items-center text-center p-6 rounded-2xl transition-all duration-300",
+                            "bg-card/50 dark:bg-white/5 backdrop-blur-xl border border-card-border dark:border-white/10",
+                            "hover:bg-card/70 dark:hover:bg-white/10 hover:border-border/80 dark:hover:border-white/20",
                             inView ? 'animate-fade-in-up' : 'opacity-0'
                         )}
                         style={{ animationDelay: `${200 + index * 100}ms` }}
                     >
-                        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                            {step.icon}
                         </div>
                         <h3 className="text-xl font-bold font-headline mb-2">{step.title}</h3>
@@ -419,3 +422,4 @@ export default function Home() {
     
 
     
+
