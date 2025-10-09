@@ -65,26 +65,6 @@ const portfolioItems = [
   },
 ];
 
-const AnimatedChar = ({ char, delay }: { char: string; delay: number }) => (
-  <span
-    className="animate-char-in"
-    style={{ animationDelay: `${delay}ms` }}
-  >
-    {char === ' ' ? '\u00A0' : char}
-  </span>
-);
-
-const AnimatedText = ({ text, el: El = 'p', className, stagger = 30 }: { text: string, el?: keyof JSX.IntrinsicElements, className?: string, stagger?: number }) => {
-  return (
-    <El className={cn("flex", className)}>
-      {text.split('').map((char, i) => (
-        <AnimatedChar key={`${char}-${i}`} char={char} delay={i * stagger} />
-      ))}
-    </El>
-  );
-};
-
-
 const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -223,11 +203,11 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section 
+        <section
           className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
           style={{paddingTop: 0, marginTop: 0}}
         >
-        <div className="absolute inset-0 w-full h-full bg-layer" style={{transform: 'scale(1.1)'}}>
+        <div className="absolute inset-0 w-full h-full bg-layer">
           <Image
             src="https://picsum.photos/seed/hero-bg/1920/1080"
             alt="Hero Background"
@@ -240,14 +220,14 @@ export default function Home() {
         <div className="container relative z-10 px-4 md:px-6 text-layer">
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
-              <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
-              <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-white/70 justify-center mt-2" stagger={20} />
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline animate-fade-in-up">Mohamed Aref</h1>
+              <p className="text-xl md:text-2xl font-medium text-white/70 mt-2 animate-fade-in-up animation-delay-200">Creative Developer & Designer</p>
             </div>
-            <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-500">
+            <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-400">
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
-            <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
+            <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-600">
               <Button asChild size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
                 <a href="#contact">Get in Touch</a>
               </Button>
@@ -327,7 +307,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-
