@@ -5,17 +5,18 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SocialFab } from '@/components/SocialFab';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Code, Smartphone, Palette, BrainCircuit, Bot, FunctionSquare } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useRef, MouseEvent, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Label } from '@/components/ui/label';
 
 export type PortfolioItem = {
   title: string;
@@ -158,28 +159,32 @@ const PortfolioGrid = () => {
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            data-active={filter === 'all'}
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'outline'}
+             data-active={filter === 'web'}
             onClick={() => handleFilterChange('web')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'outline'}
+             data-active={filter === 'mobile'}
             onClick={() => handleFilterChange('mobile')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'outline'}
+            data-active={filter === 'design'}
             onClick={() => handleFilterChange('design')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
           >
             Design
           </Button>
@@ -197,16 +202,37 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <form className="grid gap-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input placeholder="Your Name" />
-        <Input type="email" placeholder="Your Email" />
-      </div>
-      <Textarea placeholder="Your Message" rows={5} />
-      <Button type="submit" size="lg" className="w-full sm:w-auto justify-self-start bg-accent hover:bg-accent/90">
-        Send Message
-      </Button>
-    </form>
+    <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full max-w-2xl mx-auto">
+      <CardHeader className="text-center">
+        <CardTitle className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</CardTitle>
+        <CardDescription className="mt-4 text-muted-foreground md:text-xl/relaxed">
+          Have a project in mind or just want to say hello? Drop me a line.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="grid gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-foreground/80 dark:text-white/80">Your Name</Label>
+              <Input id="name" placeholder="John Doe" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-foreground/80 dark:text-white/80">Your Email</Label>
+              <Input id="email" type="email" placeholder="john.doe@example.com" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="message" className="text-foreground/80 dark:text-white/80">Your Message</Label>
+            <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+              Send Message
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -322,15 +348,7 @@ export default function Home() {
 
           <AnimatedSection id="contact" className="w-full py-24 sm:py-32" threshold={0.4}>
             <div className="container px-4 sm:px-0">
-              <div className="mx-auto max-w-2xl text-center">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
-                <p className="mt-4 text-muted-foreground md:text-xl/relaxed">
-                  Have a project in mind or just want to say hello? Drop me a line.
-                </p>
-              </div>
-              <div className="mx-auto mt-12 max-w-2xl px-4 sm:px-0">
                 <ContactForm />
-              </div>
             </div>
           </AnimatedSection>
         </div>
@@ -340,3 +358,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
