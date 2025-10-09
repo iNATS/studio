@@ -87,13 +87,13 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-500 bg-card/50 dark:bg-white/5 backdrop-blur-lg border border-border dark:border-white/10 w-full h-full group-hover:bg-card/60 dark:group-hover:bg-white/10 group-hover:border-border dark:group-hover:border-white/20">
-        <CardHeader className="p-0 relative">
+        <CardHeader className="p-0 relative overflow-hidden">
           <Image
             src={item.image}
             alt={item.title}
             width={600}
             height={400}
-            className="w-full h-48 object-cover transition-transform duration-500"
+            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
             data-ai-hint={item.hint}
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
@@ -156,28 +156,28 @@ const PortfolioGrid = () => {
       <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
-            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('all')}
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'outline'}
-            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('web')}
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'outline'}
-            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('mobile')}
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'outline'}
-            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
+            className="rounded-full backdrop-blur-sm shadow-lg data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=outline]:bg-background/60 data-[variant=outline]:dark:bg-white/10 data-[variant=outline]:border-border data-[variant=outline]:dark:border-white/20"
             onClick={() => handleFilterChange('design')}
           >
             Design
@@ -248,7 +248,7 @@ export default function Home() {
         <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className={cn("text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
               <p className={cn("text-xl md:text-2xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
             <p className={cn("max-w-[700px] text-muted-foreground md:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
