@@ -101,4 +101,8 @@ body {
   .animation-delay-800 {
     animation-delay: 800ms;
   }
+  
+  .container {
+    @apply w-full pr-0;
+  }
 }
