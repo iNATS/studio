@@ -202,14 +202,14 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full max-w-2xl mx-auto">
-      <CardHeader className="text-center">
+    <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
+      <CardHeader className="text-center p-8 md:p-12">
         <CardTitle className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</CardTitle>
-        <CardDescription className="mt-4 text-muted-foreground md:text-xl/relaxed">
+        <CardDescription className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
           Have a project in mind or just want to say hello? Drop me a line.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-8 md:px-12 pb-8 md:pb-12 max-w-2xl mx-auto w-full">
         <form className="grid gap-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -296,11 +296,11 @@ export default function Home() {
         </div>
       </section>
 
-        <div className="p-4 md:p-6 lg:p-12">
+        <div className="lg:p-12">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" className="w-full py-24 sm:py-32 my-16">
-            <div className="container px-4 md:px-6">
+          <AnimatedSection id="about" className="w-full py-24 sm:py-32 my-16 px-4 md:px-6">
+            <div className="container px-0">
               <div className="mx-auto">
                 <Card className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden w-full">
                   <CardContent className="p-8 md:p-12">
@@ -347,9 +347,7 @@ export default function Home() {
 
 
           <AnimatedSection id="contact" className="w-full py-24 sm:py-32" threshold={0.4}>
-            <div className="container px-4 sm:px-0">
-                <ContactForm />
-            </div>
+              <ContactForm />
           </AnimatedSection>
         </div>
       </main>
@@ -358,5 +356,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
