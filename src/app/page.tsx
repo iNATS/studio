@@ -219,40 +219,15 @@ const ContactForm = () => {
 };
 
 export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const { clientWidth: width, clientHeight: height } = hero;
-    const { clientX, clientY } = e;
-
-    const x = (clientX - width / 2) / (width / 2);
-    const y = (clientY - height / 2) / (height / 2);
-
-    const bgLayer = hero.querySelector('.bg-layer') as HTMLElement;
-    const textLayer = hero.querySelector('.text-layer') as HTMLElement;
-
-    if (bgLayer) {
-        bgLayer.style.transform = `translateX(${-x * 20}px) translateY(${-y * 20}px) scale(1.1)`;
-    }
-    if (textLayer) {
-        textLayer.style.transform = `translateX(${x * 40}px) translateY(${y * 40}px)`;
-    }
-  };
-
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
         <section 
-          ref={heroRef}
-          onMouseMove={onMouseMove}
           className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
           style={{paddingTop: 0, marginTop: 0}}
         >
-        <div className="absolute inset-0 w-full h-full bg-layer transition-transform duration-300 ease-out" >
+        <div className="absolute inset-0 w-full h-full bg-layer" style={{transform: 'scale(1.1)'}}>
           <Image
             src="https://picsum.photos/seed/hero-bg/1920/1080"
             alt="Hero Background"
@@ -262,7 +237,7 @@ export default function Home() {
           />
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-black/50" />
         </div>
-        <div className="container relative z-10 px-4 md:px-6 text-layer transition-transform duration-300 ease-out">
+        <div className="container relative z-10 px-4 md:px-6 text-layer">
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
               <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
@@ -273,7 +248,7 @@ export default function Home() {
               amazing together.
             </p>
             <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
-              <Button asChild size="lg" className="bg-primary text-primary-foreground backdrop-blur-sm border border-white/20 shadow-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105">
+              <Button asChild size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
                 <a href="#contact">Get in Touch</a>
               </Button>
               <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
@@ -354,4 +329,5 @@ export default function Home() {
 }
 
     
+
 
