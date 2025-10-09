@@ -158,7 +158,7 @@ const PortfolioGrid = () => {
 
   const filterButtonStyle =
     'rounded-full backdrop-blur-sm border-white/20 shadow-lg transition-all duration-300';
-  const activeFilterButtonStyle = 'bg-primary/80 text-primary-foreground';
+  const activeFilterButtonStyle = 'bg-primary text-primary-foreground';
   const inactiveFilterButtonStyle =
     'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white';
 
@@ -266,14 +266,14 @@ export default function Home() {
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
               <AnimatedText text="Mohamed Aref" el="h1" className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline justify-center" stagger={50} />
-              <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-primary justify-center mt-2" stagger={20} />
+              <AnimatedText text="Creative Developer & Designer" el="p" className="text-xl md:text-2xl font-medium text-white/70 justify-center mt-2" stagger={20} />
             </div>
             <p className="max-w-[700px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-500">
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
             <div className="flex flex-col gap-4 min-[400px]:flex-row animate-fade-in-up animation-delay-700">
-              <Button asChild size="lg" className="bg-primary/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105">
+              <Button asChild size="lg" className="bg-primary text-primary-foreground backdrop-blur-sm border border-white/20 shadow-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105">
                 <a href="#contact">Get in Touch</a>
               </Button>
               <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 shadow-lg hover:bg-white/20 hover:text-white transition-all duration-300 hover:scale-105">
@@ -354,3 +354,4 @@ export default function Home() {
 }
 
     
+
