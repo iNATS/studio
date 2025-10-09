@@ -14,7 +14,7 @@ export function useInView(
   options: IntersectionObserverOptions = {}
 ): boolean {
   const [inView, setInView] = useState(false);
-  const { threshold = 0.1, root = null, rootMargin = '0px', triggerOnce = true } = options;
+  const { threshold = 0.1, root = null, rootMargin = '0px', triggerOnce = false } = options;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,7 +42,9 @@ export function useInView(
     }
 
     return () => {
-      observer.disconnect();
+      if(ref.current) {
+        observer.unobserve(ref.current);
+      }
     };
   }, [ref, threshold, root, rootMargin, triggerOnce]);
 

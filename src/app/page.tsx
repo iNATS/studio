@@ -66,9 +66,8 @@ const portfolioItems = [
   },
 ];
 
-const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], index: number }) => {
+const PortfolioCard = ({ item, index, isVisible }: { item: (typeof portfolioItems)[0], index: number, isVisible: boolean }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { triggerOnce: true });
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
@@ -95,7 +94,7 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={cn("group relative transition-transform duration-300 ease-out", inView ? 'animate-fade-in-up' : 'opacity-0')}
+      className={cn("group relative transition-transform duration-300 ease-out", isVisible ? 'animate-fade-in-up' : 'opacity-0')}
       style={{ transformStyle: 'preserve-3d', animationDelay: `${(index % 3) * 150}ms` }}
     >
       <Card className="overflow-hidden transition-all duration-300 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full">
@@ -136,7 +135,27 @@ const PortfolioCard = ({ item, index }: { item: (typeof portfolioItems)[0], inde
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
+  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.2 });
+  const [cardsVisible, setCardsVisible] = useState(false);
+
+  useEffect(() => {
+    setCardsVisible(false);
+    if (inView) {
+      const timer = setTimeout(() => {
+        setCardsVisible(true);
+      }, 100); // A small delay to allow re-triggering the animation
+      return () => clearTimeout(timer);
+    }
+  }, [inView, filter]);
+
+  const handleFilterChange = (newFilter: string) => {
+    if (filter === newFilter) return;
+    setCardsVisible(false);
+    setTimeout(() => {
+      setFilter(newFilter);
+      setCardsVisible(true);
+    }, 300); // Corresponds to animation duration
+  };
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
@@ -157,32 +176,32 @@ const PortfolioGrid = () => {
       <div className={cn("flex justify-center gap-2 mt-8", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
         <Button
           className={cn(filterButtonStyle, filter === 'all' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => setFilter('all')}
+          onClick={() => handleFilterChange('all')}
         >
           All
         </Button>
         <Button
           className={cn(filterButtonStyle, filter === 'web' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => setFilter('web')}
+          onClick={() => handleFilterChange('web')}
         >
           Web
         </Button>
         <Button
           className={cn(filterButtonStyle, filter === 'mobile' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => setFilter('mobile')}
+          onClick={() => handleFilterChange('mobile')}
         >
           Mobile
         </Button>
         <Button
           className={cn(filterButtonStyle, filter === 'design' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => setFilter('design')}
+          onClick={() => handleFilterChange('design')}
         >
           Design
         </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 [perspective:2000px]">
         {filteredItems.map((item, index) => (
-          <PortfolioCard key={index} item={item} index={index} />
+          <PortfolioCard key={`${filter}-${index}`} item={item} index={index} isVisible={cardsVisible} />
         ))}
       </div>
     </section>
@@ -206,7 +225,7 @@ const ContactForm = () => {
 
 const AnimatedSection = ({ id, children, className }: { id?: string, children: React.ReactNode, className?: string }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
+  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.2 });
 
   return (
     <section ref={sectionRef} id={id} className={cn(className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
