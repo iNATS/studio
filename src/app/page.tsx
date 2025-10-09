@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MessageCircle, PencilRuler, Code, TestTube2, Rocket, Wrench, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -245,6 +245,73 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   )
 }
 
+const processSteps = [
+  {
+    icon: <MessageCircle className="w-10 h-10 text-primary" />,
+    title: "1. Consultation",
+    description: "We start with a conversation to understand your vision, goals, and requirements for the project.",
+  },
+  {
+    icon: <Search className="w-10 h-10 text-primary" />,
+    title: "2. Discovery & Strategy",
+    description: "I'll research and develop a comprehensive strategy and proposal tailored to your specific needs.",
+  },
+  {
+    icon: <PencilRuler className="w-10 h-10 text-primary" />,
+    title: "3. Design & Prototyping",
+    description: "I create wireframes, mockups, and interactive prototypes to visualize the user experience.",
+  },
+  {
+    icon: <Code className="w-10 h-10 text-primary" />,
+    title: "4. Development",
+    description: "I bring the designs to life with clean, efficient, and scalable code using the latest technologies.",
+  },
+  {
+    icon: <TestTube2 className="w-10 h-10 text-primary" />,
+    title: "5. Testing & QA",
+    description: "Thorough testing is conducted to ensure a bug-free, seamless experience across all devices.",
+  },
+  {
+    icon: <Rocket className="w-10 h-10 text-primary" />,
+    title: "6. Launch & Deployment",
+    description: "After your final approval, I deploy the project, making it live for the world to see.",
+  },
+];
+
+const ProcessSection = () => {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
+
+    return (
+        <section ref={sectionRef} id="process" className="container py-24 sm:py-32">
+            <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Process</h2>
+                <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
+                    A streamlined journey from concept to creation, ensuring transparency and quality at every step.
+                </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                {processSteps.map((step, index) => (
+                    <div
+                        key={step.title}
+                        className={cn("flex flex-col items-center text-center p-6 rounded-2xl transition-all duration-300 hover:bg-card/80 dark:hover:bg-white/10",
+                            inView ? 'animate-fade-in-up' : 'opacity-0'
+                        )}
+                        style={{ animationDelay: `${200 + index * 100}ms` }}
+                    >
+                        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                           {step.icon}
+                        </div>
+                        <h3 className="text-xl font-bold font-headline mb-2">{step.title}</h3>
+                        <p className="text-muted-foreground">{step.description}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -334,6 +401,8 @@ export default function Home() {
               </div>
             </div>
           </AnimatedSection>
+          
+          <ProcessSection />
 
 
           <AnimatedSection id="contact" threshold={0.4}>
