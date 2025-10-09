@@ -16,7 +16,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white/60 dark:bg-neutral-900/60 backdrop-blur-2xl border-white/20 dark:border-white/10 text-foreground dark:text-neutral-100 sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
+      <DialogContent className="bg-background/80 dark:bg-neutral-900/80 backdrop-blur-2xl border-border dark:border-white/10 text-foreground dark:text-neutral-100 sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
         <div className="relative h-64 md:h-80 w-full">
           <Image
             src={project.image}
@@ -36,7 +36,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
               </Badge>
             ))}
           </div>
-          <DialogDescription className="text-muted-foreground dark:text-white/80 text-base leading-relaxed">
+          <DialogDescription className="text-foreground/80 dark:text-white/80 text-base leading-relaxed">
             {project.description}
           </DialogDescription>
         </DialogHeader>
