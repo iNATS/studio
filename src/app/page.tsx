@@ -144,13 +144,6 @@ const PortfolioGrid = () => {
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
-  const filterButtonStyle =
-    'rounded-full backdrop-blur-sm shadow-lg transition-all duration-300 border';
-  const activeFilterButtonStyle = 'bg-primary text-primary-foreground border-transparent';
-  const inactiveFilterButtonStyle =
-    'bg-background/50 border-border hover:bg-accent hover:text-accent-foreground dark:bg-white/10 dark:border-white/20 dark:text-white/80 dark:hover:bg-white/20 dark:hover:text-white';
-
-
   return (
     <>
     <section id="projects" ref={sectionRef} className="container py-24 sm:py-32">
@@ -160,31 +153,37 @@ const PortfolioGrid = () => {
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className={cn("flex justify-center gap-2 mt-8", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
-        <Button
-          className={cn(filterButtonStyle, filter === 'all' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => handleFilterChange('all')}
-        >
-          All
-        </Button>
-        <Button
-          className={cn(filterButtonStyle, filter === 'web' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => handleFilterChange('web')}
-        >
-          Web
-        </Button>
-        <Button
-          className={cn(filterButtonStyle, filter === 'mobile' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => handleFilterChange('mobile')}
-        >
-          Mobile
-        </Button>
-        <Button
-          className={cn(filterButtonStyle, filter === 'design' ? activeFilterButtonStyle : inactiveFilterButtonStyle)}
-          onClick={() => handleFilterChange('design')}
-        >
-          Design
-        </Button>
+      <div className={cn("flex justify-center mt-8", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
+        <div className="p-1 rounded-full bg-background/60 backdrop-blur-sm border border-border/40 shadow-lg flex items-center gap-1">
+          <Button
+            variant={filter === 'all' ? 'default' : 'ghost'}
+            className="rounded-full"
+            onClick={() => handleFilterChange('all')}
+          >
+            All
+          </Button>
+          <Button
+             variant={filter === 'web' ? 'default' : 'ghost'}
+            className="rounded-full"
+            onClick={() => handleFilterChange('web')}
+          >
+            Web
+          </Button>
+          <Button
+             variant={filter === 'mobile' ? 'default' : 'ghost'}
+            className="rounded-full"
+            onClick={() => handleFilterChange('mobile')}
+          >
+            Mobile
+          </Button>
+          <Button
+            variant={filter === 'design' ? 'default' : 'ghost'}
+            className="rounded-full"
+            onClick={() => handleFilterChange('design')}
+          >
+            Design
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         {filteredItems.map((item, index) => (
@@ -338,6 +337,8 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
 
