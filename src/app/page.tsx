@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, MessageCircle, PencilRuler, Code, TestTube2, Rocket, Wrench, Search } from 'lucide-react';
+import { ArrowRight, MessageCircle, PencilRuler, Code, TestTube2, Rocket, Wrench, Search, Lightbulb, Combine, Palmtree } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -248,33 +248,33 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
 const processSteps = [
   {
     icon: <MessageCircle className="w-10 h-10 text-primary" />,
-    title: "1. Consultation",
-    description: "We start with a conversation to understand your vision, goals, and requirements for the project.",
+    title: "1. Let's Talk",
+    description: "We'll start with a friendly chat to understand your vision and project goals.",
   },
   {
-    icon: <Search className="w-10 h-10 text-primary" />,
-    title: "2. Discovery & Strategy",
-    description: "I'll research and develop a comprehensive strategy and proposal tailored to your specific needs.",
+    icon: <Lightbulb className="w-10 h-10 text-primary" />,
+    title: "2. Big Ideas",
+    description: "I'll craft a unique strategy and creative proposal tailored just for you.",
   },
   {
     icon: <PencilRuler className="w-10 h-10 text-primary" />,
-    title: "3. Design & Prototyping",
-    description: "I create wireframes, mockups, and interactive prototypes to visualize the user experience.",
+    title: "3. Creative Design",
+    description: "I'll design beautiful mockups and interactive prototypes to bring your vision to life.",
   },
   {
     icon: <Code className="w-10 h-10 text-primary" />,
-    title: "4. Development",
-    description: "I bring the designs to life with clean, efficient, and scalable code using the latest technologies.",
+    title: "4. Magic Code",
+    description: "I'll build your project with clean, efficient code using the latest tech.",
   },
   {
-    icon: <TestTube2 className="w-10 h-10 text-primary" />,
-    title: "5. Testing & QA",
-    description: "Thorough testing is conducted to ensure a bug-free, seamless experience across all devices.",
+    icon: <Combine className="w-10 h-10 text-primary" />,
+    title: "5. Polish & Perfect",
+    description: "We'll test everything to ensure a bug-free, seamless experience on all devices.",
   },
   {
     icon: <Rocket className="w-10 h-10 text-primary" />,
-    title: "6. Launch & Deployment",
-    description: "After your final approval, I deploy the project, making it live for the world to see.",
+    title: "6. Liftoff!",
+    description: "After your final approval, we'll launch your project for the world to see.",
   },
 ];
 
@@ -285,9 +285,9 @@ const ProcessSection = () => {
     return (
         <section ref={sectionRef} id="process" className="container py-24 sm:py-32">
             <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Process</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
-                    A streamlined journey from concept to creation, ensuring transparency and quality at every step.
+                    A streamlined journey from a spark of an idea to a stunning final product.
                 </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
