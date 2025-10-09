@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Globe, Menu } from 'lucide-react';
+import { Globe, Menu, Gem } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export function Header() {
@@ -20,8 +20,8 @@ export function Header() {
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-fit mx-auto">
       <div className="hidden md:flex items-center justify-center p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/40 shadow-lg">
-        <Link href="/" className="mr-4 flex items-center space-x-2 pl-2">
-          <span className="font-bold font-headline text-lg">Mohamed Aref</span>
+        <Link href="/" className="mr-4 flex items-center space-x-2 px-2">
+          <Gem className="h-6 w-6 text-primary" />
         </Link>
 
         <nav className="flex items-center gap-1 text-sm font-medium">
@@ -59,7 +59,7 @@ export function Header() {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/40 shadow-lg">
          <Link href="/" className="flex items-center space-x-2 pl-2">
-          <span className="font-bold font-headline text-base">MA</span>
+           <Gem className="h-6 w-6 text-primary" />
         </Link>
         <Sheet>
           <SheetTrigger asChild>
