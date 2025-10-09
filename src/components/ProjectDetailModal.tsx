@@ -16,7 +16,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-black/50 backdrop-blur-2xl border-white/20 text-white sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
+      <DialogContent className="bg-background/50 dark:bg-black/50 backdrop-blur-2xl border-border dark:border-white/20 text-foreground dark:text-white sm:max-w-[800px] p-0 rounded-2xl shadow-2xl">
         <div className="relative h-64 md:h-80 w-full">
           <Image
             src={project.image}
@@ -25,18 +25,18 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
             objectFit="cover"
             className="rounded-t-2xl"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/70 dark:from-black/70 to-transparent" />
         </div>
         <DialogHeader className="p-6 md:p-8 text-left">
-          <DialogTitle className="text-3xl font-bold font-headline text-white">{project.title}</DialogTitle>
+          <DialogTitle className="text-3xl font-bold font-headline text-foreground dark:text-white">{project.title}</DialogTitle>
           <div className="flex flex-wrap gap-2 py-4">
             {project.tags.map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-white/20 text-white border-none text-sm">
+              <Badge key={i} variant="secondary" className="bg-secondary dark:bg-white/20 text-secondary-foreground dark:text-white border-none text-sm">
                 {tag}
               </Badge>
             ))}
           </div>
-          <DialogDescription className="text-white/80 text-base leading-relaxed">
+          <DialogDescription className="text-muted-foreground dark:text-white/80 text-base leading-relaxed">
             {project.description}
           </DialogDescription>
         </DialogHeader>

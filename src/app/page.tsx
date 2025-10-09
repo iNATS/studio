@@ -86,7 +86,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       )}
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-white/5 backdrop-blur-lg border border-white/10 w-full h-full group-hover:bg-white/10 group-hover:border-white/20 group-hover:scale-105">
+      <Card className="overflow-hidden transition-all duration-500 bg-card/50 dark:bg-white/5 backdrop-blur-lg border border-border dark:border-white/10 w-full h-full group-hover:bg-card/60 dark:group-hover:bg-white/10 group-hover:border-border dark:group-hover:border-white/20 group-hover:scale-105">
         <CardHeader className="p-0 relative">
           <Image
             src={item.image}
@@ -99,20 +99,20 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </CardHeader>
         <CardContent className="p-4">
-          <h3 className="text-lg font-bold font-headline text-white">{item.title}</h3>
-          <p className="mt-2 text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
+          <h3 className="text-lg font-bold font-headline text-foreground dark:text-white">{item.title}</h3>
+          <p className="mt-2 text-muted-foreground dark:text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
             {item.description}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-white/10 text-white/80 border-none transition-colors duration-300 group-hover:bg-white/20">
+              <Badge key={i} variant="secondary" className="bg-secondary text-secondary-foreground dark:bg-white/10 dark:text-white/80 border-none transition-colors duration-300 group-hover:bg-secondary/80 dark:group-hover:bg-white/20">
                 {tag}
               </Badge>
             ))}
           </div>
         </CardContent>
       </Card>
-      <div className="absolute inset-0 border-2 border-transparent rounded-lg group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
+      <div className="absolute inset-0 border-2 border-transparent rounded-lg group-hover:border-primary/40 dark:group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
     </div>
   );
 };
@@ -145,10 +145,10 @@ const PortfolioGrid = () => {
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
 
   const filterButtonStyle =
-    'rounded-full backdrop-blur-sm border-white/20 shadow-lg transition-all duration-300';
+    'rounded-full backdrop-blur-sm border-border dark:border-white/20 shadow-lg transition-all duration-300';
   const activeFilterButtonStyle = 'bg-primary text-primary-foreground';
   const inactiveFilterButtonStyle =
-    'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white';
+    'bg-secondary text-secondary-foreground dark:bg-white/10 dark:text-white/80 hover:bg-secondary/80 dark:hover:bg-white/20 dark:hover:text-white';
 
   return (
     <>
@@ -250,18 +250,18 @@ export default function Home() {
         <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <h1 className={cn("text-4xl font-bold tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
               <p className={cn("text-xl md:text-2xl font-medium text-white/70 mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
-            <p className={cn("max-w-[700px] text-muted-foreground md:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
+            <p className={cn("max-w-[700px] text-white/70 md:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
             <div className={cn("flex flex-col gap-4 min-[400px]:flex-row transition-all duration-1000 delay-600", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
-              <Button asChild size="lg" className="bg-background/20 backdrop-blur-lg border border-white/10 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
+              <Button asChild size="lg" className="bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
                 <a href="#contact">Get in Touch</a>
               </Button>
-              <Button asChild variant="outline" size="lg" className="bg-background/20 backdrop-blur-lg border border-white/10 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
+              <Button asChild variant="outline" size="lg" className="bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
                 <Link href="/vibe-check">
                   Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -274,7 +274,7 @@ export default function Home() {
         <div className="p-4 md:p-6 lg:p-12">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-white/10 shadow-lg bg-white/5 my-16">
+          <AnimatedSection id="about" className="w-full py-24 sm:py-32 rounded-3xl backdrop-blur-lg border border-border dark:border-white/10 shadow-lg bg-card/50 dark:bg-white/5 my-16">
             <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6 lg:gap-10">
               <div className="space-y-3">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">About Me</h2>
@@ -287,7 +287,7 @@ export default function Home() {
               </div>
               <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-8 pt-8">
                 <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '200ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
+                  <div className="bg-secondary dark:bg-white/10 backdrop-blur-sm p-4 rounded-full border border-border dark:border-white/20">
                     <Code className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">Web Development</h3>
@@ -296,7 +296,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '400ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
+                  <div className="bg-secondary dark:bg-white/10 backdrop-blur-sm p-4 rounded-full border border-border dark:border-white/20">
                     <Film className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">Mobile Apps</h3>
@@ -305,7 +305,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className={cn("flex flex-col items-center gap-2 transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')} style={{transitionDelay: '600ms'}}>
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-full border border-white/20">
+                  <div className="bg-secondary dark:bg-white/10 backdrop-blur-sm p-4 rounded-full border border-border dark:border-white/20">
                     <Palette className="h-10 w-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-headline">UI/UX Design</h3>

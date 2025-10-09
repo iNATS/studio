@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Globe, Menu, Gem } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const navLinks = [
@@ -30,7 +31,7 @@ export function Header() {
               key={link.href}
               variant="ghost"
               asChild
-              className="rounded-full text-foreground/80 hover:bg-white/10 hover:text-foreground"
+              className="rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground"
             >
               <Link href={link.href} className="transition-colors px-4 py-2">
                 {link.label}
@@ -40,9 +41,10 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1 pl-2">
+           <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:bg-white/10 hover:text-foreground">
+              <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground">
                 <Globe className="h-5 w-5" />
                 <span className="sr-only">Change language</span>
               </Button>
@@ -80,7 +82,8 @@ export function Header() {
                 ))}
               </nav>
             </div>
-             <div className="absolute bottom-8 left-4 right-4">
+             <div className="absolute bottom-8 left-4 right-4 flex items-center gap-2">
+                <ThemeToggle />
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full justify-start">
