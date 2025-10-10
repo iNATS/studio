@@ -150,7 +150,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -434,46 +434,48 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <AnimatedSection id="testimonials" threshold={0.1}>
-      <div className="text-center mb-16 px-4 md:px-6">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
-        <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
-          Kind words from people I've had the pleasure to work with.
-        </p>
+    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
+          <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
+            Kind words from people I've had the pleasure to work with.
+          </p>
+        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {testimonials.map((testimonial, index) => (
+              <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                <div className="p-1 h-full">
+                  <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20">
+                    <CardContent className="p-6 flex-grow">
+                      <p className="text-foreground/80 dark:text-white/80">"{testimonial.feedback}"</p>
+                    </CardContent>
+                    <CardHeader className="flex flex-row items-center gap-4 pt-0">
+                      <Avatar className="w-12 h-12 border-2 border-border/80 dark:border-white/20">
+                        <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                        <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="text-base font-bold font-headline">{testimonial.name}</CardTitle>
+                        <CardDescription className="text-sm text-muted-foreground">{testimonial.company}</CardDescription>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-left-12" />
+          <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-right-12" />
+        </Carousel>
       </div>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full mx-auto"
-      >
-        <CarouselContent className="-ml-2 md:-ml-4">
-          {testimonials.map((testimonial, index) => (
-            <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-              <div className="p-1 h-full">
-                <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-lg hover:border-border/80 dark:hover:border-white/20">
-                  <CardContent className="p-6 flex-grow">
-                    <p className="text-foreground/80 dark:text-white/80">"{testimonial.feedback}"</p>
-                  </CardContent>
-                  <CardHeader className="flex flex-row items-center gap-4 pt-0">
-                    <Avatar className="w-12 h-12 border-2 border-border/80 dark:border-white/20">
-                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                      <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-base font-bold font-headline">{testimonial.name}</CardTitle>
-                      <CardDescription className="text-sm text-muted-foreground">{testimonial.company}</CardDescription>
-                    </div>
-                  </CardHeader>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:left-4" />
-        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:right-4" />
-      </Carousel>
     </AnimatedSection>
   );
 };
