@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, MessageCircle, PencilRuler, Code, TestTube2, Rocket, Wrench, Search, Lightbulb, Combine, Palmtree } from 'lucide-react';
+import { ArrowRight, MessageCircle, PencilRuler, Code, Combine, Rocket, Lightbulb, Quote } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -17,8 +17,6 @@ import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-
 
 export type PortfolioItem = {
   title: string;
@@ -424,40 +422,33 @@ const testimonials = [
     feedback: 'The fitness app has received overwhelmingly positive feedback from our users. The attention to detail in both design and functionality is evident throughout the entire experience.',
     avatar: 'https://picsum.photos/seed/chris/100/100',
   },
-  {
-    name: 'Amanda White',
-    company: 'Global Corp',
-    feedback: 'An exceptional developer and designer. He consistently delivered high-quality work on time and was always responsive to feedback. I highly recommend him for any project.',
-    avatar: 'https://picsum.photos/seed/amanda/100/100',
-  },
 ];
 
 const TestimonialsSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.1 });
+
   return (
     <AnimatedSection id="testimonials" threshold={0.1}>
-      <div className="max-w-4xl mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
             Kind words from people I've had the pleasure to work with.
           </p>
         </div>
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-4">
-            {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                <div className="p-1 h-full">
-                  <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20">
-                    <CardContent className="p-6 flex-grow">
-                      <p className="text-foreground/80 dark:text-white/80">"{testimonial.feedback}"</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => {
+            const cardRef = useRef<HTMLDivElement>(null);
+            const cardInView = useInView(cardRef, { triggerOnce: true, threshold: 0.5 });
+            return(
+              <div ref={cardRef} key={index} className={cn("transition-all duration-700 ease-in-out", cardInView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: `${index * 150}ms` }}>
+                <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20 overflow-hidden">
+                    <CardContent className="p-6 flex-grow relative">
+                      <Quote className="absolute top-4 left-4 h-12 w-12 text-primary/10" />
+                      <p className="relative z-10 text-foreground/80 dark:text-white/80 leading-relaxed pt-8">"{testimonial.feedback}"</p>
                     </CardContent>
-                    <CardHeader className="flex flex-row items-center gap-4 pt-0">
+                    <CardHeader className="flex flex-row items-center gap-4 pt-0 p-6 bg-foreground/5 dark:bg-white/5 border-t border-border/50 dark:border-white/10">
                       <Avatar className="w-12 h-12 border-2 border-border/80 dark:border-white/20">
                         <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                         <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
@@ -468,13 +459,10 @@ const TestimonialsSection = () => {
                       </div>
                     </CardHeader>
                   </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="absolute left-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-left-12" />
-          <CarouselNext className="absolute right-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-right-12" />
-        </Carousel>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </AnimatedSection>
   );
