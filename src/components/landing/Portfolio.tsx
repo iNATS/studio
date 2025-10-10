@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
@@ -79,7 +78,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       )}
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 w-full h-full group-hover:bg-card/80 dark:group-hover:bg-white/10 group-hover:border-border/80 dark:group-hover:border-white/20">
+      <Card className="overflow-hidden transition-all duration-500 bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 w-full h-full group-hover:bg-card/80 dark:group-hover:bg-white/10 group-hover:border-border/80 dark:group-hover:border-white/20 flex flex-col">
         <CardHeader className="p-0 relative overflow-hidden">
           <Image
             src={item.image}
@@ -91,16 +90,16 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-4 flex flex-col flex-grow">
           <h3 className="text-lg font-bold font-headline text-foreground dark:text-white">{item.title}</h3>
-          <p className="mt-2 text-foreground/70 dark:text-white/70 text-sm h-10 overflow-hidden text-ellipsis">
+          <p className="mt-2 text-foreground/70 dark:text-white/70 text-sm h-10 overflow-hidden text-ellipsis flex-grow">
             {item.description}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag, i) => (
-              <Badge key={i} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none transition-colors duration-300 group-hover:bg-foreground/20 dark:group-hover:bg-white/20">
+              <Button key={i} size="sm" variant="ghost" className="text-xs h-auto py-1 px-3 rounded-full bg-foreground/10 text-foreground/80 hover:bg-foreground/20 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/20 transition-colors duration-300 pointer-events-none">
                 {tag}
-              </Badge>
+              </Button>
             ))}
           </div>
         </CardContent>
