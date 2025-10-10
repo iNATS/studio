@@ -118,9 +118,9 @@ export function Process() {
                             </div>
                             <div
                                 className={cn(
-                                    "hidden md:flex absolute top-0 items-center justify-center w-12 h-12 rounded-full transition-all duration-500 -translate-y-1/2",
-                                    "bg-background/80 backdrop-blur-sm border-2",
-                                    itemInView ? "border-primary/80 shadow-lg shadow-primary/20" : "border-border",
+                                    "hidden md:flex absolute top-0 items-center justify-center w-14 h-14 rounded-full transition-all duration-500 -translate-y-1/2",
+                                    "bg-card/60 backdrop-blur-xl border",
+                                    itemInView ? "border-primary/80 shadow-lg shadow-primary/20" : "border-border/50 dark:border-white/10",
                                     isEven ? "right-0 translate-x-[50%]" : "left-0 -translate-x-[50%]"
                                 )}
                             >
