@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 const ContactForm = () => {
     return (
-      <div className="w-full max-w-4xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto px-4">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
