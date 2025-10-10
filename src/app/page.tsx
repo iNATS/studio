@@ -150,7 +150,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -434,7 +434,7 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <AnimatedSection id="testimonials" threshold={0.1}>
+    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
       <div className="text-center mb-16">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
         <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
