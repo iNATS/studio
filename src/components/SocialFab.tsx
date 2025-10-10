@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Share2, Twitter, X } from 'lucide-react';
+import { Github, Linkedin, MessageSquare, Twitter, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -56,7 +56,7 @@ export function SocialFab() {
         aria-label="Toggle social media links"
       >
         <div className="relative h-6 w-6">
-          <Share2
+          <MessageSquare
             className={cn(
               'absolute inset-0 transition-all duration-300 ease-in-out',
               isOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
