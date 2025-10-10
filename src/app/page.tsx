@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, MessageCircle, PencilRuler, Code, Combine, Rocket, Lightbulb, Quote } from 'lucide-react';
+import { ArrowRight, MessageCircle, PencilRuler, Code, Combine, Rocket, Lightbulb, Quote, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -158,13 +158,13 @@ const PortfolioGrid = () => {
   return (
     <>
     <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
-       <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
+       <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className={cn("flex justify-center flex-wrap mt-8 gap-2 px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
+      <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
@@ -198,7 +198,7 @@ const PortfolioGrid = () => {
             Design
           </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 sm:px-6 md:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
         {visibleItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
@@ -332,7 +332,7 @@ const ProcessSection = () => {
     }, [inView]);
 
     return (
-        <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 md:px-6">
+        <section ref={sectionRef} id="process" className="py-24 sm:py-32">
             <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -458,8 +458,8 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="sm:px-4 md:px-6">
-      <div className="mx-auto px-4 sm:px-6">
+    <AnimatedSection id="testimonials" threshold={0.1}>
+      <div className="mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -474,9 +474,9 @@ const TestimonialsSection = () => {
           }}
           className="w-full max-w-6xl mx-auto"
         >
-          <CarouselContent className="sm:-ml-4">
+          <CarouselContent className="-ml-4">
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="sm:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full mx-auto max-w-[400px]">
                   <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20 overflow-hidden">
                     <CardContent className="p-6 flex-grow relative">
@@ -542,7 +542,7 @@ export default function Home() {
           />
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20 dark:to-black/50" />
         </div>
-        <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
+        <div className={cn("relative z-10 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-4 sm:space-y-6">
             <div className="p-8 rounded-3xl">
               <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
@@ -569,7 +569,7 @@ export default function Home() {
         <div className="flex flex-col items-center">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" threshold={0.4} className="px-4 md:px-6">
+          <AnimatedSection id="about" threshold={0.4}>
              <div className="grid gap-8 md:grid-cols-3 items-center max-w-4xl mx-auto">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
@@ -611,7 +611,7 @@ export default function Home() {
 
           <TestimonialsSection />
 
-          <AnimatedSection id="contact" threshold={0.4} className="px-4 md:px-6">
+          <AnimatedSection id="contact" threshold={0.4}>
               <ContactForm />
           </AnimatedSection>
         </div>
