@@ -17,7 +17,7 @@ import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel';
 
 
 export type PortfolioItem = {
@@ -427,18 +427,38 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
+  const scrollTo = (index: number) => {
+    api?.scrollTo(index);
+  };
+
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
+    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 sm:px-6 md:px-8">
       <div className="container mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
             Kind words from people I've had the pleasure to work with.
           </p>
         </div>
         <Carousel
+          setApi={setApi}
           opts={{
-            align: "start",
+            align: 'start',
             loop: true,
           }}
           className="w-full max-w-6xl mx-auto"
@@ -470,6 +490,19 @@ const TestimonialsSection = () => {
           <CarouselPrevious className="hidden md:flex" />
           <CarouselNext className="hidden md:flex"/>
         </Carousel>
+        <div className="flex justify-center gap-2 mt-8">
+          {Array.from({ length: count }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => scrollTo(index)}
+              className={cn(
+                'h-2 w-2 rounded-full transition-all',
+                current === index ? 'w-4 bg-primary' : 'bg-muted-foreground/50'
+              )}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </AnimatedSection>
   );
@@ -579,5 +612,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
