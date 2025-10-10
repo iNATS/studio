@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, MessageSquare, Share2, Twitter, X } from 'lucide-react';
+import { Github, Linkedin, MessageSquare, Twitter, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -13,17 +13,17 @@ export function SocialFab() {
     {
       label: 'LinkedIn',
       href: '#',
-      icon: <Linkedin />,
+      icon: <Linkedin strokeWidth={2.5} />,
     },
     {
       label: 'Github',
       href: '#',
-      icon: <Github />,
+      icon: <Github strokeWidth={2.5} />,
     },
     {
       label: 'Twitter',
       href: '#',
-      icon: <Twitter />,
+      icon: <Twitter strokeWidth={2.5} />,
     },
   ];
 
@@ -36,7 +36,7 @@ export function SocialFab() {
           size="icon"
           variant="outline"
           className={cn(
-            'rounded-full w-14 h-14 bg-background/50 backdrop-blur-lg border-border/50 text-foreground/80 hover:bg-background/70 shadow-lg transition-all duration-300 ease-in-out',
+            'rounded-full w-14 h-14 bg-background/60 backdrop-blur-sm border border-border/40 text-foreground/80 hover:bg-foreground/10 hover:text-foreground shadow-lg transition-all duration-300 ease-in-out',
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
           )}
           style={{ transitionDelay: isOpen ? `${index * 50}ms` : `${(socialLinks.length - index - 1) * 50}ms` }}
@@ -49,20 +49,22 @@ export function SocialFab() {
       ))}
       <Button
         size="icon"
-        variant="outline"
-        className="rounded-full shadow-lg bg-background/50 backdrop-blur-lg border-border/50 text-foreground/80 hover:bg-background/70 w-14 h-14"
+        variant="ghost"
+        className="rounded-full shadow-lg bg-background/60 backdrop-blur-sm border border-border/40 text-foreground/80 hover:bg-foreground/10 hover:text-foreground w-14 h-14"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label="Toggle social media links"
       >
         <div className="relative h-full w-full flex items-center justify-center">
           <MessageSquare
+            strokeWidth={2.5}
             className={cn(
               'absolute transition-all duration-300 ease-in-out',
               isOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
             )}
           />
           <X
+            strokeWidth={2.5}
             className={cn(
               'absolute transition-all duration-300 ease-in-out',
               isOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'
