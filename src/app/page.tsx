@@ -150,7 +150,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -446,11 +446,11 @@ const TestimonialsSection = () => {
           align: "start",
           loop: true,
         }}
-        className="w-full max-w-6xl mx-auto"
+        className="w-full mx-auto"
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-2 md:-ml-4">
           {testimonials.map((testimonial, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
               <div className="p-1 h-full">
                 <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-lg hover:border-border/80 dark:hover:border-white/20">
                   <CardContent className="p-6 flex-grow">
@@ -471,8 +471,8 @@ const TestimonialsSection = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:-left-4" />
-        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:-right-4" />
+        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:left-4" />
+        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:right-4" />
       </Carousel>
     </AnimatedSection>
   );
