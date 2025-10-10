@@ -94,11 +94,6 @@ export function SocialFab() {
       icon: <Linkedin strokeWidth={2.5} className="h-6 w-6" />,
     },
     {
-      label: 'Github',
-      href: '#',
-      icon: <Github strokeWidth={2.5} className="h-6 w-6" />,
-    },
-    {
       label: 'Twitter',
       href: '#',
       icon: <XIcon className="h-5 w-5" />,
