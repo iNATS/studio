@@ -240,8 +240,8 @@ const ContactForm = () => {
           <Label htmlFor="message" className="text-foreground/80 dark:text-white/80">Your Message</Label>
           <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
         </div>
-        <div className="flex justify-end">
-          <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+        <div className="flex justify-center sm:justify-end">
+          <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg w-full sm:w-auto">
             Send Message
           </Button>
         </div>
@@ -361,17 +361,15 @@ const ProcessSection = () => {
                                 isEven ? "md:pr-8 md:self-start" : "md:pl-8 md:self-end"
                             )}
                         >
-                            <div
-                                className={cn(
-                                    "absolute left-9 top-0 -translate-x-1/2 -translate-y-1/2 md:hidden",
-                                )}
-                            >
-                                <div
-                                    className={cn(
-                                        "w-5 h-5 rounded-full transition-colors duration-500",
-                                        itemInView ? "bg-primary" : "bg-border"
-                                    )}
-                                />
+                             <div className="absolute top-0 -translate-y-1/2 left-0 w-full md:hidden">
+                                <div className="absolute left-9 -translate-x-1/2 ">
+                                    <div
+                                        className={cn(
+                                            "w-5 h-5 rounded-full transition-colors duration-500",
+                                            itemInView ? "bg-primary" : "bg-border"
+                                        )}
+                                    />
+                                </div>
                             </div>
                             <div
                                 className={cn(
@@ -400,7 +398,6 @@ const ProcessSection = () => {
         </section>
     );
 };
-
 const testimonials = [
   {
     name: 'Sarah Johnson',
@@ -462,7 +459,7 @@ const TestimonialsSection = () => {
 
   return (
     <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container mx-auto px-0 sm:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -546,12 +543,12 @@ export default function Home() {
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20 dark:to-black/50" />
         </div>
         <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-4 sm:space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <h1 className={cn("text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
               <p className={cn("text-xl md:text-2xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
-            <p className={cn("max-w-[700px] text-muted-foreground md:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
+            <p className={cn("max-w-[700px] text-muted-foreground text-base sm:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
@@ -575,23 +572,23 @@ export default function Home() {
           <AnimatedSection id="about" threshold={0.4} className="px-4 md:px-6">
              <div className="grid gap-8 md:grid-cols-3 items-center max-w-4xl mx-auto">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
+                <Avatar className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
                   <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
                   <AvatarFallback>MA</AvatarFallback>
                 </Avatar>
-                <h2 className="text-3xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter font-headline">Mohamed Aref</h2>
                 <p className="text-foreground/70 dark:text-white/70 mt-1 text-lg">Creative Developer & Designer</p>
               </div>
               <div className="md:col-span-2 space-y-8">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold tracking-tighter font-headline">About Me</h3>
-                  <p className="text-foreground/80 dark:text-white/80 text-lg leading-relaxed">
+                  <p className="text-foreground/80 dark:text-white/80 text-base sm:text-lg leading-relaxed">
                     I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
                   </p>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4">My Skills</h3>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
                     {[
                       'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
                       'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
@@ -600,7 +597,7 @@ export default function Home() {
                       'Genkit', 'TensorFlow', 'Python',
                       'Git', 'CI/CD', 'Agile'
                     ].map(skill => (
-                      <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1.5 px-4">
+                      <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1 px-3 sm:py-1.5 sm:px-4">
                         {skill}
                       </Badge>
                     ))}
