@@ -74,10 +74,6 @@ export function Testimonials() {
     });
   }, [api]);
 
-  const scrollTo = (index: number) => {
-    api?.scrollTo(index);
-  };
-
   return (
     <AnimatedSection id="testimonials" threshold={0.1} className="px-4">
       <div className="mx-auto">
@@ -120,25 +116,16 @@ export function Testimonials() {
             ))}
           </CarouselContent>
         </Carousel>
-        <div className="flex justify-center gap-4 mt-12">
-          {testimonials.map((testimonial, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className="outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full"
-              aria-label={`Go to slide ${index + 1}`}
-            >
-              <Avatar
-                className={cn(
-                  'w-10 h-10 transition-all duration-300 ease-in-out',
-                  current === index ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-110' : 'opacity-50 hover:opacity-75 hover:scale-105'
-                )}
-              >
-                <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
-            </button>
-          ))}
+        <div className="flex justify-center mt-12">
+            <div className="relative w-48 h-1 bg-foreground/10 rounded-full">
+                <div 
+                    className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-500 ease-in-out"
+                    style={{
+                        width: `${100 / count}%`,
+                        transform: `translateX(${current * 100}%)`
+                    }}
+                />
+            </div>
         </div>
       </div>
     </AnimatedSection>
