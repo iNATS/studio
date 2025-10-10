@@ -124,6 +124,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(4);
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
   const [cardsVisible, setCardsVisible] = useState(false);
@@ -131,14 +132,15 @@ const PortfolioGrid = () => {
 
   useEffect(() => {
     if (inView) {
-        setCardsVisible(true);
+      setCardsVisible(true);
     } else {
-        setCardsVisible(false);
+      setCardsVisible(false);
     }
   }, [inView]);
 
   const handleFilterChange = (newFilter: string) => {
     if (filter === newFilter) return;
+    setVisibleCount(4); // Reset visible count on filter change
     setCardsVisible(false);
     setTimeout(() => {
       setFilter(newFilter);
@@ -146,7 +148,12 @@ const PortfolioGrid = () => {
     }, 150); // A short delay for the animations to reset
   };
 
+  const handleLoadMore = () => {
+    setVisibleCount(prevCount => prevCount + 3);
+  };
+
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
+  const visibleItems = filteredItems.slice(0, visibleCount);
 
   return (
     <>
@@ -192,10 +199,17 @@ const PortfolioGrid = () => {
           </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 sm:px-6 md:px-8">
-        {filteredItems.map((item, index) => (
+        {visibleItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
       </div>
+       {visibleCount < filteredItems.length && (
+        <div className="mt-12 text-center">
+          <Button onClick={handleLoadMore} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+            Load More
+          </Button>
+        </div>
+      )}
     </section>
     <ProjectDetailModal isOpen={!!selectedProject} onOpenChange={(isOpen) => !isOpen && setSelectedProject(null)} project={selectedProject} />
     </>
@@ -487,8 +501,8 @@ const TestimonialsSection = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70 md:-left-12" />
-          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70 md:-right-12"/>
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70"/>
         </Carousel>
         <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: count }).map((_, index) => (
@@ -612,3 +626,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
