@@ -291,13 +291,12 @@ const ProcessSection = () => {
                 const timelineRect = timelineRef.current.getBoundingClientRect();
                 const viewportHeight = window.innerHeight;
 
-                const startPoint = viewportHeight * 0.2; // When the top of the timeline is 20% from the top of viewport
-                const endPoint = viewportHeight * 0.8; // When the bottom of the timeline is 20% from the bottom of viewport
+                const startPoint = viewportHeight * 0.2;
+                const endPoint = viewportHeight * 0.8; 
                 
-                const scrollableHeight = timelineRect.height - (endPoint-startPoint)
+                const scrollableHeight = timelineRect.height - (endPoint - startPoint);
                 
                 let scrollFraction = 0;
-                // Check if the timeline is in the "active" scroll area
                 if (timelineRect.top < startPoint && timelineRect.bottom > endPoint) {
                     scrollFraction = Math.min(1, (startPoint - timelineRect.top) / scrollableHeight);
                 } else if (timelineRect.top >= startPoint) {
@@ -310,7 +309,7 @@ const ProcessSection = () => {
             };
 
             window.addEventListener('scroll', handleScroll, { passive: true });
-            handleScroll(); // Initial check
+            handleScroll();
 
             return () => window.removeEventListener('scroll', handleScroll);
         }
@@ -324,7 +323,7 @@ const ProcessSection = () => {
                     A streamlined journey from a spark of an idea to a stunning final product.
                 </p>
             </div>
-            <div ref={timelineRef} className="relative max-w-3xl mx-auto">
+            <div ref={timelineRef} className="relative max-w-3xl mx-auto flex flex-col items-center">
                 <div className="absolute left-9 md:left-1/2 top-0 h-full w-0.5 bg-border/50 -translate-x-1/2" aria-hidden="true">
                     <div
                         className="absolute top-0 w-full bg-primary transition-all duration-100 ease-linear"
@@ -341,9 +340,9 @@ const ProcessSection = () => {
                             key={step.title}
                             ref={itemRef}
                             className={cn(
-                                "relative mb-12 flex items-start",
+                                "relative mb-12 flex w-full items-start",
                                 "md:w-1/2",
-                                isEven ? "md:pr-8" : "md:self-end md:pl-8"
+                                isEven ? "md:pr-8 md:self-start" : "md:self-end md:pl-8"
                             )}
                         >
                             <div
