@@ -55,16 +55,16 @@ export function SocialFab() {
         aria-expanded={isOpen}
         aria-label="Toggle social media links"
       >
-        <div className="relative">
+        <div className="relative h-full w-full flex items-center justify-center">
           <MessageSquare
             className={cn(
-              'absolute inset-0 transition-all duration-300 ease-in-out',
+              'absolute transition-all duration-300 ease-in-out',
               isOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
             )}
           />
           <X
             className={cn(
-              'absolute inset-0 transition-all duration-300 ease-in-out',
+              'absolute transition-all duration-300 ease-in-out',
               isOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'
             )}
           />
