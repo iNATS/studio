@@ -471,8 +471,8 @@ const TestimonialsSection = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="ml-8 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm" />
-        <CarouselNext className="mr-8 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm" />
+        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:left-8 xl:-left-8" />
+        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:right-8 xl:-right-8" />
       </Carousel>
     </AnimatedSection>
   );
@@ -582,5 +582,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
