@@ -150,7 +150,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -191,7 +191,7 @@ const PortfolioGrid = () => {
             Design
           </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 md:px-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 sm:px-6 md:px-8">
         {filteredItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
@@ -241,7 +241,7 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
 
   return (
-    <section ref={sectionRef} id={id} className={cn("py-24 sm:py-32 px-4 md:px-6", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
+    <section ref={sectionRef} id={id} className={cn("py-24 sm:py-32", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
       {children}
     </section>
   )
@@ -434,8 +434,8 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
-      <div className="text-center mb-16">
+    <AnimatedSection id="testimonials" threshold={0.1}>
+      <div className="text-center mb-16 px-4 md:px-6">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
         <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
           Kind words from people I've had the pleasure to work with.
@@ -471,8 +471,8 @@ const TestimonialsSection = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:left-8 xl:-left-8" />
-        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:right-8 xl:-right-8" />
+        <CarouselPrevious className="left-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:-left-4" />
+        <CarouselNext className="right-2 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm lg:-right-4" />
       </Carousel>
     </AnimatedSection>
   );
@@ -530,7 +530,7 @@ export default function Home() {
         <div className="flex flex-col items-center">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" threshold={0.4}>
+          <AnimatedSection id="about" threshold={0.4} className="px-4 md:px-6">
              <div className="grid gap-8 md:grid-cols-3 items-center max-w-4xl mx-auto">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-40 h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
@@ -572,7 +572,7 @@ export default function Home() {
 
           <TestimonialsSection />
 
-          <AnimatedSection id="contact" threshold={0.4}>
+          <AnimatedSection id="contact" threshold={0.4} className="px-4 md:px-6">
               <ContactForm />
           </AnimatedSection>
         </div>
