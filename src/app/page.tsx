@@ -157,7 +157,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -383,7 +383,7 @@ const ProcessSection = () => {
                             </div>
                             <div
                                 className={cn(
-                                    "pl-16 md:pl-0 w-full transition-all duration-700",
+                                    "pl-16 w-full transition-all duration-700 md:pl-0",
                                     isEven ? "md:text-right" : "md:text-left",
                                     itemInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                                 )}
@@ -458,8 +458,8 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
-      <div className="container mx-auto px-0 sm:px-6">
+    <AnimatedSection id="testimonials" threshold={0.1} className="sm:px-4 md:px-6">
+      <div className="mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -474,9 +474,9 @@ const TestimonialsSection = () => {
           }}
           className="w-full max-w-6xl mx-auto"
         >
-          <CarouselContent className="-ml-4">
+          <CarouselContent className="sm:-ml-4">
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={index} className="sm:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full mx-auto max-w-[400px]">
                   <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20 overflow-hidden">
                     <CardContent className="p-6 flex-grow relative">
@@ -545,8 +545,8 @@ export default function Home() {
         <div className={cn("container relative z-10 px-4 md:px-6 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-4 sm:space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className={cn("text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
-              <p className={cn("text-xl md:text-2xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
+              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <p className={cn("text-lg md:text-2xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
             <p className={cn("max-w-[700px] text-muted-foreground text-base sm:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               I build beautiful, functional, and user-centric digital experiences. Let's create something
@@ -621,3 +621,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
