@@ -124,7 +124,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 const PortfolioGrid = () => {
   const [filter, setFilter] = useState('all');
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(6);
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
   const [cardsVisible, setCardsVisible] = useState(false);
@@ -140,7 +140,7 @@ const PortfolioGrid = () => {
 
   const handleFilterChange = (newFilter: string) => {
     if (filter === newFilter) return;
-    setVisibleCount(4); // Reset visible count on filter change
+    setVisibleCount(6); // Reset visible count on filter change
     setCardsVisible(false);
     setTimeout(() => {
       setFilter(newFilter);
@@ -461,7 +461,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 sm:px-6 md:px-8">
+    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
