@@ -475,7 +475,7 @@ const TestimonialsSection = () => {
             align: 'start',
             loop: true,
           }}
-          className="w-full"
+          className="w-full max-w-6xl mx-auto"
         >
           <CarouselContent className="-ml-4">
             {testimonials.map((testimonial, index) => (
@@ -501,8 +501,6 @@ const TestimonialsSection = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70" />
-          
         </Carousel>
         <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: count }).map((_, index) => (
