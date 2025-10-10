@@ -11,17 +11,6 @@ export function Footer() {
             &copy; {currentYear} Mohamed Aref. All rights reserved.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="#" target="_blank" rel="noreferrer" aria-label="Twitter">
-            <Twitter className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
-          <Link href="#" target="_blank" rel="noreferrer" aria-label="Github">
-            <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
-          <Link href="#" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-            <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-primary" />
-          </Link>
-        </div>
       </div>
     </footer>
   );
