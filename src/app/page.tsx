@@ -502,7 +502,7 @@ const TestimonialsSection = () => {
             ))}
           </CarouselContent>
           <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70" />
-          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/50 backdrop-blur-sm border-border/50 text-foreground/80 hover:bg-background/70"/>
+          
         </Carousel>
         <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: count }).map((_, index) => (
@@ -626,5 +626,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
