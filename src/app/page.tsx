@@ -17,6 +17,8 @@ import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+
 
 export type PortfolioItem = {
   title: string;
@@ -342,7 +344,7 @@ const ProcessSection = () => {
                             className={cn(
                                 "relative mb-12 flex w-full items-start",
                                 "md:w-1/2",
-                                isEven ? "md:pr-8 md:self-start" : "md:self-end md:pl-8"
+                                isEven ? "md:pr-8 md:self-start" : "md:pl-8 md:self-end"
                             )}
                         >
                             <div
@@ -385,6 +387,96 @@ const ProcessSection = () => {
     );
 };
 
+const testimonials = [
+  {
+    name: 'Sarah Johnson',
+    company: 'Innovate Inc.',
+    feedback: 'Working with Mohamed was a game-changer. His creative vision and technical expertise brought our project to life in ways we couldn\'t have imagined. A true professional and a pleasure to collaborate with.',
+    avatar: 'https://picsum.photos/seed/sarah/100/100',
+  },
+  {
+    name: 'Michael Chen',
+    company: 'Tech Solutions',
+    feedback: 'The mobile app he developed for us exceeded all expectations. It\'s intuitive, fast, and beautifully designed. Our user engagement has skyrocketed since launch.',
+    avatar: 'https://picsum.photos/seed/michael/100/100',
+  },
+  {
+    name: 'Emily Davis',
+    company: 'Creative Studio',
+    feedback: 'I was blown away by the branding work. The new identity is modern, memorable, and perfectly captures our company\'s essence. I couldn\'t be happier with the result.',
+    avatar: 'https://picsum.photos/seed/emily/100/100',
+  },
+  {
+    name: 'David Rodriguez',
+    company: 'Startup Hub',
+    feedback: 'His ability to translate complex ideas into a simple, elegant user interface is remarkable. The SaaS dashboard he designed is both powerful and incredibly easy to use.',
+    avatar: 'https://picsum.photos/seed/david/100/100',
+  },
+  {
+    name: 'Jessica Lee',
+    company: 'E-commerce Co.',
+    feedback: 'Our new e-commerce platform is fantastic. It\'s robust, scalable, and the custom CMS is a dream to work with. Sales have increased significantly since we launched.',
+    avatar: 'https://picsum.photos/seed/jessica/100/100',
+  },
+  {
+    name: 'Chris Taylor',
+    company: 'Health & Wellness',
+    feedback: 'The fitness app has received overwhelmingly positive feedback from our users. The attention to detail in both design and functionality is evident throughout the entire experience.',
+    avatar: 'https://picsum.photos/seed/chris/100/100',
+  },
+  {
+    name: 'Amanda White',
+    company: 'Global Corp',
+    feedback: 'An exceptional developer and designer. He consistently delivered high-quality work on time and was always responsive to feedback. I highly recommend him for any project.',
+    avatar: 'https://picsum.photos/seed/amanda/100/100',
+  },
+];
+
+const TestimonialsSection = () => {
+  return (
+    <AnimatedSection id="testimonials" threshold={0.1}>
+      <div className="text-center mb-16">
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
+        <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
+          Kind words from people I've had the pleasure to work with.
+        </p>
+      </div>
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full max-w-6xl mx-auto"
+      >
+        <CarouselContent>
+          {testimonials.map((testimonial, index) => (
+            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+              <div className="p-1 h-full">
+                <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-lg hover:border-border/80 dark:hover:border-white/20">
+                  <CardContent className="p-6 flex-grow">
+                    <p className="text-foreground/80 dark:text-white/80">"{testimonial.feedback}"</p>
+                  </CardContent>
+                  <CardHeader className="flex flex-row items-center gap-4 pt-0">
+                    <Avatar className="w-12 h-12 border-2 border-border/80 dark:border-white/20">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-base font-bold font-headline">{testimonial.name}</CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground">{testimonial.company}</CardDescription>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="ml-8 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm" />
+        <CarouselNext className="mr-8 text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground backdrop-blur-sm" />
+      </Carousel>
+    </AnimatedSection>
+  );
+};
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -478,6 +570,7 @@ export default function Home() {
           
           <ProcessSection />
 
+          <TestimonialsSection />
 
           <AnimatedSection id="contact" threshold={0.4}>
               <ContactForm />
@@ -489,7 +582,5 @@ export default function Home() {
     </div>
   );
 }
-
-    
 
     
