@@ -13,17 +13,17 @@ export function SocialFab() {
     {
       label: 'LinkedIn',
       href: '#',
-      icon: <Linkedin strokeWidth={2.5} />,
+      icon: <Linkedin strokeWidth={2.5} className="h-6 w-6" />,
     },
     {
       label: 'Github',
       href: '#',
-      icon: <Github strokeWidth={2.5} />,
+      icon: <Github strokeWidth={2.5} className="h-6 w-6" />,
     },
     {
       label: 'Twitter',
       href: '#',
-      icon: <Twitter strokeWidth={2.5} />,
+      icon: <Twitter strokeWidth={2.5} className="h-6 w-6" />,
     },
   ];
 
@@ -34,7 +34,7 @@ export function SocialFab() {
           key={link.label}
           asChild
           size="icon"
-          variant="outline"
+          variant="ghost"
           className={cn(
             'rounded-full w-14 h-14 bg-background/60 backdrop-blur-sm border border-border/40 text-foreground/80 hover:bg-foreground/10 hover:text-foreground shadow-lg transition-all duration-300 ease-in-out',
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
@@ -59,14 +59,14 @@ export function SocialFab() {
           <MessageSquare
             strokeWidth={2.5}
             className={cn(
-              'absolute transition-all duration-300 ease-in-out',
+              'absolute transition-all duration-300 ease-in-out h-6 w-6',
               isOpen ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
             )}
           />
           <X
             strokeWidth={2.5}
             className={cn(
-              'absolute transition-all duration-300 ease-in-out',
+              'absolute transition-all duration-300 ease-in-out h-6 w-6',
               isOpen ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'
             )}
           />
