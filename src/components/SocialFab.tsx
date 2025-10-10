@@ -91,7 +91,7 @@ export function SocialFab() {
     {
       label: 'Twitter',
       href: '#',
-      icon: <Twitter strokeWidth={2.5} className="h-6 w-6" />,
+      icon: <X strokeWidth={2.5} className="h-6 w-6" />,
     },
   ];
 
