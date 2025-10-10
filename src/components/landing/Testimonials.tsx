@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -63,6 +64,10 @@ export function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
+  const plugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
+  );
+
   useEffect(() => {
     if (!api) {
       return;
@@ -85,11 +90,14 @@ export function Testimonials() {
         </div>
         <Carousel
           setApi={setApi}
+          plugins={[plugin.current]}
           opts={{
             align: 'start',
             loop: true,
           }}
           className="w-full max-w-6xl mx-auto"
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
         >
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
