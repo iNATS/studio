@@ -158,13 +158,13 @@ const PortfolioGrid = () => {
   return (
     <>
     <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
-       <div className={cn(inView ? 'animate-fade-in-up' : 'opacity-0')}>
+       <div className={cn("px-4", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
           A selection of projects that I'm proud of.
         </p>
       </div>
-      <div className={cn("flex justify-center flex-wrap mt-8 gap-2", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
+      <div className={cn("flex justify-center flex-wrap mt-8 gap-2 px-4", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
@@ -198,13 +198,13 @@ const PortfolioGrid = () => {
             Design
           </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 sm:px-6 md:px-8">
         {visibleItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
       </div>
        {visibleCount < filteredItems.length && (
-        <div className="mt-12 text-center">
+        <div className="mt-12 text-center px-4">
           <Button onClick={handleLoadMore} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
             Load More
           </Button>
@@ -218,7 +218,7 @@ const PortfolioGrid = () => {
 
 const ContactForm = () => {
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto px-4">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Contact Me</h2>
         <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-xl mx-auto">
@@ -332,7 +332,7 @@ const ProcessSection = () => {
     }, [inView]);
 
     return (
-        <section ref={sectionRef} id="process" className="py-24 sm:py-32">
+        <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4">
             <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -388,7 +388,7 @@ const ProcessSection = () => {
                                     itemInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                                 )}
                             >
-                                <h3 className="text-xl font-bold font-headline mb-2">{step.title}</h3>
+                                <h3 className="text-2xl font-bold font-headline mb-2">{step.title}</h3>
                                 <p className="text-muted-foreground">{step.description}</p>
                             </div>
                         </div>
@@ -458,7 +458,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <AnimatedSection id="testimonials" threshold={0.1}>
+    <AnimatedSection id="testimonials" threshold={0.1} className="px-4">
       <div className="mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
@@ -474,7 +474,7 @@ const TestimonialsSection = () => {
           }}
           className="w-full max-w-6xl mx-auto"
         >
-          <CarouselContent className="-ml-4">
+          <CarouselContent>
             {testimonials.map((testimonial, index) => (
               <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full mx-auto max-w-[400px]">
@@ -525,12 +525,11 @@ export default function Home() {
   }, []);
   
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 w-full overflow-x-hidden">
         <section
-          className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
-          style={{paddingTop: 0, marginTop: 0}}
+          className="relative w-full h-screen flex items-center justify-center text-center"
         >
         <div className="absolute inset-0 w-full h-full bg-layer">
           <Image
@@ -539,16 +538,17 @@ export default function Home() {
             fill
             className="object-cover"
             quality={90}
+            priority
           />
           <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20 dark:to-black/50" />
         </div>
-        <div className={cn("relative z-10 text-layer transition-opacity duration-1000", isMounted ? 'opacity-100' : 'opacity-0' )}>
+        <div className={cn("relative z-10 text-layer transition-opacity duration-1000 px-4", isMounted ? 'opacity-100' : 'opacity-0' )}>
           <div className="flex flex-col items-center space-y-4 sm:space-y-6">
             <div className="p-8 rounded-3xl">
-              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
-              <p className={cn("text-lg md:text-2xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
+              <h1 className={cn("text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Mohamed Aref</h1>
+              <p className={cn("text-lg md:text-xl font-medium text-muted-foreground mt-2 transition-all duration-1000 delay-200", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>Creative Developer & Designer</p>
             </div>
-            <p className={cn("max-w-[700px] text-muted-foreground text-base sm:text-xl transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
+            <p className={cn("max-w-[700px] text-muted-foreground text-base sm:text-lg transition-all duration-1000 delay-400", isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4' )}>
               I build beautiful, functional, and user-centric digital experiences. Let's create something
               amazing together.
             </p>
@@ -566,10 +566,10 @@ export default function Home() {
         </div>
       </section>
 
-        <div className="flex flex-col items-center">
+        <div className="w-full">
           <PortfolioGrid />
 
-          <AnimatedSection id="about" threshold={0.4}>
+          <AnimatedSection id="about" threshold={0.4} className="px-4">
              <div className="grid gap-8 md:grid-cols-3 items-center max-w-4xl mx-auto">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <Avatar className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-border/80 dark:border-white/20 shadow-lg mb-4">
@@ -621,5 +621,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
