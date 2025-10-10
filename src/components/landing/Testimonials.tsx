@@ -65,7 +65,7 @@ export function Testimonials() {
   const [count, setCount] = useState(0);
 
   const plugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
+    Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: false })
   );
 
   useEffect(() => {
@@ -96,8 +96,6 @@ export function Testimonials() {
             loop: true,
           }}
           className="w-full max-w-6xl mx-auto"
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
         >
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
