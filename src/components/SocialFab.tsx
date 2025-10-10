@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -13,17 +14,17 @@ export function SocialFab() {
     {
       label: 'LinkedIn',
       href: '#',
-      icon: <Linkedin className="h-6 w-6" />,
+      icon: <Linkedin />,
     },
     {
       label: 'Github',
       href: '#',
-      icon: <Github className="h-6 w-6" />,
+      icon: <Github />,
     },
     {
       label: 'Twitter',
       href: '#',
-      icon: <Twitter className="h-6 w-6" />,
+      icon: <Twitter />,
     },
   ];
 
