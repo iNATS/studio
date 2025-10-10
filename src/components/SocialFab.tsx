@@ -13,17 +13,17 @@ export function SocialFab() {
     {
       label: 'LinkedIn',
       href: '#',
-      icon: <Linkedin className="h-6 w-6 text-primary-foreground" />,
+      icon: <Linkedin className="h-6 w-6" />,
     },
     {
       label: 'Github',
       href: '#',
-      icon: <Github className="h-6 w-6 text-primary-foreground" />,
+      icon: <Github className="h-6 w-6" />,
     },
     {
       label: 'Twitter',
       href: '#',
-      icon: <Twitter className="h-6 w-6 text-primary-foreground" />,
+      icon: <Twitter className="h-6 w-6" />,
     },
   ];
 
@@ -34,8 +34,9 @@ export function SocialFab() {
           key={link.label}
           asChild
           size="icon"
+          variant="outline"
           className={cn(
-            'rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-all duration-300 ease-in-out',
+            'rounded-full w-14 h-14 bg-background/50 backdrop-blur-lg border-border/50 text-foreground/80 hover:bg-background/70 shadow-lg transition-all duration-300 ease-in-out',
             isOpen ? `translate-y-0 opacity-100` : `translate-y-full opacity-0 pointer-events-none`
           )}
           style={{ transitionDelay: isOpen ? `${index * 50}ms` : `${(socialLinks.length - index - 1) * 50}ms` }}
@@ -48,7 +49,8 @@ export function SocialFab() {
       ))}
       <Button
         size="icon"
-        className="rounded-full shadow-lg bg-accent hover:bg-accent/90 w-14 h-14"
+        variant="outline"
+        className="rounded-full shadow-lg bg-background/50 backdrop-blur-lg border-border/50 text-foreground/80 hover:bg-background/70 w-14 h-14"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label="Toggle social media links"
