@@ -2,8 +2,10 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
+import { ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface ProjectDetailModalProps {
   isOpen: boolean;
@@ -33,15 +35,25 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
               <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-white">{project.title}</DialogTitle>
               <div className="flex flex-wrap gap-2 py-4">
                 {project.tags.map((tag, i) => (
-                  <Badge key={i} variant="secondary" className="bg-white/10 text-white/80 border-none text-sm font-medium">
+                  <Button key={i} variant="ghost" size="sm" className="bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border-none text-sm font-medium rounded-full pointer-events-none">
                     {tag}
-                  </Badge>
+                  </Button>
                 ))}
               </div>
               <DialogDescription className="text-white/80 text-base sm:text-lg leading-relaxed max-h-48 overflow-y-auto">
                 {project.description}
               </DialogDescription>
             </DialogHeader>
+            {project.link && (
+                <div className="mt-6 flex justify-start">
+                  <Button asChild className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
+                    <Link href={project.link} target="_blank">
+                      Open Project
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
           </div>
         </div>
       </DialogContent>

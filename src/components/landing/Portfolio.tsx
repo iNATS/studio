@@ -15,6 +15,7 @@ export type PortfolioItem = {
   hint: string;
   tags: string[];
   category: string;
+  link?: string;
 };
 
 const portfolioItems: PortfolioItem[] = [
@@ -25,6 +26,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'online store',
     tags: ['Web', 'React', 'Node.js', 'PostgreSQL', 'Stripe'],
     category: 'web',
+    link: '#',
   },
   {
     title: 'Mobile Banking App',
@@ -33,6 +35,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'mobile banking',
     tags: ['Mobile', 'Flutter', 'Firebase', 'Security'],
     category: 'mobile',
+    link: '#',
   },
   {
     title: 'Corporate Branding',
@@ -41,6 +44,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'brand design',
     tags: ['Design', 'Branding', 'Illustrator', 'Figma'],
     category: 'design',
+    link: '#',
   },
   {
     title: 'Project Management Tool',
@@ -49,6 +53,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'team collaboration',
     tags: ['Web', 'Vue.js', 'GraphQL', 'Apollo'],
     category: 'web',
+    link: '#',
   },
   {
     title: 'Fitness Tracker App',
@@ -57,6 +62,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'fitness app',
     tags: ['Mobile', 'React Native', 'HealthKit'],
     category: 'mobile',
+    link: '#',
   },
   {
     title: 'SaaS Dashboard UI Kit',
@@ -65,6 +71,7 @@ const portfolioItems: PortfolioItem[] = [
     hint: 'dashboard interface',
     tags: ['Design', 'UI/UX', 'Figma', 'Component Library'],
     category: 'design',
+    link: '#',
   },
 ];
 
