@@ -26,7 +26,7 @@ export function CursorGlow() {
     <div
       className={cn(
         'pointer-events-none fixed inset-0 z-0 transition-opacity',
-        isVisible ? 'opacity-100' : 'opacity-0'
+        isVisible ? 'opacity-60' : 'opacity-0'
       )}
       style={{
         background: `radial-gradient(600px at ${position.x}px ${position.y}px, hsla(0, 0%, 100%, 0.08), transparent 80%)`,
