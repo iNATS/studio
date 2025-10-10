@@ -91,14 +91,14 @@ export function SocialFab() {
         icon: <InstagramIcon strokeWidth={2.5} className="h-6 w-6" />,
       },
     {
-      label: 'LinkedIn',
-      href: '#',
-      icon: <Linkedin strokeWidth={2.5} className="h-6 w-6" />,
-    },
-    {
       label: 'Twitter',
       href: '#',
       icon: <XIcon className="h-5 w-5" />,
+    },
+    {
+      label: 'LinkedIn',
+      href: '#',
+      icon: <Linkedin strokeWidth={2.5} className="h-6 w-6" />,
     },
   ];
 
