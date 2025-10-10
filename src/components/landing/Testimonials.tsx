@@ -126,8 +126,8 @@ export function Testimonials() {
               key={index}
               onClick={() => scrollTo(index)}
               className={cn(
-                'h-2 w-2 rounded-full transition-all',
-                current === index ? 'w-4 bg-primary' : 'bg-muted-foreground/50'
+                'h-1.5 w-6 rounded-full transition-all',
+                current === index ? 'bg-primary' : 'bg-muted-foreground/30'
               )}
               aria-label={`Go to slide ${index + 1}`}
             />
