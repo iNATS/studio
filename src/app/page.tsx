@@ -434,8 +434,8 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <AnimatedSection id="testimonials" threshold={0.1} className="px-4 md:px-6">
-      <div className="max-w-6xl mx-auto">
+    <AnimatedSection id="testimonials" threshold={0.1}>
+      <div className="max-w-4xl mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">What My Clients Say</h2>
           <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
@@ -584,3 +584,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
