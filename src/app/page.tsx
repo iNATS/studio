@@ -150,7 +150,7 @@ const PortfolioGrid = () => {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 px-4 md:px-6">
        <div className={cn("px-4 md:px-6", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -364,7 +364,7 @@ const ProcessSection = () => {
                                     "hidden md:flex absolute top-0 items-center justify-center w-12 h-12 rounded-full transition-all duration-500 -translate-y-1/2",
                                     "bg-background/80 backdrop-blur-sm border-2",
                                     itemInView ? "border-primary/80 shadow-lg shadow-primary/20" : "border-border",
-                                    isEven ? "right-0 translate-x-1/2" : "left-0 -translate-x-1/2"
+                                    isEven ? "right-0 translate-x-[50%]" : "left-0 -translate-x-[50%]"
                                 )}
                             >
                                {step.icon}
@@ -449,9 +449,9 @@ const TestimonialsSection = () => {
           }}
           className="w-full"
         >
-          <CarouselContent className="-ml-2 md:-ml-4">
+          <CarouselContent className="-ml-4">
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full">
                   <Card className="h-full flex flex-col justify-between bg-card/60 dark:bg-white/5 backdrop-blur-2xl border border-border/50 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border dark:hover:border-white/20">
                     <CardContent className="p-6 flex-grow">
@@ -472,8 +472,8 @@ const TestimonialsSection = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="left-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-left-12" />
-          <CarouselNext className="right-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-right-12" />
+          <CarouselPrevious className="absolute left-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-left-12" />
+          <CarouselNext className="absolute right-2 bg-background/50 backdrop-blur-sm text-foreground/80 border-border/80 dark:text-white/80 dark:border-white/20 hover:bg-accent hover:text-accent-foreground lg:-right-12" />
         </Carousel>
       </div>
     </AnimatedSection>
