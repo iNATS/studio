@@ -2,25 +2,27 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, MessageSquare, Phone, Twitter, X } from 'lucide-react';
+import { Linkedin, MessageSquare, Phone, Twitter, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-  </svg>
-);
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91s-4.45-9.91-9.91-9.91z" />
+      <path d="M16.99 13.56c-.28-.14-1.68-.83-1.94-.93-.26-.1-.45-.15-.64.15-.19.3-.73.93-.9 1.12-.17.19-.34.22-.63.07-.29-.15-1.21-.45-2.3-1.43-.85-.76-1.42-1.71-1.6-2-.17-.29-.01-.45.13-.59.13-.13.29-.34.44-.51.15-.17.2-.29.3-.49.09-.19.05-.38-.02-.52-.08-.14-.64-1.54-.87-2.11-.23-.57-.46-.49-.64-.5-.17-.01-.36-.01-.54-.01-.18 0-.48.07-.73.35s-.97.95-.97 2.32c0 1.37 1 2.69 1.14 2.88.14.19 1.98 3.01 4.8 4.25 2.82 1.24 2.82.83 3.34.78.52-.05 1.68-.68 1.92-1.33.24-.64.24-1.19.17-1.33-.07-.15-.26-.22-.54-.37z" />
+    </svg>
+  );
+  
 
 const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg 
@@ -76,7 +78,7 @@ export function SocialFab() {
     {
       label: 'WhatsApp',
       href: '#',
-      icon: <WhatsAppIcon strokeWidth={2.5} className="h-6 w-6" />,
+      icon: <WhatsAppIcon strokeWidth={1.5} className="h-6 w-6" />,
     },
     {
         label: 'Facebook',
