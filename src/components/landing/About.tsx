@@ -47,7 +47,7 @@ export function About() {
                 'Genkit', 'TensorFlow', 'Python',
                 'Git', 'CI/CD', 'Agile'
               ].map(skill => (
-                <Badge key={skill} variant="secondary" className="bg-foreground/10 text-foreground/80 dark:bg-white/10 dark:text-white/80 border-none text-sm py-1 px-3 sm:py-1.5 sm:px-4">
+                <Badge key={skill} variant="secondary" className="bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border/50 dark:border-white/10 text-foreground/80 dark:text-white/80 text-sm py-1 px-3 sm:py-1.5 sm:px-4">
                   {skill}
                 </Badge>
               ))}
