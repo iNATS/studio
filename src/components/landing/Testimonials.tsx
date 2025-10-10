@@ -52,7 +52,7 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
     const inView = useInView(sectionRef, { triggerOnce: true, threshold: threshold });
 
     return (
-      <section ref={sectionRef} id={id} className={cn("py-24 sm:py-32 transition-opacity duration-1000 ease-out", className, inView ? 'opacity-100' : 'opacity-0')}>
+      <section ref={sectionRef} id={id} className={cn("py-24 sm:py-32", className, inView ? 'animate-fade-in-up' : 'opacity-0')}>
         {children}
       </section>
     )
