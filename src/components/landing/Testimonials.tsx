@@ -116,16 +116,18 @@ export function Testimonials() {
             ))}
           </CarouselContent>
         </Carousel>
-        <div className="flex justify-center mt-12">
-            <div className="relative w-48 h-1 bg-foreground/10 rounded-full">
-                <div 
-                    className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-500 ease-in-out"
-                    style={{
-                        width: `${100 / count}%`,
-                        transform: `translateX(${current * 100}%)`
-                    }}
+        <div className="flex justify-center items-center gap-2 mt-12">
+            {Array.from({ length: count }).map((_, i) => (
+                <button
+                    key={i}
+                    onClick={() => api?.scrollTo(i)}
+                    className={cn(
+                        "h-2 rounded-full bg-primary/20 transition-all duration-300 ease-in-out",
+                        i === current ? 'w-4 bg-primary' : 'w-2'
+                    )}
+                    aria-label={`Go to slide ${i + 1}`}
                 />
-            </div>
+            ))}
         </div>
       </div>
     </AnimatedSection>
