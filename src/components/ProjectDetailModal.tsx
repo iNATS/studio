@@ -7,6 +7,7 @@ import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from './ui/scroll-area';
 
 interface ProjectDetailModalProps {
   isOpen: boolean;
@@ -31,30 +32,30 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
             />
           </div>
           <div className="flex flex-col">
-            <div className="p-6 sm:p-10 flex-grow">
-              <DialogHeader className="text-left">
-                <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
-              </DialogHeader>
-              <DialogDescription asChild className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4">
-                <div>
+            <ScrollArea className="flex-grow">
+              <div className="p-6 sm:p-10">
+                <DialogHeader className="text-left">
+                  <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4">
                   {project.description}
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {project.tags.map((tag, i) => (
-                      <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
-                          {tag}
-                      </Button>
-                    ))}
-                  </div>
+                </DialogDescription>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {project.tags.map((tag, i) => (
+                    <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
+                        {tag}
+                    </Button>
+                  ))}
                 </div>
-              </DialogDescription>
-            </div>
+              </div>
+            </ScrollArea>
             
             <div className="px-6 sm:px-10 pb-6 mt-auto pt-8">
-              {project.link && (
+              {project.slug && (
                   <Button asChild className={cn("btn-glass rounded-full text-base w-full")}>
-                      <Link href={project.link} target="_blank">
-                      Open Project
-                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                      <Link href={`/projects/${project.slug}`}>
+                        Open Project
+                        <ArrowUpRight className="ml-2 h-4 w-4" />
                       </Link>
                   </Button>
               )}

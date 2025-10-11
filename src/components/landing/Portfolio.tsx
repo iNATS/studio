@@ -10,68 +10,82 @@ import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 
 export type PortfolioItem = {
   title: string;
+  slug: string;
   description: string;
   image: string;
   hint: string;
   tags: string[];
   category: string;
   link?: string;
+  fullDescription: string;
 };
 
-const portfolioItems: PortfolioItem[] = [
+export const portfolioItems: PortfolioItem[] = [
   {
     title: 'E-commerce Platform',
-    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration. This project involved building a robust backend with Node.js and a dynamic front-end with React, ensuring a seamless user experience from browsing to checkout.',
+    slug: 'ecommerce-platform',
+    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
     image: 'https://picsum.photos/seed/ecom/600/400',
     hint: 'online store',
     tags: ['Web', 'React', 'Node.js', 'PostgreSQL', 'Stripe'],
     category: 'web',
     link: '#',
+    fullDescription: 'This project involved building a robust backend with Node.js and a dynamic front-end with React, ensuring a seamless user experience from browsing to checkout. The platform includes features like product management, order tracking, and secure payments with Stripe. The custom CMS allows for easy content updates and management of the entire e-commerce store.',
   },
   {
     title: 'Mobile Banking App',
-    description: 'A secure and intuitive mobile banking application for iOS and Android, built with Flutter. It features biometric authentication, real-time transaction updates, and a user-friendly interface for managing accounts and payments.',
+    slug: 'mobile-banking-app',
+    description: 'A secure and intuitive mobile banking application for iOS and Android, built with Flutter.',
     image: 'https://picsum.photos/seed/bank/600/400',
     hint: 'mobile banking',
     tags: ['Mobile', 'Flutter', 'Firebase', 'Security'],
     category: 'mobile',
     link: '#',
+    fullDescription: 'It features biometric authentication, real-time transaction updates, and a user-friendly interface for managing accounts and payments. Security was a top priority, implementing end-to-end encryption and leveraging Firebase for secure authentication and database management. The app provides a seamless and safe banking experience on the go.',
   },
   {
     title: 'Corporate Branding',
-    description: 'A complete brand identity design for a major tech startup. This included logo design, a comprehensive style guide, marketing collateral, and UI mockups to ensure a consistent and powerful brand presence across all platforms.',
+    slug: 'corporate-branding',
+    description: 'A complete brand identity design for a major tech startup.',
     image: 'https://picsum.photos/seed/brand/600/400',
     hint: 'brand design',
     tags: ['Design', 'Branding', 'Illustrator', 'Figma'],
     category: 'design',
     link: '#',
+    fullDescription: 'This included logo design, a comprehensive style guide, marketing collateral, and UI mockups to ensure a consistent and powerful brand presence across all platforms. The goal was to create a memorable and impactful brand that resonates with the target audience and stands out in a competitive market.',
   },
   {
     title: 'Project Management Tool',
-    description: 'A collaborative project management tool designed to streamline team workflows. Built with Vue.js and GraphQL, it offers features like task tracking, team communication, and file sharing to enhance productivity.',
+    slug: 'project-management-tool',
+    description: 'A collaborative project management tool designed to streamline team workflows.',
     image: 'https://picsum.photos/seed/pm/600/400',
     hint: 'team collaboration',
     tags: ['Web', 'Vue.js', 'GraphQL', 'Apollo'],
     category: 'web',
     link: '#',
+    fullDescription: 'Built with Vue.js and GraphQL, it offers features like task tracking, team communication, and file sharing to enhance productivity. The real-time updates and collaborative features make it an essential tool for any team looking to improve their project management process.',
   },
   {
     title: 'Fitness Tracker App',
-    description: 'A mobile app to track workouts, nutrition, and progress with social features. Using React Native, it provides a cross-platform solution with a focus on user engagement and data visualization.',
+    slug: 'fitness-tracker-app',
+    description: 'A mobile app to track workouts, nutrition, and progress with social features.',
     image: 'https://picsum.photos/seed/fit/600/400',
     hint: 'fitness app',
     tags: ['Mobile', 'React Native', 'HealthKit'],
     category: 'mobile',
     link: '#',
+    fullDescription: 'Using React Native, it provides a cross-platform solution with a focus on user engagement and data visualization. Integration with HealthKit allows for seamless tracking of health data, while social features encourage users to stay motivated and connected with their fitness community.',
   },
   {
     title: 'SaaS Dashboard UI Kit',
-    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards. This kit, created in Figma, includes a wide range of components, templates, and styles to accelerate the design process for data-heavy applications.',
+    slug: 'saas-dashboard-ui-kit',
+    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
     image: 'https://picsum.photos/seed/saas/600/400',
     hint: 'dashboard interface',
     tags: ['Design', 'UI/UX', 'Figma', 'Component Library'],
     category: 'design',
     link: '#',
+    fullDescription: 'This kit, created in Figma, includes a wide range of components, templates, and styles to accelerate the design process for data-heavy applications. It is designed to be fully customizable and scalable, allowing designers to create beautiful and functional dashboards with ease.',
   },
 ];
 
