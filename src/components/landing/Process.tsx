@@ -1,11 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
-import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowLeft, ArrowRight } from 'lucide-react';
+import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 
 const processSteps = [
     {
@@ -43,19 +42,19 @@ const processSteps = [
 const variants = {
     enter: (direction: number) => {
       return {
-        x: direction > 0 ? 100 : -100,
+        y: direction > 0 ? 30 : -30,
         opacity: 0,
       };
     },
     center: {
       zIndex: 1,
-      x: 0,
+      y: 0,
       opacity: 1,
     },
     exit: (direction: number) => {
       return {
         zIndex: 0,
-        x: direction < 0 ? 100 : -100,
+        y: direction < 0 ? 30 : -30,
         opacity: 0,
       };
     },
@@ -69,6 +68,13 @@ export function Process() {
     const paginate = (newDirection: number) => {
         setPage([(page + newDirection + processSteps.length) % processSteps.length, newDirection]);
     };
+    
+    useEffect(() => {
+        const interval = setInterval(() => {
+            paginate(1);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [page]);
 
     const activeStep = processSteps[page];
     const CurrentIcon = activeStep.icon;
@@ -83,7 +89,7 @@ export function Process() {
             </div>
 
             <div className={cn(
-                "relative w-full max-w-2xl min-h-[300px] mx-auto mt-12 flex flex-col items-center justify-center bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl p-8 md:p-12",
+                "relative w-full max-w-2xl min-h-[250px] mx-auto mt-12 flex flex-col items-center justify-center",
                 inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'
             )}>
                 <AnimatePresence initial={false} custom={direction} mode="wait">
@@ -95,10 +101,10 @@ export function Process() {
                         animate="center"
                         exit="exit"
                         transition={{
-                            x: { type: "spring", stiffness: 300, damping: 30 },
-                            opacity: { duration: 0.2 }
+                            y: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.5 }
                         }}
-                        className="w-full h-full flex flex-col items-center justify-center text-center"
+                        className="absolute w-full h-full flex flex-col items-center justify-center text-center"
                     >
                          <div className="p-4 bg-primary/10 rounded-full mb-6">
                             <CurrentIcon className="w-10 h-10 text-primary" />
@@ -107,28 +113,6 @@ export function Process() {
                         <p className="text-lg text-muted-foreground max-w-md mx-auto">{activeStep.description}</p>
                     </motion.div>
                 </AnimatePresence>
-
-                <div className="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-2 sm:px-0 sm:w-[calc(100%+4rem)]">
-                    <Button variant="ghost" size="icon" onClick={() => paginate(-1)} className="rounded-full h-12 w-12 bg-background/50 hover:bg-background border border-border/50">
-                        <ArrowLeft />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => paginate(1)} className="rounded-full h-12 w-12 bg-background/50 hover:bg-background border border-border/50">
-                        <ArrowRight />
-                    </Button>
-                </div>
-                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
-                    {processSteps.map((_, i) => (
-                    <button
-                        key={i}
-                        onClick={() => setPage([i, i > page ? 1 : -1])}
-                        className={cn(
-                            "w-2 h-2 rounded-full bg-primary/20 transition-all duration-300",
-                            page === i ? "w-4 bg-primary" : "hover:bg-primary/50"
-                        )}
-                        aria-label={`Go to step ${i + 1}`}
-                    />
-                    ))}
-                </div>
             </div>
         </section>
     );
