@@ -4,13 +4,13 @@ import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -19,31 +19,65 @@ import {
     CarouselPrevious,
   } from "@/components/ui/carousel"
 
-const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose: () => void }) => {
+const ImageLightbox = ({ 
+  images, 
+  startIndex,
+  onClose 
+}: { 
+  images: string[] | undefined;
+  startIndex: number | null;
+  onClose: () => void;
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(startIndex);
+
+  useEffect(() => {
+    setCurrentIndex(startIndex);
+  }, [startIndex]);
+
+  if (startIndex === null || !images || images.length === 0) {
+    return null;
+  }
+
+  const handleNext = () => {
+    if(currentIndex === null) return;
+    setCurrentIndex((prevIndex) => (prevIndex! + 1) % images.length);
+  };
+
+  const handlePrev = () => {
+    if(currentIndex === null) return;
+    setCurrentIndex((prevIndex) => (prevIndex! - 1 + images.length) % images.length);
+  };
+
+  const currentImage = images[currentIndex!];
+
   return (
     <AnimatePresence>
-      {imageUrl && (
+      {currentImage && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4 sm:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg"
           onClick={onClose}
         >
+          {/* Main Image */}
           <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.8 }}
-            className="relative w-full h-full"
+            key={currentImage}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-full h-full p-4 sm:p-8 md:p-16"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={imageUrl}
+              src={currentImage}
               alt="Project screenshot"
               fill
               className="object-contain shadow-2xl rounded-2xl border-2 border-white/10"
             />
           </motion.div>
+
+          {/* Close Button */}
           <Button
             variant="ghost"
             size="icon"
@@ -52,6 +86,47 @@ const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose
           >
             <X className="h-6 w-6" />
           </Button>
+
+          {/* Prev Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrev();
+            }}
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+
+          {/* Next Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNext();
+            }}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
+          
+          {/* Indicators */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" onClick={(e) => e.stopPropagation()}>
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={cn(
+                  "h-2 w-2 rounded-full bg-white/40 transition-all",
+                  currentIndex === index ? "w-4 bg-white" : "hover:bg-white/70"
+                )}
+              />
+            ))}
+          </div>
+
         </motion.div>
       )}
     </AnimatePresence>
@@ -61,7 +136,7 @@ const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find(p => p.slug === params.slug);
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
 
   if (!project) {
@@ -155,7 +230,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                       <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/2">
                           <div 
                               className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer mx-4"
-                              onClick={() => setLightboxImage(screenshot)}
+                              onClick={() => setLightboxIndex(index)}
                           >
                               <Image
                                   src={screenshot}
@@ -176,7 +251,11 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
         </div>
       </motion.main>
       <Footer />
-      <ImageLightbox imageUrl={lightboxImage} onClose={() => setLightboxImage(null)} />
+      <ImageLightbox 
+        images={project.screenshots} 
+        startIndex={lightboxIndex} 
+        onClose={() => setLightboxIndex(null)} 
+      />
     </div>
   );
 }
