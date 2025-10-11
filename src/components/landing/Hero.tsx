@@ -54,10 +54,11 @@ export function Hero() {
               transition={{ duration: 0.7, ease: 'easeOut' }}
             >
                 <Image
-                    src=""
-                    alt="Mohamed Aref Memoji"
+                    src="https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj"
+                    alt="Mohamed Aref"
                     fill
                     className="object-contain rounded-full"
+                    priority
                 />
             </motion.div>
 
