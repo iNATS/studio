@@ -19,33 +19,36 @@ import {
     CarouselPrevious,
   } from "@/components/ui/carousel"
 
-const ImageLightbox = ({ 
-  images, 
+const ImageLightbox = ({
+  images,
   startIndex,
-  onClose 
-}: { 
+  onClose,
+}: {
   images: string[] | undefined;
   startIndex: number | null;
   onClose: () => void;
 }) => {
   const [currentIndex, setCurrentIndex] = useState(startIndex);
+  const [direction, setDirection] = useState(0);
 
   useEffect(() => {
     setCurrentIndex(startIndex);
   }, [startIndex]);
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowRight') {
+      handleNext();
+    } else if (e.key === 'ArrowLeft') {
+      handlePrev();
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        handleNext();
-      } else if (e.key === 'ArrowLeft') {
-        handlePrev();
-      } else if (e.key === 'Escape') {
-        onClose();
-      }
-    };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
   if (startIndex === null || !images || images.length === 0) {
@@ -53,97 +56,140 @@ const ImageLightbox = ({
   }
 
   const handleNext = () => {
-    if(currentIndex === null) return;
+    if (currentIndex === null) return;
+    setDirection(1);
     setCurrentIndex((prevIndex) => (prevIndex! + 1) % images.length);
   };
 
   const handlePrev = () => {
-    if(currentIndex === null) return;
-    setCurrentIndex((prevIndex) => (prevIndex! - 1 + images.length) % images.length);
+    if (currentIndex === null) return;
+    setDirection(-1);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex! - 1 + images.length) % images.length
+    );
   };
+  
+  const handleThumbnailClick = (index: number) => {
+    if (currentIndex === null) return;
+    setDirection(index > currentIndex ? 1 : -1);
+    setCurrentIndex(index);
+  }
 
   const currentImage = images[currentIndex!];
 
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0,
+      scale: 0.95
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+      scale: 0.95
+    }),
+  };
+
   return (
-    <AnimatePresence>
-      {currentImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg"
-          onClick={onClose}
-        >
-          {/* Main Image */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-lg"
+      onClick={onClose}
+    >
+      {/* Close Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-50 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+        onClick={onClose}
+      >
+        <X className="h-6 w-6" />
+      </Button>
+
+      {/* Main Image */}
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden p-4 sm:p-8">
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={currentImage}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            className="relative w-full h-full p-4 sm:p-8 md:p-16 flex items-center justify-center"
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: 'spring', stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+              scale: { duration: 0.3}
+            }}
+            className="absolute w-full h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={currentImage}
               alt="Project screenshot"
               fill
-              className="object-contain shadow-2xl rounded-2xl border-2 border-white/10"
+              className="object-contain"
             />
           </motion.div>
+        </AnimatePresence>
+      </div>
 
-          {/* Close Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-4 right-4 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-            onClick={onClose}
-          >
-            <X className="h-6 w-6" />
-          </Button>
+      {/* Prev Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          handlePrev();
+        }}
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </Button>
 
-          {/* Prev Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePrev();
-            }}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-
-          {/* Next Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNext();
-            }}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-          
-          {/* Indicators */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" onClick={(e) => e.stopPropagation()}>
-            {images.map((_, index) => (
-              <button
+      {/* Next Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleNext();
+        }}
+      >
+        <ChevronRight className="h-6 w-6" />
+      </Button>
+      
+      {/* Thumbnails */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 pb-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-center">
+            <div className="flex gap-3 p-2 bg-black/20 backdrop-blur-md rounded-full border border-white/10">
+            {images.map((img, index) => (
+              <div
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => handleThumbnailClick(index)}
                 className={cn(
-                  "h-2 w-2 rounded-full bg-white/40 transition-all",
-                  currentIndex === index ? "w-4 bg-white" : "hover:bg-white/70"
+                  "relative h-12 w-20 rounded-lg overflow-hidden cursor-pointer transition-all duration-300",
+                  "border-2",
+                  currentIndex === index ? "border-primary" : "border-transparent hover:border-white/50",
                 )}
-              />
+              >
+                  <Image src={img} alt={`thumbnail ${index + 1}`} fill className="object-cover" />
+              </div>
             ))}
           </div>
-
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
