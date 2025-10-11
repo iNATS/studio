@@ -24,7 +24,7 @@ export function About() {
         <div className="grid md:grid-cols-3 gap-12 items-start">
           <div className="flex flex-col items-center text-center md:col-span-1">
             <Avatar className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-border/80 dark:border-white/20 shadow-2xl mb-4">
-              <AvatarImage src="https://firebasestudio.app/assets/memoji-working.png" alt="Mohamed Aref" />
+              <AvatarImage src="https://firebasestudio.app/assets/memoji-waving.png" alt="Mohamed Aref" />
               <AvatarFallback>MA</AvatarFallback>
             </Avatar>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">Mohamed Aref</h2>
@@ -41,14 +41,14 @@ export function About() {
               <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4 text-center md:text-left">My Skills</h3>
               <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
                 {[
-                    'React', 'Next.js', 'Vue.js', 'TypeScript', 'Tailwind CSS',
-                    'Node.js', 'GraphQL', 'PostgreSQL', 'Firebase',
-                    'React Native', 'Flutter', 'Swift',
-                    'Figma', 'Illustrator', 'UI/UX',
-                    'Genkit', 'TensorFlow', 'Python',
-                    'Git', 'CI/CD', 'Agile'
+                  'UI/UX Design', 'Prototyping', 'Wireframing', 'Branding', 'Illustrations',
+                  'React', 'Next.js', 'Vue.js', 'JavaScript', 'TypeScript',
+                  'HTML5 & CSS3', 'Tailwind CSS', 'Framer Motion',
+                  'Node.js', 'Express.js', 'PostgreSQL', 'MongoDB', 'Firebase',
+                  'GraphQL', 'RESTful APIs',
+                  'React Native', 'Flutter', 'Swift',
                 ].map(skill => (
-                    <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none h-7 px-3">
+                    <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none h-auto px-3 py-1.5">
                         {skill}
                     </Button>
                 ))}
