@@ -172,7 +172,7 @@ const ImageLightbox = ({
       {/* Thumbnails */}
       <div className="absolute bottom-0 left-0 right-0 z-20 pb-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-center">
-            <div className="flex gap-3 p-2 bg-black/20 backdrop-blur-md rounded-full border border-white/10">
+            <div className="flex gap-3 p-2 bg-black/30 backdrop-blur-xl rounded-full border border-white/10 shadow-lg">
             {images.map((img, index) => (
               <div
                 key={index}
@@ -180,7 +180,7 @@ const ImageLightbox = ({
                 className={cn(
                   "relative h-12 w-20 rounded-lg overflow-hidden cursor-pointer transition-all duration-300",
                   "border-2",
-                  currentIndex === index ? "border-primary" : "border-transparent hover:border-white/50",
+                  currentIndex === index ? "border-primary shadow-lg scale-105" : "border-transparent opacity-60 hover:opacity-100 hover:border-white/30",
                 )}
               >
                   <Image src={img} alt={`thumbnail ${index + 1}`} fill className="object-cover" />
