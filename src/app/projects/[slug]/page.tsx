@@ -122,30 +122,32 @@ const ImageLightbox = ({
                     <X className="h-5 w-5" />
                 </Button>
 
-                <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-                    <AnimatePresence initial={false} custom={direction}>
-                    <motion.div
-                        key={currentImage}
-                        custom={direction}
-                        variants={variants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{
-                            x: { type: 'spring', stiffness: 300, damping: 30 },
-                            opacity: { duration: 0.2 },
-                            scale: { duration: 0.3}
-                        }}
-                        className="absolute w-full h-full flex items-center justify-center"
-                    >
-                        <Image
-                            src={currentImage}
-                            alt="Project screenshot"
-                            fill
-                            className="object-contain"
-                        />
-                    </motion.div>
-                    </AnimatePresence>
+                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden">
+                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                        <AnimatePresence initial={false} custom={direction}>
+                        <motion.div
+                            key={currentImage}
+                            custom={direction}
+                            variants={variants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            transition={{
+                                x: { type: 'spring', stiffness: 300, damping: 30 },
+                                opacity: { duration: 0.2 },
+                                scale: { duration: 0.3}
+                            }}
+                            className="absolute w-full h-full flex items-center justify-center"
+                        >
+                            <Image
+                                src={currentImage}
+                                alt="Project screenshot"
+                                fill
+                                className="object-contain"
+                            />
+                        </motion.div>
+                        </AnimatePresence>
+                    </div>
                 </div>
 
                 <Button
