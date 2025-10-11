@@ -86,7 +86,7 @@ export function Header() {
                 <ThemeToggle />
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start backdrop-blur-sm border border-white/20 bg-white/10 hover:bg-white/20">
                     <Globe className="mr-2 h-5 w-5" />
                     <span>Change language</span>
                   </Button>

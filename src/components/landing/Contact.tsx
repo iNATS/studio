@@ -32,7 +32,7 @@ const ContactForm = () => {
             <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
           </div>
           <div className="flex justify-center sm:justify-end">
-            <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg w-full sm:w-auto">
+            <Button type="submit" size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg w-full sm:w-auto">
               Send Message
             </Button>
           </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -43,7 +42,7 @@ export function Hero() {
             <Button asChild size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
               <a href="#contact">Get in Touch</a>
             </Button>
-            <Button asChild variant="outline" size="lg" className="backdrop-blur-lg border border-border text-foreground hover:bg-accent/80 transition-all duration-300 hover:scale-105 shadow-lg">
+            <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
               <Link href="/vibe-check">
                 Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

@@ -16,7 +16,7 @@ import { Bot, Loader2, Upload } from 'lucide-react';
 function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-accent hover:bg-accent/90">
+    <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
       {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
       {children}
     </Button>

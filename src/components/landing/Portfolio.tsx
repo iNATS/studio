@@ -104,7 +104,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag, i) => (
-              <Button key={i} variant="ghost" size="sm" className="bg-foreground/5 text-foreground/80 hover:bg-foreground/10 hover:text-foreground dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/20 dark:hover:text-white border-none text-sm font-medium rounded-full pointer-events-none">
+              <Button key={i} variant="ghost" size="sm" className="bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border-none text-sm font-medium rounded-full pointer-events-none">
                 {tag}
               </Button>
             ))}
@@ -164,7 +164,7 @@ export function Portfolio() {
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
             data-active={filter === 'all'}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
           >
             All
           </Button>
@@ -172,7 +172,7 @@ export function Portfolio() {
              variant={filter === 'web' ? 'default' : 'outline'}
              data-active={filter === 'web'}
             onClick={() => handleFilterChange('web')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
           >
             Web
           </Button>
@@ -180,7 +180,7 @@ export function Portfolio() {
              variant={filter === 'mobile' ? 'default' : 'outline'}
              data-active={filter === 'mobile'}
             onClick={() => handleFilterChange('mobile')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
           >
             Mobile
           </Button>
@@ -188,7 +188,7 @@ export function Portfolio() {
             variant={filter === 'design' ? 'default' : 'outline'}
             data-active={filter === 'design'}
             onClick={() => handleFilterChange('design')}
-            className="rounded-full text-base transition-all duration-300 bg-card/60 backdrop-blur-xl border-border hover:bg-accent hover:text-accent-foreground text-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground dark:bg-white/5 dark:text-white/80 dark:border-white/10 dark:hover:bg-white/20"
+            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
           >
             Design
           </Button>
@@ -200,7 +200,7 @@ export function Portfolio() {
       </div>
        {visibleCount < filteredItems.length && (
         <div className="mt-12 text-center px-4">
-          <Button onClick={handleLoadMore} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+          <Button onClick={handleLoadMore} size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
             Load More
           </Button>
         </div>
