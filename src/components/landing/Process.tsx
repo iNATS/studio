@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 
 const processSteps = [
@@ -42,39 +43,6 @@ const processSteps = [
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.1 });
-    const timelineRef = useRef<HTMLDivElement>(null);
-    const [lineHeight, setLineHeight] = useState(0);
-
-    useEffect(() => {
-        if (inView && timelineRef.current) {
-            const handleScroll = () => {
-                if (!timelineRef.current) return;
-                const timelineRect = timelineRef.current.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
-
-                const startPoint = viewportHeight * 0.2;
-                const endPoint = viewportHeight * 0.8; 
-                
-                const scrollableHeight = timelineRect.height - (endPoint - startPoint);
-                
-                let scrollFraction = 0;
-                if (timelineRect.top < startPoint && timelineRect.bottom > endPoint) {
-                    scrollFraction = Math.min(1, (startPoint - timelineRect.top) / scrollableHeight);
-                } else if (timelineRect.top >= startPoint) {
-                    scrollFraction = 0;
-                } else {
-                    scrollFraction = 1;
-                }
-
-                setLineHeight(scrollFraction * 100);
-            };
-
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            handleScroll();
-
-            return () => window.removeEventListener('scroll', handleScroll);
-        }
-    }, [inView]);
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4">
@@ -84,58 +52,24 @@ export function Process() {
                     A streamlined journey from a spark of an idea to a stunning final product.
                 </p>
             </div>
-            <div ref={timelineRef} className="relative max-w-3xl mx-auto flex flex-col items-center">
-                <div className="absolute left-9 md:left-1/2 top-0 h-full w-0.5 bg-border/50 -translate-x-1/2" aria-hidden="true">
-                    <div
-                        className="absolute top-0 w-full bg-primary transition-all duration-100 ease-linear"
-                        style={{ height: `${lineHeight}%` }}
-                    />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 {processSteps.map((step, index) => {
                     const itemRef = useRef<HTMLDivElement>(null);
-                    const itemInView = useInView(itemRef, { triggerOnce: false, threshold: 0.5 });
-                    const isEven = index % 2 === 0;
+                    const itemInView = useInView(itemRef, { triggerOnce: true, threshold: 0.2 });
 
                     return (
-                        <div
-                            key={step.title}
-                            ref={itemRef}
-                            className={cn(
-                                "relative mb-12 flex w-full items-start",
-                                "md:w-1/2",
-                                isEven ? "md:pr-8 md:self-start" : "md:pl-8 md:self-end"
-                            )}
-                        >
-                             <div className="absolute top-0 -translate-y-1/2 left-0 w-full md:hidden">
-                                <div className="absolute left-9 -translate-x-1/2 ">
-                                    <div
-                                        className={cn(
-                                            "w-5 h-5 rounded-full transition-colors duration-500",
-                                            itemInView ? "bg-primary" : "bg-border"
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                            <div
-                                className={cn(
-                                    "hidden md:flex absolute top-0 items-center justify-center w-14 h-14 rounded-full transition-all duration-500 -translate-y-1/2",
-                                    "bg-card/60 backdrop-blur-xl border",
-                                    itemInView ? "border-primary/80 shadow-lg shadow-primary/20" : "border-border/50 dark:border-white/10",
-                                    isEven ? "right-0 translate-x-[50%]" : "left-0 -translate-x-[50%]"
-                                )}
-                            >
-                               {step.icon}
-                            </div>
-                            <div
-                                className={cn(
-                                    "pl-16 w-full transition-all duration-700 md:pl-0",
-                                    isEven ? "md:text-right" : "md:text-left",
-                                    itemInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                                )}
-                            >
-                                <h3 className="text-2xl font-bold font-headline mb-2">{step.title}</h3>
-                                <p className="text-muted-foreground">{step.description}</p>
-                            </div>
+                        <div ref={itemRef} key={step.title} className={cn("transition-all duration-700 ease-in-out", itemInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')} style={{transitionDelay: `${index * 100}ms`}}>
+                            <Card className="h-full bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl shadow-md hover:shadow-xl hover:border-border/60 dark:hover:border-white/20 transition-all duration-300">
+                                <CardHeader className="flex flex-row items-center gap-4">
+                                    <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                                        {step.icon}
+                                    </div>
+                                    <CardTitle className="font-headline text-xl">{step.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-muted-foreground">{step.description}</p>
+                                </CardContent>
+                            </Card>
                         </div>
                     );
                 })}
