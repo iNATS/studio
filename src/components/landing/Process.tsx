@@ -3,8 +3,9 @@
 import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
-import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket } from 'lucide-react';
+import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowLeft, ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 const processSteps = [
     {
@@ -39,12 +40,38 @@ const processSteps = [
     },
   ];
 
+const variants = {
+    enter: (direction: number) => {
+      return {
+        x: direction > 0 ? 100 : -100,
+        opacity: 0,
+      };
+    },
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => {
+      return {
+        zIndex: 0,
+        x: direction < 0 ? 100 : -100,
+        opacity: 0,
+      };
+    },
+  };
+
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
-    const [activeStep, setActiveStep] = useState(0);
+    const [[page, direction], setPage] = useState([0, 0]);
 
-    const CurrentIcon = processSteps[activeStep].icon;
+    const paginate = (newDirection: number) => {
+        setPage([(page + newDirection + processSteps.length) % processSteps.length, newDirection]);
+    };
+
+    const activeStep = processSteps[page];
+    const CurrentIcon = activeStep.icon;
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 overflow-hidden">
@@ -56,45 +83,51 @@ export function Process() {
             </div>
 
             <div className={cn(
-                "relative w-full max-w-5xl mx-auto mt-12 grid md:grid-cols-3 gap-8 md:gap-12",
+                "relative w-full max-w-2xl min-h-[300px] mx-auto mt-12 flex flex-col items-center justify-center bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl p-8 md:p-12",
                 inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'
             )}>
-                <div className="md:col-span-1 flex flex-col gap-2">
-                    {processSteps.map((step, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setActiveStep(index)}
-                            onMouseEnter={() => setActiveStep(index)}
-                            className={cn(
-                                "w-full text-left p-4 rounded-lg transition-colors duration-300 text-foreground/70",
-                                "focus:outline-none focus:ring-2 focus:ring-primary/50",
-                                activeStep === index ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-primary/5'
-                            )}
-                        >
-                           {step.title}
-                        </button>
-                    ))}
+                <AnimatePresence initial={false} custom={direction} mode="wait">
+                    <motion.div
+                        key={page}
+                        custom={direction}
+                        variants={variants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
+                        }}
+                        className="w-full h-full flex flex-col items-center justify-center text-center"
+                    >
+                         <div className="p-4 bg-primary/10 rounded-full mb-6">
+                            <CurrentIcon className="w-10 h-10 text-primary" />
+                        </div>
+                        <h3 className="text-3xl font-bold font-headline mb-3">{activeStep.title}</h3>
+                        <p className="text-lg text-muted-foreground max-w-md mx-auto">{activeStep.description}</p>
+                    </motion.div>
+                </AnimatePresence>
+
+                <div className="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-2 sm:px-0 sm:w-[calc(100%+4rem)]">
+                    <Button variant="ghost" size="icon" onClick={() => paginate(-1)} className="rounded-full h-12 w-12 bg-background/50 hover:bg-background border border-border/50">
+                        <ArrowLeft />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => paginate(1)} className="rounded-full h-12 w-12 bg-background/50 hover:bg-background border border-border/50">
+                        <ArrowRight />
+                    </Button>
                 </div>
-                
-                <div className="md:col-span-2 relative min-h-[200px] bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl p-8 md:p-12 flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeStep}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="text-center"
-                        >
-                            <div className="flex justify-center mb-4">
-                                <div className="p-4 bg-primary/10 rounded-full">
-                                    <CurrentIcon className="w-8 h-8 text-primary" />
-                                </div>
-                            </div>
-                            <h3 className="text-2xl font-bold font-headline mb-2">{processSteps[activeStep].title}</h3>
-                            <p className="text-lg text-muted-foreground max-w-md mx-auto">{processSteps[activeStep].description}</p>
-                        </motion.div>
-                    </AnimatePresence>
+                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
+                    {processSteps.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setPage([i, i > page ? 1 : -1])}
+                        className={cn(
+                            "w-2 h-2 rounded-full bg-primary/20 transition-all duration-300",
+                            page === i ? "w-4 bg-primary" : "hover:bg-primary/50"
+                        )}
+                        aria-label={`Go to step ${i + 1}`}
+                    />
+                    ))}
                 </div>
             </div>
         </section>
