@@ -28,13 +28,6 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans')}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <div className="gradient-bg">
-            <div className="g1"></div>
-            <div className="g2"></div>
-            <div className="g3"></div>
-            <div className="g4"></div>
-            <div className="g5"></div>
-          </div>
           <CursorGlow />
           {children}
           <Toaster />
