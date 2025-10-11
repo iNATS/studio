@@ -33,7 +33,6 @@ const ImageLightbox = ({
   }) => {
     const [currentIndex, setCurrentIndex] = useState(startIndex);
     const [direction, setDirection] = useState(0);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
     useEffect(() => {
       setCurrentIndex(startIndex);
@@ -80,6 +79,8 @@ const ImageLightbox = ({
     }
   
     const currentImage = images[currentIndex!];
+    const nextImageIndex = (currentIndex! + 1) % images.length;
+    const nextImage = images[nextImageIndex];
   
     const variants = {
       enter: (direction: number) => ({
@@ -117,47 +118,35 @@ const ImageLightbox = ({
                 className="relative w-[calc(100%-4rem)] h-[calc(100%-4rem)] max-w-7xl flex gap-4"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Sidebar */}
+                {/* Sidebar for next image preview */}
                 <AnimatePresence>
-                    {isSidebarOpen && (
-                        <motion.div
-                            initial={{ x: '-100%', opacity: 0 }}
-                            animate={{ x: '0%', opacity: 1 }}
-                            exit={{ x: '-100%', opacity: 0 }}
-                            transition={{ duration: 0.3, ease: 'easeOut' }}
-                            className="w-full max-w-sm flex-shrink-0 bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col"
-                        >
-                            <ScrollArea className="flex-grow">
-                                <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-white mb-4">{project.title}</h2>
-                                    <p className="text-white/70 text-sm leading-relaxed mb-6">{project.fullDescription}</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map((tag, i) => (
-                                            <div key={i} className="text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                                                {tag}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </ScrollArea>
-                        </motion.div>
-                    )}
+                   <motion.div
+                        key={nextImage}
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: '20rem', opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="flex-shrink-0 bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col items-center justify-center overflow-hidden"
+                    >
+                        <div className="relative w-full h-full">
+                             <Image 
+                                src={nextImage}
+                                alt="Next image preview"
+                                fill
+                                className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
+                                <p className="text-sm font-medium">Next</p>
+                                <ChevronRight className="w-8 h-8 mt-1" />
+                            </div>
+                        </div>
+                   </motion.div>
                 </AnimatePresence>
 
                 {/* Main Content */}
                 <div className="relative flex-1 flex flex-col items-center justify-center bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
                     
-                    {/* Top bar buttons */}
-                    <div className="absolute top-4 left-4 z-50 flex gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full h-10 w-10 text-white bg-white/10 hover:bg-white/20"
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        >
-                            <Info className={cn("h-5 w-5 transition-colors", isSidebarOpen && "text-primary")} />
-                        </Button>
-                    </div>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -375,5 +364,3 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
     </div>
   );
 }
-
-    
