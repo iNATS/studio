@@ -18,6 +18,7 @@ export type PortfolioItem = {
   category: string;
   link?: string;
   fullDescription: string;
+  screenshots: string[];
 };
 
 export const portfolioItems: PortfolioItem[] = [
@@ -31,6 +32,12 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'web',
     link: '#',
     fullDescription: 'This project involved building a robust backend with Node.js and a dynamic front-end with React, ensuring a seamless user experience from browsing to checkout. The platform includes features like product management, order tracking, and secure payments with Stripe. The custom CMS allows for easy content updates and management of the entire e-commerce store.',
+    screenshots: [
+        'https://picsum.photos/seed/ecom-s1/1200/800',
+        'https://picsum.photos/seed/ecom-s2/1200/800',
+        'https://picsum.photos/seed/ecom-s3/1200/800',
+        'https://picsum.photos/seed/ecom-s4/1200/800',
+      ],
   },
   {
     title: 'Mobile Banking App',
@@ -42,6 +49,10 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'mobile',
     link: '#',
     fullDescription: 'It features biometric authentication, real-time transaction updates, and a user-friendly interface for managing accounts and payments. Security was a top priority, implementing end-to-end encryption and leveraging Firebase for secure authentication and database management. The app provides a seamless and safe banking experience on the go.',
+    screenshots: [
+        'https://picsum.photos/seed/bank-s1/1200/800',
+        'https://picsum.photos/seed/bank-s2/1200/800',
+      ],
   },
   {
     title: 'Corporate Branding',
@@ -53,6 +64,11 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'design',
     link: '#',
     fullDescription: 'This included logo design, a comprehensive style guide, marketing collateral, and UI mockups to ensure a consistent and powerful brand presence across all platforms. The goal was to create a memorable and impactful brand that resonates with the target audience and stands out in a competitive market.',
+    screenshots: [
+        'https://picsum.photos/seed/brand-s1/1200/800',
+        'https://picsum.photos/seed/brand-s2/1200/800',
+        'https://picsum.photos/seed/brand-s3/1200/800',
+      ],
   },
   {
     title: 'Project Management Tool',
@@ -64,6 +80,11 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'web',
     link: '#',
     fullDescription: 'Built with Vue.js and GraphQL, it offers features like task tracking, team communication, and file sharing to enhance productivity. The real-time updates and collaborative features make it an essential tool for any team looking to improve their project management process.',
+    screenshots: [
+        'https://picsum.photos/seed/pm-s1/1200/800',
+        'https://picsum.photos/seed/pm-s2/1200/800',
+        'https://picsum.photos/seed/pm-s3/1200/800',
+      ],
   },
   {
     title: 'Fitness Tracker App',
@@ -75,6 +96,9 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'mobile',
     link: '#',
     fullDescription: 'Using React Native, it provides a cross-platform solution with a focus on user engagement and data visualization. Integration with HealthKit allows for seamless tracking of health data, while social features encourage users to stay motivated and connected with their fitness community.',
+    screenshots: [
+        'https://picsum.photos/seed/fit-s1/1200/800',
+      ],
   },
   {
     title: 'SaaS Dashboard UI Kit',
@@ -86,6 +110,12 @@ export const portfolioItems: PortfolioItem[] = [
     category: 'design',
     link: '#',
     fullDescription: 'This kit, created in Figma, includes a wide range of components, templates, and styles to accelerate the design process for data-heavy applications. It is designed to be fully customizable and scalable, allowing designers to create beautiful and functional dashboards with ease.',
+    screenshots: [
+        'https://picsum.photos/seed/saas-s1/1200/800',
+        'https://picsum.photos/seed/saas-s2/1200/800',
+        'https://picsum.photos/seed/saas-s3/1200/800',
+        'https://picsum.photos/seed/saas-s4/1200/800',
+      ],
   },
 ];
 

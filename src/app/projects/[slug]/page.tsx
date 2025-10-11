@@ -20,7 +20,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1 w-full pt-24 sm:pt-32">
+      <main className="flex-1 w-full pt-24 sm:pt-32 pb-24">
         <div className="container max-w-5xl mx-auto px-4">
           <Button asChild className={cn("btn-glass rounded-full text-base mb-8")}>
             <Link href="/#projects">
@@ -63,6 +63,26 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               )}
             </div>
           </div>
+
+          {project.screenshots && project.screenshots.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
+              <div className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border border-border/40 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  {project.screenshots.map((screenshot, index) => (
+                    <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border/20 shadow-lg group">
+                      <Image
+                        src={screenshot}
+                        alt={`${project.title} screenshot ${index + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
