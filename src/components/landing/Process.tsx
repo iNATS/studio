@@ -43,51 +43,52 @@ const processSteps = [
 
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
+    const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.1 });
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
-        offset: ['start center', 'end center']
+        offset: ['start end', 'end start']
     });
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 overflow-hidden">
-             <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
+             <div className={cn("text-center mb-24", inView ? 'animate-fade-in-up' : 'opacity-0')}>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
                     A streamlined journey from a spark of an idea to a stunning final product.
                 </p>
             </div>
             
-            <div className="relative w-full max-w-5xl mx-auto h-48">
-                {/* Roadmap Track */}
-                <div className="absolute top-1/2 left-0 w-full h-1 -translate-y-1/2 bg-foreground/10 rounded-full">
+            <div className="relative w-full max-w-5xl mx-auto">
+                {/* Vertical Roadmap Track */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-1 bg-foreground/10 rounded-full">
                      <motion.div 
-                        className="h-full bg-primary/80 rounded-full shadow-[0_0_15px_hsl(var(--primary))]"
-                        style={{ width: useTransform(scrollYProgress, [0, 1], ['0%', '100%']) }}
+                        className="w-full bg-primary/80 rounded-full shadow-[0_0_15px_hsl(var(--primary))]"
+                        style={{ height: useTransform(scrollYProgress, [0, 0.8], ['0%', '100%']) }}
                      />
                 </div>
                 
                 {/* Roadmap Steps */}
-                <div className="relative flex justify-between items-center w-full h-full">
+                <div className="relative flex flex-col items-center w-full space-y-32">
                     {processSteps.map((step, index) => {
                         const Icon = step.icon;
-                        const progress = useTransform(scrollYProgress, [index / (processSteps.length -1) - 0.1, index / (processSteps.length -1)], [0, 1]);
+                        const progress = useTransform(scrollYProgress, [(index / processSteps.length) * 0.8, (index / processSteps.length) * 0.8 + 0.1], [0, 1]);
+                        const isEven = index % 2 === 0;
 
                         return (
-                            <div key={index} className="relative flex flex-col items-center group">
+                            <div key={index} className="relative flex items-center w-full">
                                 <motion.div 
                                     style={{ scale: progress, opacity: progress }}
-                                    className="flex items-center justify-center w-12 h-12 rounded-full bg-background border-2 border-primary/50 cursor-pointer transition-all duration-300 group-hover:scale-110 group-hover:border-primary"
+                                    className={cn("absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-16 h-16 rounded-full bg-background border-4 border-primary/50 cursor-pointer transition-all duration-300 ")}
                                 >
-                                    <Icon className="w-6 h-6 text-primary/80 transition-all duration-300 group-hover:text-primary" />
+                                    <Icon className="w-8 h-8 text-primary/80 transition-all duration-300" />
                                 </motion.div>
                                 <motion.div 
-                                    style={{opacity: progress}}
-                                    className="text-center mt-4 w-40"
+                                    style={{opacity: progress, x: useTransform(progress, [0, 1], [isEven ? -30 : 30, 0])}}
+                                    className={cn("w-[calc(50%-4rem)] p-6 rounded-2xl bg-black/20 dark:bg-black/30 backdrop-blur-xl border border-white/10 shadow-xl", isEven ? "mr-auto" : "ml-auto")}
                                 >
-                                    <h3 className="font-bold text-sm font-headline text-foreground">{step.title}</h3>
-                                    <p className="text-muted-foreground text-xs mt-1">{step.description}</p>
+                                    <h3 className={cn("font-bold text-lg font-headline text-white", isEven ? 'text-right' : 'text-left')}>{step.title}</h3>
+                                    <p className={cn("text-white/70 text-sm mt-2", isEven ? 'text-right' : 'text-left')}>{step.description}</p>
                                 </motion.div>
                             </div>
                         );
