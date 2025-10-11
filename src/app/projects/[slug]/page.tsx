@@ -66,7 +66,7 @@ const ImageLightbox = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="relative w-full h-full p-4 sm:p-8 md:p-16"
+            className="relative w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
