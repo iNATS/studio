@@ -27,21 +27,21 @@ const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4 sm:p-8"
           onClick={onClose}
         >
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
-            className="relative w-[90vw] h-[90vh] shadow-2xl rounded-2xl overflow-hidden border-2 border-white/10"
+            className="relative w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={imageUrl}
               alt="Project screenshot"
               fill
-              className="object-contain"
+              className="object-contain shadow-2xl rounded-2xl border-2 border-white/10"
             />
           </motion.div>
           <Button
