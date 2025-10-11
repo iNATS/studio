@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
-import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, Mail, Phone, ArrowRight } from 'lucide-react';
+import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const processSteps = [
@@ -39,23 +39,26 @@ const processSteps = [
     },
 ];
 
-const stepPositions = [
-    { top: '0%', left: '50%', transform: 'translate(-50%, -50%)' }, // Top
-    { top: '25%', left: '88%', transform: 'translate(-50%, -50%)' }, // Top-right
-    { top: '75%', left: '88%', transform: 'translate(-50%, -50%)' }, // Bottom-right
-    { top: '100%', left: '50%', transform: 'translate(-50%, -50%)' }, // Bottom
-    { top: '75%', left: '12%', transform: 'translate(-50%, -50%)' }, // Bottom-left
-    { top: '25%', left: '12%', transform: 'translate(-50%, -50%)' }, // Top-left
-];
-
+const getStepPosition = (index: number, total: number) => {
+    const angle = (index / total) * 360;
+    const radius = 50; // percentage
+    const x = radius * Math.cos((angle - 90) * (Math.PI / 180));
+    const y = radius * Math.sin((angle - 90) * (Math.PI / 180));
+    return {
+        top: `${50 + y}%`,
+        left: `${50 + x}%`,
+        transform: `translate(-50%, -50%) rotate(${angle}deg)`,
+    };
+};
 
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.3 });
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 overflow-hidden">
-            <div className={cn("text-center mb-16", inView ? 'animate-fade-in-up' : 'opacity-0')}>
+            <div className={cn("text-center mb-16 sm:mb-24", inView ? 'animate-fade-in-up' : 'opacity-0')}>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">My Creative Process</h2>
                 <p className="mt-4 text-muted-foreground md:text-xl/relaxed max-w-2xl mx-auto">
                     A streamlined journey from a spark of an idea to a stunning final product.
@@ -63,13 +66,16 @@ export function Process() {
             </div>
 
             <div className={cn(
-                "relative w-full max-w-lg md:max-w-2xl lg:max-w-3xl aspect-square mx-auto",
+                "relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl aspect-square mx-auto",
                 inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'
             )}>
 
                 {/* Central Hub */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45%] h-[45%] md:w-[40%] md:h-[40%] flex items-center justify-center">
-                    <div className="w-full h-full rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 shadow-xl flex flex-col items-center justify-center p-4 text-center">
+                    <div className={cn(
+                        "w-full h-full rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 shadow-xl flex flex-col items-center justify-center p-4 text-center transition-all duration-300",
+                        hoveredIndex !== null ? 'scale-95 opacity-70' : 'scale-100 opacity-100'
+                    )}>
                         <h3 className="font-bold tracking-tighter font-headline text-lg md:text-xl lg:text-2xl mb-2 md:mb-4">Let's work together</h3>
                         <div className="flex gap-4 md:gap-6">
                             <Button asChild variant="ghost" size="icon" className="w-12 h-12 rounded-full bg-foreground/5 hover:bg-foreground/10">
@@ -89,21 +95,46 @@ export function Process() {
                 {/* Radial Steps */}
                 {processSteps.map((step, index) => {
                     const Icon = step.icon;
+                    const position = getStepPosition(index, processSteps.length);
+                    const isHovered = hoveredIndex === index;
+
                     return (
                         <div
                             key={index}
-                            className="group absolute w-40 h-40 md:w-48 md:h-48"
-                            style={{ ...stepPositions[index] }}
+                            className="group absolute"
+                            style={isHovered ? {
+                                top: '50%',
+                                left: '50%',
+                                width: '60%',
+                                height: 'auto',
+                                zIndex: 10,
+                                transform: 'translate(-50%, -50%)',
+                                transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
+                            } : {
+                                ...position,
+                                width: '80px',
+                                height: '80px',
+                                transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
+                            }}
+                            onMouseEnter={() => setHoveredIndex(index)}
+                            onMouseLeave={() => setHoveredIndex(null)}
                         >
+                             <div className={cn(
+                                "absolute inset-0 rounded-full bg-card/60 dark:bg-white/10 backdrop-blur-2xl border border-border/40 dark:border-white/10 shadow-lg flex items-center justify-center cursor-pointer transition-all duration-300",
+                                isHovered ? 'rounded-2xl opacity-0' : 'rounded-full opacity-100'
+                             )}>
+                                <Icon className="w-8 h-8 text-primary transition-transform duration-300 group-hover:scale-110" style={{ transform: `rotate(-${getStepPosition(index, processSteps.length).transform.match(/rotate\((.+)deg\)/)?.[1]}deg)` }} />
+                            </div>
+
                             <div className={cn(
-                                "absolute inset-0 rounded-2xl bg-card/40 dark:bg-white/5 backdrop-blur-2xl border border-border/30 dark:border-white/10 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:border-border/50 dark:group-hover:border-white/20 p-4 flex flex-col items-center justify-center text-center",
-                                inView ? 'animate-fade-in-up' : 'opacity-0'
-                            )} style={{ animationDelay: `${200 + index * 100}ms`}}>
-                                <div className="p-3 bg-primary/10 rounded-full mb-2">
-                                    <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                                "relative w-full h-full rounded-2xl bg-card/40 dark:bg-white/5 backdrop-blur-2xl border border-border/30 dark:border-white/10 shadow-xl transition-all duration-300 text-center flex flex-col items-center justify-center p-6",
+                                isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
+                            )}>
+                                <div className="p-3 bg-primary/10 rounded-full mb-3">
+                                    <Icon className="w-6 h-6 text-primary" />
                                 </div>
-                                <h4 className="font-semibold font-headline text-sm md:text-base">{step.title}</h4>
-                                <p className="text-muted-foreground text-xs md:text-sm mt-1">{step.description}</p>
+                                <h4 className="font-semibold font-headline text-lg">{step.title}</h4>
+                                <p className="text-muted-foreground text-sm mt-1">{step.description}</p>
                             </div>
                         </div>
                     );
