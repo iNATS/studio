@@ -124,38 +124,37 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
     <div
       onClick={onClick}
       className={cn(
-        "group relative rounded-2xl transition-all duration-700 ease-in-out cursor-pointer overflow-hidden",
+        "group relative rounded-3xl transition-all duration-700 ease-in-out cursor-pointer overflow-hidden",
         isVisible ? 'animate-fade-in-up' : 'opacity-0'
       )}
       style={{ animationDelay: `${(index % 3) * 150}ms` }}
     >
-      <Card className="overflow-hidden transition-all duration-500 bg-card/60 dark:bg-white/5 backdrop-blur-xl border border-border dark:border-white/10 w-full h-full group-hover:bg-card/80 dark:group-hover:bg-white/10 group-hover:border-border/80 dark:group-hover:border-white/20 flex flex-col">
-        <CardHeader className="p-0 relative overflow-hidden">
-          <Image
-            src={item.image}
-            alt={item.title}
-            width={600}
-            height={400}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-            data-ai-hint={item.hint}
-          />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-        </CardHeader>
-        <CardContent className="p-4 flex flex-col flex-grow">
-          <h3 className="text-lg font-bold font-headline text-foreground dark:text-white">{item.title}</h3>
-          <p className="mt-2 text-foreground/70 dark:text-white/70 text-sm h-10 overflow-hidden text-ellipsis flex-grow">
-            {item.description}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {item.tags.slice(0, 3).map((tag, i) => (
-              <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
-                {tag}
-              </Button>
-            ))}
+      <div className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border border-border/40 dark:border-white/20 shadow-2xl overflow-hidden rounded-3xl transition-all duration-300 group-hover:shadow-primary/20 group-hover:border-border/80 dark:group-hover:border-white/30 h-full">
+        <div className="grid md:grid-cols-2 h-full">
+          <div className="relative h-48 md:h-full w-full">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              className="object-cover"
+              data-ai-hint={item.hint}
+            />
           </div>
-        </CardContent>
-      </Card>
-      <div className="absolute inset-0 border-2 border-transparent rounded-2xl group-hover:border-black/20 dark:group-hover:border-white/40 transition-all duration-500 pointer-events-none" />
+          <div className="p-6 flex flex-col">
+            <h3 className="text-xl font-bold font-headline text-foreground">{item.title}</h3>
+            <p className="mt-2 text-foreground/70 dark:text-white/70 text-sm flex-grow">
+              {item.description}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {item.tags.slice(0, 3).map((tag, i) => (
+                <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none">
+                  {tag}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -165,7 +164,7 @@ export function Portfolio() {
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.1 });
+  const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.05 });
   const [cardsVisible, setCardsVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
 
@@ -233,7 +232,7 @@ export function Portfolio() {
             Design
           </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 px-4 sm:px-6 md:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
         {visibleItems.map((item, index) => (
           <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
