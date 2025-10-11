@@ -34,6 +34,20 @@ const ImageLightbox = ({
     setCurrentIndex(startIndex);
   }, [startIndex]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex]);
+
   if (startIndex === null || !images || images.length === 0) {
     return null;
   }
@@ -66,7 +80,7 @@ const ImageLightbox = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="relative w-full h-full"
+            className="relative w-full h-full p-4 sm:p-8 md:p-16 flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
@@ -224,12 +238,12 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
             {project.screenshots && project.screenshots.length > 0 && (
               <div className="py-10">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
-                <Carousel className="w-full">
-                  <CarouselContent>
+                <Carousel className="w-full max-w-4xl mx-auto">
+                  <CarouselContent className="-ml-4">
                       {project.screenshots.map((screenshot, index) => (
-                      <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/2">
+                      <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2">
                           <div 
-                              className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer mx-4"
+                              className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer"
                               onClick={() => setLightboxIndex(index)}
                           >
                               <Image
@@ -242,8 +256,8 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                       </CarouselItem>
                       ))}
                   </CarouselContent>
-                  <CarouselPrevious className="left-8" />
-                  <CarouselNext className="right-8" />
+                  <CarouselPrevious className="-left-4 sm:-left-12" />
+                  <CarouselNext className="-right-4 sm:-right-12" />
                   </Carousel>
               </div>
             )}
