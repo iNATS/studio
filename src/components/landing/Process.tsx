@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const processSteps = [
     {
@@ -41,15 +42,9 @@ const processSteps = [
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
-    const [hoveredStep, setHoveredStep] = useState<number | null>(1); // Default to first step
-    const [activeStep, setActiveStep] = useState<number>(1);
+    const [activeStep, setActiveStep] = useState(0);
 
-    const handleStepInteraction = (index: number) => {
-      setHoveredStep(index);
-      setActiveStep(index);
-    }
-    
-    const currentStep = hoveredStep !== null ? processSteps[hoveredStep] : null;
+    const CurrentIcon = processSteps[activeStep].icon;
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4 overflow-hidden">
@@ -60,46 +55,46 @@ export function Process() {
                 </p>
             </div>
 
-            <div className={cn("relative w-full max-w-5xl mx-auto mt-24", inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0')}>
-                {/* Timeline Track */}
-                <div className="absolute top-1/2 left-0 w-full h-0.5 -translate-y-1/2 bg-white/10">
-                   <div className="h-full bg-primary/50" style={{ width: `${(activeStep / (processSteps.length -1 )) * 100}%`, transition: 'width 0.5s ease-in-out' }} />
-                </div>
-                
-                {/* Timeline Steps */}
-                <div className="relative flex justify-between">
+            <div className={cn(
+                "relative w-full max-w-5xl mx-auto mt-12 grid md:grid-cols-3 gap-8 md:gap-12",
+                inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'
+            )}>
+                <div className="md:col-span-1 flex flex-col gap-2">
                     {processSteps.map((step, index) => (
-                        <div
+                        <button
                             key={index}
-                            className="relative flex flex-col items-center"
-                            onMouseEnter={() => handleStepInteraction(index)}
-                            onClick={() => handleStepInteraction(index)}
+                            onClick={() => setActiveStep(index)}
+                            onMouseEnter={() => setActiveStep(index)}
+                            className={cn(
+                                "w-full text-left p-4 rounded-lg transition-colors duration-300 text-foreground/70",
+                                "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                                activeStep === index ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-primary/5'
+                            )}
                         >
-                            <div className={cn(
-                                "z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 cursor-pointer",
-                                "bg-background/80 backdrop-blur-sm",
-                                activeStep >= index ? "border-primary/80 shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" : "border-border/50",
-                                hoveredStep === index ? "scale-110" : ""
-                            )}>
-                                <step.icon className={cn("w-6 h-6 transition-colors duration-300", activeStep >= index ? "text-primary": "text-muted-foreground")} />
-                            </div>
-                        </div>
+                           {step.title}
+                        </button>
                     ))}
                 </div>
                 
-                {/* Display Area */}
-                <div className="relative mt-16 min-h-[120px] px-4">
-                    <div className={cn(
-                        "text-center transition-opacity duration-500",
-                        currentStep ? 'opacity-100' : 'opacity-0'
-                    )}>
-                        {currentStep && (
-                            <>
-                                <h3 className="text-2xl font-bold font-headline">{currentStep.title}</h3>
-                                <p className="mt-2 text-lg text-muted-foreground max-w-lg mx-auto">{currentStep.description}</p>
-                            </>
-                        )}
-                    </div>
+                <div className="md:col-span-2 relative min-h-[200px] bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl p-8 md:p-12 flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeStep}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="text-center"
+                        >
+                            <div className="flex justify-center mb-4">
+                                <div className="p-4 bg-primary/10 rounded-full">
+                                    <CurrentIcon className="w-8 h-8 text-primary" />
+                                </div>
+                            </div>
+                            <h3 className="text-2xl font-bold font-headline mb-2">{processSteps[activeStep].title}</h3>
+                            <p className="text-lg text-muted-foreground max-w-md mx-auto">{processSteps[activeStep].description}</p>
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </div>
         </section>
