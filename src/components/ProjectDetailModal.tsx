@@ -19,35 +19,36 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-transparent border-none sm:max-w-4xl p-0 rounded-3xl overflow-hidden shadow-2xl min-h-[500px] md:min-h-[600px]">
-        <div className="absolute inset-0">
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover"
-            data-ai-hint={project.hint}
-          />
-           <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
-        </div>
-        <div className="relative flex flex-col justify-end h-full p-6 md:p-10">
-          <div className="bg-background/40 dark:bg-black/50 backdrop-blur-2xl p-6 md:p-8 rounded-2xl border border-foreground/10 shadow-xl ring-1 ring-black/10">
-            <DialogHeader className="text-left">
-              <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
-              <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed max-h-48 overflow-y-auto pt-4">
-                {project.description}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="mt-6 flex justify-between items-center">
-                <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, i) => (
-                    <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
-                        {tag}
-                    </Button>
-                    ))}
-                </div>
+      <DialogContent className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border-border/40 dark:border-white/20 sm:max-w-4xl p-0 rounded-3xl overflow-hidden shadow-2xl">
+        <div className="grid md:grid-cols-2">
+          <div className="relative h-64 md:h-full min-h-[300px] md:min-h-[500px]">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              data-ai-hint={project.hint}
+            />
+          </div>
+          <div className="flex flex-col justify-between p-6 sm:p-10">
+            <div>
+              <DialogHeader className="text-left">
+                <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
+                <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-48 overflow-y-auto">
+                  {project.description}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-6 flex flex-wrap gap-2">
+                  {project.tags.map((tag, i) => (
+                  <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
+                      {tag}
+                  </Button>
+                  ))}
+              </div>
+            </div>
+            <div className="mt-8 flex justify-end">
                 {project.link && (
-                    <Button asChild className={cn("btn-glass rounded-full text-base ml-4 shrink-0")}>
+                    <Button asChild className={cn("btn-glass rounded-full text-base")}>
                         <Link href={project.link} target="_blank">
                         Open Project
                         <ArrowUpRight className="ml-2 h-4 w-4" />
