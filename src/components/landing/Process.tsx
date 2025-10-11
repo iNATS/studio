@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowRight } from 'lucide-react';
@@ -42,7 +42,17 @@ const processSteps = [
 
 export function Process() {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.1 });
+    const inView = useInView(sectionRef, { triggerOnce: true, threshold: 0.2 });
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        if (inView) {
+            const interval = setInterval(() => {
+                setActiveIndex((prevIndex) => (prevIndex + 1) % processSteps.length);
+            }, 3000); // Change step every 3 seconds
+            return () => clearInterval(interval);
+        }
+    }, [inView]);
 
     return (
         <section ref={sectionRef} id="process" className="py-24 sm:py-32 px-4">
@@ -53,26 +63,29 @@ export function Process() {
                 </p>
             </div>
 
-            <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto", inView ? 'animate-fade-in-up animation-delay-200' : 'opacity-0')}>
+            <div className={cn("relative max-w-2xl mx-auto h-48 flex items-center justify-center", inView ? 'animate-fade-in-up animation-delay-200' : 'opacity-0')}>
                 {processSteps.map((step, index) => {
                     const Icon = step.icon;
                     return (
                         <div
                             key={index}
-                            className="group p-6 rounded-3xl bg-card/40 dark:bg-white/5 backdrop-blur-2xl border border-border/30 dark:border-white/10 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-border/60 dark:hover:border-white/20"
+                            className={cn(
+                                "absolute inset-0 flex flex-col items-center justify-center text-center p-6 transition-opacity duration-1000",
+                                activeIndex === index ? 'opacity-100' : 'opacity-0'
+                            )}
                         >
-                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4 transition-all duration-300 group-hover:bg-primary/20">
-                                <Icon className="w-6 h-6 text-primary" />
+                            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                                <Icon className="w-8 h-8 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold font-headline mb-2 text-foreground dark:text-white">{step.title}</h3>
-                            <p className="text-muted-foreground">{step.description}</p>
+                            <h3 className="text-2xl font-bold font-headline mb-2 text-foreground dark:text-white">{step.title}</h3>
+                            <p className="text-muted-foreground text-lg">{step.description}</p>
                         </div>
                     );
                 })}
             </div>
             
             <div className={cn("mt-16 text-center", inView ? 'animate-fade-in-up animation-delay-400' : 'opacity-0')}>
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg">
+                <Button asChild className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
                     <Link href="#contact">
                         Let's Talk
                         <ArrowRight className="ml-2 h-4 w-4" />
