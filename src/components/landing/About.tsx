@@ -24,7 +24,7 @@ export function About() {
         <div className="grid md:grid-cols-3 gap-12 items-start">
           <div className="flex flex-col items-center text-center md:col-span-1">
             <Avatar className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-border/80 dark:border-white/20 shadow-2xl mb-4">
-              <AvatarImage src="https://firebasestudio.googleapis.com/v0/b/firebase-studio-users.appspot.com/o/images%2Fclwsdeyxi000b146q6g5zpjq2%2F1722896561139.jpeg?alt=media&token=489dc84c-f09d-43ab-898f-0a0224097950" alt="Mohamed Aref" />
+              <AvatarImage src="https://firebasestudio.googleapis.com/v0/b/firebase-studio-users.appspot.com/o/images%2Fclx01j37q001c14u6c0c2a939%2F1722956961448.png?alt=media&token=86d3b378-750d-4573-a0e0-826723223b2c" alt="Mohamed Aref" />
               <AvatarFallback>MA</AvatarFallback>
             </Avatar>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">Mohamed Aref</h2>
