@@ -110,7 +110,7 @@ const ImageLightbox = ({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="relative w-full h-full flex flex-col items-center justify-center p-4 sm:p-8"
+                className="relative w-full h-full flex flex-col items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button
@@ -137,13 +137,13 @@ const ImageLightbox = ({
                                 opacity: { duration: 0.2 },
                                 scale: { duration: 0.3}
                             }}
-                            className="flex items-center justify-center w-full h-full"
+                            className="absolute w-full h-full flex items-center justify-center"
                         >
                             <Image
                                 src={currentImage}
                                 alt="Project screenshot"
                                 fill
-                                className="object-contain"
+                                className="object-cover"
                             />
                         </motion.div>
                         </AnimatePresence>
@@ -326,5 +326,3 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
     </div>
   );
 }
-
-    
