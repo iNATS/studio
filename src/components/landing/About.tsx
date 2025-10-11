@@ -41,13 +41,12 @@ export function About() {
               <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4 text-center md:text-left">My Skills</h3>
               <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
                 {[
-                  'UI/UX Design', 'Web Development', 'Mobile Development',
-                  'User Research', 'Wireframing', 'Prototyping', 'Usability Testing',
-                  'React', 'Next.js', 'Vue.js', 'Node.js', 'Express.js',
-                  'TypeScript', 'JavaScript', 'HTML5 & CSS3', 'Tailwind CSS',
-                  'Shadcn/ui', 'Framer Motion', 'React Native', 'Flutter',
-                  'Swift', 'SwiftUI', 'Logo Design', 'Style Guides',
-                  'Brand Strategy', 'Visual Identity'
+                  'UI/UX Design', 'Web Design', 'Mobile Design', 'Logo Design', 
+                  'Visual Identity', 'Wire-framing', 'Prototyping', 'Figma', 
+                  'Adobe XD', 'Photoshop', 'Illustrator', 'Web Development', 'HTML', 
+                  'CSS', 'JavaScript', 'Bootstrap', 'Tailwind', 'Webflow', 
+                  'Wordpress', 'Restfull API', 'Google maps API', 'AI Vibe coding', 
+                  'dev ops', 'hosting', 'CPanel', 'VPS', 'Shared Host'
                 ].map(skill => (
                     <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none h-auto px-3 py-1.5">
                         {skill}
