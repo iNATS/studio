@@ -4,7 +4,7 @@ import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, X, ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
@@ -18,179 +18,230 @@ import {
     CarouselNext,
     CarouselPrevious,
   } from "@/components/ui/carousel"
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ImageLightbox = ({
-  images,
-  startIndex,
-  onClose,
-}: {
-  images: string[] | undefined;
-  startIndex: number | null;
-  onClose: () => void;
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
-  const [direction, setDirection] = useState(0);
-
-  useEffect(() => {
-    setCurrentIndex(startIndex);
-  }, [startIndex]);
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowRight') {
-      handleNext();
-    } else if (e.key === 'ArrowLeft') {
-      handlePrev();
-    } else if (e.key === 'Escape') {
-      onClose();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
-
-  if (startIndex === null || !images || images.length === 0) {
-    return null;
-  }
-
-  const handleNext = () => {
-    if (currentIndex === null) return;
-    setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex! + 1) % images.length);
-  };
-
-  const handlePrev = () => {
-    if (currentIndex === null) return;
-    setDirection(-1);
-    setCurrentIndex(
-      (prevIndex) => (prevIndex! - 1 + images.length) % images.length
-    );
-  };
+    project,
+    images,
+    startIndex,
+    onClose,
+  }: {
+    project: PortfolioItem | null;
+    images: string[] | undefined;
+    startIndex: number | null;
+    onClose: () => void;
+  }) => {
+    const [currentIndex, setCurrentIndex] = useState(startIndex);
+    const [direction, setDirection] = useState(0);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  const handleThumbnailClick = (index: number) => {
-    if (currentIndex === null) return;
-    setDirection(index > currentIndex ? 1 : -1);
-    setCurrentIndex(index);
-  }
+    useEffect(() => {
+      setCurrentIndex(startIndex);
+    }, [startIndex]);
+  
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+  
+    useEffect(() => {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentIndex]);
+  
+    if (startIndex === null || !images || images.length === 0 || !project) {
+      return null;
+    }
+  
+    const handleNext = () => {
+      if (currentIndex === null) return;
+      setDirection(1);
+      setCurrentIndex((prevIndex) => (prevIndex! + 1) % images.length);
+    };
+  
+    const handlePrev = () => {
+      if (currentIndex === null) return;
+      setDirection(-1);
+      setCurrentIndex(
+        (prevIndex) => (prevIndex! - 1 + images.length) % images.length
+      );
+    };
+    
+    const handleThumbnailClick = (index: number) => {
+      if (currentIndex === null) return;
+      setDirection(index > currentIndex ? 1 : -1);
+      setCurrentIndex(index);
+    }
+  
+    const currentImage = images[currentIndex!];
+  
+    const variants = {
+      enter: (direction: number) => ({
+        x: direction > 0 ? '100%' : '-100%',
+        opacity: 0,
+        scale: 0.95
+      }),
+      center: {
+        zIndex: 1,
+        x: 0,
+        opacity: 1,
+        scale: 1
+      },
+      exit: (direction: number) => ({
+        zIndex: 0,
+        x: direction < 0 ? '100%' : '-100%',
+        opacity: 0,
+        scale: 0.95
+      }),
+    };
+  
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl"
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="relative w-[calc(100%-4rem)] h-[calc(100%-4rem)] max-w-7xl flex gap-4"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Sidebar */}
+                <AnimatePresence>
+                    {isSidebarOpen && (
+                        <motion.div
+                            initial={{ x: '-100%', opacity: 0 }}
+                            animate={{ x: '0%', opacity: 1 }}
+                            exit={{ x: '-100%', opacity: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                            className="w-full max-w-sm flex-shrink-0 bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col"
+                        >
+                            <ScrollArea className="flex-grow">
+                                <div className="p-6">
+                                    <h2 className="text-2xl font-bold text-white mb-4">{project.title}</h2>
+                                    <p className="text-white/70 text-sm leading-relaxed mb-6">{project.fullDescription}</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {project.tags.map((tag, i) => (
+                                            <div key={i} className="text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                                                {tag}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </ScrollArea>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-  const currentImage = images[currentIndex!];
+                {/* Main Content */}
+                <div className="relative flex-1 flex flex-col items-center justify-center bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
+                    
+                    {/* Top bar buttons */}
+                    <div className="absolute top-4 left-4 z-50 flex gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full h-10 w-10 text-white bg-white/10 hover:bg-white/20"
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        >
+                            <Info className={cn("h-5 w-5 transition-colors", isSidebarOpen && "text-primary")} />
+                        </Button>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-4 right-4 z-50 rounded-full h-10 w-10 text-white bg-white/10 hover:bg-white/20"
+                        onClick={onClose}
+                    >
+                        <X className="h-5 w-5" />
+                    </Button>
 
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 0,
-      scale: 0.95
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      scale: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 0,
-      scale: 0.95
-    }),
-  };
+                    {/* Main Image */}
+                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                        <AnimatePresence initial={false} custom={direction}>
+                        <motion.div
+                            key={currentImage}
+                            custom={direction}
+                            variants={variants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            transition={{
+                                x: { type: 'spring', stiffness: 300, damping: 30 },
+                                opacity: { duration: 0.2 },
+                                scale: { duration: 0.3}
+                            }}
+                            className="absolute w-full h-full flex items-center justify-center p-8"
+                        >
+                            <Image
+                                src={currentImage}
+                                alt="Project screenshot"
+                                fill
+                                className="object-contain"
+                            />
+                        </motion.div>
+                        </AnimatePresence>
+                    </div>
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-lg"
-      onClick={onClose}
-    >
-      {/* Close Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-4 right-4 z-50 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-        onClick={onClose}
-      >
-        <X className="h-6 w-6" />
-      </Button>
+                    {/* Prev Button */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrev();
+                        }}
+                    >
+                        <ChevronLeft className="h-6 w-6" />
+                    </Button>
 
-      {/* Main Image */}
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden p-4 sm:p-8">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={currentImage}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-              scale: { duration: 0.3}
-            }}
-            className="absolute w-full h-full flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Image
-              src={currentImage}
-              alt="Project screenshot"
-              fill
-              className="object-contain"
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Prev Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-        onClick={(e) => {
-          e.stopPropagation();
-          handlePrev();
-        }}
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </Button>
-
-      {/* Next Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleNext();
-        }}
-      >
-        <ChevronRight className="h-6 w-6" />
-      </Button>
-      
-      {/* Thumbnails */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 pb-4" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-center">
-            <div className="flex gap-3 p-2 bg-black/30 backdrop-blur-xl rounded-full border border-white/10 shadow-lg">
-            {images.map((img, index) => (
-              <div
-                key={index}
-                onClick={() => handleThumbnailClick(index)}
-                className={cn(
-                  "relative h-12 w-20 rounded-lg overflow-hidden cursor-pointer transition-all duration-300",
-                  "border-2",
-                  currentIndex === index ? "border-primary shadow-lg scale-105" : "border-transparent opacity-60 hover:opacity-100 hover:border-white/30",
-                )}
-              >
-                  <Image src={img} alt={`thumbnail ${index + 1}`} fill className="object-cover" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+                    {/* Next Button */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        handleNext();
+                        }}
+                    >
+                        <ChevronRight className="h-6 w-6" />
+                    </Button>
+                    
+                    {/* Thumbnails */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+                        <div className="flex gap-3 p-2 bg-black/30 backdrop-blur-xl rounded-full border border-white/10 shadow-lg">
+                        {images.map((img, index) => (
+                        <div
+                            key={index}
+                            onClick={() => handleThumbnailClick(index)}
+                            className={cn(
+                                "relative h-10 w-16 rounded-lg overflow-hidden cursor-pointer transition-all duration-300",
+                                "border-2",
+                                currentIndex === index ? "border-primary shadow-lg scale-105" : "border-transparent opacity-60 hover:opacity-100 hover:border-white/30",
+                            )}
+                        >
+                            <Image src={img} alt={`thumbnail ${index + 1}`} fill className="object-cover" />
+                        </div>
+                        ))}
+                    </div>
+                    </div>
+                </div>
+            </motion.div>
+        </motion.div>
+    );
 };
 
 
@@ -282,12 +333,12 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               )}
             </div>
             {project.screenshots && project.screenshots.length > 0 && (
-              <div className="py-10">
+              <div className="pb-10">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
                 <Carousel className="w-full max-w-4xl mx-auto">
                   <CarouselContent className="-ml-4">
                       {project.screenshots.map((screenshot, index) => (
-                      <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2">
+                      <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                           <div 
                               className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer"
                               onClick={() => setLightboxIndex(index)}
@@ -311,11 +362,16 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
         </div>
       </motion.main>
       <Footer />
-      <ImageLightbox 
-        images={project.screenshots} 
-        startIndex={lightboxIndex} 
-        onClose={() => setLightboxIndex(null)} 
-      />
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+            <ImageLightbox 
+                project={project}
+                images={project.screenshots} 
+                startIndex={lightboxIndex} 
+                onClose={() => setLightboxIndex(null)} 
+            />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
