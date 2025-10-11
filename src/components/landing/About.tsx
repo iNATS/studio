@@ -48,7 +48,7 @@ export function About() {
                     'Genkit', 'TensorFlow', 'Python',
                     'Git', 'CI/CD', 'Agile'
                 ].map(skill => (
-                    <Button key={skill} variant="ghost" size="sm" className="bg-card/60 dark:bg-white/10 text-foreground dark:text-white/80 hover:bg-card dark:hover:bg-white/20 hover:text-foreground dark:hover:text-white border border-border/50 dark:border-white/10 text-sm font-medium rounded-full pointer-events-none backdrop-blur-sm">
+                    <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
                         {skill}
                     </Button>
                 ))}
