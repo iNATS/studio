@@ -19,17 +19,7 @@ export function Hero() {
       id="home"
       className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
     >
-      <div className="absolute inset-0 w-full h-full">
-        <Image
-          src="https://picsum.photos/seed/hero-bg/1920/1080"
-          alt="Hero Background"
-          fill
-          className="object-cover"
-          quality={90}
-          priority
-        />
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-background to-background/20 dark:to-black/50" />
-      </div>
+      <div className="absolute inset-0 w-full h-full bg-background/10 dark:bg-black/30 backdrop-blur-sm" />
       <div className={cn('relative z-10 transition-opacity duration-1000', isMounted ? 'opacity-100' : 'opacity-0')}>
         <div className="flex flex-col items-center space-y-4 sm:space-y-6">
           <div className="p-8 rounded-3xl">
