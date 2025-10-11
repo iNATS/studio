@@ -11,6 +11,7 @@ import { About } from '@/components/landing/About';
 import { Process } from '@/components/landing/Process';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { Contact } from '@/components/landing/Contact';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -24,11 +25,19 @@ export default function Home() {
       <Header />
       <main className="flex-1 w-full">
         <Hero />
-        <Portfolio />
-        <About />
-        <Process />
-        <Testimonials />
-        <Contact />
+        <motion.div 
+          className="w-full"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <Portfolio />
+          <About />
+          <Process />
+          <Testimonials />
+          <Contact />
+        </motion.div>
       </main>
       <SocialFab />
       <Footer />
