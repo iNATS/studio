@@ -16,18 +16,11 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden"
+      className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden px-4"
     >
-      <div className="absolute inset-0 -z-50">
-        <div className="absolute inset-0 -z-40 bg-background"></div>
-        <div className="absolute inset-0 -z-30 bg-grid-pattern opacity-10"></div>
-        <div className="absolute inset-x-0 top-0 h-1/2 -z-20 bg-gradient-to-b from-primary/10 to-transparent"></div>
-        <div className="blob-c animation-delay-200"></div>
-        <div className="blob-c animation-delay-400"></div>
-      </div>
       <div className={cn('relative z-10 transition-opacity duration-1000', isMounted ? 'opacity-100' : 'opacity-0')}>
-        <div className="flex flex-col items-center space-y-4 sm:space-y-6">
-          <div className="p-8 rounded-3xl">
+        <div className="flex flex-col items-center space-y-6 bg-background/30 dark:bg-black/20 backdrop-blur-2xl p-8 sm:p-12 md:p-16 rounded-3xl border border-white/10 shadow-2xl">
+          <div className="transition-all duration-1000" style={{ animationDelay: '100ms' }}>
             <h1 className={cn('text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline transition-all duration-1000', isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}>
               Mohamed Aref
             </h1>
@@ -35,7 +28,7 @@ export function Hero() {
               Creative Developer & Designer
             </p>
           </div>
-          <p className={cn('max-w-[700px] text-muted-foreground text-base sm:text-lg transition-all duration-1000 delay-400', isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}>
+          <p className={cn('max-w-[600px] text-muted-foreground text-base sm:text-lg transition-all duration-1000 delay-400', isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}>
             I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.
           </p>
           <div className={cn('flex flex-col gap-4 min-[400px]:flex-row transition-all duration-1000 delay-600', isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}>
