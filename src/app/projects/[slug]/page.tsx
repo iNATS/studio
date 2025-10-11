@@ -4,15 +4,58 @@ import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+
+const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose: () => void }) => {
+  return (
+    <AnimatePresence>
+      {imageUrl && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
+            className="relative w-[90vw] h-[90vh] shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={imageUrl}
+              alt="Project screenshot"
+              fill
+              className="object-contain"
+            />
+          </motion.div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+            onClick={onClose}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find(p => p.slug === params.slug);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
 
   if (!project) {
     notFound();
@@ -101,7 +144,11 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {project.screenshots.map((screenshot, index) => (
-                      <div key={index} className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group">
+                      <div 
+                        key={index} 
+                        className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer"
+                        onClick={() => setLightboxImage(screenshot)}
+                        >
                         <Image
                           src={screenshot}
                           alt={`${project.title} screenshot ${index + 1}`}
@@ -118,6 +165,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
         </div>
       </motion.main>
       <Footer />
+      <ImageLightbox imageUrl={lightboxImage} onClose={() => setLightboxImage(null)} />
     </div>
   );
 }
