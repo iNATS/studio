@@ -111,7 +111,7 @@ export function SocialFab() {
           size="icon"
           variant="ghost"
           className={cn(
-            'rounded-full w-14 h-14 bg-background/60 backdrop-blur-sm border border-border/40 text-foreground/80 hover:bg-foreground/10 hover:text-foreground shadow-lg transition-all duration-300 ease-in-out',
+            'rounded-full w-14 h-14 bg-primary/10 dark:bg-primary/20 backdrop-blur-sm border border-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 shadow-lg transition-all duration-300 ease-in-out',
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
           )}
           style={{ transitionDelay: isOpen ? `${index * 50}ms` : `${(socialLinks.length - index - 1) * 50}ms` }}
@@ -125,7 +125,7 @@ export function SocialFab() {
       <Button
         size="icon"
         variant="ghost"
-        className="rounded-full shadow-lg bg-background/60 backdrop-blur-sm border border-border/40 text-foreground/80 hover:bg-foreground/10 hover:text-foreground w-14 h-14"
+        className="rounded-full shadow-lg bg-primary/10 dark:bg-primary/20 backdrop-blur-sm border border-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 w-14 h-14"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label="Toggle social media links"
