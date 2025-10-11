@@ -267,7 +267,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               )}
             </div>
             {project.screenshots && project.screenshots.length > 0 && (
-              <div className="pb-10 px-12 sm:px-0">
+              <div className="pb-10 px-4 sm:px-10">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
                 <Carousel className="w-full max-w-4xl mx-auto">
                   <CarouselContent className="-ml-4">
