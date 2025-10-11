@@ -104,7 +104,7 @@ const ImageLightbox = ({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="relative w-full h-full flex flex-col items-center justify-center p-4 sm:p-8 md:p-16"
+                className="relative w-full h-full flex flex-col items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button
@@ -116,7 +116,13 @@ const ImageLightbox = ({
                     <X className="h-5 w-5" />
                 </Button>
 
-                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl">
+                <motion.div 
+                  className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl"
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                >
                     <div className="relative flex-grow flex items-center justify-center overflow-hidden">
                         <AnimatePresence initial={false} custom={direction}>
                         <motion.div
@@ -131,7 +137,7 @@ const ImageLightbox = ({
                                 opacity: { duration: 0.2 },
                                 scale: { duration: 0.3}
                             }}
-                            className="relative w-full h-full"
+                            className="relative flex-grow w-full h-full"
                         >
                             <Image
                                 src={currentImage}
@@ -142,7 +148,7 @@ const ImageLightbox = ({
                         </motion.div>
                         </AnimatePresence>
                     </div>
-                </div>
+                </motion.div>
 
                 <Button
                     variant="ghost"
@@ -261,7 +267,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               )}
             </div>
             {project.screenshots && project.screenshots.length > 0 && (
-              <div className="pb-10">
+              <div className="pb-10 px-12 sm:px-0">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
                 <Carousel className="w-full max-w-4xl mx-auto">
                   <CarouselContent className="-ml-4">
