@@ -15,6 +15,8 @@ export function Header() {
   const navLinks = [
     { href: '/#projects', label: 'Projects' },
     { href: '/#about', label: 'About' },
+    { href: '/#process', label: 'Process' },
+    { href: '/#testimonials', label: 'Testimonials' },
     { href: '/#contact', label: 'Contact' },
     { href: '/vibe-check', label: 'Vibe Check' },
   ];
