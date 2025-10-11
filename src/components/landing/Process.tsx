@@ -107,7 +107,7 @@ export function Process() {
                 </div>
 
                 <div className="mt-16 text-center">
-                  <Button asChild className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
+                  <Button asChild className="btn-glass rounded-full text-base">
                       <Link href="#contact">
                           Let's Talk
                           <ArrowRight className="ml-2 h-4 w-4" />

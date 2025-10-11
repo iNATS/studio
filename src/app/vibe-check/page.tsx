@@ -4,6 +4,7 @@ import { VibeCheckTool } from '@/components/VibeCheckTool';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function VibeCheckPage() {
   return (
@@ -11,7 +12,7 @@ export default function VibeCheckPage() {
       <Header />
       <main className="flex-1 p-4 md:p-6 py-12 sm:py-16">
         <div className="container max-w-4xl">
-          <Button asChild className="mb-8 -ml-4 bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
+          <Button asChild className={cn("btn-glass rounded-full text-base mb-8 -ml-4")}>
             <Link href="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Portfolio

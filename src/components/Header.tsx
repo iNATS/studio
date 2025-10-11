@@ -9,6 +9,7 @@ import {
 import { Globe, Menu, Gem } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './ThemeToggle';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const navLinks = [
@@ -86,7 +87,7 @@ export function Header() {
                 <ThemeToggle />
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start backdrop-blur-sm border border-white/20 bg-white/10 hover:bg-white/20">
+                  <Button variant="outline" className={cn("w-full justify-start btn-glass")}>
                     <Globe className="mr-2 h-5 w-5" />
                     <span>Change language</span>
                   </Button>

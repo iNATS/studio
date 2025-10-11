@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 interface ProjectDetailModalProps {
   isOpen: boolean;
@@ -40,13 +41,13 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
             <div className="mt-6 flex justify-between items-center">
                 <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, i) => (
-                    <Button key={i} variant="ghost" size="sm" className="bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border-none text-sm font-medium rounded-full pointer-events-none">
+                    <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
                         {tag}
                     </Button>
                     ))}
                 </div>
                 {project.link && (
-                    <Button asChild className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 ml-4 shrink-0">
+                    <Button asChild className={cn("btn-glass rounded-full text-base ml-4 shrink-0")}>
                         <Link href={project.link} target="_blank">
                         Open Project
                         <ArrowUpRight className="ml-2 h-4 w-4" />

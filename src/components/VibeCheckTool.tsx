@@ -12,11 +12,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Loader2, Upload } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20">
+    <Button type="submit" disabled={pending} className={cn("btn-glass rounded-full text-base w-full sm:w-auto")}>
       {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
       {children}
     </Button>

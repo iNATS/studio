@@ -104,7 +104,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag, i) => (
-              <Button key={i} variant="ghost" size="sm" className="bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border-none text-sm font-medium rounded-full pointer-events-none">
+              <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
                 {tag}
               </Button>
             ))}
@@ -163,32 +163,28 @@ export function Portfolio() {
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('all')}
-            data-active={filter === 'all'}
-            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+            className={cn("btn-glass rounded-full text-base", filter === 'all' && "btn-glass-active")}
           >
             All
           </Button>
           <Button
              variant={filter === 'web' ? 'default' : 'outline'}
-             data-active={filter === 'web'}
-            onClick={() => handleFilterChange('web')}
-            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+             onClick={() => handleFilterChange('web')}
+             className={cn("btn-glass rounded-full text-base", filter === 'web' && "btn-glass-active")}
           >
             Web
           </Button>
           <Button
              variant={filter === 'mobile' ? 'default' : 'outline'}
-             data-active={filter === 'mobile'}
             onClick={() => handleFilterChange('mobile')}
-            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+            className={cn("btn-glass rounded-full text-base", filter === 'mobile' && "btn-glass-active")}
           >
             Mobile
           </Button>
           <Button
             variant={filter === 'design' ? 'default' : 'outline'}
-            data-active={filter === 'design'}
             onClick={() => handleFilterChange('design')}
-            className="rounded-full text-base transition-all duration-300 bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm border border-white/20 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+            className={cn("btn-glass rounded-full text-base", filter === 'design' && "btn-glass-active")}
           >
             Design
           </Button>
@@ -200,7 +196,7 @@ export function Portfolio() {
       </div>
        {visibleCount < filteredItems.length && (
         <div className="mt-12 text-center px-4">
-          <Button onClick={handleLoadMore} size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
+          <Button onClick={handleLoadMore} size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
             Load More
           </Button>
         </div>

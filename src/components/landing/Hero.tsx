@@ -39,10 +39,10 @@ export function Hero() {
             I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.
           </p>
           <div className={cn('flex flex-col gap-4 min-[400px]:flex-row transition-all duration-1000 delay-600', isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4')}>
-            <Button asChild size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
+            <Button asChild size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
               <a href="#contact">Get in Touch</a>
             </Button>
-            <Button asChild variant="outline" size="lg" className="bg-white/10 text-white/90 hover:bg-white/20 rounded-full text-base backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-105 shadow-lg">
+            <Button asChild variant="outline" size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
               <Link href="/vibe-check">
                 Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
