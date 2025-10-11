@@ -76,6 +76,9 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      backgroundImage: {
+        'aurora-gradient': 'conic-gradient(from 180deg at 50% 50%, hsl(var(--primary-rgb) / 0.15) 0deg, hsl(var(--chart-1) / 0.1) 55.42deg, hsl(var(--chart-2) / 0.1) 120.73deg, hsl(var(--chart-3) / 0.1) 154.58deg, hsl(var(--chart-4) / 0.1) 212.4deg, hsl(var(--chart-5) / 0.1) 283.54deg, hsl(var(--primary-rgb) / 0.15) 360deg)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -109,12 +112,17 @@ export default {
           '0%': { opacity: '1', transform: 'translateY(0)' },
           '100%': { opacity: '0', transform: 'translateY(10px)' },
         },
+        'aurora-spin': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in-up': 'fade-in-up 1.5s cubic-bezier(0.16, 1, 0.3, 1) both',
         'fade-out-down': 'fade-out-down 0.5s ease-out forwards',
+        'aurora-spin': 'aurora-spin 20s linear infinite',
       },
     },
   },

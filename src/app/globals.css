@@ -137,6 +137,15 @@ body {
   .dark .btn-glass-active {
     @apply bg-primary text-primary-foreground;
   }
+  .aurora-bg {
+    @apply absolute inset-0 -z-10 overflow-hidden;
+  }
+  .aurora-outer {
+    @apply absolute -inset-64 animate-aurora-spin;
+  }
+  .aurora-inner {
+    @apply absolute inset-64 bg-aurora-gradient;
+  }
 }
 
 @keyframes blob-bounce {
@@ -154,5 +163,14 @@ body {
   }
   100% {
     transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes aurora-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

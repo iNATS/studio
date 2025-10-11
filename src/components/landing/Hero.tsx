@@ -25,6 +25,22 @@ export function Hero() {
       id="home"
       className="relative w-full h-[80vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden"
     >
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-background" />
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 50% 50%, hsl(var(--primary-rgb) / 0.1), transparent 70%)',
+          }}
+        />
+        <div className="aurora-bg">
+          <div className="aurora-outer">
+            <div className="aurora-inner"></div>
+          </div>
+        </div>
+      </div>
+
       <motion.div
         initial="hidden"
         animate={isMounted ? 'visible' : 'hidden'}
