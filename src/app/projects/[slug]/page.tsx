@@ -96,7 +96,7 @@ const ImageLightbox = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-2xl px-4 sm:px-8"
             onClick={onClose}
         >
             <motion.div
@@ -267,7 +267,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
               )}
             </div>
             {project.screenshots && project.screenshots.length > 0 && (
-              <div className="pb-10 px-4 sm:px-10">
+              <div className="pb-10 px-4 sm:px-6 md:px-10">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
                 <Carousel className="w-full max-w-4xl mx-auto">
                   <CarouselContent className="-ml-4">
