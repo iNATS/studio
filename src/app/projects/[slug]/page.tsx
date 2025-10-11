@@ -122,8 +122,8 @@ const ImageLightbox = ({
                     <X className="h-5 w-5" />
                 </Button>
 
-                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden">
-                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl max-h-[90vh]">
+                    <div className="relative flex-grow w-full h-full flex items-center justify-center overflow-hidden">
                         <AnimatePresence initial={false} custom={direction}>
                         <motion.div
                             key={currentImage}
@@ -137,7 +137,7 @@ const ImageLightbox = ({
                                 opacity: { duration: 0.2 },
                                 scale: { duration: 0.3}
                             }}
-                            className="absolute w-full h-full flex items-center justify-center"
+                            className="absolute inset-0 flex items-center justify-center p-4"
                         >
                             <Image
                                 src={currentImage}
