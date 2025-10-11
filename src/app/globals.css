@@ -86,7 +86,8 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    /* @apply bg-background text-foreground; */
+    @apply text-foreground;
   }
   .container {
     @apply pr-0;
@@ -105,5 +106,38 @@ body {
   }
   .animation-delay-800 {
     animation-delay: 800ms;
+  }
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, hsl(var(--border) / 0.2) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.2) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+  }
+  .blob-c {
+    @apply absolute -z-10 rounded-full opacity-50 mix-blend-soft-light blur-2xl filter;
+    animation: blob-bounce 25s infinite alternate;
+  }
+  .blob-c:nth-child(2) {
+    @apply -bottom-1/4 -left-1/4 h-64 w-64 bg-cyan-400;
+  }
+  .blob-c:nth-child(3) {
+    @apply -right-1/4 -top-1/4 h-72 w-72 bg-fuchsia-400;
+  }
+}
+
+@keyframes blob-bounce {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  25% {
+    transform: translate(30vw, 15vh) scale(1.1);
+  }
+  50% {
+    transform: translate(60vw, 20vh) scale(1.2);
+  }
+  75% {
+    transform: translate(20vw, 80vh) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
   }
 }
