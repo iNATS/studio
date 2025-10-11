@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { motion } from 'framer-motion';
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
   const project = portfolioItems.find(p => p.slug === params.slug);
@@ -17,10 +18,38 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
     notFound();
   }
 
+  const pageVariants = {
+    initial: {
+      opacity: 0,
+      y: 20,
+    },
+    in: {
+      opacity: 1,
+      y: 0,
+    },
+    out: {
+      opacity: 0,
+      y: -20,
+    },
+  };
+
+  const pageTransition = {
+    type: 'tween',
+    ease: 'anticipate',
+    duration: 0.75,
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1 w-full pt-24 sm:pt-32 pb-24">
+      <motion.main
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="flex-1 w-full pt-24 sm:pt-32 pb-24"
+      >
         <div className="container max-w-5xl mx-auto px-4">
           <Button asChild className={cn("btn-glass rounded-full text-base mb-8")}>
             <Link href="/#projects">
@@ -87,7 +116,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
-      </main>
+      </motion.main>
       <Footer />
     </div>
   );
