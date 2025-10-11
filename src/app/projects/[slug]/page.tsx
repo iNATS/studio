@@ -69,12 +69,6 @@ const ImageLightbox = ({
       );
     };
     
-    const handleThumbnailClick = (index: number) => {
-      if (currentIndex === null) return;
-      setDirection(index > currentIndex ? 1 : -1);
-      setCurrentIndex(index);
-    }
-  
     const currentImage = images[currentIndex!];
   
     const variants = {
@@ -110,7 +104,7 @@ const ImageLightbox = ({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="relative w-full h-full flex flex-col items-center justify-center"
+                className="relative w-full h-full flex flex-col items-center justify-center p-4 sm:p-8 md:p-16"
                 onClick={(e) => e.stopPropagation()}
             >
                 <Button
@@ -122,7 +116,7 @@ const ImageLightbox = ({
                     <X className="h-5 w-5" />
                 </Button>
 
-                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl max-h-[90vh]">
+                <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl">
                     <div className="relative flex-grow flex items-center justify-center overflow-hidden">
                         <AnimatePresence initial={false} custom={direction}>
                         <motion.div
@@ -137,7 +131,7 @@ const ImageLightbox = ({
                                 opacity: { duration: 0.2 },
                                 scale: { duration: 0.3}
                             }}
-                            className="absolute w-full h-full flex items-center justify-center"
+                            className="relative w-full h-full"
                         >
                             <Image
                                 src={currentImage}
@@ -173,24 +167,6 @@ const ImageLightbox = ({
                 >
                     <ChevronRight className="h-6 w-6" />
                 </Button>
-                
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-                    <div className="flex gap-3 p-2 bg-black/30 backdrop-blur-xl rounded-full border border-white/10 shadow-lg">
-                    {images.map((img, index) => (
-                    <div
-                        key={index}
-                        onClick={() => handleThumbnailClick(index)}
-                        className={cn(
-                            "relative h-10 w-16 rounded-lg overflow-hidden cursor-pointer transition-all duration-300",
-                            "border-2",
-                            currentIndex === index ? "border-primary shadow-lg scale-105" : "border-transparent opacity-60 hover:opacity-100 hover:border-white/30",
-                        )}
-                    >
-                        <Image src={img} alt={`thumbnail ${index + 1}`} fill className="object-cover" />
-                    </div>
-                    ))}
-                </div>
-                </div>
             </motion.div>
         </motion.div>
     );
