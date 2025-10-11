@@ -34,19 +34,19 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
             <div>
               <DialogHeader className="text-left">
                 <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
-                <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-48 overflow-y-auto">
+                <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-60 overflow-y-auto">
                   {project.description}
                 </DialogDescription>
               </DialogHeader>
-              <div className="mt-6 flex flex-wrap gap-2">
-                  {project.tags.map((tag, i) => (
-                  <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
-                      {tag}
-                  </Button>
-                  ))}
-              </div>
             </div>
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag, i) => (
+                    <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
+                        {tag}
+                    </Button>
+                    ))}
+                </div>
                 {project.link && (
                     <Button asChild className={cn("btn-glass rounded-full text-base")}>
                         <Link href={project.link} target="_blank">
