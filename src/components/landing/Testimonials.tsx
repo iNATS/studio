@@ -106,7 +106,7 @@ export function Testimonials() {
                       <Quote className="absolute top-4 left-4 h-12 w-12 text-primary/10" />
                       <p className="relative z-10 text-foreground/80 dark:text-white/80 leading-relaxed pt-8">"{testimonial.feedback}"</p>
                     </CardContent>
-                    <CardHeader className="flex flex-row items-center gap-4 pt-0 p-6 bg-foreground/5 dark:bg-white/5 border-t border-border/50 dark:border-white/10">
+                    <CardHeader className="flex flex-row items-center gap-4 p-6 pt-4">
                       <Avatar className="w-12 h-12 border-2 border-border/80 dark:border-white/20">
                         <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                         <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
