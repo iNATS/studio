@@ -145,34 +145,33 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                     </Button>
                  </div>
               )}
-
-              {project.screenshots && project.screenshots.length > 0 && (
-                <div>
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
-                  <Carousel className="w-full max-w-xl mx-auto">
-                    <CarouselContent>
-                        {project.screenshots.map((screenshot, index) => (
-                        <CarouselItem key={index}>
-                            <div 
-                                className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer"
-                                onClick={() => setLightboxImage(screenshot)}
-                            >
-                                <Image
-                                    src={screenshot}
-                                    alt={`${project.title} screenshot ${index + 1}`}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            </div>
-                        </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                    </Carousel>
-                </div>
-              )}
             </div>
+            {project.screenshots && project.screenshots.length > 0 && (
+              <div className="py-10">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl font-headline text-center mb-8">Project Gallery</h2>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                      {project.screenshots.map((screenshot, index) => (
+                      <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/2">
+                          <div 
+                              className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer mx-4"
+                              onClick={() => setLightboxImage(screenshot)}
+                          >
+                              <Image
+                                  src={screenshot}
+                                  alt={`${project.title} screenshot ${index + 1}`}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                          </div>
+                      </CarouselItem>
+                      ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-8" />
+                  <CarouselNext className="right-8" />
+                  </Carousel>
+              </div>
+            )}
           </div>
         </div>
       </motion.main>
