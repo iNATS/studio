@@ -24,7 +24,7 @@ export function About() {
         <div className="grid md:grid-cols-3 gap-12 items-start">
           <div className="flex flex-col items-center text-center md:col-span-1">
             <Avatar className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-border/80 dark:border-white/20 shadow-2xl mb-4">
-              <AvatarImage src="https://picsum.photos/seed/avatar/200/200" alt="Mohamed Aref" />
+              <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Mohamed Aref" />
               <AvatarFallback>MA</AvatarFallback>
             </Avatar>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">Mohamed Aref</h2>
