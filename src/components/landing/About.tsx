@@ -24,7 +24,7 @@ export function About() {
         <div className="grid md:grid-cols-3 gap-12 items-start">
           <div className="flex flex-col items-center text-center md:col-span-1">
             <Avatar className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-border/80 dark:border-white/20 shadow-2xl mb-4">
-              <AvatarImage src="https://storage.googleapis.com/project-spark-315183332029-output/user/e8cb1d15_1e96_4e86_a088_33c9472f88a8.jpg" alt="Mohamed Aref" />
+              <AvatarImage src="https://firebasestudio.app/assets/memoji-working.png" alt="Mohamed Aref" />
               <AvatarFallback>MA</AvatarFallback>
             </Avatar>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">Mohamed Aref</h2>
@@ -48,7 +48,7 @@ export function About() {
                     'Genkit', 'TensorFlow', 'Python',
                     'Git', 'CI/CD', 'Agile'
                 ].map(skill => (
-                    <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
+                    <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none h-7 px-3">
                         {skill}
                     </Button>
                 ))}
