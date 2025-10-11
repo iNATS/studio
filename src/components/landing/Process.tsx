@@ -7,7 +7,6 @@ import { useInView } from '@/hooks/use-in-view';
 import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 const processSteps = [
     {
@@ -71,7 +70,7 @@ export function Process() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
                     {processSteps.map((step, index) => {
                         const Icon = step.icon;
                         const stepRef = useRef<HTMLDivElement>(null);
@@ -84,24 +83,21 @@ export function Process() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={stepInView ? { opacity: 1, y: 0 } : {}}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                                className="flex items-start gap-4"
                             >
-                                <Card className="h-full bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl shadow-md hover:shadow-xl hover:border-border/60 dark:hover:border-white/20 transition-all duration-300">
-                                    <CardHeader className="flex flex-row items-center gap-4">
-                                        <div className={cn(
-                                            "flex h-12 w-12 items-center justify-center rounded-xl border bg-background/50 shadow-inner-lg",
-                                            step.color
-                                        )}>
-                                            <Icon className="h-6 w-6" />
-                                        </div>
-                                        <CardTitle className="text-lg font-bold font-headline">
-                                            <span className="text-primary/40 mr-2">0{index + 1}</span>
-                                            {step.title}
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-muted-foreground">{step.description}</p>
-                                    </CardContent>
-                                </Card>
+                                <div className={cn(
+                                    "flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border bg-background/50 shadow-inner-lg",
+                                    step.color
+                                )}>
+                                    <Icon className="h-6 w-6" />
+                                </div>
+                                <div className="space-y-1">
+                                  <h3 className="text-lg font-bold font-headline">
+                                      <span className="text-primary/40 mr-2">0{index + 1}</span>
+                                      {step.title}
+                                  </h3>
+                                  <p className="text-muted-foreground">{step.description}</p>
+                                </div>
                             </motion.div>
                         );
                     })}
