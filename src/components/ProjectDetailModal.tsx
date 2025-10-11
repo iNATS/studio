@@ -28,13 +28,13 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
             className="object-cover"
             data-ai-hint={project.hint}
           />
-           <div className="absolute inset-0 bg-black/30" />
+           <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
         </div>
         <div className="relative flex flex-col justify-end h-full p-6 md:p-10">
-          <div className="bg-black/40 dark:bg-black/50 backdrop-blur-2xl p-6 md:p-8 rounded-2xl border border-white/10 shadow-xl ring-1 ring-black/10">
+          <div className="bg-background/40 dark:bg-black/50 backdrop-blur-2xl p-6 md:p-8 rounded-2xl border border-foreground/10 shadow-xl ring-1 ring-black/10">
             <DialogHeader className="text-left">
-              <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-white">{project.title}</DialogTitle>
-              <DialogDescription className="text-white/80 text-base sm:text-lg leading-relaxed max-h-48 overflow-y-auto pt-4">
+              <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
+              <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed max-h-48 overflow-y-auto pt-4">
                 {project.description}
               </DialogDescription>
             </DialogHeader>
