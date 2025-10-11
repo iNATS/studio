@@ -126,7 +126,7 @@ body {
     @apply backdrop-blur-sm border transition-all duration-300;
   }
   .btn-glass {
-    @apply bg-black/5 text-foreground/80 border-black/10 hover:bg-black/10 hover:text-foreground;
+    @apply bg-black/5 text-foreground/80 border-black/10 hover:bg-black/10 hover:text-white;
   }
   .dark .btn-glass {
     @apply bg-white/10 text-white/80 border-white/20 hover:bg-white/20 hover:text-white;
