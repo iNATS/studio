@@ -22,22 +22,22 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full h-screen flex items-center justify-start text-left overflow-hidden px-4 sm:px-6 lg:px-8"
+      className="relative w-full h-screen flex items-center justify-center text-center overflow-hidden px-4 sm:px-6 lg:px-8"
     >
       <motion.div
         initial="hidden"
         animate={isMounted ? 'visible' : 'hidden'}
         transition={{ staggerChildren: 0.2, delayChildren: 0.2 }}
-        className="relative z-10 flex flex-col items-start space-y-6 max-w-3xl"
+        className="relative z-10 flex flex-col items-center space-y-6 max-w-4xl"
       >
         <motion.div 
           variants={FADE_UP_VARIANTS} 
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
-          <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline">
+          <h1 className="text-5xl font-bold tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl font-headline">
             Mohamed Aref
           </h1>
-          <p className="text-xl md:text-2xl font-medium text-muted-foreground mt-3">
+          <p className="text-xl md:text-2xl font-medium text-muted-foreground mt-4">
             Creative Developer & Designer
           </p>
         </motion.div>
@@ -51,7 +51,7 @@ export function Hero() {
         <motion.div
           variants={FADE_UP_VARIANTS}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="flex flex-col gap-4 min-[400px]:flex-row"
+          className="flex flex-col gap-4 min-[400px]:flex-row pt-4"
         >
           <Button asChild size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
             <a href="#contact">Get in Touch</a>
