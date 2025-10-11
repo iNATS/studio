@@ -7,6 +7,7 @@ import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ScrollArea, ScrollBar } from './ui/scroll-area';
 
 interface ProjectDetailModalProps {
   isOpen: boolean;
@@ -30,31 +31,33 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
               data-ai-hint={project.hint}
             />
           </div>
-          <div className="flex flex-col justify-between p-6 sm:p-10">
-            <div>
+          <div className="flex flex-col">
+            <div className="p-6 sm:p-10 flex-grow">
               <DialogHeader className="text-left">
                 <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
-                <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-60 overflow-y-auto">
-                  {project.description}
-                </DialogDescription>
               </DialogHeader>
+              <DialogDescription className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-48 overflow-y-auto">
+                {project.description}
+              </DialogDescription>
             </div>
-            <div className="mt-8 flex items-center justify-between">
-                <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, i) => (
-                    <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
-                        {tag}
-                    </Button>
-                    ))}
-                </div>
-                {project.link && (
-                    <Button asChild className={cn("btn-glass rounded-full text-base")}>
-                        <Link href={project.link} target="_blank">
-                        Open Project
-                        <ArrowUpRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                )}
+            
+            <div className="px-6 sm:px-10 pb-6">
+              <div className="flex flex-wrap gap-2 mb-8">
+                {project.tags.map((tag, i) => (
+                  <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
+                      {tag}
+                  </Button>
+                ))}
+              </div>
+
+              {project.link && (
+                  <Button asChild className={cn("btn-glass rounded-full text-base w-full")}>
+                      <Link href={project.link} target="_blank">
+                      Open Project
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                      </Link>
+                  </Button>
+              )}
             </div>
           </div>
         </div>
