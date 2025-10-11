@@ -162,7 +162,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 export function Portfolio() {
   const [filter, setFilter] = useState('all');
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(4);
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.05 });
   const [cardsVisible, setCardsVisible] = useState(false);
@@ -178,7 +178,7 @@ export function Portfolio() {
 
   const handleFilterChange = (newFilter: string) => {
     if (filter === newFilter) return;
-    setVisibleCount(6); // Reset visible count on filter change
+    setVisibleCount(4); // Reset visible count on filter change
     setCardsVisible(false);
     setTimeout(() => {
       setFilter(newFilter);
