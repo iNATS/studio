@@ -3,8 +3,9 @@
 import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
-import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, Mail, Phone } from 'lucide-react';
+import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const processSteps = [
     {
@@ -96,22 +97,14 @@ export function Process() {
                     <div className="flex flex-col items-center justify-center text-center p-8 bg-foreground/5 dark:bg-white/5 rounded-2xl border border-border/20 dark:border-white/10">
                         <h3 className="font-bold tracking-tighter font-headline text-2xl mb-4">Let's work together</h3>
                         <p className="text-muted-foreground mb-8">
-                            Ready to start your next project? I'm just an email or a call away.
+                            Ready to start your next project? I'm excited to hear your ideas.
                         </p>
-                        <div className="flex flex-col gap-4 w-full max-w-xs">
-                             <Button asChild variant="outline" size="lg" className="justify-start backdrop-blur-lg border-border text-foreground hover:bg-accent/80 transition-all duration-300 shadow-sm">
-                                <a href="mailto:hello@mohamedaref.com">
-                                    <Mail className="mr-3 h-5 w-5 text-primary" />
-                                    <span>hello@mohamedaref.com</span>
-                                </a>
+                        <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg w-full max-w-xs">
+                                <Link href="#contact">
+                                    Let's Talk
+                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                </Link>
                             </Button>
-                             <Button asChild variant="outline" size="lg" className="justify-start backdrop-blur-lg border-border text-foreground hover:bg-accent/80 transition-all duration-300 shadow-sm">
-                                <a href="tel:+1234567890">
-                                    <Phone className="mr-3 h-5 w-5 text-primary" />
-                                    <span>+1 (234) 567-890</span>
-                                </a>
-                            </Button>
-                        </div>
                     </div>
                 </div>
             </div>
