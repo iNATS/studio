@@ -54,7 +54,7 @@ export function Hero() {
               transition={{ duration: 0.7, ease: 'easeOut' }}
             >
                 <Image
-                    src="https://firebasestudio.app/assets/memoji-waving.png"
+                    src=""
                     alt="Mohamed Aref Memoji"
                     fill
                     className="object-contain rounded-full"
