@@ -23,10 +23,12 @@ const ImageLightbox = ({
     images,
     startIndex,
     onClose,
+    project
   }: {
     images: string[] | undefined;
     startIndex: number | null;
     onClose: () => void;
+    project: PortfolioItem | null;
   }) => {
     const [currentIndex, setCurrentIndex] = useState(startIndex);
     const [direction, setDirection] = useState(0);
@@ -51,7 +53,7 @@ const ImageLightbox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex]);
   
-    if (startIndex === null || !images || images.length === 0) {
+    if (startIndex === null || !images || images.length === 0 || !project) {
       return null;
     }
   
@@ -72,24 +74,21 @@ const ImageLightbox = ({
     const currentImage = images[currentIndex!];
   
     const variants = {
-      enter: (direction: number) => ({
-        x: direction > 0 ? '100%' : '-100%',
-        opacity: 0,
-        scale: 0.95
-      }),
-      center: {
-        zIndex: 1,
-        x: 0,
-        opacity: 1,
-        scale: 1
-      },
-      exit: (direction: number) => ({
-        zIndex: 0,
-        x: direction < 0 ? '100%' : '-100%',
-        opacity: 0,
-        scale: 0.95
-      }),
-    };
+        enter: (direction: number) => ({
+          x: direction > 0 ? '100%' : '-100%',
+          opacity: 0,
+        }),
+        center: {
+          zIndex: 1,
+          x: 0,
+          opacity: 1,
+        },
+        exit: (direction: number) => ({
+          zIndex: 0,
+          x: direction < 0 ? '100%' : '-100%',
+          opacity: 0,
+        }),
+      };
   
     return (
         <motion.div
@@ -116,44 +115,46 @@ const ImageLightbox = ({
                     <X className="h-5 w-5" />
                 </Button>
 
-                <motion.div 
-                  className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden flex flex-col w-full h-full max-w-7xl"
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                >
-                    <div className="relative flex-grow flex items-center justify-center overflow-hidden">
-                        <AnimatePresence initial={false} custom={direction}>
+                <div className="relative flex-grow flex items-center justify-center overflow-hidden w-full max-w-7xl">
+                    <AnimatePresence initial={false} custom={direction}>
                         <motion.div
-                            key={currentImage}
+                            key={currentIndex}
+                            className="w-full h-full flex items-center justify-center"
                             custom={direction}
                             variants={variants}
                             initial="enter"
                             animate="center"
                             exit="exit"
                             transition={{
-                                x: { type: 'spring', stiffness: 300, damping: 30 },
-                                opacity: { duration: 0.2 },
-                                scale: { duration: 0.3}
+                            x: { type: 'spring', stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 },
                             }}
-                            className="relative flex-grow w-full h-full"
                         >
-                            <Image
-                                src={currentImage}
-                                alt="Project screenshot"
-                                fill
-                                className="object-cover"
-                            />
+                            <motion.div 
+                                className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg overflow-hidden w-full h-full max-w-7xl flex items-center justify-center"
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeOut' }}
+                                >
+                                <div className="relative w-full h-full flex-grow">
+                                <Image
+                                    src={currentImage}
+                                    alt="Project screenshot"
+                                    fill
+                                    className="object-cover"
+                                />
+                                </div>
+                            </motion.div>
                         </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </motion.div>
+                    </AnimatePresence>
+                </div>
+
 
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+                    className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
                     onClick={(e) => {
                     e.stopPropagation();
                     handlePrev();
@@ -165,7 +166,7 @@ const ImageLightbox = ({
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
+                    className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 rounded-full h-12 w-12 text-white bg-white/10 hover:bg-white/20"
                     onClick={(e) => {
                     e.stopPropagation();
                     handleNext();
@@ -287,8 +288,8 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                       </CarouselItem>
                       ))}
                   </CarouselContent>
-                  <CarouselPrevious className="-left-4 sm:-left-12" />
-                  <CarouselNext className="-right-4 sm:-right-12" />
+                  <CarouselPrevious className="left-2 sm:-left-8" />
+                  <CarouselNext className="right-2 sm:-right-8" />
                   </Carousel>
               </div>
             )}
@@ -301,7 +302,8 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
             <ImageLightbox 
                 images={project.screenshots} 
                 startIndex={lightboxIndex} 
-                onClose={() => setLightboxIndex(null)} 
+                onClose={() => setLightboxIndex(null)}
+                project={project}
             />
         )}
       </AnimatePresence>
