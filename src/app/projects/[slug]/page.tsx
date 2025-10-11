@@ -34,7 +34,7 @@ const ImageLightbox = ({ imageUrl, onClose }: { imageUrl: string | null; onClose
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
-            className="relative w-[90vw] h-[90vh] shadow-2xl"
+            className="relative w-[90vw] h-[90vh] shadow-2xl rounded-2xl overflow-hidden border-2 border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
