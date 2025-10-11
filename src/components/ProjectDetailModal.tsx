@@ -7,7 +7,6 @@ import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { ScrollArea, ScrollBar } from './ui/scroll-area';
 
 interface ProjectDetailModalProps {
   isOpen: boolean;
@@ -36,7 +35,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
               <DialogHeader className="text-left">
                 <DialogTitle className="text-3xl md:text-4xl font-bold font-headline text-foreground">{project.title}</DialogTitle>
               </DialogHeader>
-              <DialogDescription asChild className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4 max-h-48 overflow-y-auto">
+              <DialogDescription asChild className="text-foreground/80 text-base sm:text-lg leading-relaxed pt-4">
                 <div>
                   {project.description}
                   <div className="flex flex-wrap gap-2 mt-4">
