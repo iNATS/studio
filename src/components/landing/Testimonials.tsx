@@ -101,7 +101,7 @@ export function Testimonials() {
             {testimonials.map((testimonial, index) => (
               <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full mx-auto max-w-[400px]">
-                  <Card className="h-full flex flex-col justify-between bg-card/40 dark:bg-white/5 backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border/60 dark:hover:border-white/20 overflow-hidden">
+                  <Card className="h-full flex flex-col justify-between backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border/60 dark:hover:border-white/20 overflow-hidden">
                     <CardContent className="p-6 flex-grow relative">
                       <Quote className="absolute top-4 left-4 h-12 w-12 text-primary/10" />
                       <p className="relative z-10 text-foreground/80 dark:text-white/80 leading-relaxed pt-8">"{testimonial.feedback}"</p>
