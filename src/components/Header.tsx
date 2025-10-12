@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,19 +12,22 @@ import { Globe, Menu, Gem } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/utils';
+import { useActiveSection } from '@/hooks/use-active-section';
 
 export function Header() {
   const navLinks = [
-    { href: '/#projects', label: 'Projects' },
-    { href: '/#about', label: 'About' },
-    { href: '/#process', label: 'Process' },
-    { href: '/#testimonials', label: 'Testimonials' },
-    { href: '/#contact', label: 'Contact' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#about', label: 'About' },
+    { href: '#process', label: 'Process' },
+    { href: '#testimonials', label: 'Testimonials' },
+    { href: '#contact', label: 'Contact' },
   ];
+
+  const activeSection = useActiveSection(navLinks.map(l => l.href.substring(1)));
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-fit mx-auto">
-      <div className="hidden md:flex items-center justify-center p-2 rounded-full bg-background/60 backdrop-blur-sm border border-border/40 shadow-lg">
+      <div className="hidden md:flex items-center justify-center p-2 rounded-full shadow-lg backdrop-blur-lg bg-background/70 dark:bg-background/50 border border-foreground/10">
         <Link href="/" className="mr-4 flex items-center space-x-2 px-2">
           <Gem className="h-6 w-6 text-primary" />
         </Link>
@@ -33,9 +38,12 @@ export function Header() {
               key={link.href}
               variant="ghost"
               asChild
-              className="rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground"
+              className={cn(
+                "rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground transition-colors px-4 py-2",
+                activeSection === link.href.substring(1) && "bg-foreground/10 text-foreground"
+              )}
             >
-              <Link href={link.href} className="transition-colors px-4 py-2">
+              <Link href={link.href}>
                 {link.label}
               </Link>
             </Button>

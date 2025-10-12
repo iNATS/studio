@@ -195,7 +195,7 @@ export function Portfolio() {
 
   return (
     <>
-    <section id="projects" ref={sectionRef} className="py-24 sm:py-32">
+    <section id="projects" ref={sectionRef} className="py-24 sm:py-32 scroll-mt-20">
        <div className={cn("px-4", inView ? 'animate-fade-in-up' : 'opacity-0')}>
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline text-center">My Work</h2>
         <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-center mt-4">
@@ -204,30 +204,30 @@ export function Portfolio() {
       </div>
       <div className={cn("flex justify-center flex-wrap mt-8 gap-2 px-4", inView ? 'animate-fade-in-up' : 'opacity-0')} style={{ animationDelay: '200ms' }}>
           <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
+            variant="ghost"
             onClick={() => handleFilterChange('all')}
-            className={cn("btn-glass rounded-full text-base", filter === 'all' && "btn-glass-active")}
+            className={cn("btn-glass rounded-full text-base", filter === 'all' ? "btn-glass-active" : "")}
           >
             All
           </Button>
           <Button
-             variant={filter === 'web' ? 'default' : 'outline'}
+             variant="ghost"
              onClick={() => handleFilterChange('web')}
-             className={cn("btn-glass rounded-full text-base", filter === 'web' && "btn-glass-active")}
+             className={cn("btn-glass rounded-full text-base", filter === 'web' ? "btn-glass-active" : "")}
           >
             Web
           </Button>
           <Button
-             variant={filter === 'mobile' ? 'default' : 'outline'}
+            variant="ghost"
             onClick={() => handleFilterChange('mobile')}
-            className={cn("btn-glass rounded-full text-base", filter === 'mobile' && "btn-glass-active")}
+            className={cn("btn-glass rounded-full text-base", filter === 'mobile' ? "btn-glass-active" : "")}
           >
             Mobile
           </Button>
           <Button
-            variant={filter === 'design' ? 'default' : 'outline'}
+            variant="ghost"
             onClick={() => handleFilterChange('design')}
-            className={cn("btn-glass rounded-full text-base", filter === 'design' && "btn-glass-active")}
+            className={cn("btn-glass rounded-full text-base", filter === 'design' ? "btn-glass-active" : "")}
           >
             Design
           </Button>
