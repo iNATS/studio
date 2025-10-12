@@ -82,10 +82,10 @@ export function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut', delay: 0.6 }}
           className="flex flex-col gap-4 min-[400px]:flex-row pt-8"
         >
-          <Button asChild size="lg" className="rounded-full text-base hover:scale-105 shadow-lg">
+          <Button asChild size="lg" className="rounded-full text-base shadow-lg">
               <a href="#contact">Get in Touch</a>
           </Button>
-          <Button asChild variant="outline" size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
+          <Button asChild variant="outline" size="lg" className="btn-glass rounded-full text-base shadow-lg">
               <a href="#projects">
               View My Work <ArrowRight className="ml-2 h-4 w-4" />
               </a>
