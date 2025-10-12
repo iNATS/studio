@@ -86,9 +86,9 @@ export function Hero() {
               <a href="#contact">Get in Touch</a>
           </Button>
           <Button asChild variant="outline" size="lg" className="btn-glass rounded-full text-base hover:scale-105 shadow-lg">
-              <Link href="/vibe-check">
-              Try AI Vibe Check <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              <a href="#projects">
+              View My Work <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
           </Button>
         </motion.div>
       </motion.div>
