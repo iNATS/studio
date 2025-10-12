@@ -110,7 +110,7 @@ export function SocialFab() {
           asChild
           size="icon"
           className={cn(
-            'rounded-full w-14 h-14 bg-background/60 backdrop-blur-sm border border-border/40 text-foreground shadow-lg transition-all duration-300 ease-in-out hover:scale-105',
+            'rounded-full w-14 h-14 bg-background/60 backdrop-blur-sm border border-border/40 text-foreground shadow-lg transition-all duration-300 ease-in-out',
             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
           )}
           style={{ transitionDelay: isOpen ? `${index * 50}ms` : `${(socialLinks.length - index - 1) * 50}ms` }}

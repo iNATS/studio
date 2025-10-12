@@ -239,7 +239,7 @@ export function Portfolio() {
       </div>
        {visibleCount < filteredItems.length && (
         <div className="mt-12 text-center px-4">
-          <Button onClick={handleLoadMore} size="lg" className="rounded-full text-base hover:scale-105 shadow-lg">
+          <Button onClick={handleLoadMore} size="lg" className="rounded-full text-base shadow-lg">
             Load More
           </Button>
         </div>
