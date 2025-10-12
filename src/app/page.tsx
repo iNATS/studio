@@ -21,7 +21,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={cn('flex min-h-screen flex-col bg-background', !isMounted && 'opacity-0')}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className={cn('flex min-h-screen flex-col bg-background', !isMounted && 'opacity-0')}
+    >
       <Header />
       <main className="flex-1 w-full">
         <Hero />
@@ -41,6 +46,6 @@ export default function Home() {
       </main>
       <SocialFab />
       <Footer />
-    </div>
+    </motion.div>
   );
 }
