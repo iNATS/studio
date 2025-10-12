@@ -12,7 +12,7 @@ import { Globe, Menu, Gem } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useActiveSection } from '@/hooks/use-active-section';
 
 export function Header() {
   const navLinks = [
@@ -24,20 +24,7 @@ export function Header() {
     { href: '#contact', label: 'Contact' },
   ];
 
-  const [activeSection, setActiveSection] = useState('#home');
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setActiveSection(window.location.hash || '#home');
-    };
-
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
+  const activeSection = useActiveSection(navLinks.map(l => l.href.substring(1)));
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-fit mx-auto">
@@ -54,7 +41,7 @@ export function Header() {
               asChild
               className={cn(
                 "rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground transition-colors px-4 py-2",
-                activeSection === link.href && "bg-foreground/10 text-foreground"
+                `#${activeSection}` === link.href && "bg-foreground/10 text-foreground"
               )}
             >
               <Link href={link.href}>
