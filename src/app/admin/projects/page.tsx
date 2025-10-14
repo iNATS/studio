@@ -26,7 +26,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { portfolioItems } from '@/components/landing/Portfolio';
+import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import Image from 'next/image';
 import {
   Dialog,
@@ -41,6 +41,30 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
+  const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
+
+  const handleEdit = (project: PortfolioItem) => {
+    setEditingProject(project);
+  };
+
+  const closeEditDialog = () => {
+    setEditingProject(null);
+  };
+  
+  const getProjectForForm = (project: PortfolioItem | null) => {
+    if (!project) return undefined;
+    
+    // The form expects tags as a string, and image/screenshots as File objects or null.
+    // When editing, we don't have the original files, so we'll pass undefined
+    // and rely on the user to re-upload if they want to change them.
+    // The original image URLs will still be displayed in the table.
+    return {
+      ...project,
+      tags: project.tags.join(', '),
+      image: undefined,
+      screenshots: undefined,
+    }
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-6 w-full">
@@ -68,11 +92,34 @@ export default function AdminProjectsPage() {
                 <div className="pr-6">
                     <ProjectForm
                     onSubmit={(values) => {
-                        console.log(values);
+                        console.log('Adding project:', values);
                         setIsAddDialogOpen(false);
                     }}
                     />
                 </div>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Project Dialog */}
+        <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>Edit Project</DialogTitle>
+              <DialogDescription>
+                Update the details of your project below.
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="flex-grow min-h-0">
+              <div className="pr-6">
+                <ProjectForm
+                  project={getProjectForForm(editingProject)}
+                  onSubmit={(values) => {
+                    console.log('Editing project:', values);
+                    closeEditDialog();
+                  }}
+                />
+              </div>
             </ScrollArea>
           </DialogContent>
         </Dialog>
@@ -159,7 +206,7 @@ export default function AdminProjectsPage() {
                         className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
                         <DropdownMenuItem>View</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white">
                           Delete
