@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,13 +37,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ProjectForm } from '@/components/admin/ProjectForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
+  const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -52,14 +62,18 @@ export default function AdminProjectsPage() {
   const closeEditDialog = () => {
     setEditingProject(null);
   };
+
+  const handleDeleteConfirm = () => {
+    if (projectToDelete) {
+      console.log('Deleting project:', projectToDelete.title);
+      // Here you would add the actual logic to delete the project
+      setProjectToDelete(null); // Close the dialog
+    }
+  };
   
   const getProjectForForm = (project: PortfolioItem | null) => {
     if (!project) return undefined;
     
-    // The form expects tags as a string, and image/screenshots as File objects or null.
-    // When editing, we don't have the original files, so we'll pass undefined
-    // and rely on the user to re-upload if they want to change them.
-    // The original image URLs will still be displayed in the table.
     return {
       ...project,
       tags: project.tags.join(', '),
@@ -93,10 +107,10 @@ export default function AdminProjectsPage() {
             <ScrollArea className="flex-grow min-h-0">
                 <div className="pr-6 space-y-6">
                     <ProjectForm
-                    onSubmit={(values) => {
-                        console.log('Adding project:', values);
-                        setIsAddDialogOpen(false);
-                    }}
+                      onSubmit={(values) => {
+                          console.log('Adding project:', values);
+                          setIsAddDialogOpen(false);
+                      }}
                     />
                 </div>
             </ScrollArea>
@@ -125,6 +139,30 @@ export default function AdminProjectsPage() {
             </ScrollArea>
           </DialogContent>
         </Dialog>
+
+         {/* Delete Confirmation Dialog */}
+         <AlertDialog open={!!projectToDelete} onOpenChange={(isOpen) => !isOpen && setProjectToDelete(null)}>
+          <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the
+                project "{projectToDelete?.title}" from your portfolio.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel asChild>
+                <Button variant="ghost" className="rounded-lg">Cancel</Button>
+              </AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button variant="destructive" onClick={handleDeleteConfirm} className="rounded-lg">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Yes, delete it
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
@@ -210,7 +248,7 @@ export default function AdminProjectsPage() {
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => window.open(`/projects/${project.slug}`, '_blank')}>View</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white">
+                        <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => setProjectToDelete(project)}>
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
