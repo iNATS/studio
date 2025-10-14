@@ -70,14 +70,14 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 10% 3.9%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 0 0% 98%;
+    --sidebar-background: 225 15% 12%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 210 90% 60%;
+    --sidebar-primary-foreground: 210 20% 10%;
+    --sidebar-accent: 225 15% 18%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 225 15% 20%;
+    --sidebar-ring: 210 90% 70%;
   }
 }
 
