@@ -95,7 +95,7 @@ export default function AdminLayout({
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <div className="flex-1 w-full h-full p-4 pt-16 sm:p-8 sm:pt-8">
+          <div className="flex-1 w-full h-full p-4 pt-16 sm:p-6 md:p-8">
             {children}
           </div>
         </SidebarInset>
