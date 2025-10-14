@@ -100,7 +100,7 @@ export default function AdminProjectsPage() {
               Add Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
             <DialogHeader>
               <DialogTitle>Add New Project</DialogTitle>
               <DialogDescription>
@@ -122,7 +122,7 @@ export default function AdminProjectsPage() {
 
         {/* Edit Project Dialog */}
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
-           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
+           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
               <DialogDescription>
@@ -157,11 +157,9 @@ export default function AdminProjectsPage() {
               <AlertDialogCancel asChild>
                 <Button variant="ghost" className="rounded-lg">Cancel</Button>
               </AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm} asChild>
-                <Button variant="destructive" className="rounded-lg">
+              <AlertDialogAction onClick={handleDeleteConfirm} className="rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Yes, delete it
-                </Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
