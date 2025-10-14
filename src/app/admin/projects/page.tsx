@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -96,7 +95,7 @@ export default function AdminProjectsPage() {
               Add Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Project</DialogTitle>
               <DialogDescription>
@@ -104,39 +103,31 @@ export default function AdminProjectsPage() {
                 portfolio.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="flex-grow min-h-0">
-                <div className="pr-6 space-y-6">
-                    <ProjectForm
-                      onSubmit={(values) => {
-                          console.log('Adding project:', values);
-                          setIsAddDialogOpen(false);
-                      }}
-                    />
-                </div>
-            </ScrollArea>
+            <ProjectForm
+              onSubmit={(values) => {
+                  console.log('Adding project:', values);
+                  setIsAddDialogOpen(false);
+              }}
+            />
           </DialogContent>
         </Dialog>
 
         {/* Edit Project Dialog */}
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
               <DialogDescription>
                 Update the details of your project below.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="flex-grow min-h-0">
-              <div className="pr-6 space-y-6">
-                <ProjectForm
-                  project={getProjectForForm(editingProject)}
-                  onSubmit={(values) => {
-                    console.log('Editing project:', values);
-                    closeEditDialog();
-                  }}
-                />
-              </div>
-            </ScrollArea>
+            <ProjectForm
+              project={getProjectForForm(editingProject)}
+              onSubmit={(values) => {
+                console.log('Editing project:', values);
+                closeEditDialog();
+              }}
+            />
           </DialogContent>
         </Dialog>
 
