@@ -99,7 +99,8 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}
@@ -278,6 +279,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             <Button type="submit" size="lg" className="rounded-full">
             {project ? 'Save Changes' : 'Create Project'}
             </Button>
+        </div>
         </div>
       </form>
     </Form>

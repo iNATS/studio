@@ -64,7 +64,7 @@ export default function AdminProjectsPage() {
                 portfolio.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="flex-grow">
+            <ScrollArea className="flex-grow min-h-0">
                 <div className="pr-6">
                     <ProjectForm
                     onSubmit={(values) => {
