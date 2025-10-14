@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -39,11 +40,13 @@ import {
 } from '@/components/ui/dialog';
 import { ProjectForm } from '@/components/admin/ProjectForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 
 export default function AdminProjectsPage() {
   const router = useRouter();
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
+  const [viewingProject, setViewingProject] = React.useState<PortfolioItem | null>(null);
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -51,10 +54,6 @@ export default function AdminProjectsPage() {
 
   const closeEditDialog = () => {
     setEditingProject(null);
-  };
-
-  const handleView = (slug: string) => {
-    router.push(`/projects/${slug}`);
   };
   
   const getProjectForForm = (project: PortfolioItem | null) => {
@@ -213,7 +212,7 @@ export default function AdminProjectsPage() {
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handleView(project.slug)}>View</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setViewingProject(project)}>View</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white">
                           Delete
                         </DropdownMenuItem>
@@ -226,6 +225,12 @@ export default function AdminProjectsPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      <ProjectDetailModal 
+        isOpen={!!viewingProject} 
+        onOpenChange={(isOpen) => !isOpen && setViewingProject(null)} 
+        project={viewingProject} 
+      />
     </main>
   );
 }
