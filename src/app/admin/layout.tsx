@@ -12,6 +12,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarMenuSub,
+  SidebarMenuSubTrigger,
+  SidebarMenuSubContent,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
 import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, Contact } from 'lucide-react';
 import Link from 'next/link';
@@ -27,10 +31,13 @@ export default function AdminLayout({
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
     { href: '/admin/projects', label: 'Projects', icon: Briefcase },
-    { href: '#', label: 'CRM', icon: Contact, 
+    {  
+      label: 'CRM', icon: Contact, 
       subItems: [
-        { href: '#', label: 'Contacts' },
-        { href: '#', label: 'Deals' },
+        { href: '/admin/crm/clients', label: 'Clients' },
+        { href: '/admin/crm/tasks', label: 'Tasks' },
+        { href: '/admin/crm/run-projects', label: 'Run Projects' },
+        { href: '/admin/crm/deadline', label: 'Deadline' },
       ]
     },
   ];
@@ -57,6 +64,29 @@ export default function AdminLayout({
               {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
+
+                  if (item.subItems) {
+                    return (
+                      <SidebarMenuItem key={item.label}>
+                        <SidebarMenuSub>
+                          <SidebarMenuSubTrigger className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
+                            <Icon />
+                            <span>{item.label}</span>
+                          </SidebarMenuSubTrigger>
+                          <SidebarMenuSubContent>
+                            {item.subItems.map(subItem => (
+                               <SidebarMenuSubItem key={subItem.href}>
+                                <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
+                                  <Link href={subItem.href}>{subItem.label}</Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSubContent>
+                        </SidebarMenuSub>
+                      </SidebarMenuItem>
+                    )
+                  }
+
                   return (
                     <SidebarMenuItem key={item.label}>
                         <SidebarMenuButton 
@@ -65,7 +95,7 @@ export default function AdminLayout({
                         className={cn("text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg")}
                         data-active={isActive}
                         >
-                        <Link href={item.href}>
+                        <Link href={item.href!}>
                             <Icon />
                             <span>{item.label}</span>
                         </Link>
