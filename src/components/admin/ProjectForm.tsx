@@ -99,8 +99,8 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
             control={form.control}
             name="title"
@@ -138,6 +138,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
               <FormControl>
                 <Textarea
                   placeholder="A short summary of the project..."
+                  rows={2}
                   {...field}
                   className="bg-white/5 border-white/10"
                 />
@@ -164,7 +165,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             </FormItem>
           )}
         />
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
             control={form.control}
             name="category"
@@ -207,7 +208,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             )}
             />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
                 control={form.control}
                 name="image"
