@@ -163,9 +163,10 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     }),
   };
   
-  const ImagePreview = ({file}: {file: File}) => {
+  const ImagePreview = ({file, className, fill, alt}: {file: File, className?: string, fill?: boolean, alt?: string}) => {
     const [preview, setPreview] = useState<string | null>(null);
     React.useEffect(() => {
+        if (!file) return;
         const reader = new FileReader();
         reader.onloadend = () => {
             setPreview(reader.result as string);
@@ -173,9 +174,13 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         reader.readAsDataURL(file);
     }, [file]);
 
-    if (!preview) return <div className="aspect-video w-full rounded-md bg-white/10 animate-pulse" />;
+    if (!preview) return <div className={cn("bg-white/10 animate-pulse", className)} />;
+    
+    if (fill) {
+        return <Image src={preview} alt={alt || "preview"} fill className={cn("object-cover", className)} />
+    }
 
-    return <Image src={preview} alt="preview" width={200} height={112} className="aspect-video w-full object-cover rounded-md" />
+    return <Image src={preview} alt={alt || "preview"} width={200} height={112} className={cn("aspect-video w-full object-cover", className)} />
   }
 
   return (
@@ -196,7 +201,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                     className="absolute w-full h-full px-1"
                 >
                     {currentStep === 0 && (
-                        <div className="space-y-4">
+                        <div className="space-y-4 px-1">
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -262,7 +267,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                         </div>
                     )}
                     {currentStep === 1 && (
-                         <div className="space-y-4">
+                         <div className="space-y-4 px-1">
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                <FormField
                                     control={form.control}
@@ -333,7 +338,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                         </div>
                     )}
                      {currentStep === 2 && (
-                         <div className="space-y-4">
+                         <div className="space-y-4 px-1">
                              <FormField
                                 control={form.control}
                                 name="category"
@@ -378,38 +383,41 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                          </div>
                      )}
                      {currentStep === 3 && (
-                         <div className="space-y-6 text-white/90">
-                             <h3 className="text-lg font-semibold text-center">Review &amp; Publish</h3>
-                             <div className="space-y-4 rounded-lg bg-white/5 border border-white/10 p-4">
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="col-span-1">
-                                    {watchedValues.image && <ImagePreview file={watchedValues.image} />}
-                                    </div>
-                                    <div className="col-span-2 space-y-1">
-                                        <h4 className="font-bold text-xl">{watchedValues.title}</h4>
-                                        <p className="text-sm text-white/60">{watchedValues.description}</p>
-                                        <div className="flex flex-wrap gap-2 pt-2">
-                                            <Badge variant="outline" className="text-white/70 border-white/20">{watchedValues.category}</Badge>
-                                            {watchedValues.tags?.split(',').map(tag => <Badge key={tag} variant="secondary" className="bg-white/10 text-white/80">{tag.trim()}</Badge>)}
-                                        </div>
+                        <div className="text-white/90 overflow-y-auto h-full">
+                            <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
+                            <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+                                <div className="relative w-full h-48">
+                                    {watchedValues.image && <ImagePreview file={watchedValues.image} alt={watchedValues.title} fill />}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                                    <div className="absolute bottom-0 left-0 p-4">
+                                        <h1 className="text-2xl font-bold text-white shadow-2xl">{watchedValues.title}</h1>
                                     </div>
                                 </div>
-                                <div>
-                                    <h5 className="font-semibold text-sm mb-2">Full Description</h5>
-                                    <p className="text-sm text-white/70 bg-black/20 p-3 rounded-md">{watchedValues.fullDescription}</p>
-                                </div>
-                                {watchedValues.screenshots && watchedValues.screenshots.length > 0 && (
-                                    <div>
-                                        <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
-                                        <div className="grid grid-cols-4 gap-2">
-                                            {Array.from(watchedValues.screenshots).map((file: any, index) => (
-                                                <ImagePreview key={index} file={file} />
-                                            ))}
-                                        </div>
+                                <div className="p-4 space-y-4">
+                                    <div className="prose prose-sm max-w-none text-white/80 dark:prose-invert">
+                                        <p>{watchedValues.fullDescription}</p>
                                     </div>
-                                )}
-                             </div>
-                         </div>
+
+                                    <div className="flex flex-wrap gap-2">
+                                        <Badge variant="outline" className="text-white/70 border-white/20">{watchedValues.category}</Badge>
+                                        {watchedValues.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-white/10 text-white/80">{tag.trim()}</Badge>)}
+                                    </div>
+
+                                    {watchedValues.screenshots && watchedValues.screenshots.length > 0 && (
+                                        <div>
+                                            <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {Array.from(watchedValues.screenshots).map((file: any, index) => (
+                                                    <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-white/10">
+                                                      <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                      )}
                 </motion.div>
             </AnimatePresence>
