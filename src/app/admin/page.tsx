@@ -28,8 +28,8 @@ const userActivityData = [
 
 export default function AdminDashboard() {
   return (
-    <main className="flex flex-1 flex-col gap-8 w-full">
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <main className="flex flex-1 flex-col gap-6 w-full">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-white/70">Total Revenue</CardTitle>
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1">
           <CardHeader>
             <CardTitle className="text-white/90">Revenue Overview</CardTitle>
