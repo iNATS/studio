@@ -2,7 +2,6 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -43,10 +42,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 
 export default function AdminProjectsPage() {
-  const router = useRouter();
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
-  const [viewingProject, setViewingProject] = React.useState<PortfolioItem | null>(null);
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -212,7 +209,7 @@ export default function AdminProjectsPage() {
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setViewingProject(project)}>View</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => window.open(`/projects/${project.slug}`, '_blank')}>View</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white">
                           Delete
                         </DropdownMenuItem>
@@ -225,12 +222,6 @@ export default function AdminProjectsPage() {
           </Table>
         </CardContent>
       </Card>
-      
-      <ProjectDetailModal 
-        isOpen={!!viewingProject} 
-        onOpenChange={(isOpen) => !isOpen && setViewingProject(null)} 
-        project={viewingProject} 
-      />
     </main>
   );
 }
