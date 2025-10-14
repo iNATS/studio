@@ -26,13 +26,13 @@ export default function AdminLayout({
         <Sidebar
           variant="floating"
           collapsible="icon"
-          className="bg-transparent backdrop-blur-xl border-white/20 text-white"
+          className="bg-white/5 backdrop-blur-2xl border-white/10 text-white/90"
         >
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-white/80 hover:text-white" />
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <LayoutGrid className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
+                <LayoutGrid className="w-5 h-5 text-primary-foreground" />
               </div>
               <h1 className="text-lg font-semibold text-white">Dashboard</h1>
             </div>
