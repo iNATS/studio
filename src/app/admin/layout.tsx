@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
+import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, Contact } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -27,8 +27,12 @@ export default function AdminLayout({
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
     { href: '/admin/projects', label: 'Projects', icon: Briefcase },
-    { href: '#', label: 'Users', icon: Users },
-    { href: '#', label: 'Analytics', icon: BarChart3 },
+    { href: '#', label: 'CRM', icon: Contact, 
+      subItems: [
+        { href: '#', label: 'Contacts' },
+        { href: '#', label: 'Deals' },
+      ]
+    },
   ];
 
   return (
