@@ -14,8 +14,8 @@ import {
   SidebarInset,
   SidebarMenuSub,
   SidebarMenuSubTrigger,
-  SidebarMenuSubContent,
   SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, Contact } from 'lucide-react';
 import Link from 'next/link';
@@ -73,7 +73,7 @@ export default function AdminLayout({
                             <Icon />
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>
-                          <SidebarMenuSubContent>
+                          <SidebarMenuSub>
                             {item.subItems.map(subItem => (
                                <SidebarMenuSubItem key={subItem.href}>
                                 <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
@@ -81,7 +81,7 @@ export default function AdminLayout({
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             ))}
-                          </SidebarMenuSubContent>
+                          </SidebarMenuSub>
                         </SidebarMenuSub>
                       </SidebarMenuItem>
                     )
