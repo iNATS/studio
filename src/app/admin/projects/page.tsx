@@ -69,6 +69,7 @@ export default function AdminProjectsPage() {
       // Here you would add the actual logic to delete the project
       setProjectToDelete(null); // Close the dialog
       toast({
+        variant: 'success',
         title: "Project Deleted",
         description: `"${projectToDelete.title}" has been removed.`,
       });
@@ -112,6 +113,7 @@ export default function AdminProjectsPage() {
                   console.log('Adding project:', values);
                   setIsAddDialogOpen(false);
                   toast({
+                    variant: 'success',
                     title: "Project Published!",
                     description: "Your new project has been added to the portfolio.",
                   });
@@ -135,6 +137,7 @@ export default function AdminProjectsPage() {
                 console.log('Editing project:', values);
                 closeEditDialog();
                 toast({
+                  variant: 'success',
                   title: "Project Updated!",
                   description: "Your project has been successfully updated.",
                 });
