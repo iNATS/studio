@@ -37,6 +37,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ProjectForm } from '@/components/admin/ProjectForm';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
@@ -55,7 +56,7 @@ export default function AdminProjectsPage() {
               Add Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
             <DialogHeader>
               <DialogTitle>Add New Project</DialogTitle>
               <DialogDescription>
@@ -63,12 +64,16 @@ export default function AdminProjectsPage() {
                 portfolio.
               </DialogDescription>
             </DialogHeader>
-            <ProjectForm
-              onSubmit={(values) => {
-                console.log(values);
-                setIsAddDialogOpen(false);
-              }}
-            />
+            <ScrollArea className="flex-grow">
+                <div className="pr-6">
+                    <ProjectForm
+                    onSubmit={(values) => {
+                        console.log(values);
+                        setIsAddDialogOpen(false);
+                    }}
+                    />
+                </div>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
       </div>

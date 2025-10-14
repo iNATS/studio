@@ -36,6 +36,7 @@ const formSchema = z.object({
   category: z.enum(['web', 'mobile', 'design']),
   tags: z.string().min(1, 'Please add at least one tag.'),
   image: z.any()
+    .refine((file) => file, "Main image is required.")
     .refine((file) => file?.size <= 5000000, `Max image size is 5MB.`)
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
@@ -63,12 +64,12 @@ interface ProjectFormProps {
 
 
 const FileUploadPreview = ({ file, onRemove }: { file: File, onRemove: () => void }) => (
-    <div className="p-2 mt-2 bg-white/10 rounded-md flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2">
-            <FileIcon className="h-4 w-4" />
-            <span className="truncate max-w-[150px]">{file.name}</span>
+    <div className="p-2 mt-2 bg-white/10 rounded-md flex items-center justify-between text-sm text-white/80">
+        <div className="flex items-center gap-2 overflow-hidden">
+            <FileIcon className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">{file.name}</span>
         </div>
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onRemove}>
+        <Button variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={onRemove}>
             <X className="h-4 w-4" />
         </Button>
     </div>
@@ -98,7 +99,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}
@@ -248,9 +249,9 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
                            file={file} 
                            onRemove={() => {
                                const newFiles = new DataTransfer();
-                               Array.from(value).forEach((f: any, i: number) => {
-                                   if (i !== index) newFiles.items.add(f);
-                               });
+                               const currentFiles = Array.from(value);
+                               currentFiles.splice(index, 1);
+                               currentFiles.forEach((f: any) => newFiles.items.add(f));
                                onChange(newFiles.files.length > 0 ? newFiles.files : null);
                            }} 
                        />
@@ -273,7 +274,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-4">
             <Button type="submit" size="lg" className="rounded-full">
             {project ? 'Save Changes' : 'Create Project'}
             </Button>
