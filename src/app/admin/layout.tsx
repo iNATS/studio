@@ -29,7 +29,7 @@ export default function AdminLayout({
           collapsible="icon"
           className="bg-transparent backdrop-blur-xl border-white/20 text-white"
         >
-          <SidebarHeader className="p-4">
+          <SidebarHeader>
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-white/80 hover:text-white" />
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -38,7 +38,7 @@ export default function AdminLayout({
               <h1 className="text-lg font-semibold text-white">Dashboard</h1>
             </div>
           </SidebarHeader>
-          <SidebarContent className="p-4">
+          <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Dashboard" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
@@ -74,7 +74,7 @@ export default function AdminLayout({
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter className="p-4">
+          <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Settings" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
