@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { Home, Settings, Briefcase, MessageSquare, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
+import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLayout({
