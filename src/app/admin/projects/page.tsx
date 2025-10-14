@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -40,6 +41,7 @@ import { ProjectForm } from '@/components/admin/ProjectForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function AdminProjectsPage() {
+  const router = useRouter();
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
 
@@ -49,6 +51,10 @@ export default function AdminProjectsPage() {
 
   const closeEditDialog = () => {
     setEditingProject(null);
+  };
+
+  const handleView = (slug: string) => {
+    router.push(`/projects/${slug}`);
   };
   
   const getProjectForForm = (project: PortfolioItem | null) => {
@@ -89,7 +95,7 @@ export default function AdminProjectsPage() {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="flex-grow min-h-0">
-                <div className="pr-6">
+                <div className="pr-6 space-y-6">
                     <ProjectForm
                     onSubmit={(values) => {
                         console.log('Adding project:', values);
@@ -111,7 +117,7 @@ export default function AdminProjectsPage() {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="flex-grow min-h-0">
-              <div className="pr-6">
+              <div className="pr-6 space-y-6">
                 <ProjectForm
                   project={getProjectForForm(editingProject)}
                   onSubmit={(values) => {
@@ -207,7 +213,7 @@ export default function AdminProjectsPage() {
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => handleView(project.slug)}>View</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white">
                           Delete
                         </DropdownMenuItem>
