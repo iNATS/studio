@@ -46,8 +46,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ProjectForm } from '@/components/admin/ProjectForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ProjectWizard } from '@/components/admin/ProjectWizard';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
@@ -95,43 +95,38 @@ export default function AdminProjectsPage() {
               Add Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Project</DialogTitle>
               <DialogDescription>
-                Fill out the details below to add a new project to your
-                portfolio.
+                Follow the steps to add a new project to your portfolio.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="flex-grow min-h-0 pr-6 -mr-6">
-                <ProjectForm
-                onSubmit={(values) => {
-                    console.log('Adding project:', values);
-                    setIsAddDialogOpen(false);
-                }}
-                />
-            </ScrollArea>
+             <ProjectWizard
+              onSubmit={(values) => {
+                  console.log('Adding project:', values);
+                  setIsAddDialogOpen(false);
+              }}
+            />
           </DialogContent>
         </Dialog>
 
         {/* Edit Project Dialog */}
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
-           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl flex flex-col max-h-[90vh]">
+           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-3xl">
             <DialogHeader>
               <DialogTitle>Edit Project</DialogTitle>
               <DialogDescription>
-                Update the details of your project below.
+                 Update the details of your project below.
               </DialogDescription>
             </DialogHeader>
-             <ScrollArea className="flex-grow min-h-0 pr-6 -mr-6">
-                <ProjectForm
-                project={getProjectForForm(editingProject)}
-                onSubmit={(values) => {
-                    console.log('Editing project:', values);
-                    closeEditDialog();
-                }}
-                />
-            </ScrollArea>
+            <ProjectWizard
+              project={getProjectForForm(editingProject)}
+              onSubmit={(values) => {
+                console.log('Editing project:', values);
+                closeEditDialog();
+              }}
+            />
           </DialogContent>
         </Dialog>
 
@@ -149,9 +144,11 @@ export default function AdminProjectsPage() {
               <AlertDialogCancel asChild>
                 <Button variant="ghost" className="rounded-lg">Cancel</Button>
               </AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg">
+              <AlertDialogAction onClick={handleDeleteConfirm} asChild>
+                <Button variant="destructive" className="rounded-lg">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Yes, delete it
+                </Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
