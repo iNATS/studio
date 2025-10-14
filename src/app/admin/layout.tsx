@@ -21,8 +21,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-screen">
+      <SidebarProvider>
         <Sidebar
           variant="floating"
           collapsible="icon"
@@ -99,7 +99,7 @@ export default function AdminLayout({
             {children}
           </div>
         </SidebarInset>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   );
 }
