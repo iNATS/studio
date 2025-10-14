@@ -193,7 +193,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                     animate="center"
                     exit="exit"
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="absolute w-full h-full"
+                    className="absolute w-full h-full px-1"
                 >
                     {currentStep === 0 && (
                         <div className="space-y-4">
