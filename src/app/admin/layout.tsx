@@ -95,7 +95,16 @@ export default function AdminLayout({
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <div className="flex-1 w-full h-full p-4 pt-16 sm:p-8">
+            <header className="fixed top-0 left-0 right-0 z-10 flex h-14 items-center justify-between gap-4 border-b border-white/10 bg-background/50 px-4 backdrop-blur-md md:hidden">
+                <Link href="/admin" className="flex items-center gap-2 text-lg font-semibold text-white">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
+                        <LayoutGrid className="w-5 h-5 text-primary-foreground" />
+                    </div>
+                    <span>Dashboard</span>
+                </Link>
+                <SidebarTrigger className="text-white/80 hover:text-white" />
+            </header>
+          <div className="flex-1 w-full h-full p-4 pt-20 sm:p-8">
             {children}
           </div>
         </SidebarInset>
