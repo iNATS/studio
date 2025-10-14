@@ -23,82 +23,111 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { PortfolioItem } from '../landing/Portfolio';
+import { Upload, File as FileIcon, X } from 'lucide-react';
+import React from 'react';
+
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   title: z.string().min(2, 'Title must be at least 2 characters.'),
-  slug: z.string().min(2, 'Slug must be at least 2 characters.'),
+  slug: z.string().min(2, 'Slug must be at least 2 characters.').regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens.'),
   description: z.string().min(10, 'Description is too short.'),
   fullDescription: z.string().min(20, 'Full description is too short.'),
   category: z.enum(['web', 'mobile', 'design']),
   tags: z.string().min(1, 'Please add at least one tag.'),
-  image: z.string().url('Please enter a valid URL.'),
+  image: z.any()
+    .refine((file) => file?.size <= 5000000, `Max image size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ),
   link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
-  screenshots: z.string().optional(),
+  screenshots: z.any()
+    .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => file.size <= 5000000) : true, `Max image size is 5MB.`)
+    .refine(
+        (files) => files?.length > 0 ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true,
+        "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ).optional(),
 });
 
 type ProjectFormValues = z.infer<typeof formSchema>;
 
 interface ProjectFormProps {
-  project?: PortfolioItem;
+  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags'> & {
+    tags: string;
+    image: any;
+    screenshots: any;
+  };
   onSubmit: (values: ProjectFormValues) => void;
 }
+
+
+const FileUploadPreview = ({ file, onRemove }: { file: File, onRemove: () => void }) => (
+    <div className="p-2 mt-2 bg-white/10 rounded-md flex items-center justify-between text-sm">
+        <div className="flex items-center gap-2">
+            <FileIcon className="h-4 w-4" />
+            <span className="truncate max-w-[150px]">{file.name}</span>
+        </div>
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onRemove}>
+            <X className="h-4 w-4" />
+        </Button>
+    </div>
+)
 
 export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      ...project,
-      tags: project?.tags.join(', '),
-      screenshots: project?.screenshots.join('\n'),
-    } || {
+    defaultValues: project || {
       title: '',
       slug: '',
       description: '',
       fullDescription: '',
       category: 'web',
       tags: '',
-      image: '',
+      image: undefined,
       link: '',
-      screenshots: '',
+      screenshots: undefined,
     },
   });
 
   const handleSubmit = (values: ProjectFormValues) => {
     onSubmit(values);
   };
+  
+  const screenshotsRef = form.register("screenshots");
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input placeholder="E.g., E-commerce Platform" {...field} className="bg-white/5 border-white/10" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Slug</FormLabel>
-              <FormControl>
-                <Input placeholder="e-commerce-platform" {...field} className="bg-white/5 border-white/10" />
-              </FormControl>
-              <FormDescription>
-                This is the URL-friendly version of the title.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                    <Input placeholder="E.g., E-commerce Platform" {...field} className="bg-white/5 border-white/10" />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Slug</FormLabel>
+                <FormControl>
+                    <Input placeholder="e-commerce-platform" {...field} className="bg-white/5 border-white/10" />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        </div>
+        
         <FormField
           control={form.control}
           name="description"
@@ -177,19 +206,60 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             )}
             />
         </div>
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Main Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://..." {...field} className="bg-white/5 border-white/10" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange, value, ...rest } }) => (
+                    <FormItem>
+                        <FormLabel>Main Image</FormLabel>
+                         <FormControl>
+                            <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover:border-white/40 transition-colors">
+                                <div className="text-center">
+                                    <Upload className="mx-auto h-8 w-8 text-white/50" />
+                                    <p className="mt-2 text-sm text-white/60">Click or drag to upload</p>
+                                </div>
+                                <Input type="file" className="sr-only" onChange={(e) => onChange(e.target.files?.[0])} {...rest} />
+                            </label>
+                         </FormControl>
+                         {value && <FileUploadPreview file={value} onRemove={() => onChange(null)} />}
+                         <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="screenshots"
+                render={({ field: { onChange, value, ...rest } }) => (
+                    <FormItem>
+                        <FormLabel>Screenshots</FormLabel>
+                        <FormControl>
+                            <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover:border-white/40 transition-colors">
+                                <div className="text-center">
+                                <Upload className="mx-auto h-8 w-8 text-white/50" />
+                                <p className="mt-2 text-sm text-white/60">Upload one or more files</p>
+                                </div>
+                                <Input type="file" multiple className="sr-only" {...screenshotsRef} onChange={(e) => onChange(e.target.files)} />
+                            </label>
+                        </FormControl>
+                        {value && Array.from(value).map((file: any, index: number) => (
+                           <FileUploadPreview 
+                           key={index} 
+                           file={file} 
+                           onRemove={() => {
+                               const newFiles = new DataTransfer();
+                               Array.from(value).forEach((f: any, i: number) => {
+                                   if (i !== index) newFiles.items.add(f);
+                               });
+                               onChange(newFiles.files.length > 0 ? newFiles.files : null);
+                           }} 
+                       />
+                        ))}
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
         <FormField
           control={form.control}
           name="link"
@@ -203,30 +273,11 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
             </FormItem>
           )}
         />
-         <FormField
-          control={form.control}
-          name="screenshots"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Screenshot URLs</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="One URL per line..."
-                  rows={4}
-                  {...field}
-                  className="bg-white/5 border-white/10"
-                />
-              </FormControl>
-               <FormDescription>
-                    Each URL should be on a new line.
-                </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full">
-          {project ? 'Save Changes' : 'Create Project'}
-        </Button>
+        <div className="flex justify-end">
+            <Button type="submit" size="lg" className="rounded-full">
+            {project ? 'Save Changes' : 'Create Project'}
+            </Button>
+        </div>
       </form>
     </Form>
   );
