@@ -3,11 +3,16 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { ChevronDown, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
@@ -683,21 +688,55 @@ const SidebarMenuSkeleton = React.forwardRef<
 SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton"
 
 const SidebarMenuSub = React.forwardRef<
-  HTMLUListElement,
-  React.ComponentProps<"ul">
->(({ className, ...props }, ref) => (
-  <ul
-    ref={ref}
-    data-sidebar="menu-sub"
-    className={cn(
-      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5",
-      "group-data-[collapsible=icon]:hidden",
-      className
-    )}
-    {...props}
-  />
-))
+  React.ElementRef<typeof Collapsible>,
+  React.ComponentProps<typeof Collapsible>
+>(({ ...props }, ref) => {
+  return <Collapsible ref={ref} {...props} />
+})
 SidebarMenuSub.displayName = "SidebarMenuSub"
+
+const SidebarMenuSubTrigger = React.forwardRef<
+  React.ElementRef<typeof SidebarMenuButton>,
+  React.ComponentProps<typeof SidebarMenuButton>
+>(({ className, children, ...props }, ref) => {
+  return (
+    <CollapsibleTrigger asChild>
+      <SidebarMenuButton
+        ref={ref}
+        className={cn("group/sub-trigger", className)}
+        {...props}
+      >
+        <div className="flex w-full items-center justify-between">
+          <div className="flex items-center gap-2">{children}</div>
+          <ChevronDown className="size-4 shrink-0 text-sidebar-foreground/50 transition-transform duration-200 group-data-[state=open]/sub-trigger:rotate-180" />
+        </div>
+      </SidebarMenuButton>
+    </CollapsibleTrigger>
+  )
+})
+SidebarMenuSubTrigger.displayName = "SidebarMenuSubTrigger"
+
+const SidebarMenuSubContent = React.forwardRef<
+  React.ElementRef<typeof CollapsibleContent>,
+  React.ComponentProps<typeof CollapsibleContent>
+>(({ className, ...props }, ref) => {
+  return (
+    <CollapsibleContent
+      ref={ref}
+      className={cn("overflow-hidden", className)}
+      {...props}
+    >
+      <ul
+        data-sidebar="menu-sub-content"
+        className={cn(
+          "flex min-w-0 flex-col gap-1 py-1 pl-6 group-data-[collapsible=icon]:hidden"
+        )}
+      >
+        {props.children}
+      </ul>
+    </CollapsibleContent>
+  )
+})
 
 const SidebarMenuSubItem = React.forwardRef<
   HTMLLIElement,
@@ -754,7 +793,9 @@ export {
   SidebarMenuSkeleton,
   SidebarMenuSub,
   SidebarMenuSubButton,
+  SidebarMenuSubContent,
   SidebarMenuSubItem,
+  SidebarMenuSubTrigger,
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
