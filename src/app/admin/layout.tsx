@@ -73,7 +73,7 @@ export default function AdminLayout({
                             <Icon />
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>
-                          <SidebarMenuSub>
+                          <SidebarMenuSubContent>
                             {item.subItems.map(subItem => (
                                <SidebarMenuSubItem key={subItem.href}>
                                 <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
@@ -81,7 +81,7 @@ export default function AdminLayout({
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             ))}
-                          </SidebarMenuSub>
+                          </SidebarMenuSubContent>
                         </SidebarMenuSub>
                       </SidebarMenuItem>
                     )

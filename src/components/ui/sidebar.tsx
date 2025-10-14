@@ -737,6 +737,7 @@ const SidebarMenuSubContent = React.forwardRef<
     </CollapsibleContent>
   )
 })
+SidebarMenuSubContent.displayName = "SidebarMenuSubContent"
 
 const SidebarMenuSubItem = React.forwardRef<
   HTMLLIElement,
