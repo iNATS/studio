@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, Code, Smartphone, Palette, Tag, ArrowUp, User } from 'lucide-react';
+import { Briefcase, Code, Smartphone, Palette, Tag } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { portfolioItems } from '@/components/landing/Portfolio';
 import Image from 'next/image';
@@ -20,10 +20,6 @@ const projectsByCategoryData = [
 
 const allTags = portfolioItems.flatMap(p => p.tags);
 const uniqueTags = [...new Set(allTags)];
-const tagCounts = uniqueTags.map(tag => ({
-  name: tag,
-  count: allTags.filter(t => t === tag).length,
-})).sort((a, b) => b.count - a.count).slice(0, 10);
 
 const recentProjects = portfolioItems.slice(0, 5);
 
