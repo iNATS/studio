@@ -154,11 +154,9 @@ export default function AdminProjectsPage() {
               <AlertDialogCancel asChild>
                 <Button variant="ghost" className="rounded-lg">Cancel</Button>
               </AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button variant="destructive" onClick={handleDeleteConfirm} className="rounded-lg">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Yes, delete it
-                </Button>
+              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Yes, delete it
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
