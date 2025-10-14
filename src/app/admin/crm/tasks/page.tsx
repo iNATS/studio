@@ -301,6 +301,7 @@ export default function TasksPage() {
             setTasks(tasks.filter(t => t.id !== taskToDelete.id));
             setTaskToDelete(null);
             toast({
+                variant: 'success',
                 title: 'Task Removed',
                 description: `"${taskToDelete.title}" has been removed.`,
             });
@@ -318,6 +319,7 @@ export default function TasksPage() {
         setTasks([...tasks, newTask]);
         setIsAddDialogOpen(false);
         toast({
+            variant: 'success',
             title: 'Task Added',
             description: `"${newTask.title}" has been added to 'To Do'.`,
         });
@@ -329,6 +331,7 @@ export default function TasksPage() {
         setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t));
         closeEditDialog();
         toast({
+            variant: 'success',
             title: 'Task Updated',
             description: `"${updatedTask.title}" has been updated.`,
         });
