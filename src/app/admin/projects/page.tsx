@@ -46,13 +46,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
+  const { toast } = useToast();
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -67,6 +68,10 @@ export default function AdminProjectsPage() {
       console.log('Deleting project:', projectToDelete.title);
       // Here you would add the actual logic to delete the project
       setProjectToDelete(null); // Close the dialog
+      toast({
+        title: "Project Deleted",
+        description: `"${projectToDelete.title}" has been removed.`,
+      });
     }
   };
   
@@ -106,6 +111,10 @@ export default function AdminProjectsPage() {
               onSubmit={(values) => {
                   console.log('Adding project:', values);
                   setIsAddDialogOpen(false);
+                  toast({
+                    title: "Project Published!",
+                    description: "Your new project has been added to the portfolio.",
+                  });
               }}
             />
           </DialogContent>
@@ -125,6 +134,10 @@ export default function AdminProjectsPage() {
               onSubmit={(values) => {
                 console.log('Editing project:', values);
                 closeEditDialog();
+                toast({
+                  title: "Project Updated!",
+                  description: "Your project has been successfully updated.",
+                });
               }}
             />
           </DialogContent>

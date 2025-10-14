@@ -22,10 +22,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { PortfolioItem } from '../landing/Portfolio';
-import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send } from 'lucide-react';
+import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send, Rocket, GalleryHorizontal } from 'lucide-react';
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { Badge } from '../ui/badge';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -50,7 +52,8 @@ const stepSchemas = [
   z.object({
     category: z.enum(['web', 'mobile', 'design']),
     tags: z.string().min(1, 'Please add at least one tag.'),
-  })
+  }),
+  z.object({})
 ];
 
 const formSchema = stepSchemas.reduce((acc, schema) => acc.merge(schema), z.object({}));
@@ -115,6 +118,8 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     },
     mode: "onChange",
   });
+  
+  const watchedValues = form.watch();
 
   const handleSubmit = (values: ProjectFormValues) => {
     onSubmit(values);
@@ -157,13 +162,28 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
       opacity: 0,
     }),
   };
+  
+  const ImagePreview = ({file}: {file: File}) => {
+    const [preview, setPreview] = useState<string | null>(null);
+    React.useEffect(() => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    }, [file]);
+
+    if (!preview) return <div className="aspect-video w-full rounded-md bg-white/10 animate-pulse" />;
+
+    return <Image src={preview} alt="preview" width={200} height={112} className="aspect-video w-full object-cover rounded-md" />
+  }
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={stepSchemas.length} />
 
-        <div className="overflow-hidden relative h-[450px]">
+        <div className="overflow-hidden relative h-[450px] p-1">
             <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                     key={currentStep}
@@ -271,7 +291,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         <FormItem>
                                             <FormLabel>Screenshots</FormLabel>
                                             <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover:border-white/40 transition-colors">
+                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover-border-white/40 transition-colors">
                                                     <div className="text-center">
                                                     <Upload className="mx-auto h-8 w-8 text-white/50" />
                                                     <p className="mt-2 text-sm text-white/60">Upload one or more files</p>
@@ -357,17 +377,53 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                             />
                          </div>
                      )}
+                     {currentStep === 3 && (
+                         <div className="space-y-6 text-white/90">
+                             <h3 className="text-lg font-semibold text-center">Review &amp; Publish</h3>
+                             <div className="space-y-4 rounded-lg bg-white/5 border border-white/10 p-4">
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="col-span-1">
+                                    {watchedValues.image && <ImagePreview file={watchedValues.image} />}
+                                    </div>
+                                    <div className="col-span-2 space-y-1">
+                                        <h4 className="font-bold text-xl">{watchedValues.title}</h4>
+                                        <p className="text-sm text-white/60">{watchedValues.description}</p>
+                                        <div className="flex flex-wrap gap-2 pt-2">
+                                            <Badge variant="outline" className="text-white/70 border-white/20">{watchedValues.category}</Badge>
+                                            {watchedValues.tags?.split(',').map(tag => <Badge key={tag} variant="secondary" className="bg-white/10 text-white/80">{tag.trim()}</Badge>)}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 className="font-semibold text-sm mb-2">Full Description</h5>
+                                    <p className="text-sm text-white/70 bg-black/20 p-3 rounded-md">{watchedValues.fullDescription}</p>
+                                </div>
+                                {watchedValues.screenshots && watchedValues.screenshots.length > 0 && (
+                                    <div>
+                                        <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {Array.from(watchedValues.screenshots).map((file: any, index) => (
+                                                <ImagePreview key={index} file={file} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                             </div>
+                         </div>
+                     )}
                 </motion.div>
             </AnimatePresence>
         </div>
         
-        <div className="flex justify-between pt-4">
+        <div className="flex justify-between pt-6">
             <Button type="button" variant="ghost" onClick={prevStep} disabled={currentStep === 0} className="rounded-full">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
             <Button type="button" onClick={processStep} size="lg" className="rounded-full">
             {currentStep === stepSchemas.length - 1 ? (
-                <>Submit <Send className="ml-2 h-4 w-4" /></>
+                <>Publish Project <Rocket className="ml-2 h-4 w-4" /></>
+            ) : currentStep === stepSchemas.length - 2 ? (
+                <>Review <Send className="ml-2 h-4 w-4" /></>
             ) : (
                 <>Next <ArrowRight className="ml-2 h-4 w-4" /></>
             )}
