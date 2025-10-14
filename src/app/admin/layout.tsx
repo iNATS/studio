@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -14,15 +15,25 @@ import {
 } from '@/components/ui/sidebar';
 import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/admin', label: 'Dashboard', icon: Home },
+    { href: '/admin/projects', label: 'Projects', icon: Briefcase },
+    { href: '#', label: 'Users', icon: Users },
+    { href: '#', label: 'Analytics', icon: BarChart3 },
+  ];
+
   return (
     <div className="bg-background min-h-screen">
-      <SidebarProvider>
+       <SidebarProvider>
         <Sidebar
           variant="floating"
           collapsible="icon"
@@ -39,38 +50,25 @@ export default function AdminLayout({
           </SidebarHeader>
           <SidebarContent className="p-3">
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Dashboard" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
-                  <Link href="/admin">
-                    <Home />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Projects" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
-                  <Link href="#">
-                    <Briefcase />
-                    <span>Projects</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Users" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
-                  <Link href="#">
-                    <Users />
-                    <span>Users</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Analytics" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
-                  <Link href="#">
-                    <BarChart3 />
-                    <span>Analytics</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <SidebarMenuItem key={item.label}>
+                        <SidebarMenuButton 
+                        asChild 
+                        tooltip={item.label} 
+                        className={cn("text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg")}
+                        data-active={isActive}
+                        >
+                        <Link href={item.href}>
+                            <Icon />
+                            <span>{item.label}</span>
+                        </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+              })}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter className="p-3">
