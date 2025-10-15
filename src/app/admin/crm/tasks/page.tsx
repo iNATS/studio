@@ -7,7 +7,7 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -67,6 +67,8 @@ export type Task = {
 };
 
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
+
 
 const initialTasks: Task[] = [
   { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high', assignee: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
@@ -278,8 +280,32 @@ export default function TasksPage() {
     const { toast } = useToast();
     const sensors = useSensors(useSensor(PointerSensor));
 
+    const [filters, setFilters] = React.useState({
+        assignee: 'all',
+        priority: 'all',
+        tag: '',
+    });
+
     const columns: TaskStatus[] = ['todo', 'in-progress', 'done'];
     const columnTitles = { todo: 'To Do', 'in-progress': 'In Progress', done: 'Done' };
+
+    const handleFilterChange = (filterType: keyof typeof filters, value: string) => {
+        setFilters(prev => ({ ...prev, [filterType]: value }));
+    };
+
+    const clearFilters = () => {
+        setFilters({ assignee: 'all', priority: 'all', tag: '' });
+    };
+
+    const filteredTasks = React.useMemo(() => {
+        return tasks.filter(task => {
+            const assigneeMatch = filters.assignee === 'all' || task.assignee === filters.assignee;
+            const priorityMatch = filters.priority === 'all' || task.priority === filters.priority;
+            const tagMatch = filters.tag === '' || task.tags?.some(t => t.toLowerCase().includes(filters.tag.toLowerCase()));
+            return assigneeMatch && priorityMatch && tagMatch;
+        });
+    }, [tasks, filters]);
+
 
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event;
@@ -415,6 +441,39 @@ export default function TasksPage() {
                 </Dialog>
             </div>
             
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <Select value={filters.assignee} onValueChange={(value) => handleFilterChange('assignee', value)}>
+                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Assignee..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                        <SelectItem value="all">All Assignees</SelectItem>
+                        {users.map(user => <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+                <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
+                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Priority..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                        <SelectItem value="all">All Priorities</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Input 
+                    type="text" 
+                    placeholder="Filter by tag..."
+                    value={filters.tag}
+                    onChange={(e) => handleFilterChange('tag', e.target.value)}
+                    className="bg-white/5 border-white/10 w-full sm:w-[180px]"
+                />
+                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
+                    <XIcon className="mr-2 h-4 w-4" /> Clear
+                </Button>
+            </div>
+
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                 <div className="flex flex-col lg:flex-row gap-6">
                     {columns.map(status => (
@@ -422,7 +481,7 @@ export default function TasksPage() {
                             key={status}
                             title={columnTitles[status]}
                             status={status}
-                            tasks={tasks.filter(t => t.status === status)}
+                            tasks={filteredTasks.filter(t => t.status === status)}
                             onEdit={handleEdit}
                             onDelete={setTaskToDelete}
                         />
