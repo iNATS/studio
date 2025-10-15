@@ -7,7 +7,7 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -43,6 +43,17 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+
+const users = [
+    { id: '1', name: 'Alex', avatar: 'https://picsum.photos/seed/alex/40/40' },
+    { id: '2', name: 'Maria', avatar: 'https://picsum.photos/seed/maria/40/40' },
+    { id: '3', name: 'David', avatar: 'https://picsum.photos/seed/david-t/40/40' },
+]
 
 export type Task = {
   id: string;
@@ -50,18 +61,21 @@ export type Task = {
   description: string;
   status: 'todo' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
+  dueDate?: Date;
+  assignee?: string;
+  tags?: string[];
 };
 
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
 
 const initialTasks: Task[] = [
-  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high' },
-  { id: '2', title: 'Develop API Endpoints', description: 'Setup new routes for user auth', status: 'todo', priority: 'high' },
-  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile', status: 'in-progress', priority: 'medium' },
-  { id: '4', title: 'Write Documentation', description: 'For the new credit card processing feature', status: 'todo', priority: 'low' },
-  { id: '5', title: 'Deploy Staging Server', description: 'Update server with latest build', status: 'done', priority: 'high' },
-  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides for project update', status: 'done', priority: 'medium' },
-  { id: '7', title: 'Update Dependencies', description: 'Check for security vulnerabilities', status: 'todo', priority: 'low' },
+  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high', assignee: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
+  { id: '2', title: 'Develop API Endpoints', description: 'Setup new routes for user auth', status: 'todo', priority: 'high', assignee: '2', tags: ['backend'] },
+  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile', status: 'in-progress', priority: 'medium', assignee: '3' },
+  { id: '4', title: 'Write Documentation', description: 'For the new credit card processing feature', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
+  { id: '5', title: 'Deploy Staging Server', description: 'Update server with latest build', status: 'done', priority: 'high', assignee: '1', tags: ['devops'] },
+  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides for project update', status: 'done', priority: 'medium', assignee: '2' },
+  { id: '7', title: 'Update Dependencies', description: 'Check for security vulnerabilities', status: 'todo', priority: 'low', tags: ['maintenance'] },
 ];
 
 const getPriorityBadge = (priority: Task['priority']) => {
@@ -77,6 +91,7 @@ const getPriorityBadge = (priority: Task['priority']) => {
 
 const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: {type: 'Task', task} });
+    const assignee = users.find(u => u.id === task.assignee);
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -89,14 +104,34 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
             <Card className="bg-white/10 backdrop-blur-3xl border-white/20 shadow-lg rounded-xl mb-4 transition-shadow hover:shadow-2xl">
                 <CardContent className="p-4">
                     <div className="flex justify-between items-start">
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-start gap-2 flex-1">
                              <button {...listeners} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
                                 <GripVertical className="h-5 w-5" />
                             </button>
-                            <div>
+                            <div className="flex-1">
                                 <h4 className="font-semibold text-white/90">{task.title}</h4>
                                 <p className="text-sm text-white/60 mt-1 mb-3">{task.description}</p>
-                                {getPriorityBadge(task.priority)}
+                                <div className="flex flex-wrap gap-2 items-center">
+                                    {getPriorityBadge(task.priority)}
+                                    {task.tags?.map(tag => <Badge key={tag} variant="secondary" className="bg-white/10 text-white/70">{tag}</Badge>)}
+                                </div>
+                                <div className="flex items-center gap-4 text-sm text-white/50 mt-4">
+                                    {task.dueDate && (
+                                        <div className="flex items-center gap-1.5">
+                                            <CalendarIcon className="h-4 w-4"/>
+                                            <span>{format(task.dueDate, 'MMM d')}</span>
+                                        </div>
+                                    )}
+                                    {assignee && (
+                                        <div className="flex items-center gap-1.5">
+                                             <Avatar className="h-5 w-5">
+                                                <AvatarImage src={assignee.avatar} alt={assignee.name} />
+                                                <AvatarFallback>{assignee.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                            <span>{assignee.name}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <DropdownMenu>
@@ -145,11 +180,13 @@ const TaskColumn = ({ title, status, tasks, onEdit, onDelete }: { title: string,
 };
 
 const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => void }) => {
+    const [dueDate, setDueDate] = React.useState<Date | undefined>(task?.dueDate);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const values = Object.fromEntries(formData.entries());
-        onSubmit(values);
+        onSubmit({...values, dueDate});
     }
     
     return (
@@ -166,6 +203,44 @@ const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => 
               </Label>
               <Textarea id="description" name="description" defaultValue={task?.description} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="assignee" className="text-right">
+                Assignee
+              </Label>
+               <Select name="assignee" defaultValue={task?.assignee}>
+                <SelectTrigger id="assignee" className="col-span-3 bg-white/5 border-white/10">
+                    <SelectValue placeholder="Select an assignee" />
+                </SelectTrigger>
+                <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                    {users.map(user => <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>)}
+                </SelectContent>
+                </Select>
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="dueDate" className="text-right">Due Date</Label>
+                <Popover>
+                    <PopoverTrigger asChild>
+                    <Button
+                        variant={"outline"}
+                        className={cn(
+                        "col-span-3 justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10",
+                        !dueDate && "text-muted-foreground"
+                        )}
+                    >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dueDate ? format(dueDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={dueDate}
+                            onSelect={setDueDate}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="priority" className="text-right">
                 Priority
@@ -180,6 +255,12 @@ const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => 
                     <SelectItem value="high">High</SelectItem>
                 </SelectContent>
                 </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="tags" className="text-right">
+                Tags
+              </Label>
+              <Input id="tags" name="tags" defaultValue={task?.tags?.join(', ')} className="col-span-3 bg-white/5 border-white/10" placeholder="e.g. UI, backend, urgent" />
             </div>
             <div className="flex justify-end pt-4">
                 <Button type="submit" className="rounded-lg">Save changes</Button>
@@ -233,7 +314,14 @@ export default function TasksPage() {
                     newTasks.splice(overTaskIndex, 0, draggedTask);
                 } else if (isOverAColumn) {
                     draggedTask.status = over.data.current?.status as TaskStatus;
-                    newTasks.push(draggedTask); // simplified logic: move to end
+                    // Find last index of the target column and insert
+                    const tasksInColumn = newTasks.filter(t => t.status === draggedTask.status);
+                    const lastTaskIndex = newTasks.map(t=>t.id).lastIndexOf(tasksInColumn[tasksInColumn.length-1]?.id);
+                    if (lastTaskIndex !== -1) {
+                        newTasks.splice(lastTaskIndex + 1, 0, draggedTask);
+                    } else {
+                        newTasks.push(draggedTask);
+                    }
                 }
 
                 return newTasks;
@@ -242,50 +330,7 @@ export default function TasksPage() {
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-        setActiveTask(null);
-        if (!over) return;
-
-        const activeId = active.id;
-        const overId = over.id;
-        
-        if (activeId !== overId) {
-            setTasks(items => {
-                const oldIndex = items.findIndex(item => item.id === activeId);
-                const overItem = items.find(item => item.id === overId);
-                const overColumn = columns.find(c => c === overId);
-                let newIndex;
-                let newStatus;
-
-                if (overItem) {
-                    newIndex = items.findIndex(item => item.id === overId);
-                    newStatus = overItem.status;
-                } else if (overColumn) {
-                    newStatus = overColumn;
-                    const tasksInColumn = items.filter(t => t.status === newStatus);
-                    newIndex = oldIndex; // Keep index logic simple, can be improved for better UX
-                } else {
-                    return items;
-                }
-
-                const updatedTasks = [...items];
-                const [movedTask] = updatedTasks.splice(oldIndex, 1);
-                movedTask.status = newStatus;
-                
-                if (overItem) {
-                    updatedTasks.splice(newIndex, 0, movedTask);
-                } else {
-                     // Find last index of the target column and insert
-                    const lastTaskInColumnIndex = updatedTasks.map(t => t.status).lastIndexOf(newStatus);
-                    if (lastTaskInColumnIndex !== -1) {
-                        updatedTasks.splice(lastTaskInColumnIndex + 1, 0, movedTask);
-                    } else {
-                        updatedTasks.push(movedTask);
-                    }
-                }
-                return updatedTasks;
-            });
-        }
+      setActiveTask(null);
     };
 
     const handleEdit = (task: Task) => {
@@ -315,6 +360,9 @@ export default function TasksPage() {
             description: values.description,
             priority: values.priority,
             status: 'todo',
+            assignee: values.assignee,
+            dueDate: values.dueDate,
+            tags: values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [],
         };
         setTasks([...tasks, newTask]);
         setIsAddDialogOpen(false);
@@ -327,7 +375,11 @@ export default function TasksPage() {
 
     const handleEditTask = (values: any) => {
         if (!editingTask) return;
-        const updatedTask = { ...editingTask, ...values };
+        const updatedTask = { 
+            ...editingTask, 
+            ...values,
+            tags: values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [],
+        };
         setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t));
         closeEditDialog();
         toast({
@@ -405,7 +457,7 @@ export default function TasksPage() {
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete the task "{taskToDelete?.title}".
-                    </AlertDialogDescription>
+                    </الدDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel asChild>
