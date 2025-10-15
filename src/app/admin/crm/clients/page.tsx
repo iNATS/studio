@@ -61,7 +61,7 @@ const clientsData: Client[] = [
 ];
 
 
-const ClientForm = ({ client, onSubmit }: { client?: Client, onSubmit: (values: any) => void }) => {
+const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit: (values: any) => void, onCancel: () => void }) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -75,19 +75,19 @@ const ClientForm = ({ client, onSubmit }: { client?: Client, onSubmit: (values: 
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
-              <Input id="name" name="name" defaultValue={client?.name} className="col-span-3 bg-white/5 border-white/10" />
+              <Input id="name" name="name" defaultValue={client?.name} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
-              <Input id="email" name="email" type="email" defaultValue={client?.email} className="col-span-3 bg-white/5 border-white/10" />
+              <Input id="email" name="email" type="email" defaultValue={client?.email} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="company" className="text-right">
                 Company
               </Label>
-              <Input id="company" name="company" defaultValue={client?.company} className="col-span-3 bg-white/5 border-white/10" />
+              <Input id="company" name="company" defaultValue={client?.company} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="status" className="text-right">
@@ -104,7 +104,8 @@ const ClientForm = ({ client, onSubmit }: { client?: Client, onSubmit: (values: 
                 </SelectContent>
                 </Select>
             </div>
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
                 <Button type="submit" className="rounded-lg">Save changes</Button>
             </div>
           </form>
@@ -124,7 +125,7 @@ const getStatusBadge = (status: Client['status']) => {
 
 const ClientCard = ({ client, onEdit, onDelete }: { client: Client, onEdit: (client: Client) => void, onDelete: (client: Client) => void }) => {
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex flex-col">
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex flex-col transition-all duration-300 hover:border-white/20 hover:scale-[1.02]">
             <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Image
@@ -249,7 +250,7 @@ export default function ClientsPage() {
                 Enter the details for the new client.
               </DialogDescription>
             </DialogHeader>
-            <ClientForm onSubmit={handleAddClient} />
+            <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
           </DialogContent>
         </Dialog>
 
@@ -262,7 +263,7 @@ export default function ClientsPage() {
                  Update the details of your client below.
               </DialogDescription>
             </DialogHeader>
-            <ClientForm client={editingClient!} onSubmit={handleEditClient} />
+            <ClientForm client={editingClient!} onSubmit={handleEditClient} onCancel={closeEditDialog} />
           </DialogContent>
         </Dialog>
 
@@ -296,3 +297,5 @@ export default function ClientsPage() {
     </main>
   );
 }
+
+    
