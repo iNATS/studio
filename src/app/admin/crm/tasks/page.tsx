@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import * as React from 'react';
@@ -8,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
+  CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb } from 'lucide-react';
@@ -51,6 +49,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const clientsData = [
     { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
@@ -97,9 +96,10 @@ const getPriorityBadge = (priority: Task['priority']) => {
     }
 }
 
-const CreativeNoteSection = () => {
+const CreativeNotesWidget = () => {
     const [notes, setNotes] = React.useState<string[]>(['Initial brain-dump here!', 'Maybe a new color palette?', 'Explore animations for the hero section.']);
     const [newNote, setNewNote] = React.useState('');
+    const [isOpen, setIsOpen] = React.useState(false);
 
     const handleAddNote = (e: React.FormEvent) => {
         e.preventDefault();
@@ -114,39 +114,61 @@ const CreativeNoteSection = () => {
     };
 
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl mb-8">
-            <CardHeader>
-                <CardTitle className="text-white/90 flex items-center gap-3">
-                    <Lightbulb className="h-6 w-6 text-yellow-300" />
-                    Creative Notes
-                </CardTitle>
-                <CardDescription className="text-white/60">A place for quick ideas and inspiration.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {notes.map((note, index) => (
-                        <Badge key={index} variant="secondary" className="bg-white/10 text-white/80 py-1 px-3 text-sm relative group">
-                            {note}
-                            <button onClick={() => handleRemoveNote(index)} className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                <XIcon className="h-3 w-3" />
-                            </button>
-                        </Badge>
-                    ))}
-                </div>
-                <form onSubmit={handleAddNote} className="flex gap-2">
-                    <Input 
-                        type="text" 
-                        placeholder="Jot down an idea..."
-                        value={newNote}
-                        onChange={(e) => setNewNote(e.target.value)}
-                        className="bg-white/5 border-white/10 flex-grow"
-                    />
-                    <Button type="submit" size="sm" className="bg-white/10 hover:bg-white/20 text-white rounded-lg">
-                        Add
-                    </Button>
-                </form>
-            </CardContent>
-        </Card>
+        <div className="fixed bottom-6 right-6 z-50">
+             <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        className="w-80 mb-4"
+                    >
+                        <Card className="bg-background/70 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+                            <CardHeader>
+                                <CardTitle className="text-white/90 flex items-center gap-3 text-lg">
+                                    <Lightbulb className="h-5 w-5 text-yellow-300" />
+                                    Creative Notes
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-wrap gap-2 mb-4 max-h-48 overflow-y-auto pr-2">
+                                    {notes.map((note, index) => (
+                                        <Badge key={index} variant="secondary" className="bg-white/10 text-white/80 py-1 px-3 text-sm relative group whitespace-normal text-left">
+                                            {note}
+                                            <button onClick={() => handleRemoveNote(index)} className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <XIcon className="h-3 w-3" />
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+                                <form onSubmit={handleAddNote} className="flex gap-2">
+                                    <Input 
+                                        type="text" 
+                                        placeholder="Jot down an idea..."
+                                        value={newNote}
+                                        onChange={(e) => setNewNote(e.target.value)}
+                                        className="bg-white/5 border-white/10 flex-grow h-9"
+                                    />
+                                    <Button type="submit" size="sm" className="bg-white/10 hover:bg-white/20 text-white rounded-lg">
+                                        Add
+                                    </Button>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <Button
+                size="icon"
+                className={cn("rounded-full shadow-lg w-14 h-14 transition-colors duration-300", isOpen ? "bg-yellow-400/80 hover:bg-yellow-400 text-black" : "bg-white/10 hover:bg-white/20 text-white")}
+                onClick={() => setIsOpen(!isOpen)}
+                aria-expanded={isOpen}
+                aria-label="Toggle creative notes"
+            >
+                <Lightbulb className="h-6 w-6" />
+            </Button>
+        </div>
     );
 };
 
@@ -479,7 +501,7 @@ export default function TasksPage() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-6 w-full">
+        <main className="flex flex-1 flex-col gap-6 w-full relative">
             <div className="flex items-center">
                 <h1 className="text-2xl font-bold text-white">Tasks</h1>
                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -504,8 +526,6 @@ export default function TasksPage() {
                 </Dialog>
             </div>
 
-            <CreativeNoteSection />
-            
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
                     <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
@@ -594,10 +614,7 @@ export default function TasksPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <CreativeNotesWidget />
         </main>
     );
 }
-
-    
-
-    
