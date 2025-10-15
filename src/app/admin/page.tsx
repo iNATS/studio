@@ -26,7 +26,10 @@ const recentProjects = portfolioItems.slice(0, 5);
 
 export default function AdminDashboard() {
   return (
-    <main className="flex flex-1 flex-col gap-6 w-full">
+    <main className="flex flex-col h-full">
+        <div className="flex items-center mb-6">
+            <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -70,7 +73,7 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 mt-6">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-white/90">Works by Category</CardTitle>
@@ -122,7 +125,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
       </div>
-       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-3">
+       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-3 mt-6">
           <CardHeader>
             <CardTitle className="text-white/90">Skills & Technologies Overview</CardTitle>
           </CardHeader>

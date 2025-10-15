@@ -2,7 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function DeadlinePage() {
   return (
-    <main className="flex flex-1 flex-col gap-6 w-full">
+    <main className="flex flex-col h-full">
+        <div className="flex items-center mb-6">
+            <h1 className="text-2xl font-bold text-white">Deadlines</h1>
+        </div>
       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
         <CardHeader>
           <CardTitle className="text-white/90">Deadlines</CardTitle>

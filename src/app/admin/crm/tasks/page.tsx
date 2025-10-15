@@ -570,8 +570,8 @@ export default function TasksPage() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-6 w-full h-full relative">
-            <div className="flex items-center">
+        <main className="flex flex-col h-full">
+            <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold text-white">Tasks</h1>
                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                     <DialogTrigger asChild>
@@ -699,7 +699,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
-
-    

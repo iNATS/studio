@@ -282,8 +282,8 @@ export default function ClientsPage() {
   }
   
   return (
-    <main className="flex flex-1 flex-col gap-6 w-full">
-      <div className="flex items-center">
+    <main className="flex flex-col h-full">
+      <div className="flex items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Clients</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>

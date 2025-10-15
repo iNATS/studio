@@ -455,8 +455,8 @@ export default function RunProjectsPage() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-6 w-full">
-            <div className="flex items-center">
+        <main className="flex flex-col h-full">
+            <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold text-white">Run Projects</h1>
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                     <DialogTrigger asChild>
@@ -475,7 +475,7 @@ export default function RunProjectsPage() {
                 </Dialog>
             </div>
             
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 mb-6">
                 <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
                     <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-auto min-w-[180px]">
                         <SelectValue placeholder="Filter by Client..." />
@@ -620,27 +620,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   }
 
   // Adding the custom indicator class to the ui/progress component is tricky without modifying the base component.
-  // A cleaner way is to just define a slightly modified local version if needed.
   // For this implementation, I've just added a prop to the project card that uses a normal Progress bar and styles it.
   
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
-
-    
-
-    
-
-    
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
