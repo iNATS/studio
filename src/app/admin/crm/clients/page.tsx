@@ -73,6 +73,26 @@ const clientsData: Client[] = [
     { id: '3', name: 'Emily Davis', email: 'emily.d@creativestudio.com', avatar: 'https://picsum.photos/seed/emily/100/100', status: 'new', company: 'Creative Studio', phone: '555-555-5555', address: '789 Art Blvd, Design District', notes: 'New client, interested in a full branding package.' },
     { id: '4', name: 'David Rodriguez', email: 'david.r@startuphub.io', avatar: 'https://picsum.photos/seed/david/100/100', status: 'archived', company: 'Startup Hub', phone: '555-111-2222', address: '101 Startup Ln, Venture City', notes: 'Project completed in Q2. Potentially more work in the future.' },
     { id: '5', name: 'Jessica Lee', email: 'jessica.l@ecommerce.co', avatar: 'https://picsum.photos/seed/jessica/100/100', status: 'active', company: 'E-commerce Co.', phone: '555-444-3333', address: '210 Market St, Online Town', notes: 'Marketing director. Needs monthly analytics reports.' },
+    { id: '6', name: 'Chris Brown', email: 'chris.b@datasys.co', avatar: 'https://picsum.photos/seed/chris/100/100', status: 'new', company: 'Data Systems', phone: '555-234-5678', address: '321 Data Dr, Server City', notes: 'Initial contact made. Follow up next week.' },
+    { id: '7', name: 'Amanda White', email: 'amanda.w@healthfirst.io', avatar: 'https://picsum.photos/seed/amanda/100/100', status: 'active', company: 'HealthFirst', phone: '555-345-6789', address: '55 Wellness Way, Healthville', notes: 'Ongoing project for patient portal.' },
+    { id: '8', name: 'James Wilson', email: 'james.w@cloudnine.com', avatar: 'https://picsum.photos/seed/james/100/100', status: 'active', company: 'CloudNine', phone: '555-456-7890', address: '987 Cloud Ave, Sky High', notes: 'Requires quarterly performance reviews.' },
+    { id: '9', name: 'Patricia Garcia', email: 'patricia.g@fintech.com', avatar: 'https://picsum.photos/seed/patricia/100/100', status: 'archived', company: 'Fintech Corp', phone: '555-567-8901', address: '12 Finance St, Moneytown', notes: 'Contract ended. Good standing.' },
+    { id: '10', name: 'Robert Martinez', email: 'robert.m@edutech.org', avatar: 'https://picsum.photos/seed/robert/100/100', status: 'active', company: 'EduTech Org', phone: '555-678-9012', address: '45 Learning Ln, Knowledge City', notes: 'Developing a new e-learning platform.' },
+    { id: '11', name: 'Linda Hernandez', email: 'linda.h@globex.com', avatar: 'https://picsum.photos/seed/linda/100/100', status: 'new', company: 'Globex Corporation', phone: '555-789-0123', address: '1 Globex Plaza, Megalopolis', notes: 'Interested in enterprise solutions.' },
+    { id: '12', name: 'William Anderson', email: 'william.a@logistics.net', avatar: 'https://picsum.photos/seed/william/100/100', status: 'active', company: 'Logistics Pro', phone: '555-890-1234', address: '789 Supply Chain, Port City', notes: 'Manages fleet tracking software.' },
+    { id: '13', name: 'Elizabeth Thomas', email: 'elizabeth.t@realestate.com', avatar: 'https://picsum.photos/seed/elizabeth/100/100', status: 'active', company: 'Prestige Realty', phone: '555-901-2345', address: '100 Main St, Propertyville', notes: 'Needs website redesign.' },
+    { id: '14', name: 'Richard Jackson', email: 'richard.j@travelco.com', avatar: 'https://picsum.photos/seed/richard/100/100', status: 'new', company: 'TravelCo', phone: '555-012-3456', address: '200 Journey Ave, Adventure Bay', notes: 'Looking for a new booking engine.' },
+    { id: '15', name: 'Susan Moore', email: 'susan.m@fashionforward.com', avatar: 'https://picsum.photos/seed/susan/100/100', status: 'archived', company: 'Fashion Forward', phone: '555-123-4567', address: '300 Style St, Trend City', notes: 'Seasonal campaign completed.' },
+    { id: '16', name: 'Joseph Taylor', email: 'joseph.t@greenenergy.io', avatar: 'https://picsum.photos/seed/joseph/100/100', status: 'active', company: 'Green Energy', phone: '555-234-5678', address: '400 Solar Panel Rd, Eco Town', notes: 'Monitoring dashboard project.' },
+    { id: '17', name: 'Margaret Martin', email: 'margaret.m@foodie.com', avatar: 'https://picsum.photos/seed/margaret/100/100', status: 'active', company: 'FoodieFinds', phone: '555-345-6789', address: '500 Gourmet Grove, Tastytown', notes: 'Mobile app for recipe sharing.' },
+    { id: '18', name: 'Charles Lee', email: 'charles.l@gamerhub.gg', avatar: 'https://picsum.photos/seed/charles/100/100', status: 'new', company: 'GamerHub', phone: '555-456-7890', address: '600 Controller Ct, Pixel City', notes: 'Wants to build a community forum.' },
+    { id: '19', name: 'Karen Perez', email: 'karen.p@artisan.co', avatar: 'https://picsum.photos/seed/karen/100/100', status: 'active', company: 'Artisan Crafts', phone: '555-567-8901', address: '700 Handmade Ave, Craftsville', notes: 'Online marketplace for handmade goods.' },
+    { id: '20', name: 'Thomas Thompson', email: 'thomas.t@legaltech.com', avatar: 'https://picsum.photos/seed/thomas/100/100', status: 'archived', company: 'LegalTech', phone: '555-678-9012', address: '800 Justice Blvd, Lawful City', notes: 'Document management system built.' },
+    { id: '21', name: 'Nancy Clark', email: 'nancy.c@soundwave.audio', avatar: 'https://picsum.photos/seed/nancy/100/100', status: 'active', company: 'SoundWave', phone: '555-789-0123', address: '900 Melody Ln, Harmony Heights', notes: 'Streaming service UI/UX refresh.' },
+    { id: '22', name: 'Daniel Lewis', email: 'daniel.l@autoworld.com', avatar: 'https://picsum.photos/seed/daniel/100/100', status: 'new', company: 'AutoWorld', phone: '555-890-1234', address: '1000 Piston Parkway, Motor City', notes: 'Wants a car configurator tool.' },
+    { id: '23', name: 'Betty Robinson', email: 'betty.r@petcare.com', avatar: 'https://picsum.photos/seed/betty/100/100', status: 'active', company: 'PetCare Plus', phone: '555-901-2345', address: '1100 Paw Print Path, Animal Town', notes: 'Appointment booking system.' },
+    { id: '24', name: 'Paul Walker', email: 'paul.w@archviz.com', avatar: 'https://picsum.photos/seed/paul/100/100', status: 'active', company: 'ArchViz Studio', phone: '555-012-3456', address: '1200 Blueprint Blvd, Structure City', notes: '3D rendering portfolio site.' },
+    { id: '25', name: 'Helen Hall', email: 'helen.h@bookworm.com', avatar: 'https://picsum.photos/seed/helen/100/100', status: 'new', company: 'Bookworm Nook', phone: '555-123-4567', address: '1300 Storybook St, Readington', notes: 'Online book club platform.' }
 ];
 
 
@@ -401,5 +421,7 @@ export default function ClientsPage() {
     </main>
   );
 }
+
+    
 
     
