@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText, X as XIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -307,8 +307,30 @@ export default function RunProjectsPage() {
     const { toast } = useToast();
     const sensors = useSensors(useSensor(PointerSensor));
 
+    const [filters, setFilters] = React.useState({
+        clientId: 'all',
+        title: '',
+    });
+
     const columns: ProjectStatus[] = ['planning', 'in-progress', 'completed'];
     const columnTitles = { planning: 'Planning', 'in-progress': 'In Progress', completed: 'Completed' };
+    
+    const handleFilterChange = (filterType: keyof typeof filters, value: string) => {
+        setFilters(prev => ({ ...prev, [filterType]: value }));
+    };
+
+    const clearFilters = () => {
+        setFilters({ clientId: 'all', title: '' });
+    };
+
+    const filteredProjects = React.useMemo(() => {
+        return projects.filter(project => {
+            const clientMatch = filters.clientId === 'all' || project.clientId === filters.clientId;
+            const titleMatch = project.title.toLowerCase().includes(filters.title.toLowerCase());
+            return clientMatch && titleMatch;
+        });
+    }, [projects, filters]);
+
 
     const handleDragStart = React.useCallback((event: DragStartEvent) => {
         const { active } = event;
@@ -427,6 +449,29 @@ export default function RunProjectsPage() {
                     </DialogContent>
                 </Dialog>
             </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+                <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
+                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
+                        <SelectValue placeholder="Filter by Client..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                        <SelectItem value="all">All Clients</SelectItem>
+                        {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+                <Input 
+                    type="text" 
+                    placeholder="Filter by title..."
+                    value={filters.title}
+                    onChange={(e) => handleFilterChange('title', e.target.value)}
+                    className="bg-white/5 border-white/10 w-full sm:w-[220px]"
+                />
+                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
+                    <XIcon className="mr-2 h-4 w-4" /> Clear
+                </Button>
+            </div>
+
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                 <div className="flex flex-col lg:flex-row gap-6">
@@ -435,7 +480,7 @@ export default function RunProjectsPage() {
                             key={status}
                             title={columnTitles[status]}
                             status={status}
-                            projects={projects.filter(p => p.status === status)}
+                            projects={filteredProjects.filter(p => p.status === status)}
                             onEdit={handleEdit}
                             onDelete={setProjectToDelete}
                             onView={handleView}
@@ -518,3 +563,6 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
 
     
 
+
+
+    
