@@ -143,7 +143,7 @@ export default function AdminLayout({
                 </Link>
                 <SidebarTrigger className="text-white/80 hover:text-white" />
             </header>
-          <div className="flex-1 w-full h-full p-4 pt-20 sm:p-8 overflow-hidden flex flex-col">
+          <div className="flex-1 w-full h-full p-4 pt-20 sm:p-8 flex flex-col">
             {children}
           </div>
         </SidebarInset>
