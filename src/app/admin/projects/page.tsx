@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -169,14 +170,14 @@ export default function AdminProjectsPage() {
         </AlertDialog>
       </div>
 
-      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
         <CardHeader>
           <CardTitle className="text-white/90">Manage Your Portfolio</CardTitle>
           <CardDescription className="text-white/60">
             View, edit, or delete your works.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 overflow-y-auto">
           <Table>
             <TableHeader>
               <TableRow className="border-white/10 hover:bg-white/10">
