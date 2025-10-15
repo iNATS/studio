@@ -348,14 +348,14 @@ export default function ClientsPage() {
         </AlertDialog>
       </div>
 
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
             <CardHeader>
                 <CardTitle className="text-white/90">Your Clients</CardTitle>
                 <CardDescription className="text-white/60">
                     Manage your client relationships.
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 overflow-y-auto">
                 <Table>
                     <TableHeader>
                     <TableRow className="border-white/10 hover:bg-white/10">
@@ -421,7 +421,3 @@ export default function ClientsPage() {
     </main>
   );
 }
-
-    
-
-    
