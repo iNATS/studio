@@ -262,7 +262,7 @@ const TaskColumn = ({ title, status, tasks, onEdit, onDelete, onView }: { title:
     return (
         <div ref={setNodeRef} className={cn("w-full sm:w-[340px] flex-shrink-0", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
             <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title}</h3>
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 min-h-[500px]">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 h-full">
                 <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
                     {tasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onView={onView} />)}
                 </SortableContext>
@@ -570,7 +570,7 @@ export default function TasksPage() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-6 w-full relative">
+        <main className="flex flex-1 flex-col gap-6 w-full h-full relative">
             <div className="flex items-center">
                 <h1 className="text-2xl font-bold text-white">Tasks</h1>
                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -628,30 +628,33 @@ export default function TasksPage() {
                 </Button>
             </div>
             
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                <ScrollArea className="w-full">
-                    <div className="flex flex-row gap-6 pb-4">
-                        {columns.map(status => (
-                            <TaskColumn
-                                key={status}
-                                title={columnTitles[status]}
-                                status={status}
-                                tasks={filteredTasks.filter(t => t.status === status)}
-                                onEdit={handleEdit}
-                                onDelete={setTaskToDelete}
-                                onView={handleView}
-                            />
-                        ))}
-                    </div>
-                </ScrollArea>
-                 <DragOverlay>
-                    {activeTask ? (
-                        <div className="w-[300px] md:w-[340px]">
-                         <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
+            <div className="flex-1 overflow-hidden">
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+                    <ScrollArea className="w-full h-full">
+                        <div className="flex flex-row gap-6 pb-4 h-full">
+                            {columns.map(status => (
+                                <TaskColumn
+                                    key={status}
+                                    title={columnTitles[status]}
+                                    status={status}
+                                    tasks={filteredTasks.filter(t => t.status === status)}
+                                    onEdit={handleEdit}
+                                    onDelete={setTaskToDelete}
+                                    onView={handleView}
+                                />
+                            ))}
                         </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+                    </ScrollArea>
+                    <DragOverlay>
+                        {activeTask ? (
+                            <div className="w-[300px] md:w-[340px]">
+                            <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
+            </div>
+
 
              <TaskViewDialog 
                 task={viewingTask} 
@@ -696,5 +699,7 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
 
     

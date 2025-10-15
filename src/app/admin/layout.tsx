@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -44,7 +45,7 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-screen h-screen flex">
        <SidebarProvider>
         <Sidebar
           variant="floating"
@@ -137,7 +138,7 @@ export default function AdminLayout({
                 </Link>
                 <SidebarTrigger className="text-white/80 hover:text-white" />
             </header>
-          <div className="flex-1 w-full h-full p-4 pt-20 sm:p-8">
+          <div className="flex-1 w-full h-full p-4 pt-20 sm:p-8 overflow-hidden flex flex-col">
             {children}
           </div>
         </SidebarInset>
@@ -145,3 +146,5 @@ export default function AdminLayout({
     </div>
   );
 }
+
+    
