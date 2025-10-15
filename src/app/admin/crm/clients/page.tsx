@@ -10,6 +10,14 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,6 +50,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type Client = {
   id: string;
@@ -121,58 +130,6 @@ const getStatusBadge = (status: Client['status']) => {
         case 'archived':
             return <Badge variant="outline" className="text-white/50 border-white/20 bg-white/10">Archived</Badge>;
     }
-}
-
-const ClientCard = ({ client, onEdit, onDelete, onView }: { client: Client, onEdit: (client: Client) => void, onDelete: (client: Client) => void, onView: (client: Client) => void }) => {
-    return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex flex-col transition-all duration-300 hover:border-white/20 hover:scale-[1.02]">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <Image
-                        alt={client.name}
-                        className="aspect-square rounded-full object-cover border-2 border-white/20"
-                        height="48"
-                        src={client.avatar}
-                        width="48"
-                    />
-                    <div>
-                        <CardTitle className="text-white/90 text-lg">{client.name}</CardTitle>
-                        <CardDescription className="text-white/60">{client.company}</CardDescription>
-                    </div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      aria-haspopup="true"
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
-                  >
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onSelect={() => onView(client)}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => onEdit(client)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(client)}>
-                      <Trash2 className="mr-2 h-4 w-4" />Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-            </CardHeader>
-            <CardContent className="flex-grow">
-                <p className="text-sm text-white/70">{client.email}</p>
-            </CardContent>
-            <CardFooter>
-                {getStatusBadge(client.status)}
-            </CardFooter>
-        </Card>
-    );
 }
 
 export default function ClientsPage() {
@@ -298,11 +255,76 @@ export default function ClientsPage() {
         </AlertDialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clients.map((client) => (
-            <ClientCard key={client.id} client={client} onEdit={handleEdit} onDelete={setClientToDelete} onView={handleView} />
-        ))}
-      </div>
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="text-white/90">Your Clients</CardTitle>
+                <CardDescription className="text-white/60">
+                    Manage your client relationships.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                    <TableRow className="border-white/10 hover:bg-white/10">
+                        <TableHead className="text-white/80">Client</TableHead>
+                        <TableHead className="text-white/80 hidden md:table-cell">Email</TableHead>
+                        <TableHead className="text-white/80 hidden lg:table-cell">Company</TableHead>
+                        <TableHead className="text-white/80">Status</TableHead>
+                        <TableHead>
+                        <span className="sr-only">Actions</span>
+                        </TableHead>
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {clients.map((client) => (
+                        <TableRow
+                        key={client.id}
+                        className="border-white/10 hover:bg-white/5"
+                        >
+                        <TableCell>
+                            <div className="flex items-center gap-3">
+                                <Avatar className="hidden h-9 w-9 sm:flex border-2 border-white/20">
+                                    <AvatarImage src={client.avatar} alt={client.name} />
+                                    <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div className="font-medium text-white/90">{client.name}</div>
+                            </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-white/70">{client.email}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-white/70">{client.company}</TableCell>
+                        <TableCell>{getStatusBadge(client.status)}</TableCell>
+                        <TableCell>
+                            <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
+                                >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="end"
+                                className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
+                            >
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem onSelect={() => handleView(client)}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => handleEdit(client)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => setClientToDelete(client)}>
+                                <Trash2 className="mr-2 h-4 w-4" />Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
     </main>
   );
 }
