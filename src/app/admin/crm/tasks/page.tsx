@@ -457,7 +457,7 @@ export default function TasksPage() {
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete the task "{taskToDelete?.title}".
-                    </الدDescription>
+                    </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel asChild>
