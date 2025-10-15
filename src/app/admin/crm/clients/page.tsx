@@ -357,7 +357,7 @@ export default function ClientsPage() {
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="sticky top-0 bg-white/5 backdrop-blur-xl">
                     <TableRow className="border-white/10 hover:bg-white/10">
                         <TableHead className="text-white/80">Client</TableHead>
                         <TableHead className="text-white/80 hidden md:table-cell">Email</TableHead>

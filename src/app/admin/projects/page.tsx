@@ -179,7 +179,7 @@ export default function AdminProjectsPage() {
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 bg-white/5 backdrop-blur-xl">
               <TableRow className="border-white/10 hover:bg-white/10">
                 <TableHead className="hidden w-[100px] sm:table-cell text-white/80">
                   <span className="sr-only">Image</span>
