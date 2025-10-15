@@ -114,8 +114,8 @@ const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, 
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem onSelect={() => onEdit(project)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(project)}>
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); onEdit(project); }}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={(e) => { e.stopPropagation(); onDelete(project); }}>
                                   <Trash2 className="mr-2 h-4 w-4" />Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -634,6 +634,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
     
 
 
+
+    
 
     
 
