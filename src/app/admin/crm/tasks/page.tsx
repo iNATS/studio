@@ -7,10 +7,11 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription
+  CardDescription,
+  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye, User, Tag, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -78,13 +80,13 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 
 
 const initialTasks: Task[] = [
-  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high', clientId: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
-  { id: '2', title: 'Develop API Endpoints', description: 'Setup new routes for user auth', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'] },
-  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile', status: 'in-progress', priority: 'medium', clientId: '3' },
-  { id: '4', title: 'Write Documentation', description: 'For the new credit card processing feature', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
-  { id: '5', title: 'Deploy Staging Server', description: 'Update server with latest build', status: 'done', priority: 'high', clientId: '1', tags: ['devops'] },
-  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides for project update', status: 'done', priority: 'medium', clientId: '2' },
-  { id: '7', title: 'Update Dependencies', description: 'Check for security vulnerabilities', status: 'todo', priority: 'low', tags: ['maintenance'] },
+  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma for the new marketing campaign. Focus on a clean and modern design.', status: 'in-progress', priority: 'high', clientId: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
+  { id: '2', title: 'Develop API Endpoints', description: 'Setup new GraphQL routes for user authentication and profile management.', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'] },
+  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile devices where the keyboard covers the password field.', status: 'in-progress', priority: 'medium', clientId: '3' },
+  { id: '4', title: 'Write Documentation', description: 'Create comprehensive documentation for the new credit card processing feature, including API specs and usage examples.', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
+  { id: '5', title: 'Deploy Staging Server', description: 'Update the staging environment with the latest build from the develop branch.', status: 'done', priority: 'high', clientId: '1', tags: ['devops'] },
+  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides and a demo for the project update meeting with Michael Chen.', status: 'done', priority: 'medium', clientId: '2' },
+  { id: '7', title: 'Update Dependencies', description: 'Check for outdated npm packages and update them, focusing on any with known security vulnerabilities.', status: 'todo', priority: 'low', tags: ['maintenance'] },
 ];
 
 const getPriorityBadge = (priority: Task['priority']) => {
@@ -175,7 +177,7 @@ const CreativeNotesWidget = () => {
 };
 
 
-const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void }) => {
+const TaskCard = ({ task, onEdit, onDelete, onView }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: {type: 'Task', task} });
     const client = clientsData.find(c => c.id === task.clientId);
 
@@ -191,12 +193,12 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
                 <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                         <div className="flex items-start gap-2 flex-1">
-                             <button {...listeners} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
+                             <div {...listeners} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
                                 <GripVertical className="h-5 w-5" />
-                            </button>
+                            </div>
                             <div className="flex-1">
                                 <h4 className="font-semibold text-white/90">{task.title}</h4>
-                                <p className="text-sm text-white/60 mt-1 mb-3">{task.description}</p>
+                                <p className="text-sm text-white/60 mt-1 mb-3 line-clamp-2">{task.description}</p>
                                 <div className="flex flex-wrap gap-2 items-center">
                                     {getPriorityBadge(task.priority)}
                                     {task.tags?.map(tag => <Badge key={tag} variant="secondary" className="bg-white/10 text-white/70">{tag}</Badge>)}
@@ -227,6 +229,7 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
                             size="icon"
                             variant="ghost"
                             className="h-6 w-6 text-white/70 hover:bg-white/20 hover:text-white"
+                            onClick={e => e.stopPropagation()}
                             >
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Toggle menu</span>
@@ -237,9 +240,9 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
                             className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
                         >
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onSelect={() => {}}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => onEdit(task)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(task)}>
+                            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onView(task); }}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onEdit(task); }}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={(e) => { e.preventDefault(); onDelete(task); }}>
                               <Trash2 className="mr-2 h-4 w-4" />Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -251,7 +254,7 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
     );
 };
 
-const TaskColumn = ({ title, status, tasks, onEdit, onDelete }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void }) => {
+const TaskColumn = ({ title, status, tasks, onEdit, onDelete, onView }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
 
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
@@ -261,14 +264,14 @@ const TaskColumn = ({ title, status, tasks, onEdit, onDelete }: { title: string,
             <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title}</h3>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 min-h-[500px]">
                 <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete}/>)}
+                    {tasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onView={onView} />)}
                 </SortableContext>
             </div>
         </div>
     );
 };
 
-const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => void }) => {
+const TaskForm = ({ task, onSubmit, onCancel }: { task?: Task, onSubmit: (values: any) => void, onCancel: () => void }) => {
     const [dueDate, setDueDate] = React.useState<Date | undefined>(task?.dueDate);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -351,18 +354,82 @@ const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => 
               </Label>
               <Input id="tags" name="tags" defaultValue={task?.tags?.join(', ')} className="col-span-3 bg-white/5 border-white/10" placeholder="e.g. UI, backend, urgent" />
             </div>
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
                 <Button type="submit" className="rounded-lg">Save changes</Button>
             </div>
           </form>
     )
 }
 
+const TaskViewDialog = ({ task, open, onOpenChange }: { task: Task | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+    if (!task) return null;
+
+    const client = clientsData.find(c => c.id === task.clientId);
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle className="text-xl">{task.title}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 mt-4">
+                    <div className="flex items-start gap-4">
+                        <FileText className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
+                        <p className="text-white/80">{task.description}</p>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <Lightbulb className="h-5 w-5 text-white/50" />
+                        {getPriorityBadge(task.priority)}
+                    </div>
+
+                    {task.dueDate && (
+                        <div className="flex items-center gap-4">
+                            <CalendarIcon className="h-5 w-5 text-white/50" />
+                            <span className="text-white/80">{format(task.dueDate, "PPP")}</span>
+                        </div>
+                    )}
+                    
+                    {client && (
+                        <div className="flex items-center gap-4">
+                            <User className="h-5 w-5 text-white/50" />
+                            <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                    <AvatarImage src={client.avatar} alt={client.name} />
+                                    <AvatarFallback>{client.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-white/80">{client.name}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {task.tags && task.tags.length > 0 && (
+                        <div className="flex items-start gap-4">
+                            <Tag className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
+                            <div className="flex flex-wrap gap-2">
+                                {task.tags.map(tag => (
+                                    <Badge key={tag} variant="secondary" className="bg-white/10 text-white/70">{tag}</Badge>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                 <DialogFooter className="mt-6">
+                    <Button onClick={() => onOpenChange(false)} className="rounded-lg w-full">Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function TasksPage() {
     const [tasks, setTasks] = React.useState<Task[]>(initialTasks);
     const [activeTask, setActiveTask] = React.useState<Task | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
     const [editingTask, setEditingTask] = React.useState<Task | null>(null);
+    const [viewingTask, setViewingTask] = React.useState<Task | null>(null);
     const [taskToDelete, setTaskToDelete] = React.useState<Task | null>(null);
     const { toast } = useToast();
     const sensors = useSensors(useSensor(PointerSensor));
@@ -449,14 +516,10 @@ export default function TasksPage() {
     const handleDragEnd = React.useCallback((event: DragEndEvent) => {
       setActiveTask(null);
     }, []);
-
-    const handleEdit = (task: Task) => {
-        setEditingTask(task);
-    };
-
-    const closeEditDialog = () => {
-        setEditingTask(null);
-    };
+    
+    const handleView = (task: Task) => setViewingTask(task);
+    const handleEdit = (task: Task) => setEditingTask(task);
+    const closeEditDialog = () => setEditingTask(null);
 
     const handleDeleteConfirm = () => {
         if (taskToDelete) {
@@ -527,7 +590,7 @@ export default function TasksPage() {
                             Enter the details for the new task.
                         </DialogDescription>
                         </DialogHeader>
-                        <TaskForm onSubmit={handleAddTask} />
+                        <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
                     </DialogContent>
                 </Dialog>
             </div>
@@ -576,6 +639,7 @@ export default function TasksPage() {
                                 tasks={filteredTasks.filter(t => t.status === status)}
                                 onEdit={handleEdit}
                                 onDelete={setTaskToDelete}
+                                onView={handleView}
                             />
                         ))}
                     </div>
@@ -583,11 +647,17 @@ export default function TasksPage() {
                  <DragOverlay>
                     {activeTask ? (
                         <div className="w-[300px] md:w-[340px]">
-                         <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} />
+                         <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
                         </div>
                     ) : null}
                 </DragOverlay>
             </DndContext>
+
+             <TaskViewDialog 
+                task={viewingTask} 
+                open={!!viewingTask} 
+                onOpenChange={(isOpen) => !isOpen && setViewingTask(null)} 
+            />
 
             {/* Edit Task Dialog */}
             <Dialog open={!!editingTask} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
@@ -598,7 +668,7 @@ export default function TasksPage() {
                         Update the details of your task below.
                     </DialogDescription>
                     </DialogHeader>
-                    <TaskForm task={editingTask!} onSubmit={handleEditTask} />
+                    <TaskForm task={editingTask!} onSubmit={handleEditTask} onCancel={closeEditDialog} />
                 </DialogContent>
             </Dialog>
 
