@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -7,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb } from 'lucide-react';
@@ -49,7 +51,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CardDescription } from '@/components/ui/card';
 
 const clientsData = [
     { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
@@ -96,20 +97,20 @@ const getPriorityBadge = (priority: Task['priority']) => {
     }
 }
 
-const CreativeNodSection = () => {
-    const [nods, setNods] = React.useState<string[]>(['Initial brain-dump here!', 'Maybe a new color palette?', 'Explore animations for the hero section.']);
-    const [newNod, setNewNod] = React.useState('');
+const CreativeNoteSection = () => {
+    const [notes, setNotes] = React.useState<string[]>(['Initial brain-dump here!', 'Maybe a new color palette?', 'Explore animations for the hero section.']);
+    const [newNote, setNewNote] = React.useState('');
 
-    const handleAddNod = (e: React.FormEvent) => {
+    const handleAddNote = (e: React.FormEvent) => {
         e.preventDefault();
-        if (newNod.trim()) {
-            setNods(prev => [newNod.trim(), ...prev]);
-            setNewNod('');
+        if (newNote.trim()) {
+            setNotes(prev => [newNote.trim(), ...prev]);
+            setNewNote('');
         }
     };
     
-    const handleRemoveNod = (indexToRemove: number) => {
-        setNods(prev => prev.filter((_, index) => index !== indexToRemove));
+    const handleRemoveNote = (indexToRemove: number) => {
+        setNotes(prev => prev.filter((_, index) => index !== indexToRemove));
     };
 
     return (
@@ -117,27 +118,27 @@ const CreativeNodSection = () => {
             <CardHeader>
                 <CardTitle className="text-white/90 flex items-center gap-3">
                     <Lightbulb className="h-6 w-6 text-yellow-300" />
-                    Creative Nods
+                    Creative Notes
                 </CardTitle>
                 <CardDescription className="text-white/60">A place for quick ideas and inspiration.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-wrap gap-2 mb-4">
-                    {nods.map((nod, index) => (
+                    {notes.map((note, index) => (
                         <Badge key={index} variant="secondary" className="bg-white/10 text-white/80 py-1 px-3 text-sm relative group">
-                            {nod}
-                            <button onClick={() => handleRemoveNod(index)} className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            {note}
+                            <button onClick={() => handleRemoveNote(index)} className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                                 <XIcon className="h-3 w-3" />
                             </button>
                         </Badge>
                     ))}
                 </div>
-                <form onSubmit={handleAddNod} className="flex gap-2">
+                <form onSubmit={handleAddNote} className="flex gap-2">
                     <Input 
                         type="text" 
                         placeholder="Jot down an idea..."
-                        value={newNod}
-                        onChange={(e) => setNewNod(e.target.value)}
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
                         className="bg-white/5 border-white/10 flex-grow"
                     />
                     <Button type="submit" size="sm" className="bg-white/10 hover:bg-white/20 text-white rounded-lg">
@@ -503,7 +504,7 @@ export default function TasksPage() {
                 </Dialog>
             </div>
 
-            <CreativeNodSection />
+            <CreativeNoteSection />
             
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
@@ -596,5 +597,7 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
 
     
