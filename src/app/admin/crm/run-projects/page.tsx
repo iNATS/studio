@@ -205,29 +205,32 @@ const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSub
               <Label htmlFor="budget" className="text-right">Budget</Label>
               <Input id="budget" name="budget" type="number" defaultValue={project?.budget} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
-             <div className="grid grid-cols-1 sm:grid-cols-2 col-start-2 col-span-3 gap-4">
-                <Popover>
-                    <PopoverTrigger asChild>
-                    <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !startDate && "text-muted-foreground")}>
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {startDate ? format(startDate, "PPP") : <span>Start Date</span>}
-                    </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
-                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
-                    </PopoverContent>
-                </Popover>
-                 <Popover>
-                    <PopoverTrigger asChild>
-                    <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !endDate && "text-muted-foreground")}>
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {endDate ? format(endDate, "PPP") : <span>End Date</span>}
-                    </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
-                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
-                    </PopoverContent>
-                </Popover>
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">Timeline</Label>
+                <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !startDate && "text-muted-foreground")}>
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {startDate ? format(startDate, "PPP") : <span>Start Date</span>}
+                        </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                            <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
+                        </PopoverContent>
+                    </Popover>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !endDate && "text-muted-foreground")}>
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {endDate ? format(endDate, "PPP") : <span>End Date</span>}
+                        </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                            <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
+                        </PopoverContent>
+                    </Popover>
+                </div>
             </div>
             <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
@@ -441,5 +444,7 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
 
+
+    
 
     
