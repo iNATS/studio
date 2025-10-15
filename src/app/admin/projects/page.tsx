@@ -70,7 +70,7 @@ export default function AdminProjectsPage() {
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',
-        title: "Project Deleted",
+        title: "Work Deleted",
         description: `"${projectToDelete.title}" has been removed.`,
       });
     }
@@ -90,7 +90,7 @@ export default function AdminProjectsPage() {
   return (
     <main className="flex flex-1 flex-col gap-6 w-full">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-white">Projects</h1>
+        <h1 className="text-2xl font-bold text-white">My Works</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -98,24 +98,24 @@ export default function AdminProjectsPage() {
               className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
             >
               <PlusCircle className="h-4 w-4" />
-              Add Project
+              Add Work
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Add New Project</DialogTitle>
+              <DialogTitle>Add New Work</DialogTitle>
               <DialogDescription>
-                Follow the steps to add a new project to your portfolio.
+                Follow the steps to add a new work to your portfolio.
               </DialogDescription>
             </DialogHeader>
              <ProjectWizard
               onSubmit={(values) => {
-                  console.log('Adding project:', values);
+                  console.log('Adding work:', values);
                   setIsAddDialogOpen(false);
                   toast({
                     variant: 'success',
-                    title: "Project Published!",
-                    description: "Your new project has been added to the portfolio.",
+                    title: "Work Published!",
+                    description: "Your new work has been added to the portfolio.",
                   });
               }}
             />
@@ -126,20 +126,20 @@ export default function AdminProjectsPage() {
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Edit Project</DialogTitle>
+              <DialogTitle>Edit Work</DialogTitle>
               <DialogDescription>
-                 Update the details of your project below.
+                 Update the details of your work below.
               </DialogDescription>
             </DialogHeader>
             <ProjectWizard
               project={getProjectForForm(editingProject)}
               onSubmit={(values) => {
-                console.log('Editing project:', values);
+                console.log('Editing work:', values);
                 closeEditDialog();
                 toast({
                   variant: 'success',
-                  title: "Project Updated!",
-                  description: "Your project has been successfully updated.",
+                  title: "Work Updated!",
+                  description: "Your work has been successfully updated.",
                 });
               }}
             />
@@ -153,7 +153,7 @@ export default function AdminProjectsPage() {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the
-                project "{projectToDelete?.title}" from your portfolio.
+                work "{projectToDelete?.title}" from your portfolio.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -173,7 +173,7 @@ export default function AdminProjectsPage() {
         <CardHeader>
           <CardTitle className="text-white/90">Manage Your Portfolio</CardTitle>
           <CardDescription className="text-white/60">
-            View, edit, or delete your projects.
+            View, edit, or delete your works.
           </CardDescription>
         </CardHeader>
         <CardContent>

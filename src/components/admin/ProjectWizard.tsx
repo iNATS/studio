@@ -236,7 +236,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormLabel>Short Description</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                        placeholder="A short summary of the project..."
+                                        placeholder="A short summary of the work..."
                                         rows={2}
                                         {...field}
                                         className="bg-white/5 border-white/10"
@@ -254,7 +254,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormLabel>Full Description</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                        placeholder="The full, detailed description of the project..."
+                                        placeholder="The full, detailed description of the work..."
                                         rows={3}
                                         {...field}
                                         className="bg-white/5 border-white/10"
@@ -429,7 +429,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
             </Button>
             <Button type="button" onClick={processStep} size="lg" className="rounded-full">
             {currentStep === stepSchemas.length - 1 ? (
-                <>Publish Project <Rocket className="ml-2 h-4 w-4" /></>
+                <>Publish Work <Rocket className="ml-2 h-4 w-4" /></>
             ) : currentStep === stepSchemas.length - 2 ? (
                 <>Review <Send className="ml-2 h-4 w-4" /></>
             ) : (

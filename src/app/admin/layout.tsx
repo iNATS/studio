@@ -32,7 +32,7 @@ export default function AdminLayout({
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
-    { href: '/admin/projects', label: 'Projects', icon: Briefcase },
+    { href: '/admin/projects', label: 'My Works', icon: Briefcase },
     {  
       label: 'CRM', icon: Contact, 
       subItems: [

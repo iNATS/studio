@@ -30,7 +30,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white/70">Total Projects</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/70">Total Works</CardTitle>
             <Briefcase className="h-5 w-5 text-white/50" />
           </CardHeader>
           <CardContent>
@@ -40,32 +40,32 @@ export default function AdminDashboard() {
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white/70">Web Projects</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/70">Web Works</CardTitle>
             <Code className="h-5 w-5 text-white/50" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-white">{webProjects}</div>
-            <p className="text-xs text-white/50">Web development projects</p>
+            <p className="text-xs text-white/50">Web development works</p>
           </CardContent>
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white/70">Mobile Projects</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/70">Mobile Works</CardTitle>
             <Smartphone className="h-5 w-5 text-white/50" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-white">{mobileProjects}</div>
-            <p className="text-xs text-white/50">Mobile app projects</p>
+            <p className="text-xs text-white/50">Mobile app works</p>
           </CardContent>
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white/70">Design Projects</CardTitle>
+            <CardTitle className="text-sm font-medium text-white/70">Design Works</CardTitle>
             <Palette className="h-5 w-5 text-white/50" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-white">{designProjects}</div>
-            <p className="text-xs text-white/50">Branding & UI/UX projects</p>
+            <p className="text-xs text-white/50">Branding & UI/UX works</p>
           </CardContent>
         </Card>
       </div>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-white/90">Projects by Category</CardTitle>
+            <CardTitle className="text-white/90">Works by Category</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
              <ResponsiveContainer width="100%" height={300}>
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1">
             <CardHeader>
-              <CardTitle className="text-white/90">Recent Projects</CardTitle>
+              <CardTitle className="text-white/90">Recent Works</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
