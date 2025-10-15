@@ -311,9 +311,9 @@ export default function ClientsPage() {
                                 className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
                             >
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem onSelect={() => handleView(client)}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => handleEdit(client)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => setClientToDelete(client)}>
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); handleView(client); }}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); handleEdit(client); }}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={(e) => { e.stopPropagation(); setClientToDelete(client); }}>
                                 <Trash2 className="mr-2 h-4 w-4" />Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -328,3 +328,5 @@ export default function ClientsPage() {
     </main>
   );
 }
+
+    
