@@ -37,7 +37,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, PlusCircle, Trash2, Edit } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -123,7 +123,7 @@ const getStatusBadge = (status: Client['status']) => {
     }
 }
 
-const ClientCard = ({ client, onEdit, onDelete }: { client: Client, onEdit: (client: Client) => void, onDelete: (client: Client) => void }) => {
+const ClientCard = ({ client, onEdit, onDelete, onView }: { client: Client, onEdit: (client: Client) => void, onDelete: (client: Client) => void, onView: (client: Client) => void }) => {
     return (
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex flex-col transition-all duration-300 hover:border-white/20 hover:scale-[1.02]">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -157,6 +157,7 @@ const ClientCard = ({ client, onEdit, onDelete }: { client: Client, onEdit: (cli
                     className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
                   >
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem onSelect={() => onView(client)}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => onEdit(client)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
                     <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(client)}>
                       <Trash2 className="mr-2 h-4 w-4" />Delete
@@ -183,6 +184,14 @@ export default function ClientsPage() {
 
   const handleEdit = (client: Client) => {
     setEditingClient(client);
+  };
+  
+  const handleView = (client: Client) => {
+    // Placeholder for view functionality
+    toast({
+        title: 'View Client',
+        description: `Viewing details for "${client.name}".`,
+    });
   };
 
   const closeEditDialog = () => {
@@ -291,11 +300,9 @@ export default function ClientsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {clients.map((client) => (
-            <ClientCard key={client.id} client={client} onEdit={handleEdit} onDelete={setClientToDelete} />
+            <ClientCard key={client.id} client={client} onEdit={handleEdit} onDelete={setClientToDelete} onView={handleView} />
         ))}
       </div>
     </main>
   );
 }
-
-    
