@@ -166,7 +166,7 @@ const CreativeNotesWidget = () => {
                 aria-expanded={isOpen}
                 aria-label="Toggle creative notes"
             >
-                <Lightbulb className="h-6 w-6" />
+                <Lightbulb className="h-7 w-7" strokeWidth={2.5} />
             </Button>
         </div>
     );
@@ -413,6 +413,9 @@ export default function TasksPage() {
         if (isActiveATask && isOverAColumn) {
             setTasks(currentTasks => {
                 const activeIndex = currentTasks.findIndex(t => t.id === activeId);
+                if (currentTasks[activeIndex].status === over.data.current?.status) {
+                    return currentTasks;
+                }
                 const updatedTask = {
                     ...currentTasks[activeIndex],
                     status: over.data.current?.status as TaskStatus,
