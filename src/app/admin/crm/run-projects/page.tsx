@@ -1,19 +1,445 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+'use client';
+
+import * as React from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format, differenceInDays, differenceInCalendarDays } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
+
+const clientsData = [
+    { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
+    { id: '2', name: 'Michael Chen', avatar: 'https://picsum.photos/seed/michael/100/100' },
+    { id: '3', name: 'Emily Davis', avatar: 'https://picsum.photos/seed/emily/100/100' },
+    { id: '4', name: 'David Rodriguez', avatar: 'https://picsum.photos/seed/david/100/100' },
+    { id: '5', name: 'Jessica Lee', avatar: 'https://picsum.photos/seed/jessica/100/100' },
+];
+
+export type Project = {
+  id: string;
+  title: string;
+  description: string;
+  status: 'planning' | 'in-progress' | 'completed';
+  clientId: string;
+  budget: number;
+  startDate: Date;
+  endDate: Date;
+};
+
+export type ProjectStatus = 'planning' | 'in-progress' | 'completed';
+
+const initialProjects: Project[] = [
+  { id: 'proj-1', title: 'E-commerce Website', description: 'Full-stack development for online store', status: 'in-progress', clientId: '1', budget: 12000, startDate: new Date(2024, 5, 1), endDate: new Date(2024, 7, 30) },
+  { id: 'proj-2', title: 'Mobile App Design', description: 'UI/UX for a new banking app', status: 'planning', clientId: '3', budget: 8000, startDate: new Date(2024, 6, 15), endDate: new Date(2024, 8, 15) },
+  { id: 'proj-3', title: 'Corporate Branding', description: 'Complete brand identity refresh', status: 'completed', clientId: '2', budget: 5000, startDate: new Date(2024, 4, 1), endDate: new Date(2024, 5, 15) },
+  { id: 'proj-4', title: 'Marketing Campaign', description: 'Digital marketing assets for Q3', status: 'planning', clientId: '5', budget: 7500, startDate: new Date(2024, 7, 1), endDate: new Date(2024, 9, 1) },
+  { id: 'proj-5', title: 'Dashboard UI Kit', description: 'Component library for SaaS product', status: 'in-progress', clientId: '4', budget: 15000, startDate: new Date(2024, 5, 20), endDate: new Date(2024, 8, 20) },
+];
+
+
+const ProjectCard = ({ project, onEdit, onDelete }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id, data: {type: 'Project', project} });
+    const client = clientsData.find(c => c.id === project.clientId);
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+    };
+    
+    const totalDays = differenceInCalendarDays(project.endDate, project.startDate);
+    const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
+    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : 0;
+
+    return (
+        <div ref={setNodeRef} style={style} {...attributes}>
+            <Card className="bg-white/10 backdrop-blur-3xl border-white/20 shadow-lg rounded-xl mb-4 transition-shadow hover:shadow-2xl">
+                <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start">
+                         <button {...listeners} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
+                            <GripVertical className="h-5 w-5" />
+                        </button>
+                        <CardTitle className="text-base font-semibold text-white/95 flex-1 ml-2">{project.title}</CardTitle>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost" className="h-6 w-6 text-white/70 hover:bg-white/20 hover:text-white">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem onSelect={() => onEdit(project)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(project)}>
+                                  <Trash2 className="mr-2 h-4 w-4" />Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </CardHeader>
+                <CardContent className="p-4 pt-2">
+                    <p className="text-sm text-white/60 mb-4">{project.description}</p>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center text-sm text-white/80">
+                           {client && (
+                                <div className="flex items-center gap-2">
+                                     <Avatar className="h-6 w-6">
+                                        <AvatarImage src={client.avatar} alt={client.name} />
+                                        <AvatarFallback>{client.name[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{client.name}</span>
+                                </div>
+                            )}
+                             <div className="flex items-center gap-1.5 font-semibold text-green-400">
+                                <DollarSign className="h-4 w-4"/>
+                                <span>{project.budget.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center text-xs text-white/50">
+                                <span>{format(project.startDate, 'MMM d, yyyy')}</span>
+                                <span>{format(project.endDate, 'MMM d, yyyy')}</span>
+                            </div>
+                             <Progress value={progress} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+};
+
+const ProjectColumn = ({ title, status, projects, onEdit, onDelete }: { title: string, status: ProjectStatus, projects: Project[], onEdit: (project: Project) => void, onDelete: (project: Project) => void }) => {
+    const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
+    const projectsById = React.useMemo(() => projects.map(p => p.id), [projects]);
+
+    return (
+        <div ref={setNodeRef} className={cn("flex-1", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
+            <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title} <Badge variant="outline" className="ml-2 bg-white/10 border-white/20 text-white/70">{projects.length}</Badge></h3>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-2 sm:p-4 min-h-[600px]">
+                <SortableContext items={projectsById} strategy={verticalListSortingStrategy}>
+                    {projects.map(project => <ProjectCard key={project.id} project={project} onEdit={onEdit} onDelete={onDelete}/>)}
+                </SortableContext>
+            </div>
+        </div>
+    );
+};
+
+const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSubmit: (values: any) => void, onCancel: () => void }) => {
+    const [startDate, setStartDate] = React.useState<Date | undefined>(project?.startDate);
+    const [endDate, setEndDate] = React.useState<Date | undefined>(project?.endDate);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const values = Object.fromEntries(formData.entries());
+        onSubmit({ ...values, startDate, endDate, budget: Number(values.budget) });
+    };
+    
+    return (
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">Title</Label>
+              <Input id="title" name="title" defaultValue={project?.title} className="col-span-3 bg-white/5 border-white/10" required />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">Description</Label>
+              <Input id="description" name="description" defaultValue={project?.description} className="col-span-3 bg-white/5 border-white/10" required />
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="clientId" className="text-right">Client</Label>
+               <Select name="clientId" defaultValue={project?.clientId} required>
+                <SelectTrigger id="clientId" className="col-span-3 bg-white/5 border-white/10">
+                    <SelectValue placeholder="Select a client" />
+                </SelectTrigger>
+                <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                    {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                </SelectContent>
+                </Select>
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="budget" className="text-right">Budget</Label>
+              <Input id="budget" name="budget" type="number" defaultValue={project?.budget} className="col-span-3 bg-white/5 border-white/10" required />
+            </div>
+             <div className="grid grid-cols-1 sm:grid-cols-2 col-start-2 col-span-3 gap-4">
+                <Popover>
+                    <PopoverTrigger asChild>
+                    <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !startDate && "text-muted-foreground")}>
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, "PPP") : <span>Start Date</span>}
+                    </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
+                    </PopoverContent>
+                </Popover>
+                 <Popover>
+                    <PopoverTrigger asChild>
+                    <Button variant={"outline"} className={cn("justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !endDate && "text-muted-foreground")}>
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, "PPP") : <span>End Date</span>}
+                    </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
+                <Button type="submit" className="rounded-lg">Save Project</Button>
+            </div>
+        </form>
+    );
+};
 
 export default function RunProjectsPage() {
-  return (
-    <main className="flex flex-1 flex-col gap-6 w-full">
-      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
-        <CardHeader>
-          <CardTitle className="text-white/90">Run Projects</CardTitle>
-          <CardDescription className="text-white/60">
-            Manage your active and ongoing projects.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-white/80">Functionality for running projects will be implemented here.</p>
-        </CardContent>
-      </Card>
-    </main>
-  );
+    const [projects, setProjects] = React.useState<Project[]>(initialProjects);
+    const [activeProject, setActiveProject] = React.useState<Project | null>(null);
+    const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
+    const [editingProject, setEditingProject] = React.useState<Project | null>(null);
+    const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null);
+    const { toast } = useToast();
+    const sensors = useSensors(useSensor(PointerSensor));
+
+    const columns: ProjectStatus[] = ['planning', 'in-progress', 'completed'];
+    const columnTitles = { planning: 'Planning', 'in-progress': 'In Progress', completed: 'Completed' };
+
+    const handleDragStart = React.useCallback((event: DragStartEvent) => {
+        const { active } = event;
+        if (active.data.current?.type === 'Project') {
+            setActiveProject(active.data.current.project);
+        }
+    }, []);
+
+    const handleDragOver = React.useCallback((event: DragOverEvent) => {
+        const { active, over } = event;
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        if (activeId === overId) return;
+
+        const isActiveAProject = active.data.current?.type === "Project";
+        const isOverAColumn = over.data.current?.type === "Column";
+
+        if (isActiveAProject && isOverAColumn) {
+            setProjects(currentProjects => {
+                const activeIndex = currentProjects.findIndex(p => p.id === activeId);
+                const currentStatus = currentProjects[activeIndex].status;
+                const newStatus = over.data.current?.status as ProjectStatus;
+                if (currentStatus === newStatus) return currentProjects;
+
+                const updatedProject = { ...currentProjects[activeIndex], status: newStatus };
+                const newProjects = [...currentProjects];
+                newProjects[activeIndex] = updatedProject;
+
+                return arrayMove(newProjects, activeIndex, activeIndex); // Keep position but update status
+            });
+        }
+        
+        const isOverAProject = over.data.current?.type === "Project";
+        if (isActiveAProject && isOverAProject) {
+             setProjects(currentProjects => {
+                const activeIndex = currentProjects.findIndex(p => p.id === activeId);
+                const overIndex = currentProjects.findIndex(p => p.id === overId);
+                
+                if (currentProjects[activeIndex].status !== currentProjects[overIndex].status) {
+                    currentProjects[activeIndex].status = currentProjects[overIndex].status;
+                    return arrayMove(currentProjects, activeIndex, overIndex);
+                }
+
+                return arrayMove(currentProjects, activeIndex, overIndex);
+            });
+        }
+    }, []);
+
+    const handleDragEnd = React.useCallback(() => {
+        setActiveProject(null);
+    }, []);
+
+    const handleEdit = (project: Project) => setEditingProject(project);
+    const closeEditDialog = () => setEditingProject(null);
+
+    const handleDeleteConfirm = () => {
+        if (projectToDelete) {
+            setProjects(projects.filter(p => p.id !== projectToDelete.id));
+            setProjectToDelete(null);
+            toast({
+                variant: 'success',
+                title: 'Project Removed',
+                description: `"${projectToDelete.title}" has been removed.`,
+            });
+        }
+    };
+
+    const handleAddProject = (values: any) => {
+        const newProject: Project = {
+            id: `project-${Date.now()}`,
+            status: 'planning',
+            ...values
+        };
+        setProjects([...projects, newProject]);
+        setIsAddDialogOpen(false);
+        toast({
+            variant: 'success',
+            title: 'Project Added',
+            description: `"${newProject.title}" has been added to 'Planning'.`,
+        });
+    };
+
+    const handleEditProject = (values: any) => {
+        if (!editingProject) return;
+        const updatedProject = { ...editingProject, ...values };
+        setProjects(projects.map(p => p.id === editingProject.id ? updatedProject : p));
+        closeEditDialog();
+        toast({
+            variant: 'success',
+            title: 'Project Updated',
+            description: `"${updatedProject.title}" has been updated.`,
+        });
+    };
+
+    return (
+        <main className="flex flex-1 flex-col gap-6 w-full">
+            <div className="flex items-center">
+                <h1 className="text-2xl font-bold text-white">Run Projects</h1>
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button size="sm" className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg">
+                            <PlusCircle className="h-4 w-4" />
+                            Add Project
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Add New Project</DialogTitle>
+                            <DialogDescription>Enter the details for the new project.</DialogDescription>
+                        </DialogHeader>
+                        <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
+                    </DialogContent>
+                </Dialog>
+            </div>
+
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+                <div className="flex flex-col lg:flex-row gap-6">
+                    {columns.map(status => (
+                        <ProjectColumn
+                            key={status}
+                            title={columnTitles[status]}
+                            status={status}
+                            projects={projects.filter(p => p.status === status)}
+                            onEdit={handleEdit}
+                            onDelete={setProjectToDelete}
+                        />
+                    ))}
+                </div>
+                 <DragOverlay>
+                    {activeProject ? (
+                        <div className="w-[300px] md:w-[400px]">
+                            <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} />
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+
+            {/* Edit Project Dialog */}
+            <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
+                <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Edit Project</DialogTitle>
+                        <DialogDescription>Update the details of your project.</DialogDescription>
+                    </DialogHeader>
+                    <ProjectForm project={editingProject!} onSubmit={handleEditProject} onCancel={closeEditDialog} />
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={!!projectToDelete} onOpenChange={(isOpen) => !isOpen && setProjectToDelete(null)}>
+                <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the project "{projectToDelete?.title}".
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel asChild>
+                            <Button variant="ghost" className="rounded-lg">Cancel</Button>
+                        </AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteConfirm} className="rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Yes, delete project
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </main>
+    );
 }
+
+// Custom Progress component to allow indicator class name
+const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.ComponentProps<typeof Progress> & { indicatorClassName?: string }) => {
+    return (
+      <Progress {...props} >
+         {/* @ts-ignore */}
+        <Progress.Indicator className={cn("h-full w-full flex-1 bg-primary transition-all", indicatorClassName)} style={{ transform: `translateX(-${100 - (props.value || 0)}%)` }} />
+      </Progress>
+    )
+  }
+
+  // Adding the custom indicator class to the ui/progress component is tricky without modifying the base component.
+  // A cleaner way is to just define a slightly modified local version if needed.
+  // For this implementation, I've just added a prop to the project card that uses a normal Progress bar and styles it.
+  
+  const originalProgress = Progress;
+  // @ts-ignore
+  originalProgress.Indicator = Progress.Indicator;
+
+
+    
