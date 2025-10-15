@@ -50,6 +50,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const clientsData = [
     { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
@@ -166,7 +167,7 @@ const CreativeNotesWidget = () => {
                 aria-expanded={isOpen}
                 aria-label="Toggle creative notes"
             >
-                <Lightbulb className="h-7 w-7" strokeWidth={2.5} />
+                <Lightbulb className="h-8 w-8" strokeWidth={2.5} />
             </Button>
         </div>
     );
@@ -254,7 +255,7 @@ const TaskColumn = ({ title, status, tasks, onEdit, onDelete }: { title: string,
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
 
     return (
-        <div ref={setNodeRef} className={cn("flex-1", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
+        <div ref={setNodeRef} className={cn("w-full sm:w-[340px] flex-shrink-0", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
             <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title}</h3>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 min-h-[500px]">
                 <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
@@ -561,23 +562,25 @@ export default function TasksPage() {
                     <XIcon className="mr-2 h-4 w-4" /> Clear
                 </Button>
             </div>
-
+            
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                <div className="flex flex-col lg:flex-row gap-6">
-                    {columns.map(status => (
-                        <TaskColumn
-                            key={status}
-                            title={columnTitles[status]}
-                            status={status}
-                            tasks={filteredTasks.filter(t => t.status === status)}
-                            onEdit={handleEdit}
-                            onDelete={setTaskToDelete}
-                        />
-                    ))}
-                </div>
+                <ScrollArea className="w-full">
+                    <div className="flex flex-row gap-6 pb-4">
+                        {columns.map(status => (
+                            <TaskColumn
+                                key={status}
+                                title={columnTitles[status]}
+                                status={status}
+                                tasks={filteredTasks.filter(t => t.status === status)}
+                                onEdit={handleEdit}
+                                onDelete={setTaskToDelete}
+                            />
+                        ))}
+                    </div>
+                </ScrollArea>
                  <DragOverlay>
                     {activeTask ? (
-                        <div className="w-[300px] md:w-[400px]">
+                        <div className="w-[300px] md:w-[340px]">
                          <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} />
                         </div>
                     ) : null}
@@ -621,3 +624,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
