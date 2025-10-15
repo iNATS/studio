@@ -132,14 +132,14 @@ const CreativeNotesWidget = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex flex-wrap gap-2 mb-4 max-h-48 overflow-y-auto pr-2">
+                                <div className="flex flex-col gap-2 mb-4 max-h-48 overflow-y-auto pr-2">
                                     {notes.map((note, index) => (
-                                        <Badge key={index} variant="secondary" className="bg-white/10 text-white/80 py-1 px-3 text-sm relative group whitespace-normal text-left">
-                                            {note}
-                                            <button onClick={() => handleRemoveNote(index)} className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div key={index} className="bg-white/10 text-white/80 py-2 px-3 text-sm relative group rounded-lg flex items-center justify-between">
+                                            <span className="flex-grow">{note}</span>
+                                            <button onClick={() => handleRemoveNote(index)} className="ml-2 flex-shrink-0 h-5 w-5 rounded-full bg-red-500/80 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <XIcon className="h-3 w-3" />
                                             </button>
-                                        </Badge>
+                                        </div>
                                     ))}
                                 </div>
                                 <form onSubmit={handleAddNote} className="flex gap-2">
