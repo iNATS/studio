@@ -38,8 +38,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, DragStartEvent, DragOverEvent, DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, DragStartEvent, DragOverEvent, DragEndEvent, UniqueIdentifier } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
@@ -169,11 +169,13 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
 const TaskColumn = ({ title, status, tasks, onEdit, onDelete }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
 
+    const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
+
     return (
         <div ref={setNodeRef} className={cn("flex-1", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
             <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title}</h3>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 min-h-[500px]">
-                <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
                     {tasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete}/>)}
                 </SortableContext>
             </div>
@@ -307,57 +309,58 @@ export default function TasksPage() {
     }, [tasks, filters]);
 
 
-    const handleDragStart = (event: DragStartEvent) => {
+    const handleDragStart = React.useCallback((event: DragStartEvent) => {
         const { active } = event;
         if (active.data.current?.type === 'Task') {
             setActiveTask(active.data.current.task);
         }
-    };
+    }, []);
 
-    const handleDragOver = (event: DragOverEvent) => {
+    const handleDragOver = React.useCallback((event: DragOverEvent) => {
         const { active, over } = event;
         if (!over) return;
-        
+
         const activeId = active.id;
         const overId = over.id;
 
         if (activeId === overId) return;
 
         const isActiveATask = active.data.current?.type === "Task";
-        const isOverATask = over.data.current?.type === "Task";
         const isOverAColumn = over.data.current?.type === "Column";
 
-        if (isActiveATask) {
+        if (isActiveATask && isOverAColumn) {
             setTasks(currentTasks => {
                 const activeIndex = currentTasks.findIndex(t => t.id === activeId);
-                const overTaskIndex = isOverATask ? currentTasks.findIndex(t => t.id === overId) : -1;
-                
-                let newTasks = [...currentTasks];
-                const [draggedTask] = newTasks.splice(activeIndex, 1);
+                const updatedTask = {
+                    ...currentTasks[activeIndex],
+                    status: over.data.current?.status as TaskStatus,
+                };
+                const newTasks = [...currentTasks];
+                newTasks[activeIndex] = updatedTask;
 
-                if (isOverATask && overTaskIndex !== -1) {
-                    draggedTask.status = newTasks[overTaskIndex].status;
-                    newTasks.splice(overTaskIndex, 0, draggedTask);
-                } else if (isOverAColumn) {
-                    draggedTask.status = over.data.current?.status as TaskStatus;
-                    // Find last index of the target column and insert
-                    const tasksInColumn = newTasks.filter(t => t.status === draggedTask.status);
-                    const lastTaskIndex = newTasks.map(t=>t.id).lastIndexOf(tasksInColumn[tasksInColumn.length-1]?.id);
-                    if (lastTaskIndex !== -1) {
-                        newTasks.splice(lastTaskIndex + 1, 0, draggedTask);
-                    } else {
-                        newTasks.push(draggedTask);
-                    }
-                }
-
-                return newTasks;
+                return arrayMove(newTasks, activeIndex, activeIndex);
             });
         }
-    };
+        
+        const isOverATask = over.data.current?.type === "Task";
+        if (isActiveATask && isOverATask) {
+             setTasks(currentTasks => {
+                const activeIndex = currentTasks.findIndex(t => t.id === activeId);
+                const overIndex = currentTasks.findIndex(t => t.id === overId);
+                
+                if (currentTasks[activeIndex].status !== currentTasks[overIndex].status) {
+                    currentTasks[activeIndex].status = currentTasks[overIndex].status;
+                    return arrayMove(currentTasks, activeIndex, overIndex);
+                }
 
-    const handleDragEnd = (event: DragEndEvent) => {
+                return arrayMove(currentTasks, activeIndex, overIndex);
+            });
+        }
+    }, []);
+
+    const handleDragEnd = React.useCallback((event: DragEndEvent) => {
       setActiveTask(null);
-    };
+    }, []);
 
     const handleEdit = (task: Task) => {
         setEditingTask(task);
@@ -532,3 +535,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
