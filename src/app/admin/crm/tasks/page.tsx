@@ -48,12 +48,14 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
+const clientsData = [
+    { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
+    { id: '2', name: 'Michael Chen', avatar: 'https://picsum.photos/seed/michael/100/100' },
+    { id: '3', name: 'Emily Davis', avatar: 'https://picsum.photos/seed/emily/100/100' },
+    { id: '4', name: 'David Rodriguez', avatar: 'https://picsum.photos/seed/david/100/100' },
+    { id: '5', name: 'Jessica Lee', avatar: 'https://picsum.photos/seed/jessica/100/100' },
+];
 
-const users = [
-    { id: '1', name: 'Alex', avatar: 'https://picsum.photos/seed/alex/40/40' },
-    { id: '2', name: 'Maria', avatar: 'https://picsum.photos/seed/maria/40/40' },
-    { id: '3', name: 'David', avatar: 'https://picsum.photos/seed/david-t/40/40' },
-]
 
 export type Task = {
   id: string;
@@ -62,7 +64,7 @@ export type Task = {
   status: 'todo' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   dueDate?: Date;
-  assignee?: string;
+  clientId?: string;
   tags?: string[];
 };
 
@@ -71,12 +73,12 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 
 
 const initialTasks: Task[] = [
-  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high', assignee: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
-  { id: '2', title: 'Develop API Endpoints', description: 'Setup new routes for user auth', status: 'todo', priority: 'high', assignee: '2', tags: ['backend'] },
-  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile', status: 'in-progress', priority: 'medium', assignee: '3' },
+  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma', status: 'in-progress', priority: 'high', clientId: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
+  { id: '2', title: 'Develop API Endpoints', description: 'Setup new routes for user auth', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'] },
+  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile', status: 'in-progress', priority: 'medium', clientId: '3' },
   { id: '4', title: 'Write Documentation', description: 'For the new credit card processing feature', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
-  { id: '5', title: 'Deploy Staging Server', description: 'Update server with latest build', status: 'done', priority: 'high', assignee: '1', tags: ['devops'] },
-  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides for project update', status: 'done', priority: 'medium', assignee: '2' },
+  { id: '5', title: 'Deploy Staging Server', description: 'Update server with latest build', status: 'done', priority: 'high', clientId: '1', tags: ['devops'] },
+  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides for project update', status: 'done', priority: 'medium', clientId: '2' },
   { id: '7', title: 'Update Dependencies', description: 'Check for security vulnerabilities', status: 'todo', priority: 'low', tags: ['maintenance'] },
 ];
 
@@ -93,7 +95,7 @@ const getPriorityBadge = (priority: Task['priority']) => {
 
 const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: {type: 'Task', task} });
-    const assignee = users.find(u => u.id === task.assignee);
+    const client = clientsData.find(c => c.id === task.clientId);
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -124,13 +126,13 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
                                             <span>{format(task.dueDate, 'MMM d')}</span>
                                         </div>
                                     )}
-                                    {assignee && (
+                                    {client && (
                                         <div className="flex items-center gap-1.5">
                                              <Avatar className="h-5 w-5">
-                                                <AvatarImage src={assignee.avatar} alt={assignee.name} />
-                                                <AvatarFallback>{assignee.name[0]}</AvatarFallback>
+                                                <AvatarImage src={client.avatar} alt={client.name} />
+                                                <AvatarFallback>{client.name[0]}</AvatarFallback>
                                             </Avatar>
-                                            <span>{assignee.name}</span>
+                                            <span>{client.name}</span>
                                         </div>
                                     )}
                                 </div>
@@ -208,15 +210,15 @@ const TaskForm = ({ task, onSubmit }: { task?: Task, onSubmit: (values: any) => 
               <Textarea id="description" name="description" defaultValue={task?.description} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="assignee" className="text-right">
-                Assignee
+              <Label htmlFor="clientId" className="text-right">
+                Client
               </Label>
-               <Select name="assignee" defaultValue={task?.assignee}>
-                <SelectTrigger id="assignee" className="col-span-3 bg-white/5 border-white/10">
-                    <SelectValue placeholder="Select an assignee" />
+               <Select name="clientId" defaultValue={task?.clientId}>
+                <SelectTrigger id="clientId" className="col-span-3 bg-white/5 border-white/10">
+                    <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                    {users.map(user => <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>)}
+                    {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
                 </SelectContent>
                 </Select>
             </div>
@@ -283,7 +285,7 @@ export default function TasksPage() {
     const sensors = useSensors(useSensor(PointerSensor));
 
     const [filters, setFilters] = React.useState({
-        assignee: 'all',
+        clientId: 'all',
         priority: 'all',
         tag: '',
     });
@@ -296,15 +298,15 @@ export default function TasksPage() {
     };
 
     const clearFilters = () => {
-        setFilters({ assignee: 'all', priority: 'all', tag: '' });
+        setFilters({ clientId: 'all', priority: 'all', tag: '' });
     };
 
     const filteredTasks = React.useMemo(() => {
         return tasks.filter(task => {
-            const assigneeMatch = filters.assignee === 'all' || task.assignee === filters.assignee;
+            const clientMatch = filters.clientId === 'all' || task.clientId === filters.clientId;
             const priorityMatch = filters.priority === 'all' || task.priority === filters.priority;
             const tagMatch = filters.tag === '' || task.tags?.some(t => t.toLowerCase().includes(filters.tag.toLowerCase()));
-            return assigneeMatch && priorityMatch && tagMatch;
+            return clientMatch && priorityMatch && tagMatch;
         });
     }, [tasks, filters]);
 
@@ -389,7 +391,7 @@ export default function TasksPage() {
             description: values.description,
             priority: values.priority,
             status: 'todo',
-            assignee: values.assignee,
+            clientId: values.clientId,
             dueDate: values.dueDate,
             tags: values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [],
         };
@@ -445,13 +447,13 @@ export default function TasksPage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <Select value={filters.assignee} onValueChange={(value) => handleFilterChange('assignee', value)}>
+                <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
                     <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Assignee..." />
+                        <SelectValue placeholder="Filter by Client..." />
                     </SelectTrigger>
                     <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                        <SelectItem value="all">All Assignees</SelectItem>
-                        {users.map(user => <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>)}
+                        <SelectItem value="all">All Clients</SelectItem>
+                        {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
                 <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
@@ -535,5 +537,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
