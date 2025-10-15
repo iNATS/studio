@@ -161,7 +161,7 @@ const CreativeNotesWidget = () => {
             </AnimatePresence>
             <Button
                 size="icon"
-                className={cn("rounded-full shadow-lg w-14 h-14 transition-colors duration-300", isOpen ? "bg-yellow-400/80 hover:bg-yellow-400 text-black" : "bg-white/10 hover:bg-white/20 text-white")}
+                className={cn("rounded-full shadow-lg w-14 h-14 transition-colors duration-300 text-white", isOpen ? "bg-yellow-400 hover:bg-yellow-400/90 text-black" : "bg-yellow-400/20 hover:bg-yellow-400/30")}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
                 aria-label="Toggle creative notes"
