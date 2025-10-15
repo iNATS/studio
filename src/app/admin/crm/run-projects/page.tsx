@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -48,7 +48,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format, differenceInDays, differenceInCalendarDays } from 'date-fns';
+import { format, differenceInCalendarDays, formatDistanceToNowStrict } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 
@@ -82,7 +82,7 @@ const initialProjects: Project[] = [
 ];
 
 
-const ProjectCard = ({ project, onEdit, onDelete }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void }) => {
+const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id, data: {type: 'Project', project} });
     const client = clientsData.find(c => c.id === project.clientId);
 
@@ -94,20 +94,20 @@ const ProjectCard = ({ project, onEdit, onDelete }: { project: Project, onEdit: 
     
     const totalDays = differenceInCalendarDays(project.endDate, project.startDate);
     const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
-    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : 0;
+    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > project.endDate ? 100 : 0);
 
     return (
         <div ref={setNodeRef} style={style} {...attributes}>
-            <Card className="bg-white/10 backdrop-blur-3xl border-white/20 shadow-lg rounded-xl mb-4 transition-shadow hover:shadow-2xl">
+            <Card className="bg-white/10 backdrop-blur-3xl border-white/20 shadow-lg rounded-xl mb-4 transition-shadow hover:shadow-2xl cursor-pointer" onClick={() => onView(project)}>
                 <CardHeader className="p-4 pb-2">
                     <div className="flex justify-between items-start">
-                         <button {...listeners} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
+                         <div {...listeners} onClick={e => e.stopPropagation()} className="flex-shrink-0 pt-1 text-white/40 hover:text-white transition-colors cursor-grab active:cursor-grabbing">
                             <GripVertical className="h-5 w-5" />
-                        </button>
+                        </div>
                         <CardTitle className="text-base font-semibold text-white/95 flex-1 ml-2">{project.title}</CardTitle>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button aria-haspopup="true" size="icon" variant="ghost" className="h-6 w-6 text-white/70 hover:bg-white/20 hover:text-white">
+                                <Button aria-haspopup="true" size="icon" variant="ghost" className="h-6 w-6 text-white/70 hover:bg-white/20 hover:text-white" onClick={e => e.stopPropagation()}>
                                     <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -153,7 +153,7 @@ const ProjectCard = ({ project, onEdit, onDelete }: { project: Project, onEdit: 
     );
 };
 
-const ProjectColumn = ({ title, status, projects, onEdit, onDelete }: { title: string, status: ProjectStatus, projects: Project[], onEdit: (project: Project) => void, onDelete: (project: Project) => void }) => {
+const ProjectColumn = ({ title, status, projects, onEdit, onDelete, onView }: { title: string, status: ProjectStatus, projects: Project[], onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
     const projectsById = React.useMemo(() => projects.map(p => p.id), [projects]);
 
@@ -162,7 +162,7 @@ const ProjectColumn = ({ title, status, projects, onEdit, onDelete }: { title: s
             <h3 className="text-lg font-semibold text-white/90 mb-4 px-1">{title} <Badge variant="outline" className="ml-2 bg-white/10 border-white/20 text-white/70">{projects.length}</Badge></h3>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-2 sm:p-4 min-h-[600px]">
                 <SortableContext items={projectsById} strategy={verticalListSortingStrategy}>
-                    {projects.map(project => <ProjectCard key={project.id} project={project} onEdit={onEdit} onDelete={onDelete}/>)}
+                    {projects.map(project => <ProjectCard key={project.id} project={project} onEdit={onEdit} onDelete={onDelete} onView={onView} />)}
                 </SortableContext>
             </div>
         </div>
@@ -240,11 +240,68 @@ const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSub
     );
 };
 
+const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+    if (!project) return null;
+    
+    const client = clientsData.find(c => c.id === project.clientId);
+    const totalDays = differenceInCalendarDays(project.endDate, project.startDate);
+    const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
+    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > project.endDate ? 100 : 0);
+    const timeRemaining = formatDistanceToNowStrict(project.endDate, { addSuffix: true });
+
+    return (
+         <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{project.title}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6 mt-4">
+                    <div className="flex items-center gap-4">
+                        <FileText className="h-5 w-5 text-white/50" />
+                        <p className="text-white/80">{project.description}</p>
+                    </div>
+                     {client && (
+                        <div className="flex items-center gap-4">
+                            <User className="h-5 w-5 text-white/50" />
+                            <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                    <AvatarImage src={client.avatar} alt={client.name} />
+                                    <AvatarFallback>{client.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-white/80">{client.name}</span>
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex items-center gap-4">
+                        <DollarSign className="h-5 w-5 text-white/50" />
+                        <span className="text-white/80 font-semibold">{project.budget.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} Budget</span>
+                    </div>
+
+                    <div className="space-y-3">
+                         <div className="flex items-center gap-4">
+                            <CalendarIcon className="h-5 w-5 text-white/50" />
+                            <div className="text-sm">
+                                <p className="text-white/80">{format(project.startDate, "MMMM d, yyyy")} - {format(project.endDate, "MMMM d, yyyy")}</p>
+                                <p className="text-white/60">Ends {timeRemaining}</p>
+                            </div>
+                        </div>
+                        <Progress value={progress} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
+                    </div>
+                </div>
+                 <DialogFooter className="mt-6">
+                    <Button onClick={() => onOpenChange(false)} className="rounded-lg">Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 export default function RunProjectsPage() {
     const [projects, setProjects] = React.useState<Project[]>(initialProjects);
     const [activeProject, setActiveProject] = React.useState<Project | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
     const [editingProject, setEditingProject] = React.useState<Project | null>(null);
+    const [viewingProject, setViewingProject] = React.useState<Project | null>(null);
     const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null);
     const { toast } = useToast();
     const sensors = useSensors(useSensor(PointerSensor));
@@ -308,6 +365,7 @@ export default function RunProjectsPage() {
 
     const handleEdit = (project: Project) => setEditingProject(project);
     const closeEditDialog = () => setEditingProject(null);
+    const handleView = (project: Project) => setViewingProject(project);
 
     const handleDeleteConfirm = () => {
         if (projectToDelete) {
@@ -379,13 +437,14 @@ export default function RunProjectsPage() {
                             projects={projects.filter(p => p.status === status)}
                             onEdit={handleEdit}
                             onDelete={setProjectToDelete}
+                            onView={handleView}
                         />
                     ))}
                 </div>
                  <DragOverlay>
                     {activeProject ? (
                         <div className="w-[300px] md:w-[400px]">
-                            <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} />
+                            <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
                         </div>
                     ) : null}
                 </DragOverlay>
@@ -401,6 +460,13 @@ export default function RunProjectsPage() {
                     <ProjectForm project={editingProject!} onSubmit={handleEditProject} onCancel={closeEditDialog} />
                 </DialogContent>
             </Dialog>
+
+             {/* View Project Dialog */}
+             <ProjectViewDialog 
+                project={viewingProject} 
+                open={!!viewingProject} 
+                onOpenChange={(isOpen) => !isOpen && setViewingProject(null)} 
+            />
 
             {/* Delete Confirmation Dialog */}
             <AlertDialog open={!!projectToDelete} onOpenChange={(isOpen) => !isOpen && setProjectToDelete(null)}>
@@ -444,6 +510,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
 
+
+    
 
     
 
