@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -9,7 +10,7 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -236,6 +237,7 @@ const TaskCard = ({ task, onEdit, onDelete }: { task: Task, onEdit: (task: Task)
                             className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
                         >
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onSelect={() => {}}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
                             <DropdownMenuItem onSelect={() => onEdit(task)}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
                             <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => onDelete(task)}>
                               <Trash2 className="mr-2 h-4 w-4" />Delete
@@ -624,5 +626,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
