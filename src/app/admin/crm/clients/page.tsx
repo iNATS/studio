@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -34,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import {
     AlertDialog,
@@ -45,7 +47,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye, User, Mail, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -132,10 +134,44 @@ const getStatusBadge = (status: Client['status']) => {
     }
 }
 
+const ClientViewDialog = ({ client, open, onOpenChange }: { client: Client | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+    if (!client) return null;
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-md">
+                <DialogHeader className="items-center text-center">
+                    <Avatar className="h-24 w-24 border-4 border-white/20">
+                        <AvatarImage src={client.avatar} alt={client.name} />
+                        <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <DialogTitle className="text-2xl pt-2">{client.name}</DialogTitle>
+                    {getStatusBadge(client.status)}
+                </DialogHeader>
+                <div className="space-y-4 mt-4">
+                    <div className="flex items-center gap-4">
+                        <Mail className="h-5 w-5 text-white/50" />
+                        <span className="text-white/80">{client.email}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Building className="h-5 w-5 text-white/50" />
+                        <span className="text-white/80">{client.company}</span>
+                    </div>
+                </div>
+                <DialogFooter className="mt-6">
+                    <Button onClick={() => onOpenChange(false)} className="rounded-lg w-full">Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+
 export default function ClientsPage() {
   const [clients, setClients] = React.useState(clientsData);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingClient, setEditingClient] = React.useState<Client | null>(null);
+  const [viewingClient, setViewingClient] = React.useState<Client | null>(null);
   const [clientToDelete, setClientToDelete] = React.useState<Client | null>(null);
   const { toast } = useToast();
 
@@ -144,11 +180,7 @@ export default function ClientsPage() {
   };
   
   const handleView = (client: Client) => {
-    // Placeholder for view functionality
-    toast({
-        title: 'View Client',
-        description: `Viewing details for "${client.name}".`,
-    });
+    setViewingClient(client);
   };
 
   const closeEditDialog = () => {
@@ -232,6 +264,13 @@ export default function ClientsPage() {
             <ClientForm client={editingClient!} onSubmit={handleEditClient} onCancel={closeEditDialog} />
           </DialogContent>
         </Dialog>
+
+        {/* View Client Dialog */}
+        <ClientViewDialog 
+            client={viewingClient} 
+            open={!!viewingClient} 
+            onOpenChange={(isOpen) => !isOpen && setViewingClient(null)} 
+        />
 
          {/* Delete Confirmation Dialog */}
          <AlertDialog open={!!clientToDelete} onOpenChange={(isOpen) => !isOpen && setClientToDelete(null)}>
