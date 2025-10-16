@@ -93,6 +93,17 @@ export const initialProjects: Project[] = [
 ];
 
 
+const getStatusBadge = (status: ProjectStatus) => {
+    switch (status) {
+      case 'in-progress':
+        return <Badge variant="outline" className="text-orange-400 border-orange-400/40 bg-orange-400/10">In Progress</Badge>;
+      case 'planning':
+        return <Badge variant="outline" className="text-blue-400 border-blue-400/40 bg-blue-400/10">Planning</Badge>;
+      case 'completed':
+        return <Badge variant="outline" className="text-green-400 border-green-400/40 bg-green-400/10">Completed</Badge>;
+    }
+}
+
 const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id, data: {type: 'Project', project} });
     const client = clientsData.find(c => c.id === project.clientId);
@@ -262,45 +273,47 @@ const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project |
 
     return (
          <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>{project.title}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-6 mt-4">
-                    <div className="flex items-center gap-4">
-                        <FileText className="h-5 w-5 text-white/50" />
-                        <p className="text-white/80">{project.description}</p>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg p-0 rounded-2xl">
+                <DialogHeader className="p-6 pb-4">
+                    <div className="flex items-center justify-between">
+                        <DialogTitle className="text-2xl">{project.title}</DialogTitle>
+                        {getStatusBadge(project.status)}
                     </div>
-                     {client && (
-                        <div className="flex items-center gap-4">
-                            <User className="h-5 w-5 text-white/50" />
-                            <div className="flex items-center gap-2">
-                                <Avatar className="h-6 w-6">
-                                    <AvatarImage src={client.avatar} alt={client.name} />
-                                    <AvatarFallback>{client.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <span className="text-white/80">{client.name}</span>
-                            </div>
+                    {client && (
+                        <div className="flex items-center gap-2 pt-2">
+                            <Avatar className="h-6 w-6">
+                                <AvatarImage src={client.avatar} alt={client.name} />
+                                <AvatarFallback>{client.name[0]}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-white/70">{client.name}</span>
                         </div>
                     )}
-                    <div className="flex items-center gap-4">
-                        <DollarSign className="h-5 w-5 text-white/50" />
-                        <span className="text-white/80 font-semibold">{project.budget.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} Budget</span>
+                </DialogHeader>
+                <div className="space-y-6 px-6 pb-6">
+                    <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                        <h4 className="font-semibold text-white/80 mb-2 flex items-center gap-2"><FileText className="h-4 w-4"/> Description</h4>
+                        <p className="text-white/70 text-sm">{project.description}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h4 className="font-semibold text-white/80 mb-2 flex items-center gap-2"><DollarSign className="h-4 w-4"/> Budget</h4>
+                            <p className="text-2xl font-bold text-green-400">{project.budget.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</p>
+                        </div>
+                         <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h4 className="font-semibold text-white/80 mb-2 flex items-center gap-2"><CalendarIcon className="h-4 w-4"/> Timeline</h4>
+                             <p className="text-sm text-white/70">{format(project.startDate, "MMM d")} - {format(project.endDate, "MMM d, yyyy")}</p>
+                             <p className="text-xs text-white/50">{timeRemaining}</p>
+                        </div>
                     </div>
 
-                    <div className="space-y-3">
-                         <div className="flex items-center gap-4">
-                            <CalendarIcon className="h-5 w-5 text-white/50" />
-                            <div className="text-sm">
-                                <p className="text-white/80">{format(project.startDate, "MMMM d, yyyy")} - {format(project.endDate, "MMMM d, yyyy")}</p>
-                                <p className="text-white/60">Ends {timeRemaining}</p>
-                            </div>
-                        </div>
+                    <div>
                         <Progress value={progress} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
+                        <p className="text-xs text-white/50 text-right mt-1.5">{Math.round(progress)}% Complete</p>
                     </div>
                 </div>
-                 <DialogFooter className="mt-6">
-                    <Button onClick={() => onOpenChange(false)} className="rounded-lg">Close</Button>
+                 <DialogFooter className="p-6 pt-0 mt-2">
+                    <Button onClick={() => onOpenChange(false)} className="rounded-lg w-full bg-white/10 hover:bg-white/20 text-white">Close</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -648,3 +661,6 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
 
     
 
+
+
+    
