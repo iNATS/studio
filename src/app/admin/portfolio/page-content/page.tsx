@@ -84,10 +84,15 @@ export default function PageContentPage() {
         setProcessSteps(processSteps.filter((_, i) => i !== index));
         toast({ title: 'Success', description: 'Process step removed.' });
     };
+    
+    const handleGenericSave = (e: React.FormEvent<HTMLFormElement>, section: string) => {
+        e.preventDefault();
+        toast({ title: 'Success', description: `${section} content updated!` });
+    }
 
   return (
-    <main className="flex flex-col h-full">
-        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4 pt-4">
+    <main className="flex flex-col h-full pt-4">
+        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
             <h1 className="text-2xl font-bold text-white">Page Content</h1>
         </div>
         <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
@@ -104,7 +109,7 @@ export default function PageContentPage() {
                     <AccordionItem value="hero">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">Hero Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10" onSubmit={(e) => handleGenericSave(e, 'Hero')}>
                         <div className="space-y-2">
                             <Label htmlFor="hero-title" className="text-white/70">Title</Label>
                             <Input id="hero-title" defaultValue="Mohamed Aref" className="bg-white/10 border-white/20"/>
@@ -117,7 +122,7 @@ export default function PageContentPage() {
                             <Label htmlFor="hero-description" className="text-white/70">Description</Label>
                             <Textarea id="hero-description" defaultValue="I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together." className="bg-white/10 border-white/20"/>
                         </div>
-                        <Button className="rounded-lg">Save Hero Content</Button>
+                        <Button className="rounded-lg" type="submit">Save Hero Content</Button>
                         </form>
                     </AccordionContent>
                     </AccordionItem>
@@ -125,7 +130,7 @@ export default function PageContentPage() {
                     <AccordionItem value="about">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10" onSubmit={(e) => handleGenericSave(e, 'About')}>
                         <div className="space-y-2">
                             <Label htmlFor="about-title" className="text-white/70">Title</Label>
                             <Input id="about-title" defaultValue="Mohamed Aref" className="bg-white/10 border-white/20"/>
@@ -138,7 +143,7 @@ export default function PageContentPage() {
                             <Label htmlFor="about-skills" className="text-white/70">Skills (comma-separated)</Label>
                             <Textarea id="about-skills" rows={3} defaultValue="UI/UX Design, Web Design, Mobile Design, Logo Design, Visual Identity, Wire-framing, Prototyping, Figma, Adobe XD, Photoshop, Illustrator, Web Development, HTML, CSS, JavaScript, Bootstrap, Tailwind, Webflow, Wordpress, Restfull API, Google maps API, AI Vibe coding, dev ops, hosting, CPanel, VPS, Shared Host" className="bg-white/10 border-white/20"/>
                         </div>
-                        <Button className="rounded-lg">Save About Content</Button>
+                        <Button className="rounded-lg" type="submit">Save About Content</Button>
                         </form>
                     </AccordionContent>
                     </AccordionItem>
