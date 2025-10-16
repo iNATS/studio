@@ -10,6 +10,9 @@ import {
   Calendar as CalendarIcon,
   Circle,
   Clock,
+  BarChart2,
+  ListTodo,
+  LayoutGrid
 } from 'lucide-react';
 import {
   startOfMonth,
@@ -25,8 +28,12 @@ import {
   startOfWeek,
   endOfWeek,
   differenceInDays,
+  isToday as isTodayDateFns,
+  add,
+  eachMonthOfInterval,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -48,6 +55,8 @@ import { Project, ProjectStatus } from '../projects/page';
 import { Task, TaskPriority } from '../tasks/page';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
@@ -147,6 +156,139 @@ const getTaskColor = (priority: TaskPriority) => {
   }
 };
 
+
+const ProjectsOverviewChart = ({ projects }: { projects: Project[] }) => {
+    const nextSixMonths = eachMonthOfInterval({
+        start: startOfMonth(new Date()),
+        end: add(new Date(), { months: 5 }),
+      });
+    
+      const projectsPerMonth = nextSixMonths.map(month => {
+        const projectsInMonth = projects.filter(project =>
+          isWithinInterval(month, { start: startOfMonth(project.startDate), end: endOfMonth(project.endDate) })
+        );
+        return {
+          name: format(month, 'MMM'),
+          projects: projectsInMonth.length,
+        };
+      });
+
+    return (
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><BarChart2 className="w-5 h-5"/>Projects Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={projectsPerMonth} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                        <defs>
+                            <linearGradient id="colorProjects" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsla(180, 80%, 70%, 0.5)" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="hsla(180, 80%, 70%, 0)" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsla(0,0%,100%,0.1)" />
+                        <XAxis dataKey="name" stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                        <Tooltip
+                            contentStyle={{
+                                background: 'rgba(0, 0, 0, 0.8)',
+                                border: '1px solid hsla(0,0%,100%,0.1)',
+                                borderRadius: '0.75rem',
+                                color: '#fff',
+                            }}
+                            cursor={{ fill: 'hsla(0,0%,100%,0.1)' }}
+                         />
+                        <Bar dataKey="projects" fill="url(#colorProjects)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+    );
+};
+
+
+const OngoingProjectsList = ({ projects, onHover }: { projects: Project[], onHover: (id: string | null) => void }) => {
+    return (
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><LayoutGrid className="w-5 h-5"/>Ongoing Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
+                    {projects.map(project => {
+                        const totalDays = differenceInDays(project.endDate, project.startDate) || 1;
+                        const daysPassed = differenceInDays(new Date(), project.startDate);
+                        const progress = Math.min(100, Math.max(0, (daysPassed / totalDays) * 100));
+
+                        return (
+                            <motion.div 
+                                key={project.id}
+                                onMouseEnter={() => onHover(project.id)}
+                                onMouseLeave={() => onHover(null)}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                            >
+                                <div className="flex justify-between items-start">
+                                    <h5 className="font-semibold text-white/80">{project.title}</h5>
+                                    {getProjectStatusBadge(project.status)}
+                                </div>
+                                <Progress value={progress} className="h-1 mt-2 bg-white/10" indicatorClassName={getProjectColor(project.id)} />
+                            </motion.div>
+                        )
+                    })}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+const UpcomingTasksList = ({ tasks, onHover }: { tasks: Task[], onHover: (id: string | null) => void }) => {
+    return (
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><ListTodo className="w-5 h-5"/>Upcoming Tasks</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                    {tasks.map(task => (
+                        <motion.div 
+                            key={task.id}
+                            onMouseEnter={() => onHover(task.id)}
+                            onMouseLeave={() => onHover(null)}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors"
+                        >
+                            <Circle className={cn("h-2.5 w-2.5 flex-shrink-0", getTaskColor(task.priority))} fill="currentColor" />
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-white/80">{task.title}</p>
+                                {task.dueDate && <p className="text-xs text-white/50">{format(task.dueDate, 'MMM d, yyyy')}</p>}
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+
+const getProjectStatusBadge = (status: ProjectStatus) => {
+    switch (status) {
+      case 'in-progress':
+        return <Badge variant="outline" className="text-orange-400 border-orange-400/40 bg-orange-400/10">In Progress</Badge>;
+      case 'planning':
+        return <Badge variant="outline" className="text-blue-400 border-blue-400/40 bg-blue-400/10">Planning</Badge>;
+      case 'completed':
+        return <Badge variant="outline" className="text-green-400 border-green-400/40 bg-green-400/10">Completed</Badge>;
+    }
+}
+
+
 export default function TimelinePage() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [activeFilters, setActiveFilters] = React.useState({
@@ -205,6 +347,52 @@ export default function TimelinePage() {
 
     return { projects, tasks };
   };
+
+  const dayGridRef = React.useRef<HTMLDivElement>(null);
+  const [projectPositions, setProjectPositions] = React.useState<Record<string, number>>({});
+
+  React.useEffect(() => {
+    const newPositions: Record<string, number> = {};
+    const weekSlots: Record<number, string[]> = {};
+  
+    filteredEvents.filter(e => e.type === 'project').forEach(project => {
+        const proj = project as Project;
+        const startWeek = Math.floor((getDay(proj.startDate) + differenceInDays(proj.startDate, start)) / 7);
+
+        let slot = 0;
+        let placed = false;
+        while (!placed) {
+            let week = startWeek;
+            let canPlace = true;
+            while(new Date(proj.startDate).setDate(new Date(proj.startDate).getDate() + (week - startWeek)*7) <= proj.endDate) {
+                if(weekSlots[week]?.[slot]) {
+                    canPlace = false;
+                    break;
+                }
+                week++;
+            }
+
+            if(canPlace) {
+                let weekToFill = startWeek;
+                while(new Date(proj.startDate).setDate(new Date(proj.startDate).getDate() + (weekToFill - startWeek)*7) <= proj.endDate) {
+                    if(!weekSlots[weekToFill]) weekSlots[weekToFill] = [];
+                    weekSlots[weekToFill][slot] = proj.id;
+                    weekToFill++;
+                }
+                newPositions[proj.id] = slot;
+                placed = true;
+            } else {
+                slot++;
+            }
+        }
+    });
+
+    setProjectPositions(newPositions);
+  }, [currentDate, filteredEvents, start]);
+
+
+  const ongoingProjects = filteredEvents.filter(e => e.type === 'project' && (e as Project).status === 'in-progress') as Project[];
+  const upcomingTasks = filteredEvents.filter(e => e.type === 'task' && (e as Task).status !== 'done' && isWithinInterval(new Date(), { start: new Date(), end: add(new Date(), {days: 7})})) as Task[];
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -292,145 +480,160 @@ export default function TimelinePage() {
           </div>
         </div>
       </div>
-      <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
-        <header className="flex items-center justify-between px-2 pb-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
-              onClick={prevMonth}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
-              onClick={nextMonth}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={goToToday}
-              className="rounded-lg h-8 px-3 text-sm"
-            >
-              Today
-            </Button>
-          </div>
-          <h2 className="text-lg font-semibold text-white text-center">
-            {format(currentDate, 'MMMM yyyy')}
-          </h2>
-        </header>
-
-        <div className="grid grid-cols-7 gap-px flex-1 min-h-0 bg-white/5 p-px rounded-xl border border-white/10">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-            <div
-              key={day}
-              className="text-center text-xs font-medium text-white/50 py-2"
-            >
-              {day}
-            </div>
-          ))}
-          {Array.from({ length: startingDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="bg-black/10 rounded-lg"></div>
-          ))}
-          {days.map((day, dayIdx) => {
-            const { projects, tasks } = getEventsForDay(day);
-            const isToday = isSameDay(day, new Date());
-            const projectsForWeek = filteredEvents.filter(
-              (e) =>
-                e.type === 'project' &&
-                isWithinInterval(e.startDate, {
-                  start: startOfWeek(day, { weekStartsOn: 0 }),
-                  end: endOfWeek(day, { weekStartsOn: 0 }),
-                })
-            ) as Project[];
-
-            return (
-              <div
-                key={day.toString()}
-                className={cn(
-                  'relative flex flex-col p-1.5 bg-black/10 rounded-lg min-h-[120px]',
-                  isSameMonth(day, currentDate) ? '' : 'opacity-40'
-                )}
-              >
-                <time
-                  dateTime={format(day, 'yyyy-MM-dd')}
-                  className={cn(
-                    'text-xs font-semibold flex items-center justify-center h-6 w-6 rounded-full ml-auto',
-                    isToday
-                      ? 'bg-blue-500 text-white'
-                      : 'text-white/70'
-                  )}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 flex flex-col">
+          <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
+            <header className="flex items-center justify-between px-2 pb-4">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
+                  onClick={prevMonth}
                 >
-                  {format(day, 'd')}
-                </time>
-                <div className="flex-1 space-y-1 mt-1 relative">
-                  {projects.map((p, projectIndex) => {
-                      const offset = projectsForWeek.findIndex(fp => fp.id === p.id);
-                      const isStart = isSameDay(p.startDate, day) || getDay(day) === 0;
-                      const isEnd = isSameDay(p.endDate, day) || getDay(day) === 6;
-                      const duration = differenceInDays(p.endDate, p.startDate) + 1;
-                      const dayOfWeek = getDay(day);
-                      
-                      return(
-                          <EventPopover key={p.id} event={p}>
-                            <motion.div
-                                onMouseEnter={() => setHoveredEvent(p.id)}
-                                onMouseLeave={() => setHoveredEvent(null)}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: dayIdx * 0.01 }}
-                                style={{ top: `${24 * (offset % 4)}px` }}
-                                className={cn(
-                                    "absolute left-0 right-0 h-5 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded-sm transition-all duration-200",
-                                    getProjectColor(p.id),
-                                    isStart ? 'ml-0.5' : '-ml-px',
-                                    isEnd ? 'mr-0.5' : '-mr-px',
-                                    hoveredEvent === p.id ? 'ring-2 ring-white/80 scale-105 z-10' : 'z-0'
-                                )}
-                                >
-                                <span className="truncate">
-                                    {(isStart || dayOfWeek === 0) && p.title}
-                                </span>
-                            </motion.div>
-                          </EventPopover>
-                      )
-                  })}
-                   {tasks.map((t) => (
-                    <EventPopover key={t.id} event={t}>
-                      <motion.div
-                        onMouseEnter={() => setHoveredEvent(t.id)}
-                        onMouseLeave={() => setHoveredEvent(null)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: dayIdx * 0.02 }}
-                        className={cn(
-                            "flex items-center gap-1.5 p-1 rounded-md cursor-pointer hover:bg-white/10 transition-colors",
-                            hoveredEvent === t.id && "bg-white/10"
-                        )}
-                      >
-                        <Circle
-                          className={cn(
-                            'h-2 w-2 flex-shrink-0',
-                            getTaskColor(t.priority)
-                          )}
-                          fill="currentColor"
-                        />
-                        <span className="text-[11px] font-medium text-white/80 truncate flex-1">
-                          {t.title}
-                        </span>
-                      </motion.div>
-                    </EventPopover>
-                  ))}
-                </div>
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
+                  onClick={nextMonth}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={goToToday}
+                  className="rounded-lg h-8 px-3 text-sm"
+                >
+                  Today
+                </Button>
               </div>
-            );
-          })}
+              <h2 className="text-lg font-semibold text-white text-center">
+                {format(currentDate, 'MMMM yyyy')}
+              </h2>
+            </header>
+
+            <div className="grid grid-cols-7 gap-px flex-1 min-h-0 bg-white/5 p-px rounded-xl border border-white/10">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div
+                  key={day}
+                  className="text-center text-xs font-medium text-white/50 py-2"
+                >
+                  {day}
+                </div>
+              ))}
+              {Array.from({ length: startingDay }).map((_, i) => (
+                <div key={`empty-${i}`} className="bg-black/10 rounded-lg"></div>
+              ))}
+              {days.map((day, dayIdx) => {
+                const { tasks } = getEventsForDay(day);
+                const isCurrentMonth = isSameMonth(day, currentDate);
+                const isToday = isTodayDateFns(day);
+                const dayOfWeek = getDay(day);
+
+                const projectsStartingOnDay = (filteredEvents.filter(e => e.type === 'project' && isSameDay(day, e.startDate)) as Project[]);
+
+                return (
+                  <div
+                    key={day.toString()}
+                    className={cn(
+                      'relative flex flex-col p-1.5 bg-black/10 rounded-lg min-h-[120px] transition-colors',
+                      isCurrentMonth ? '' : 'opacity-40',
+                      isToday && 'bg-blue-500/10'
+                    )}
+                  >
+                    <time
+                      dateTime={format(day, 'yyyy-MM-dd')}
+                      className={cn(
+                        'text-xs font-semibold flex items-center justify-center h-6 w-6 rounded-full ml-auto transition-colors',
+                        isToday
+                          ? 'bg-blue-500 text-white'
+                          : 'text-white/70'
+                      )}
+                    >
+                      {format(day, 'd')}
+                    </time>
+                    <div className="flex-1 space-y-1 mt-1 relative">
+                      {projectsStartingOnDay.map(p => {
+                        const duration = differenceInDays(p.endDate, p.startDate) + 1;
+                        const yOffset = (projectPositions[p.id] || 0) * 24;
+                        const width = `calc(${duration} * 100% + ${duration - 1} * 1px)`;
+                        
+                        return (
+                          <EventPopover key={p.id} event={p}>
+                              <motion.div
+                                  onMouseEnter={() => setHoveredEvent(p.id)}
+                                  onMouseLeave={() => setHoveredEvent(null)}
+                                  initial={{ opacity: 0, scale: 0.9 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: 0.1, duration: 0.3 }}
+                                  style={{ 
+                                      top: `${yOffset}px`,
+                                      width: width,
+                                  }}
+                                  className={cn(
+                                      "absolute h-5 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded-sm transition-all duration-200 z-10",
+                                      getProjectColor(p.id),
+                                      hoveredEvent === p.id && 'ring-2 ring-white/80 scale-105 z-20'
+                                  )}
+                              >
+                                  <span className="truncate">{p.title}</span>
+                              </motion.div>
+                          </EventPopover>
+                        )
+                      })}
+
+                      {tasks.map((t) => (
+                        <EventPopover key={t.id} event={t}>
+                          <motion.div
+                            onMouseEnter={() => setHoveredEvent(t.id)}
+                            onMouseLeave={() => setHoveredEvent(null)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: dayIdx * 0.02 }}
+                            className={cn(
+                                "flex items-center gap-1.5 p-1 rounded-md cursor-pointer hover:bg-white/10 transition-colors z-0",
+                                hoveredEvent === t.id && "bg-white/10"
+                            )}
+                          >
+                            <Circle
+                              className={cn(
+                                'h-2 w-2 flex-shrink-0',
+                                getTaskColor(t.priority)
+                              )}
+                              fill="currentColor"
+                            />
+                            <span className="text-[11px] font-medium text-white/80 truncate flex-1">
+                              {t.title}
+                            </span>
+                          </motion.div>
+                        </EventPopover>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-1 flex flex-col gap-6">
+            <AnimatePresence>
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+                    <ProjectsOverviewChart projects={filteredEvents.filter(e => e.type === 'project') as Project[]} />
+                </motion.div>
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+                    <OngoingProjectsList projects={ongoingProjects} onHover={setHoveredEvent} />
+                </motion.div>
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+                    <UpcomingTasksList tasks={upcomingTasks} onHover={setHoveredEvent} />
+                </motion.div>
+            </AnimatePresence>
         </div>
       </div>
     </main>
   );
 }
+
+    
