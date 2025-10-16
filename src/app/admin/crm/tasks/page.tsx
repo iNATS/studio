@@ -668,7 +668,7 @@ export default function TasksPage() {
             <div className="flex-1 overflow-hidden">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                     <ScrollArea className="w-full h-full">
-                        <div className="flex flex-row gap-6 pb-4 h-full">
+                        <div className="flex flex-row gap-6 pb-4 h-full px-1">
                             {columns.map(status => (
                                 <TaskColumn
                                     key={status}
@@ -736,5 +736,7 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
 
     

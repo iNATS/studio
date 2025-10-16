@@ -544,29 +544,30 @@ export default function ProjectsPage() {
                 </div>
             </div>
 
-
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                <div className="flex flex-col lg:flex-row gap-6">
-                    {columns.map(status => (
-                        <ProjectColumn
-                            key={status}
-                            title={columnTitles[status]}
-                            status={status}
-                            projects={filteredProjects.filter(p => p.status === status)}
-                            onEdit={handleEdit}
-                            onDelete={setProjectToDelete}
-                            onView={handleView}
-                        />
-                    ))}
-                </div>
-                 <DragOverlay>
-                    {activeProject ? (
-                        <div className="w-[300px] md:w-[400px]">
-                            <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
-                        </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+            <div className="flex-1 overflow-auto">
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+                  <div className="flex flex-col lg:flex-row gap-6 h-full">
+                      {columns.map(status => (
+                          <ProjectColumn
+                              key={status}
+                              title={columnTitles[status]}
+                              status={status}
+                              projects={filteredProjects.filter(p => p.status === status)}
+                              onEdit={handleEdit}
+                              onDelete={setProjectToDelete}
+                              onView={handleView}
+                          />
+                      ))}
+                  </div>
+                  <DragOverlay>
+                      {activeProject ? (
+                          <div className="w-[300px] md:w-[400px]">
+                              <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
+                          </div>
+                      ) : null}
+                  </DragOverlay>
+              </DndContext>
+            </div>
 
             {/* Edit Project Dialog */}
             <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
@@ -630,5 +631,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
     
 
     
+
+    
+
 
     
