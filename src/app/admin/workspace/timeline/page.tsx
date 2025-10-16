@@ -303,7 +303,7 @@ export default function TimelinePage() {
   const firstDayOfGrid = startOfWeek(firstDayOfMonth);
   const lastDayOfGrid = endOfWeek(lastDayOfMonth);
 
-  const days = eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid });
+  const days = React.useMemo(() => eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid }), [firstDayOfGrid, lastDayOfGrid]);
 
   const prevMonth = () => setCurrentDate((d) => subMonths(d, 1));
   const nextMonth = () => setCurrentDate((d) => addMonths(d, 1));
@@ -398,7 +398,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [filteredEvents, firstDayOfGrid, days.length]);
+  }, [filteredEvents, firstDayOfGrid, days]);
 
 
   const ongoingProjects = initialProjects.filter(p => p.status === 'in-progress');
@@ -652,5 +652,3 @@ export default function TimelinePage() {
     </main>
   );
 }
-
-    
