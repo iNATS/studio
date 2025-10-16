@@ -42,10 +42,10 @@ export default function AdminLayout({
     {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
+        { href: '/admin/workspace/calendar', label: 'Calendar' },
         { href: '/admin/workspace/clients', label: 'Clients' },
         { href: '/admin/workspace/tasks', label: 'Tasks' },
         { href: '/admin/workspace/projects', label: 'Projects' },
-        { href: '/admin/workspace/deadline', label: 'Deadline' },
       ]
     },
     { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
