@@ -18,7 +18,6 @@ import {
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
-  getDay,
   isSameDay,
   addMonths,
   subMonths,
@@ -60,7 +59,7 @@ import { Progress } from '@/components/ui/progress';
 
 type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
-const EventPopover = ({
+const EventPopover = React.memo(({
   event,
   children,
 }: {
@@ -125,7 +124,8 @@ const EventPopover = ({
       </PopoverContent>
     </Popover>
   );
-};
+});
+EventPopover.displayName = 'EventPopover';
 
 const getProjectColor = (projectId: string) => {
   const colors = [
@@ -320,33 +320,34 @@ export default function TimelinePage() {
     activeFilters.type !== 'all' || activeFilters.client !== 'all';
 
   const filteredEvents = React.useMemo(() => {
-      const allEvents: TimelineEvent[] = [
-        ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
-        ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
-      ];
-
-      return allEvents.filter((event) => {
-        const typeMatch =
-          activeFilters.type === 'all' || event.type === activeFilters.type;
-        const clientMatch =
-          activeFilters.client === 'all' || event.clientId === activeFilters.client;
-        
-        if (event.type === 'project') {
-          const project = event as Project;
-          const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
-          const projectInGrid = isWithinInterval(project.startDate, gridInterval) || 
-                                isWithinInterval(project.endDate, gridInterval) ||
-                                (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
-          return typeMatch && clientMatch && projectInGrid;
-        }
-        
-        if (event.type === 'task') {
-            const task = event as Task;
-            return typeMatch && clientMatch && task.dueDate && isWithinInterval(task.dueDate, {start: firstDayOfGrid, end: lastDayOfGrid});
-        }
-
-        return false;
-      });
+    const allEvents: TimelineEvent[] = [
+      ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
+      ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
+    ];
+  
+    return allEvents.filter((event) => {
+      const typeMatch =
+        activeFilters.type === 'all' || event.type === activeFilters.type;
+      const clientMatch =
+        activeFilters.client === 'all' || event.clientId === activeFilters.client;
+      
+      const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
+      
+      if (event.type === 'project') {
+        const project = event as Project;
+        const projectInGrid = isWithinInterval(project.startDate, gridInterval) || 
+                              isWithinInterval(project.endDate, gridInterval) ||
+                              (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
+        return typeMatch && clientMatch && projectInGrid;
+      }
+      
+      if (event.type === 'task') {
+          const task = event as Task;
+          return typeMatch && clientMatch && task.dueDate && isWithinInterval(task.dueDate, gridInterval);
+      }
+  
+      return false;
+    });
   }, [activeFilters, firstDayOfGrid, lastDayOfGrid]);
 
 
@@ -370,22 +371,24 @@ export default function TimelinePage() {
     const projects = filteredEvents.filter(e => e.type === 'project') as Project[];
   
     projects.forEach(project => {
-      const startWeek = Math.floor(differenceInDays(project.startDate, firstDayOfGrid) / 7);
-      const endWeek = Math.floor(differenceInDays(project.endDate, firstDayOfGrid) / 7);
+      const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
+      const endDayIndex = Math.min(days.length - 1, differenceInDays(project.endDate, firstDayOfGrid));
 
       let slot = 0;
       while (true) {
         let isOccupied = false;
-        for (let week = startWeek; week <= endWeek; week++) {
-          if (weekSlots[week]?.[slot]) {
+        for (let i = startDayIndex; i <= endDayIndex; i++) {
+          const weekIndex = Math.floor(i / 7);
+          if (weekSlots[weekIndex]?.[slot]) {
             isOccupied = true;
             break;
           }
         }
         if (!isOccupied) {
-          for (let week = startWeek; week <= endWeek; week++) {
-            if (!weekSlots[week]) weekSlots[week] = [];
-            weekSlots[week][slot] = project.id;
+          for (let i = startDayIndex; i <= endDayIndex; i++) {
+            const weekIndex = Math.floor(i / 7);
+            if (!weekSlots[weekIndex]) weekSlots[weekIndex] = [];
+            weekSlots[weekIndex][slot] = project.id;
           }
           newPositions[project.id] = slot;
           break;
@@ -395,7 +398,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [filteredEvents, firstDayOfGrid]);
+  }, [filteredEvents, firstDayOfGrid, days.length]);
 
 
   const ongoingProjects = initialProjects.filter(p => p.status === 'in-progress');
@@ -649,3 +652,5 @@ export default function TimelinePage() {
     </main>
   );
 }
+
+    
