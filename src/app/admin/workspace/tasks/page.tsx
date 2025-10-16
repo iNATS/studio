@@ -289,8 +289,8 @@ const TaskForm = ({ task, onSubmit, onCancel }: { task?: Task, onSubmit: (values
               </Label>
               <Input id="title" name="title" defaultValue={task?.title} className="col-span-3 bg-white/5 border-white/10" required />
             </div>
-             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+             <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="description" className="text-right pt-2">
                 Description
               </Label>
               <Textarea id="description" name="description" defaultValue={task?.description} className="col-span-3 bg-white/5 border-white/10" required />
@@ -736,7 +736,5 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
 
     
