@@ -12,7 +12,6 @@ import {
   eachDayOfInterval,
   endOfMonth,
   format,
-  getDay,
   startOfMonth,
   addMonths,
   subMonths,
@@ -23,6 +22,7 @@ import {
   startOfWeek,
   isWithinInterval,
   parseISO,
+  getDay
 } from 'date-fns';
 import { initialProjects, Project } from '@/app/admin/workspace/projects/page';
 import { initialTasks, Task } from '@/app/admin/workspace/tasks/page';
@@ -110,8 +110,8 @@ export default function CalendarPage() {
   const firstDayCurrentMonth = currentMonth;
   
   const days = eachDayOfInterval({
-    start: startOfWeek(firstDayCurrentMonth),
-    end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
+    start: startOfWeek(firstDayCurrentMonth, { weekStartsOn: 0 }),
+    end: endOfWeek(endOfMonth(firstDayCurrentMonth), { weekStartsOn: 0 }),
   });
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -161,7 +161,9 @@ export default function CalendarPage() {
 
   const getEventsForDay = (day: Date) => {
     return filteredEvents.filter(event => 
-      isWithinInterval(day, { start: event.startDate, end: event.endDate }) || isSameDay(day, event.startDate)
+        isSameDay(day, event.startDate) ||
+        (isSameDay(day, event.endDate)) ||
+        (isWithinInterval(day, { start: event.startDate, end: event.endDate }))
     );
   }
 
@@ -244,15 +246,16 @@ export default function CalendarPage() {
                 <div
                   key={day.toString()}
                   className={cn(
-                    'border border-white/10 rounded-lg p-1.5 flex flex-col relative',
-                    !isSameMonth(day, currentMonth) && 'bg-white/5 text-white/40'
+                    'border border-transparent hover:border-white/10 rounded-lg p-1.5 flex flex-col relative transition-colors duration-300',
+                    isSameMonth(day, currentMonth) ? 'bg-white/5' : 'bg-black/10 text-white/40'
                   )}
                 >
                   <time
                     dateTime={format(day, 'yyyy-MM-dd')}
                     className={cn(
                       'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs',
-                      isToday(day) && 'bg-primary text-primary-foreground'
+                      isToday(day) && 'bg-primary text-primary-foreground',
+                      !isSameMonth(day, currentMonth) && 'text-white/30'
                     )}
                   >
                     {format(day, 'd')}
@@ -260,26 +263,31 @@ export default function CalendarPage() {
                   <div className="mt-1 space-y-0.5 flex-1 overflow-y-auto pr-1">
                      <AnimatePresence>
                        {dayEvents.map((event, index) => {
-                          const isStartDate = isSameDay(day, event.startDate);
-                          if (!isStartDate) return null; // Render event only on its start date to avoid duplication
-  
-                          return (
-                            <motion.div
-                              key={event.id}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                            >
-                              <EventDetailsPopover event={event}>
-                                <div className={cn(
-                                    "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
-                                    event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
-                                )}>
-                                    {event.title}
-                                </div>
-                            </EventDetailsPopover>
-                            </motion.div>
-                          )
+                           if (isSameDay(day, event.startDate) || (getDay(day) === 0 && isWithinInterval(day, { start: event.startDate, end: event.endDate }))) {
+                            const remainingDays = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? 7 - getDay(day) : 1
+                            const eventDuration = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? Math.min(differenceInDays(event.endDate, day) + 1, remainingDays) : 1;
+
+                            return (
+                                <motion.div
+                                key={event.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                style={{ width: `calc(${eventDuration * 100}% + ${(eventDuration - 1) * 4}px)` }}
+                                className="relative z-10"
+                                >
+                                <EventDetailsPopover event={event}>
+                                    <div className={cn(
+                                        "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
+                                        event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
+                                    )}>
+                                        {event.title}
+                                    </div>
+                                </EventDetailsPopover>
+                                </motion.div>
+                            );
+                           }
+                          return null
                        })}
                      </AnimatePresence>
                   </div>
@@ -293,6 +301,9 @@ export default function CalendarPage() {
   );
 }
 
-    
+function differenceInDays(dateLeft: Date, dateRight: Date): number {
+    const diff = dateLeft.getTime() - dateRight.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
 
     
