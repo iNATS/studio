@@ -56,17 +56,17 @@ type CalendarEvent = (
     endDate: Date;
 };
 
-const EventDetailsPopover = ({ event, children }: { event: CalendarEvent, children: React.ReactNode }) => {
+const EventDetailsPopover = ({ event, children, onOpenChange }: { event: CalendarEvent, children: React.ReactNode, onOpenChange: (open: boolean) => void }) => {
     const client = 'clientId' in event.data && event.data.clientId ? clientsData.find(c => c.id === event.data.clientId) : null;
     return (
-        <Popover>
-            <PopoverTrigger asChild>{children}</PopoverTrigger>
+        <Popover onOpenChange={onOpenChange}>
+            <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>{children}</PopoverTrigger>
             <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white">
                 <div className="grid gap-4">
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
                             <h4 className="font-medium leading-none">{event.title}</h4>
-                            <Badge variant="outline" className={cn(event.type === 'project' ? "border-blue-400/50 text-blue-400" : "border-orange-400/50 text-orange-400")}>{event.type}</Badge>
+                            <Badge variant="outline" className={cn(event.type === 'project' ? "border-blue-400/50 text-blue-400 bg-blue-500/10" : "border-orange-400/50 text-orange-400 bg-orange-500/10")}>{event.type}</Badge>
                         </div>
                         <p className="text-sm text-white/60">
                             {event.data.description}
@@ -129,8 +129,16 @@ export default function TimelinePage() {
   
   const days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth, { weekStartsOn: 0 }),
-    end: endOfWeek(endOfMonth(firstDayCurrentMonth), { weekStartsOn: 0 }),
+    end: endOfWeek(endOfMonth(addMonths(firstDayCurrentMonth,1)), { weekStartsOn: 0 }),
   });
+  
+  // Ensure we have 6 full weeks
+   while (days.length < 42) {
+    days.push(addMonths(days[days.length - 1], 1));
+  }
+  if (days.length > 42) {
+    days.splice(42);
+  }
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -178,7 +186,21 @@ export default function TimelinePage() {
 
 
   const getEventsForDay = (day: Date) => {
-    return filteredEvents.filter(event => isWithinInterval(day, { start: new Date(event.startDate.setHours(0,0,0,0)), end: new Date(event.endDate.setHours(23,59,59,999)) }));
+    return filteredEvents.filter(event => 
+        isWithinInterval(day, { start: startOfDay(event.startDate), end: endOfDay(event.endDate) })
+    );
+  };
+  
+  const startOfDay = (date: Date) => {
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate;
+  };
+  
+  const endOfDay = (date: Date) => {
+    const newDate = new Date(date);
+    newDate.setHours(23, 59, 59, 999);
+    return newDate;
   };
 
   const ongoingProjects = filteredEvents.filter(e => e.type === 'project' && e.data.status === 'in-progress') as CalendarEvent[];
@@ -257,7 +279,7 @@ export default function TimelinePage() {
             <Button variant="outline" className="rounded-lg" onClick={goToToday}>Today</Button>
             <div className="flex items-center gap-1 rounded-lg border border-white/20 p-1">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
-              <h2 className="text-lg font-semibold text-white text-center px-2">{format(currentMonth, 'MMMM yyyy')}</h2>
+              <h2 className="text-lg font-semibold text-white px-2 text-center">{format(currentMonth, 'MMMM yyyy')}</h2>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
@@ -266,83 +288,61 @@ export default function TimelinePage() {
 
       <div className="flex-1 overflow-auto -mx-4 px-4 grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 flex flex-col min-h-0">
-            <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
-                <CardContent className="flex-1 p-2 sm:p-4 overflow-hidden">
-                    <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                    </div>
-                    <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
-                    {days.map((day) => {
-                        const dayEvents = getEventsForDay(day);
-                        return (
-                        <motion.div
-                            key={day.toString()}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className={cn(
-                                'border border-transparent rounded-lg p-1 flex flex-col relative',
-                                isSameMonth(day, currentMonth) ? 'bg-white/5' : 'bg-black/10 text-white/40'
-                            )}
+             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
+                <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => <div key={day}>{day}</div>)}
+                </div>
+                <div className="grid grid-cols-7 grid-rows-6 gap-1 flex-1">
+                {days.map((day, dayIdx) => {
+                    const dayEvents = getEventsForDay(day);
+                    return (
+                    <motion.div
+                        key={day.toString()}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: dayIdx * 0.01 }}
+                        className={cn(
+                            'relative flex flex-col rounded-lg p-1.5 transition-colors duration-300',
+                            isSameMonth(day, currentMonth) ? 'bg-white/5' : 'bg-black/10'
+                        )}
+                    >
+                        <time
+                        dateTime={format(day, 'yyyy-MM-dd')}
+                        className={cn(
+                            'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs mb-1',
+                            isToday(day) && 'bg-primary text-primary-foreground',
+                            !isSameMonth(day, currentMonth) && 'text-white/30'
+                        )}
                         >
-                            <time
-                            dateTime={format(day, 'yyyy-MM-dd')}
-                            className={cn(
-                                'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs',
-                                isToday(day) && 'bg-primary text-primary-foreground',
-                                !isSameMonth(day, currentMonth) && 'text-white/30'
-                            )}
-                            >
-                            {format(day, 'd')}
-                            </time>
-                            <div className="mt-1 space-y-0.5 flex-1 overflow-hidden">
-                                <AnimatePresence>
-                                {dayEvents.map((event) => {
-                                    const isProject = event.type === 'project';
-                                    if (!isSameDay(day, event.startDate) && getDay(day) !== 0) return null;
-                                    
-                                    const eventDuration = differenceInCalendarDays(event.endDate, event.startDate) + 1;
-
-                                    let weekOffset = 0;
-                                    if(!isSameDay(day, event.startDate)) {
-                                        weekOffset = differenceInCalendarDays(day, event.startDate);
-                                    }
-                                    
-                                    const remainingDuration = eventDuration - weekOffset;
-                                    const span = Math.min(remainingDuration, 7 - getDay(day));
-                                    
-                                    if (span <= 0 && isProject) return null;
-
-                                    return (
-                                        <motion.div
-                                            key={event.id}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            onMouseEnter={() => setHoveredEventId(event.id)}
-                                            onMouseLeave={() => setHoveredEventId(null)}
-                                            style={isProject ? { width: `calc(${span * 100}% + ${ (span - 1) * 0.25 }rem)` } : {}}
-                                            className="relative z-10"
-                                        >
-                                            <EventDetailsPopover event={event}>
-                                                <div className={cn(
-                                                    "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
-                                                    event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40",
-                                                    hoveredEventId === event.id && "ring-2 ring-primary"
-                                                )}>
-                                                    {event.title}
-                                                </div>
-                                            </EventDetailsPopover>
-                                        </motion.div>
-                                    );
-                                })}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
-                    )})}
-                    </div>
-                </CardContent>
-            </Card>
+                        {format(day, 'd')}
+                        </time>
+                        <div className="flex-1 space-y-1 overflow-hidden">
+                          {dayEvents.filter(e => e.type === 'task').map(event => (
+                               <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setHoveredEventId(open ? event.id : null)}>
+                                <div className={cn("h-1.5 w-1.5 rounded-full mx-auto", "bg-orange-400", hoveredEventId === event.id && "ring-2 ring-orange-400 ring-offset-2 ring-offset-background/50")}/>
+                               </EventDetailsPopover>
+                           ))}
+                          {filteredEvents.filter(e => e.type === 'project' && isSameDay(day, e.startDate)).map(event => {
+                              const duration = differenceInCalendarDays(event.endDate, event.startDate) + 1;
+                              const offset = 0;
+                              return (
+                                 <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setHoveredEventId(open ? event.id : null)}>
+                                    <div
+                                      style={{ width: `calc(${duration * 100}% + ${duration - 1} * 0.25rem)` }}
+                                      className={cn("h-6 text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer text-white flex items-center",
+                                      "bg-blue-500/20 border-blue-500/40",
+                                      hoveredEventId === event.id && "ring-2 ring-primary bg-blue-500/30"
+                                    )}>
+                                       <p className="truncate pl-1">{event.title}</p>
+                                    </div>
+                                </EventDetailsPopover>
+                              )
+                          })}
+                        </div>
+                    </motion.div>
+                )})}
+                </div>
+            </div>
         </div>
         <div className="flex flex-col gap-6">
             <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
@@ -427,6 +427,5 @@ export default function TimelinePage() {
       </div>
     </main>
   );
-}
 
     
