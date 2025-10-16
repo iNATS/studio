@@ -5,12 +5,9 @@ import * as React from 'react';
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, User, FileText, DollarSign, Filter, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, User, DollarSign, Filter, X } from 'lucide-react';
 import {
   eachDayOfInterval,
   endOfMonth,
@@ -25,6 +22,7 @@ import {
   endOfWeek,
   startOfWeek,
   isWithinInterval,
+  parseISO,
 } from 'date-fns';
 import { initialProjects, Project } from '@/app/admin/workspace/projects/page';
 import { initialTasks, Task } from '@/app/admin/workspace/tasks/page';
@@ -39,16 +37,7 @@ import { clientsData } from '@/app/admin/workspace/clients/page';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-
-const colStartClasses = [
-  '',
-  'col-start-2',
-  'col-start-3',
-  'col-start-4',
-  'col-start-5',
-  'col-start-6',
-  'col-start-7',
-];
+import { AnimatePresence, motion } from 'framer-motion';
 
 type CalendarEvent = {
   type: 'project' | 'task';
@@ -108,7 +97,7 @@ const EventDetailsPopover = ({ event, children }: { event: CalendarEvent, childr
 }
 
 export default function CalendarPage() {
-  const [today, setToday] = React.useState(new Date());
+  const [currentMonth, setCurrentMonth] = React.useState(startOfMonth(new Date()));
 
   const [filters, setFilters] = React.useState<{
     type: 'all' | 'project' | 'task';
@@ -118,16 +107,16 @@ export default function CalendarPage() {
     clientId: 'all',
   });
 
-  const firstDayCurrentMonth = startOfMonth(today);
+  const firstDayCurrentMonth = currentMonth;
   
   const days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth),
     end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
   });
 
-  const nextMonth = () => setToday(addMonths(today, 1));
-  const prevMonth = () => setToday(subMonths(today, 1));
-  const goToToday = () => setToday(new Date());
+  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+  const goToToday = () => setCurrentMonth(startOfMonth(new Date()));
 
   const allEvents = React.useMemo<CalendarEvent[]>(() => {
     const projectEvents: CalendarEvent[] = initialProjects.map(p => ({
@@ -170,20 +159,11 @@ export default function CalendarPage() {
   }, [allEvents, filters]);
 
 
-  const eventsByDate = React.useMemo(() => {
-    const map = new Map<string, CalendarEvent[]>();
-    filteredEvents.forEach(event => {
-        const eventDays = eachDayOfInterval({start: event.startDate, end: event.endDate});
-        eventDays.forEach(day => {
-            const dateString = format(day, 'yyyy-MM-dd');
-            if (!map.has(dateString)) {
-                map.set(dateString, []);
-            }
-            map.get(dateString)!.push(event);
-        });
-    });
-    return map;
-  }, [filteredEvents]);
+  const getEventsForDay = (day: Date) => {
+    return filteredEvents.filter(event => 
+      isWithinInterval(day, { start: event.startDate, end: event.endDate }) || isSameDay(day, event.startDate)
+    );
+  }
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -243,65 +223,76 @@ export default function CalendarPage() {
             <Button variant="outline" className="rounded-lg" onClick={goToToday}>Today</Button>
             <div className="flex items-center gap-1 rounded-lg border border-white/20 p-1">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
-              <h2 className="text-lg font-semibold text-white w-32 text-center">{format(today, 'MMMM yyyy')}</h2>
+              <h2 className="text-lg font-semibold text-white w-32 text-center">{format(currentMonth, 'MMMM yyyy')}</h2>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
         </div>
       </div>
 
-      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
-        <CardContent className="flex-1 p-2 sm:p-4 overflow-hidden">
-          <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
-            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-          </div>
-          <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
-            {days.map((day, dayIdx) => {
-              const dayEvents = eventsByDate.get(format(day, 'yyyy-MM-dd')) || [];
-              
-              return (
-              <div
-                key={day.toString()}
-                className={cn(
-                  'border border-white/10 rounded-lg p-1.5 flex flex-col relative',
-                  dayIdx === 0 && colStartClasses[getDay(day)],
-                  !isSameMonth(day, today) && 'bg-white/5 text-white/40'
-                )}
-              >
-                <time
-                  dateTime={format(day, 'yyyy-MM-dd')}
+      <div className="flex-1 overflow-auto -mx-4 px-4">
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
+          <CardContent className="flex-1 p-2 sm:p-4 overflow-hidden">
+            <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
+              {days.map((day, dayIdx) => {
+                const dayEvents = getEventsForDay(day);
+                
+                return (
+                <div
+                  key={day.toString()}
                   className={cn(
-                    'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs',
-                    isToday(day) && 'bg-primary text-primary-foreground'
+                    'border border-white/10 rounded-lg p-1.5 flex flex-col relative',
+                    !isSameMonth(day, currentMonth) && 'bg-white/5 text-white/40'
                   )}
                 >
-                  {format(day, 'd')}
-                </time>
-                <div className="mt-1 space-y-0.5 flex-1 overflow-y-auto">
-                   {dayEvents.map(event => {
-                        const isStartDate = isSameDay(day, event.startDate);
-                        const isTask = event.type === 'task';
-                        if (!isStartDate && !isTask) return null;
-
-                        return (
-                          <EventDetailsPopover key={event.id} event={event}>
-                            <div className={cn(
-                                "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40",
-                                event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
-                            )}>
-                                {event.title}
-                            </div>
-                        </EventDetailsPopover>
-                        )
-                   })}
+                  <time
+                    dateTime={format(day, 'yyyy-MM-dd')}
+                    className={cn(
+                      'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs',
+                      isToday(day) && 'bg-primary text-primary-foreground'
+                    )}
+                  >
+                    {format(day, 'd')}
+                  </time>
+                  <div className="mt-1 space-y-0.5 flex-1 overflow-y-auto pr-1">
+                     <AnimatePresence>
+                       {dayEvents.map((event, index) => {
+                          const isStartDate = isSameDay(day, event.startDate);
+                          if (!isStartDate) return null; // Render event only on its start date to avoid duplication
+  
+                          return (
+                            <motion.div
+                              key={event.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                            >
+                              <EventDetailsPopover event={event}>
+                                <div className={cn(
+                                    "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
+                                    event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
+                                )}>
+                                    {event.title}
+                                </div>
+                            </EventDetailsPopover>
+                            </motion.div>
+                          )
+                       })}
+                     </AnimatePresence>
+                  </div>
                 </div>
-              </div>
-            )})}
-          </div>
-        </CardContent>
-      </Card>
+              )})}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }
+
+    
 
     
