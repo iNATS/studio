@@ -45,6 +45,7 @@ export default function AdminLayout({
         { href: '/admin/workspace/clients', label: 'Clients' },
         { href: '/admin/workspace/tasks', label: 'Tasks' },
         { href: '/admin/workspace/projects', label: 'Projects' },
+        { href: '/admin/workspace/timeline', label: 'Timeline' },
       ]
     },
     { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
