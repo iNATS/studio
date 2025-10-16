@@ -20,9 +20,10 @@ import {
   isSameDay,
   endOfWeek,
   startOfWeek,
-  isWithinInterval,
+  getDay,
   parseISO,
-  getDay
+  differenceInCalendarDays,
+  isWithinInterval
 } from 'date-fns';
 import { initialProjects, Project } from '@/app/admin/workspace/projects/page';
 import { initialTasks, Task } from '@/app/admin/workspace/tasks/page';
@@ -160,12 +161,8 @@ export default function CalendarPage() {
 
 
   const getEventsForDay = (day: Date) => {
-    return filteredEvents.filter(event => 
-        isSameDay(day, event.startDate) ||
-        (isSameDay(day, event.endDate)) ||
-        (isWithinInterval(day, { start: event.startDate, end: event.endDate }))
-    );
-  }
+    return filteredEvents.filter(event => isWithinInterval(day, { start: event.startDate, end: event.endDate }));
+  };
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -239,7 +236,7 @@ export default function CalendarPage() {
               <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
             <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
-              {days.map((day, dayIdx) => {
+              {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
                 
                 return (
@@ -264,8 +261,12 @@ export default function CalendarPage() {
                      <AnimatePresence>
                        {dayEvents.map((event, index) => {
                            if (isSameDay(day, event.startDate) || (getDay(day) === 0 && isWithinInterval(day, { start: event.startDate, end: event.endDate }))) {
-                            const remainingDays = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? 7 - getDay(day) : 1
-                            const eventDuration = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? Math.min(differenceInDays(event.endDate, day) + 1, remainingDays) : 1;
+                            const remainingDaysInWeek = 7 - getDay(day);
+                            const eventDurationInDays = differenceInCalendarDays(event.endDate, event.startDate) + 1;
+                            const eventStartOffset = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? 0 : differenceInCalendarDays(day, event.startDate);
+                            const daysLeftInEvent = eventDurationInDays - eventStartOffset;
+                            const segmentDuration = Math.min(daysLeftInEvent, remainingDaysInWeek);
+                            const isTask = event.type === 'task' || isSameDay(event.startDate, event.endDate);
 
                             return (
                                 <motion.div
@@ -273,8 +274,8 @@ export default function CalendarPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                style={{ width: `calc(${eventDuration * 100}% + ${(eventDuration - 1) * 4}px)` }}
-                                className="relative z-10"
+                                style={!isTask ? { width: `calc(${segmentDuration * 100}% + ${(segmentDuration - 1) * 4}px)` } : {}}
+                                className={cn("relative", isTask ? 'w-full' : 'z-10')}
                                 >
                                 <EventDetailsPopover event={event}>
                                     <div className={cn(
@@ -299,11 +300,6 @@ export default function CalendarPage() {
       </div>
     </main>
   );
-}
-
-function differenceInDays(dateLeft: Date, dateRight: Date): number {
-    const diff = dateLeft.getTime() - dateRight.getTime();
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 
     
