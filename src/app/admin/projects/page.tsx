@@ -101,39 +101,42 @@ export default function AdminProjectsPage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col p-4 sm:p-8">
-      <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">My Works</h1>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              size="sm"
-              className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Work
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Add New Work</DialogTitle>
-              <DialogDescription>
-                Follow the steps to add a new work to your portfolio.
-              </DialogDescription>
-            </DialogHeader>
-             <ProjectWizard
-              onSubmit={(values) => {
-                  console.log('Adding work:', values);
-                  setIsAddDialogOpen(false);
-                  toast({
-                    variant: 'success',
-                    title: "Work Published!",
-                    description: "Your new work has been added to the portfolio.",
-                  });
-              }}
-            />
-          </DialogContent>
-        </Dialog>
+    <main className="flex flex-col h-full pt-4">
+      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+        <div className="flex items-center">
+            <h1 className="text-2xl font-bold text-white">My Works</h1>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+                <Button
+                size="sm"
+                className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                >
+                <PlusCircle className="h-4 w-4" />
+                Add Work
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
+                <DialogHeader>
+                <DialogTitle>Add New Work</DialogTitle>
+                <DialogDescription>
+                    Follow the steps to add a new work to your portfolio.
+                </DialogDescription>
+                </DialogHeader>
+                <ProjectWizard
+                onSubmit={(values) => {
+                    console.log('Adding work:', values);
+                    setIsAddDialogOpen(false);
+                    toast({
+                        variant: 'success',
+                        title: "Work Published!",
+                        description: "Your new work has been added to the portfolio.",
+                    });
+                }}
+                />
+            </DialogContent>
+            </Dialog>
+        </div>
+      </div>
 
         {/* Edit Project Dialog */}
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
@@ -180,7 +183,6 @@ export default function AdminProjectsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
 
       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
         <CardHeader>
@@ -201,7 +203,7 @@ export default function AdminProjectsPage() {
                 <TableHead className="hidden md:table-cell text-white/80">
                   Tags
                 </TableHead>
-                <TableHead>
+                <TableHead className="sticky top-0 bg-white/5 backdrop-blur-xl">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
@@ -287,3 +289,5 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
+
+    

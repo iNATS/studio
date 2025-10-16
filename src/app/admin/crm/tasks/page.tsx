@@ -570,62 +570,64 @@ export default function TasksPage() {
     };
 
     return (
-        <main className="flex flex-col h-full">
-            <div className="flex items-center mb-6">
-                <h1 className="text-2xl font-bold text-white">Tasks</h1>
-                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            size="sm"
-                            className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
-                        >
-                            <PlusCircle className="h-4 w-4" />
-                            Add Task
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-                        <DialogHeader>
-                        <DialogTitle>Add New Task</DialogTitle>
-                        <DialogDescription>
-                            Enter the details for the new task.
-                        </DialogDescription>
-                        </DialogHeader>
-                        <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
-                    </DialogContent>
-                </Dialog>
-            </div>
+        <main className="flex flex-col h-full pt-4">
+            <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+                <div className="flex items-center">
+                    <h1 className="text-2xl font-bold text-white">Tasks</h1>
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                size="sm"
+                                className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                            >
+                                <PlusCircle className="h-4 w-4" />
+                                Add Task
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                            <DialogHeader>
+                            <DialogTitle>Add New Task</DialogTitle>
+                            <DialogDescription>
+                                Enter the details for the new task.
+                            </DialogDescription>
+                            </DialogHeader>
+                            <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
+                        </DialogContent>
+                    </Dialog>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
-                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Client..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                        <SelectItem value="all">All Clients</SelectItem>
-                        {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
-                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by Priority..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                        <SelectItem value="all">All Priorities</SelectItem>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Input 
-                    type="text" 
-                    placeholder="Filter by tag..."
-                    value={filters.tag}
-                    onChange={(e) => handleFilterChange('tag', e.target.value)}
-                    className="bg-white/5 border-white/10 w-full sm:w-[180px]"
-                />
-                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
-                    <XIcon className="mr-2 h-4 w-4" /> Clear
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                    <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
+                            <SelectValue placeholder="Filter by Client..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                            <SelectItem value="all">All Clients</SelectItem>
+                            {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[180px]">
+                            <SelectValue placeholder="Filter by Priority..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                            <SelectItem value="all">All Priorities</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Input 
+                        type="text" 
+                        placeholder="Filter by tag..."
+                        value={filters.tag}
+                        onChange={(e) => handleFilterChange('tag', e.target.value)}
+                        className="bg-white/5 border-white/10 w-full sm:w-[180px]"
+                    />
+                    <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
+                        <XIcon className="mr-2 h-4 w-4" /> Clear
+                    </Button>
+                </div>
             </div>
             
             <div className="flex-1 overflow-hidden">
@@ -699,3 +701,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    

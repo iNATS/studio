@@ -455,92 +455,93 @@ export default function RunProjectsPage() {
     };
 
     return (
-        <main className="flex flex-col h-full">
-            <div className="flex items-center mb-6">
-                <h1 className="text-2xl font-bold text-white">Run Projects</h1>
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button size="sm" className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg">
-                            <PlusCircle className="h-4 w-4" />
-                            Add Project
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-                        <DialogHeader>
-                            <DialogTitle>Add New Project</DialogTitle>
-                            <DialogDescription>Enter the details for the new project.</DialogDescription>
-                        </DialogHeader>
-                        <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
-                    </DialogContent>
-                </Dialog>
-            </div>
-            
-            <div className="flex flex-wrap gap-4 mb-6">
-                <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
-                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-auto min-w-[180px]">
-                        <SelectValue placeholder="Filter by Client..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                        <SelectItem value="all">All Clients</SelectItem>
-                        {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                 <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                    <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-auto min-w-[180px]">
-                        <SelectValue placeholder="Filter by Status..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="planning">Planning</SelectItem>
-                        <SelectItem value="in-progress">In Progress</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                </Select>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Input 
-                        type="number" 
-                        placeholder="Min Budget"
-                        value={filters.budgetMin}
-                        onChange={(e) => handleFilterChange('budgetMin', e.target.value === '' ? '' : Number(e.target.value))}
-                        className="bg-white/5 border-white/10 w-full"
-                    />
-                    <span className="text-white/50">-</span>
-                     <Input 
-                        type="number" 
-                        placeholder="Max Budget"
-                        value={filters.budgetMax}
-                        onChange={(e) => handleFilterChange('budgetMax', e.target.value === '' ? '' : Number(e.target.value))}
-                        className="bg-white/5 border-white/10 w-full"
-                    />
+        <main className="flex flex-col h-full pt-4">
+             <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+                <div className="flex items-center">
+                    <h1 className="text-2xl font-bold text-white">Run Projects</h1>
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button size="sm" className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg">
+                                <PlusCircle className="h-4 w-4" />
+                                Add Project
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                            <DialogHeader>
+                                <DialogTitle>Add New Project</DialogTitle>
+                                <DialogDescription>Enter the details for the new project.</DialogDescription>
+                            </DialogHeader>
+                            <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
+                        </DialogContent>
+                    </Dialog>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                     <Popover>
-                        <PopoverTrigger asChild>
-                        <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !filters.startDate && "text-muted-foreground")}>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {filters.startDate ? format(filters.startDate, "MMM d, yyyy") : <span>Start Date</span>}
-                        </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
-                            <Calendar mode="single" selected={filters.startDate} onSelect={(date) => handleFilterChange('startDate', date)} initialFocus />
-                        </PopoverContent>
-                    </Popover>
-                    <span className="text-white/50">-</span>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                        <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !filters.endDate && "text-muted-foreground")}>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {filters.endDate ? format(filters.endDate, "MMM d, yyyy") : <span>End Date</span>}
-                        </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
-                            <Calendar mode="single" selected={filters.endDate} onSelect={(date) => handleFilterChange('endDate', date)} initialFocus />
-                        </PopoverContent>
-                    </Popover>
+                <div className="flex flex-wrap gap-4 mt-4">
+                    <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-auto min-w-[180px]">
+                            <SelectValue placeholder="Filter by Client..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                            <SelectItem value="all">All Clients</SelectItem>
+                            {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-auto min-w-[180px]">
+                            <SelectValue placeholder="Filter by Status..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="planning">Planning</SelectItem>
+                            <SelectItem value="in-progress">In Progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <Input 
+                            type="number" 
+                            placeholder="Min Budget"
+                            value={filters.budgetMin}
+                            onChange={(e) => handleFilterChange('budgetMin', e.target.value === '' ? '' : Number(e.target.value))}
+                            className="bg-white/5 border-white/10 w-full"
+                        />
+                        <span className="text-white/50">-</span>
+                        <Input 
+                            type="number" 
+                            placeholder="Max Budget"
+                            value={filters.budgetMax}
+                            onChange={(e) => handleFilterChange('budgetMax', e.target.value === '' ? '' : Number(e.target.value))}
+                            className="bg-white/5 border-white/10 w-full"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !filters.startDate && "text-muted-foreground")}>
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {filters.startDate ? format(filters.startDate, "MMM d, yyyy") : <span>Start Date</span>}
+                            </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                                <Calendar mode="single" selected={filters.startDate} onSelect={(date) => handleFilterChange('startDate', date)} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                        <span className="text-white/50">-</span>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10", !filters.endDate && "text-muted-foreground")}>
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {filters.endDate ? format(filters.endDate, "MMM d, yyyy") : <span>End Date</span>}
+                            </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="start">
+                                <Calendar mode="single" selected={filters.endDate} onSelect={(date) => handleFilterChange('endDate', date)} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
+                        <XIcon className="mr-2 h-4 w-4" /> Clear
+                    </Button>
                 </div>
-                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
-                    <XIcon className="mr-2 h-4 w-4" /> Clear
-                </Button>
             </div>
 
 
@@ -625,3 +626,5 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    

@@ -26,8 +26,8 @@ const recentProjects = portfolioItems.slice(0, 5);
 
 export default function AdminDashboard() {
   return (
-    <main className="flex flex-col h-full">
-        <div className="flex items-center mb-6">
+    <main className="flex flex-col h-full pt-4">
+        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
             <h1 className="text-2xl font-bold text-white">Dashboard</h1>
         </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -143,3 +143,5 @@ export default function AdminDashboard() {
     </main>
   );
 }
+
+    

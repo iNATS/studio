@@ -293,29 +293,32 @@ export default function ClientsPage() {
   }
   
   return (
-    <main className="flex flex-1 flex-col p-4 sm:p-8">
-      <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Clients</h1>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              size="sm"
-              className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Client
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Add New Client</DialogTitle>
-              <DialogDescription>
-                Enter the details for the new client.
-              </DialogDescription>
-            </DialogHeader>
-            <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
-          </DialogContent>
-        </Dialog>
+    <main className="flex flex-col h-full pt-4">
+      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+        <div className="flex items-center">
+            <h1 className="text-2xl font-bold text-white">Clients</h1>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+                <Button
+                size="sm"
+                className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                >
+                <PlusCircle className="h-4 w-4" />
+                Add Client
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                <DialogHeader>
+                <DialogTitle>Add New Client</DialogTitle>
+                <DialogDescription>
+                    Enter the details for the new client.
+                </DialogDescription>
+                </DialogHeader>
+                <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
+            </DialogContent>
+            </Dialog>
+        </div>
+      </div>
 
         {/* Edit Client Dialog */}
         <Dialog open={!!editingClient} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
@@ -357,7 +360,6 @@ export default function ClientsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
 
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
             <CardHeader>
@@ -439,3 +441,5 @@ export default function ClientsPage() {
     </main>
   );
 }
+
+    

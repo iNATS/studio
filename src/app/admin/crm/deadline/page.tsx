@@ -1,9 +1,10 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function DeadlinePage() {
   return (
-    <main className="flex flex-col h-full">
-        <div className="flex items-center mb-6">
+    <main className="flex flex-col h-full pt-4">
+        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
             <h1 className="text-2xl font-bold text-white">Deadlines</h1>
         </div>
       <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
@@ -20,3 +21,5 @@ export default function DeadlinePage() {
     </main>
   );
 }
+
+    
