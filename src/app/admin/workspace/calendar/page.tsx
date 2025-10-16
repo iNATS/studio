@@ -102,11 +102,10 @@ export default function CalendarPage() {
   const [viewingProject, setViewingProject] = React.useState<Project | null>(null);
 
   const firstDayCurrentMonth = startOfMonth(today);
-  const lastDayCurrentMonth = endOfMonth(today);
   
   const days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth),
-    end: endOfWeek(lastDayCurrentMonth),
+    end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
   });
 
   const nextMonth = () => setToday(addMonths(today, 1));
@@ -173,7 +172,7 @@ export default function CalendarPage() {
             <div>Fri</div>
             <div>Sat</div>
           </div>
-          <div className="grid grid-cols-7 grid-rows-5 gap-1 h-full">
+          <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
             {days.map((day, dayIdx) => (
               <div
                 key={day.toString()}
@@ -195,7 +194,7 @@ export default function CalendarPage() {
                 </time>
                 <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
                    {(projectsByDate.get(format(day, 'yyyy-MM-dd')) || []).map(project => (
-                     isSameDay(day, project.startDate) || (getDay(day) === 1 && isWithinInterval(project.startDate, {start: startOfWeek(day, {weekStartsOn: 1}), end: day})) ? (
+                     isSameDay(day, project.startDate) || (dayIdx % 7 === 0 && isWithinInterval(day, {start: project.startDate, end: project.endDate})) ? (
                         <button key={project.id} onClick={() => setViewingProject(project)} className="w-full text-left bg-blue-500/20 text-blue-300 p-1.5 rounded-md text-xs truncate border border-blue-500/40 hover:bg-blue-500/30">
                             {project.title}
                         </button>
