@@ -48,6 +48,7 @@ export default function AdminLayout({
         { href: '/admin/crm/deadline', label: 'Deadline' },
       ]
     },
+    { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
   ];
 
   return (
