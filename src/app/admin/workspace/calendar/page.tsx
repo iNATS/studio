@@ -24,6 +24,7 @@ import {
   isSameDay,
   endOfWeek,
   startOfWeek,
+  isWithinInterval,
 } from 'date-fns';
 import { initialProjects, Project } from '@/app/admin/workspace/projects/page';
 import { initialTasks, Task } from '@/app/admin/workspace/tasks/page';
@@ -58,10 +59,9 @@ type CalendarEvent = {
   data: Project | Task;
 };
 
-const EventDetailsPopover = ({ event, children, onOpenChange }: { event: CalendarEvent, children: React.ReactNode, onOpenChange: (open:boolean) => void }) => {
-    
+const EventDetailsPopover = ({ event, children }: { event: CalendarEvent, children: React.ReactNode }) => {
     return (
-        <Popover onOpenChange={onOpenChange}>
+        <Popover>
             <PopoverTrigger asChild>{children}</PopoverTrigger>
             <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white">
                 <div className="grid gap-4">
@@ -109,7 +109,6 @@ const EventDetailsPopover = ({ event, children, onOpenChange }: { event: Calenda
 
 export default function CalendarPage() {
   const [today, setToday] = React.useState(new Date());
-  const [activePopover, setActivePopover] = React.useState<string | null>(null);
 
   const [filters, setFilters] = React.useState<{
     type: 'all' | 'project' | 'task';
@@ -149,7 +148,7 @@ export default function CalendarPage() {
             endDate: t.dueDate!,
             data: t,
         }));
-    return [...projectEvents, ...taskEvents];
+    return [...projectEvents, ...taskEvents].sort((a,b) => a.startDate.getTime() - b.startDate.getTime());
   }, []);
 
   const handleFilterChange = (filterType: keyof typeof filters, value: any) => {
@@ -251,21 +250,20 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col">
+      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
         <CardContent className="flex-1 p-2 sm:p-4 overflow-hidden">
-          <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2 mb-2">
+          <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
             <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
           </div>
           <div className="grid grid-cols-7 grid-rows-5 gap-1 h-[calc(100%-2.5rem)]">
             {days.map((day, dayIdx) => {
               const dayEvents = eventsByDate.get(format(day, 'yyyy-MM-dd')) || [];
-              const isFirstDayOfWeek = dayIdx % 7 === 0;
-
+              
               return (
               <div
                 key={day.toString()}
                 className={cn(
-                  'border border-white/10 rounded-lg p-2 flex flex-col',
+                  'border border-white/10 rounded-lg p-1.5 flex flex-col relative',
                   dayIdx === 0 && colStartClasses[getDay(day)],
                   !isSameMonth(day, today) && 'bg-white/5 text-white/40'
                 )}
@@ -273,25 +271,29 @@ export default function CalendarPage() {
                 <time
                   dateTime={format(day, 'yyyy-MM-dd')}
                   className={cn(
-                    'flex items-center justify-center h-6 w-6 rounded-full font-semibold',
+                    'flex items-center justify-center h-6 w-6 rounded-full font-semibold text-xs',
                     isToday(day) && 'bg-primary text-primary-foreground'
                   )}
                 >
                   {format(day, 'd')}
                 </time>
-                <div className="mt-2 space-y-1 flex-1 overflow-y-auto">
-                   {dayEvents.map(event => (
-                     (isSameDay(day, event.startDate) || (isFirstDayOfWeek && isSameDay(day, startOfWeek(event.startDate, { weekStartsOn: 0 })))) && (
-                        <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setActivePopover(open ? event.id : null)}>
-                            <button className={cn(
-                                "w-full text-left p-1.5 rounded-md text-xs truncate border hover:bg-opacity-40",
+                <div className="mt-1 space-y-0.5 flex-1 overflow-y-auto">
+                   {dayEvents.map(event => {
+                        const isStartDate = isSameDay(day, event.startDate);
+                        const isTask = event.type === 'task';
+                        if (!isStartDate && !isTask) return null;
+
+                        return (
+                          <EventDetailsPopover key={event.id} event={event}>
+                            <div className={cn(
+                                "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40",
                                 event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
                             )}>
                                 {event.title}
-                            </button>
+                            </div>
                         </EventDetailsPopover>
-                    )
-                  ))}
+                        )
+                   })}
                 </div>
               </div>
             )})}
