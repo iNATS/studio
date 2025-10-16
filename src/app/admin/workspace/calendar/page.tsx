@@ -259,37 +259,49 @@ export default function CalendarPage() {
                   </time>
                   <div className="mt-1 space-y-0.5 flex-1 overflow-y-auto pr-1">
                      <AnimatePresence>
-                       {dayEvents.map((event, index) => {
-                           if (isSameDay(day, event.startDate) || (getDay(day) === 0 && isWithinInterval(day, { start: event.startDate, end: event.endDate }))) {
-                            const remainingDaysInWeek = 7 - getDay(day);
-                            const eventDurationInDays = differenceInCalendarDays(event.endDate, event.startDate) + 1;
-                            const eventStartOffset = isWithinInterval(day, { start: event.startDate, end: event.endDate }) ? 0 : differenceInCalendarDays(day, event.startDate);
-                            const daysLeftInEvent = eventDurationInDays - eventStartOffset;
-                            const segmentDuration = Math.min(daysLeftInEvent, remainingDaysInWeek);
-                            const isTask = event.type === 'task' || isSameDay(event.startDate, event.endDate);
+                        {dayEvents.map((event, index) => {
+                          const isProject = event.type === 'project' && !isSameDay(event.startDate, event.endDate);
+                          // Only render the start of the event bar
+                          if (!isSameDay(day, event.startDate) && !(getDay(day) === 0 && isWithinInterval(day, { start: event.startDate, end: event.endDate }))) {
+                            if (isProject) return null; // Don't render segments
+                          }
 
-                            return (
-                                <motion.div
-                                key={event.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                style={!isTask ? { width: `calc(${segmentDuration * 100}% + ${(segmentDuration - 1) * 4}px)` } : {}}
-                                className={cn("relative", isTask ? 'w-full' : 'z-10')}
-                                >
-                                <EventDetailsPopover event={event}>
-                                    <div className={cn(
-                                        "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
-                                        event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
-                                    )}>
-                                        {event.title}
-                                    </div>
-                                </EventDetailsPopover>
-                                </motion.div>
-                            );
-                           }
-                          return null
-                       })}
+                          const remainingDaysInWeek = 7 - getDay(day);
+                          const eventDurationInDays = differenceInCalendarDays(event.endDate, event.startDate) + 1;
+                          
+                          // Correctly calculate offset for events that started before the current view
+                          const eventStartOffset = isWithinInterval(day, { start: event.startDate, end: event.endDate }) 
+                            ? differenceInCalendarDays(day, event.startDate)
+                            : 0;
+
+                          const daysLeftInEvent = eventDurationInDays - eventStartOffset;
+                          const segmentDuration = Math.min(daysLeftInEvent, remainingDaysInWeek);
+                          
+                          // Tasks or single day projects
+                          const isSingleDayEvent = event.type === 'task' || isSameDay(event.startDate, event.endDate);
+
+                          if (isSingleDayEvent && !isSameDay(day, event.startDate)) return null;
+
+                          return (
+                              <motion.div
+                              key={event.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                              style={!isSingleDayEvent ? { width: `calc(${segmentDuration * 100}% + ${(segmentDuration - 1) * 4}px)` } : {}}
+                              className={cn("relative", isSingleDayEvent ? 'w-full' : 'z-10')}
+                              >
+                              <EventDetailsPopover event={event}>
+                                  <div className={cn(
+                                      "w-full text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer",
+                                      event.type === 'project' ? "bg-blue-500/20 text-blue-300 border-blue-500/40" : "bg-orange-500/20 text-orange-300 border-orange-500/40"
+                                  )}>
+                                      {event.title}
+                                  </div>
+                              </EventDetailsPopover>
+                              </motion.div>
+                          );
+                        })}
                      </AnimatePresence>
                   </div>
                 </div>
@@ -300,6 +312,5 @@ export default function CalendarPage() {
       </div>
     </main>
   );
-}
 
     
