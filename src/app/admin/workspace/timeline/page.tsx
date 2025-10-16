@@ -620,13 +620,13 @@ export default function TimelinePage() {
 
         <div className="lg:col-span-1 flex flex-col gap-6">
             <AnimatePresence>
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+                <motion.div key="projects-overview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
                     <ProjectsOverviewChart projects={filteredEvents.filter(e => e.type === 'project') as Project[]} />
                 </motion.div>
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+                <motion.div key="ongoing-projects" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                     <OngoingProjectsList projects={ongoingProjects} onHover={setHoveredEvent} />
                 </motion.div>
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+                <motion.div key="upcoming-tasks" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
                     <UpcomingTasksList tasks={upcomingTasks} onHover={setHoveredEvent} />
                 </motion.div>
             </AnimatePresence>
@@ -635,5 +635,3 @@ export default function TimelinePage() {
     </main>
   );
 }
-
-    
