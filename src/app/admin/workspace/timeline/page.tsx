@@ -257,7 +257,7 @@ export default function TimelinePage() {
             <Button variant="outline" className="rounded-lg" onClick={goToToday}>Today</Button>
             <div className="flex items-center gap-1 rounded-lg border border-white/20 p-1">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
-              <h2 className="text-lg font-semibold text-white w-32 text-center">{format(currentMonth, 'MMMM yyyy')}</h2>
+              <h2 className="text-lg font-semibold text-white text-center px-2">{format(currentMonth, 'MMMM yyyy')}</h2>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
