@@ -301,7 +301,6 @@ export default function TimelinePage() {
                                     const isProject = event.type === 'project';
                                     if (!isSameDay(day, event.startDate) && getDay(day) !== 0) return null;
                                     
-                                    const startingDay = getDay(event.startDate);
                                     const eventDuration = differenceInCalendarDays(event.endDate, event.startDate) + 1;
 
                                     let weekOffset = 0;
