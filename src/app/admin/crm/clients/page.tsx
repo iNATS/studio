@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -47,7 +46,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye, User, Mail, Building, Phone, MapPin, FileText, Search } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye, User, Mail, Building, Phone, MapPin, FileText, Search, Filter, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -55,6 +54,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Pagination } from '@/components/ui/pagination';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 
 type Client = {
   id: string;
@@ -68,7 +69,7 @@ type Client = {
   notes: string;
 };
 
-const clientsData: Client[] = [
+export const clientsData: Client[] = [
     { id: '1', name: 'Sarah Johnson', email: 'sarah.j@innovate.inc', avatar: 'https://picsum.photos/seed/sarah/100/100', status: 'active', company: 'Innovate Inc.', phone: '555-123-4567', address: '123 Innovation Dr, Tech City', notes: 'Lead designer, prefers communication via email.' },
     { id: '2', name: 'Michael Chen', email: 'michael.c@techsolutions.com', avatar: 'https://picsum.photos/seed/michael/100/100', status: 'active', company: 'Tech Solutions', phone: '555-987-6543', address: '456 Tech Ave, Silicon Valley', notes: 'CEO. Key decision maker.' },
     { id: '3', name: 'Emily Davis', email: 'emily.d@creativestudio.com', avatar: 'https://picsum.photos/seed/emily/100/100', status: 'new', company: 'Creative Studio', phone: '555-555-5555', address: '789 Art Blvd, Design District', notes: 'New client, interested in a full branding package.' },
@@ -228,17 +229,42 @@ export default function ClientsPage() {
   const [editingClient, setEditingClient] = React.useState<Client | null>(null);
   const [viewingClient, setViewingClient] = React.useState<Client | null>(null);
   const [clientToDelete, setClientToDelete] = React.useState<Client | null>(null);
-  const [searchTerm, setSearchTerm] = React.useState('');
   const { toast } = useToast();
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
+  
+  const [filters, setFilters] = React.useState<{
+    searchTerm: string;
+    status: 'all' | Client['status'];
+  }>({
+    searchTerm: '',
+    status: 'all',
+  });
 
-  const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.company.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleFilterChange = (filterType: keyof typeof filters, value: any) => {
+    setFilters(prev => ({ ...prev, [filterType]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      searchTerm: '',
+      status: 'all',
+    });
+  };
+
+  const filteredClients = React.useMemo(() => {
+    return clients.filter(client => {
+      const searchTermMatch =
+        client.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        client.email.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        client.company.toLowerCase().includes(filters.searchTerm.toLowerCase());
+      
+      const statusMatch = filters.status === 'all' || client.status === filters.status;
+
+      return searchTermMatch && statusMatch;
+    });
+  }, [clients, filters]);
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
 
@@ -247,6 +273,7 @@ export default function ClientsPage() {
     currentPage * itemsPerPage
   );
 
+  const hasActiveFilters = filters.searchTerm !== '' || filters.status !== 'all';
 
   const handleEdit = (client: Client) => {
     setEditingClient(client);
@@ -305,35 +332,81 @@ export default function ClientsPage() {
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold text-white flex-shrink-0">Clients</h1>
-            <div className="relative w-full max-w-sm ml-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-                <Input 
-                    placeholder="Search clients..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-white/5 border-white/10 pl-10"
-                />
+            <div className="ml-auto flex items-center gap-2">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" className="gap-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 relative">
+                            <Filter className="h-4 w-4" />
+                            <span>Filter</span>
+                            {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="end">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Filters</h4>
+                                <p className="text-sm text-white/60">
+                                Refine your client list.
+                                </p>
+                            </div>
+                            <div className="grid gap-2">
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                  <Label>Search</Label>
+                                  <div className="relative col-span-2">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                                    <Input 
+                                        placeholder="Name, email, company..."
+                                        value={filters.searchTerm}
+                                        onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                                        className="bg-white/5 border-white/10 pl-10"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                  <Label>Status</Label>
+                                    <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                                        <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                            <SelectValue placeholder="Status..." />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                            <SelectItem value="all">All Statuses</SelectItem>
+                                            <SelectItem value="new">New</SelectItem>
+                                            <SelectItem value="active">Active</SelectItem>
+                                            <SelectItem value="archived">Archived</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                            {hasActiveFilters && (
+                                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10 w-full justify-center">
+                                    <X className="mr-2 h-4 w-4" /> Clear Filters
+                                </Button>
+                            )}
+                        </div>
+                    </PopoverContent>
+                </Popover>
+
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button
+                    size="sm"
+                    className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0"
+                    >
+                    <PlusCircle className="h-4 w-4" />
+                    Add Client
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                    <DialogHeader>
+                    <DialogTitle>Add New Client</DialogTitle>
+                    <DialogDescription>
+                        Enter the details for the new client.
+                    </DialogDescription>
+                    </DialogHeader>
+                    <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
+                </DialogContent>
+                </Dialog>
             </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-                <Button
-                size="sm"
-                className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0"
-                >
-                <PlusCircle className="h-4 w-4" />
-                Add Client
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-                <DialogHeader>
-                <DialogTitle>Add New Client</DialogTitle>
-                <DialogDescription>
-                    Enter the details for the new client.
-                </DialogDescription>
-                </DialogHeader>
-                <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
-            </DialogContent>
-            </Dialog>
         </div>
       </div>
 

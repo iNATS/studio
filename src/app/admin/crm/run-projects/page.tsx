@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -74,7 +73,7 @@ export type Project = {
 
 export type ProjectStatus = 'planning' | 'in-progress' | 'completed';
 
-const initialProjects: Project[] = [
+export const initialProjects: Project[] = [
   { id: 'proj-1', title: 'E-commerce Website', description: 'Full-stack development for online store', status: 'in-progress', clientId: '1', budget: 12000, startDate: new Date(2024, 5, 1), endDate: new Date(2024, 7, 30) },
   { id: 'proj-2', title: 'Mobile App Design', description: 'UI/UX for a new banking app', status: 'planning', clientId: '3', budget: 8000, startDate: new Date(2024, 6, 15), endDate: new Date(2024, 8, 15) },
   { id: 'proj-3', title: 'Corporate Branding', description: 'Complete brand identity refresh', status: 'completed', clientId: '2', budget: 5000, startDate: new Date(2024, 4, 1), endDate: new Date(2024, 5, 15) },
@@ -297,7 +296,7 @@ const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project |
     );
 }
 
-export default function RunProjectsPage() {
+export default function ProjectsPage() {
     const [projects, setProjects] = React.useState<Project[]>(initialProjects);
     const [activeProject, setActiveProject] = React.useState<Project | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
