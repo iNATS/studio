@@ -44,7 +44,7 @@ export default function AdminLayout({
       subItems: [
         { href: '/admin/crm/clients', label: 'Clients' },
         { href: '/admin/crm/tasks', label: 'Tasks' },
-        { href: '/admin/crm/run-projects', label: 'Run Projects' },
+        { href: '/admin/crm/run-projects', label: 'Projects' },
         { href: '/admin/crm/deadline', label: 'Deadline' },
       ]
     },

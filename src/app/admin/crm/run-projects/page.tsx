@@ -458,7 +458,7 @@ export default function RunProjectsPage() {
         <main className="flex flex-col h-full pt-4">
              <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
                 <div className="flex items-center">
-                    <h1 className="text-2xl font-bold text-white">Run Projects</h1>
+                    <h1 className="text-2xl font-bold text-white">Projects</h1>
                     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
                             <Button size="sm" className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg">
