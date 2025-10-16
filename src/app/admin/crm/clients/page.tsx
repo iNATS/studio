@@ -54,6 +54,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
+import { Pagination } from '@/components/ui/pagination';
 
 type Client = {
   id: string;
@@ -229,6 +230,16 @@ export default function ClientsPage() {
   const [clientToDelete, setClientToDelete] = React.useState<Client | null>(null);
   const { toast } = useToast();
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(clients.length / itemsPerPage);
+
+  const paginatedClients = clients.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
   const handleEdit = (client: Client) => {
     setEditingClient(client);
   };
@@ -282,7 +293,7 @@ export default function ClientsPage() {
   }
   
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-1 flex-col p-4 sm:p-8">
       <div className="flex items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Clients</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -369,7 +380,7 @@ export default function ClientsPage() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {clients.map((client) => (
+                    {paginatedClients.map((client) => (
                         <TableRow
                         key={client.id}
                         className="border-white/10 hover:bg-white/5"
@@ -417,6 +428,13 @@ export default function ClientsPage() {
                     </TableBody>
                 </Table>
             </CardContent>
+            <CardFooter className="border-t border-white/10 px-6 py-4">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            </CardFooter>
         </Card>
     </main>
   );

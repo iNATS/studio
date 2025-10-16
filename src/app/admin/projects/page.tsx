@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import {
   Table,
@@ -49,12 +50,23 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
+import { Pagination } from '@/components/ui/pagination';
 
 export default function AdminProjectsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
   const { toast } = useToast();
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(portfolioItems.length / itemsPerPage);
+
+  const paginatedItems = portfolioItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -89,7 +101,7 @@ export default function AdminProjectsPage() {
   }
 
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-1 flex-col p-4 sm:p-8">
       <div className="flex items-center mb-6">
         <h1 className="text-2xl font-bold text-white">My Works</h1>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -195,7 +207,7 @@ export default function AdminProjectsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {portfolioItems.map((project) => (
+              {paginatedItems.map((project) => (
                 <TableRow
                   key={project.slug}
                   className="border-white/10 hover:bg-white/5"
@@ -264,6 +276,13 @@ export default function AdminProjectsPage() {
             </TableBody>
           </Table>
         </CardContent>
+         <CardFooter className="border-t border-white/10 px-6 py-4">
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+        </CardFooter>
       </Card>
     </main>
   );
