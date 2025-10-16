@@ -97,7 +97,7 @@ const EventDetailsPopover = ({ event, children }: { event: CalendarEvent, childr
     )
 }
 
-export default function CalendarPage() {
+export default function TimelinePage() {
   const [currentMonth, setCurrentMonth] = React.useState(startOfMonth(new Date()));
 
   const [filters, setFilters] = React.useState<{
@@ -168,7 +168,7 @@ export default function CalendarPage() {
     <main className="flex flex-col h-full pt-4">
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Calendar</h1>
+          <h1 className="text-2xl font-bold text-white">Timeline</h1>
           <div className="flex items-center gap-2">
             <Popover>
                 <PopoverTrigger asChild>
@@ -182,7 +182,7 @@ export default function CalendarPage() {
                     <div className="grid gap-4">
                         <div className="space-y-2">
                             <h4 className="font-medium leading-none">Filters</h4>
-                            <p className="text-sm text-white/60">Refine your calendar view.</p>
+                            <p className="text-sm text-white/60">Refine your timeline view.</p>
                         </div>
                         <div className="grid gap-2">
                             <div className="grid grid-cols-3 items-center gap-4">
