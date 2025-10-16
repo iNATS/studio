@@ -47,6 +47,7 @@ import { clientsData, initialProjects, initialTasks } from '../data';
 import { Project, ProjectStatus } from '../projects/page';
 import { Task, TaskPriority } from '../tasks/page';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
