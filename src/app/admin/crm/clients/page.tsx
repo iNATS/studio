@@ -47,7 +47,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye, User, Mail, Building, Phone, MapPin, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, Eye, User, Mail, Building, Phone, MapPin, FileText, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -228,13 +228,21 @@ export default function ClientsPage() {
   const [editingClient, setEditingClient] = React.useState<Client | null>(null);
   const [viewingClient, setViewingClient] = React.useState<Client | null>(null);
   const [clientToDelete, setClientToDelete] = React.useState<Client | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const { toast } = useToast();
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(clients.length / itemsPerPage);
 
-  const paginatedClients = clients.slice(
+  const filteredClients = clients.filter(client => 
+    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.company.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
+
+  const paginatedClients = filteredClients.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -295,13 +303,22 @@ export default function ClientsPage() {
   return (
     <main className="flex flex-col h-full pt-4">
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
-        <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-white">Clients</h1>
+        <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-white flex-shrink-0">Clients</h1>
+            <div className="relative w-full max-w-sm ml-auto">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                <Input 
+                    placeholder="Search clients..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-white/5 border-white/10 pl-10"
+                />
+            </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
                 <Button
                 size="sm"
-                className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0"
                 >
                 <PlusCircle className="h-4 w-4" />
                 Add Client
@@ -441,5 +458,3 @@ export default function ClientsPage() {
     </main>
   );
 }
-
-    
