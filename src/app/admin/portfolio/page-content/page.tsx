@@ -14,7 +14,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, Upload } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
 
 // Mock data for testimonials
 const initialTestimonials = [
@@ -52,6 +54,7 @@ const initialProcessSteps = [
 export default function PageContentPage() {
     const [testimonials, setTestimonials] = React.useState(initialTestimonials);
     const [processSteps, setProcessSteps] = React.useState(initialProcessSteps);
+    const [avatarPreview, setAvatarPreview] = React.useState<string | null>('https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj');
 
     const handleTestimonialSave = (index: number, data: any) => {
         const newTestimonials = [...testimonials];
@@ -89,6 +92,19 @@ export default function PageContentPage() {
         e.preventDefault();
         toast({ title: 'Success', description: `${section} content updated!` });
     }
+    
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            toast({ variant: 'destructive', title: 'Invalid File', description: 'Please select an image file.' });
+        }
+    };
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -131,6 +147,23 @@ export default function PageContentPage() {
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
                         <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10" onSubmit={(e) => handleGenericSave(e, 'About')}>
+                        <div className="space-y-2">
+                            <Label className="text-white/70">Avatar</Label>
+                            <div className="flex items-center gap-4">
+                                <Avatar className="w-20 h-20 border-2 border-white/10">
+                                    {avatarPreview && <AvatarImage src={avatarPreview} alt="Avatar Preview" />}
+                                    <AvatarFallback>MA</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                    <Input id="avatar-upload" type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
+                                    <Label htmlFor="avatar-upload" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer">
+                                        <Upload className="mr-2 h-4 w-4" />
+                                        Upload New Image
+                                    </Label>
+                                    <p className="text-xs text-white/50 mt-2">Recommended size: 200x200px. PNG or JPG.</p>
+                                </div>
+                            </div>
+                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-title" className="text-white/70">Title</Label>
                             <Input id="about-title" defaultValue="Mohamed Aref" className="bg-white/10 border-white/20"/>
@@ -209,3 +242,5 @@ export default function PageContentPage() {
     </main>
   );
 }
+
+    
