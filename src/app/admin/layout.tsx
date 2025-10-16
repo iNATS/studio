@@ -19,7 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, Contact } from 'lucide-react';
+import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -40,12 +40,12 @@ export default function AdminLayout({
       ]
     },
     {  
-      label: 'CRM', icon: Contact, 
+      label: 'Workspace', icon: LayoutGrid, 
       subItems: [
-        { href: '/admin/crm/clients', label: 'Clients' },
-        { href: '/admin/crm/tasks', label: 'Tasks' },
-        { href: '/admin/crm/run-projects', label: 'Projects' },
-        { href: '/admin/crm/deadline', label: 'Deadline' },
+        { href: '/admin/workspace/clients', label: 'Clients' },
+        { href: '/admin/workspace/tasks', label: 'Tasks' },
+        { href: '/admin/workspace/projects', label: 'Projects' },
+        { href: '/admin/workspace/deadline', label: 'Deadline' },
       ]
     },
     { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
