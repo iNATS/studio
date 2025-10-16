@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText, X as XIcon } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText, X as XIcon, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -445,71 +445,103 @@ export default function RunProjectsPage() {
         });
     };
 
+    const hasActiveFilters = filters.clientId !== 'all' || filters.status !== 'all' || filters.budgetMin !== '' || filters.budgetMax !== '';
+
     return (
         <main className="flex flex-col h-full pt-4">
              <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-white flex-shrink-0">Projects</h1>
                     
-                    <div className="flex items-center gap-2 flex-wrap ml-auto">
-                        <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
-                            <SelectTrigger className="bg-white/5 border-white/10 w-[160px]">
-                                <SelectValue placeholder="Client..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                                <SelectItem value="all">All Clients</SelectItem>
-                                {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                        <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                            <SelectTrigger className="bg-white/5 border-white/10 w-[160px]">
-                                <SelectValue placeholder="Status..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                                <SelectItem value="all">All Statuses</SelectItem>
-                                <SelectItem value="planning">Planning</SelectItem>
-                                <SelectItem value="in-progress">In Progress</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <div className="flex items-center gap-2">
-                            <Input 
-                                type="number" 
-                                placeholder="Min Budget"
-                                value={filters.budgetMin}
-                                onChange={(e) => handleFilterChange('budgetMin', e.target.value === '' ? '' : Number(e.target.value))}
-                                className="bg-white/5 border-white/10 w-32"
-                            />
-                            <Input 
-                                type="number" 
-                                placeholder="Max Budget"
-                                value={filters.budgetMax}
-                                onChange={(e) => handleFilterChange('budgetMax', e.target.value === '' ? '' : Number(e.target.value))}
-                                className="bg-white/5 border-white/10 w-32"
-                            />
-                        </div>
-                        {(filters.clientId !== 'all' || filters.status !== 'all' || filters.budgetMin !== '' || filters.budgetMax !== '') && (
-                            <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
-                                <XIcon className="mr-2 h-4 w-4" /> Clear
-                            </Button>
-                        )}
-                    </div>
+                    <div className="ml-auto flex items-center gap-2">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" className="gap-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 relative">
+                                    <Filter className="h-4 w-4" />
+                                    <span>Filter</span>
+                                    {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="end">
+                                <div className="grid gap-4">
+                                    <div className="space-y-2">
+                                        <h4 className="font-medium leading-none">Filters</h4>
+                                        <p className="text-sm text-white/60">
+                                        Adjust the filters to refine the project list.
+                                        </p>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <Label>Client</Label>
+                                            <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
+                                                <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                                    <SelectValue placeholder="Client..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                                    <SelectItem value="all">All Clients</SelectItem>
+                                                    {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                         <div className="grid grid-cols-3 items-center gap-4">
+                                            <Label>Status</Label>
+                                            <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                                                <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                                    <SelectValue placeholder="Status..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                                    <SelectItem value="all">All Statuses</SelectItem>
+                                                    <SelectItem value="planning">Planning</SelectItem>
+                                                    <SelectItem value="in-progress">In Progress</SelectItem>
+                                                    <SelectItem value="completed">Completed</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                         <div className="grid grid-cols-3 items-center gap-4">
+                                            <Label>Budget</Label>
+                                            <div className="col-span-2 grid grid-cols-2 gap-2">
+                                                <Input 
+                                                    type="number" 
+                                                    placeholder="Min"
+                                                    value={filters.budgetMin}
+                                                    onChange={(e) => handleFilterChange('budgetMin', e.target.value === '' ? '' : Number(e.target.value))}
+                                                    className="bg-white/5 border-white/10"
+                                                />
+                                                <Input 
+                                                    type="number" 
+                                                    placeholder="Max"
+                                                    value={filters.budgetMax}
+                                                    onChange={(e) => handleFilterChange('budgetMax', e.target.value === '' ? '' : Number(e.target.value))}
+                                                    className="bg-white/5 border-white/10"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {hasActiveFilters && (
+                                        <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10 w-full justify-center">
+                                            <XIcon className="mr-2 h-4 w-4" /> Clear Filters
+                                        </Button>
+                                    )}
+                                </div>
+                            </PopoverContent>
+                        </Popover>
 
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button size="sm" className="ml-4 gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0">
-                                <PlusCircle className="h-4 w-4" />
-                                Add Project
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-                            <DialogHeader>
-                                <DialogTitle>Add New Project</DialogTitle>
-                                <DialogDescription>Enter the details for the new project.</DialogDescription>
-                            </DialogHeader>
-                            <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
-                        </DialogContent>
-                    </Dialog>
+                        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button size="sm" className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg">
+                                    <PlusCircle className="h-4 w-4" />
+                                    Add Project
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                                <DialogHeader>
+                                    <DialogTitle>Add New Project</DialogTitle>
+                                    <DialogDescription>Enter the details for the new project.</DialogDescription>
+                                </DialogHeader>
+                                <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
             </div>
 
@@ -595,6 +627,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    
 
     
 

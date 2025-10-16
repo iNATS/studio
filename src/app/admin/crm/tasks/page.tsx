@@ -11,7 +11,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye, User, Tag, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye, User, Tag, FileText, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -450,6 +450,8 @@ export default function TasksPage() {
     const clearFilters = () => {
         setFilters({ clientId: 'all', priority: 'all', tag: '' });
     };
+    
+    const hasActiveFilters = filters.clientId !== 'all' || filters.priority !== 'all' || filters.tag !== '';
 
     const filteredTasks = React.useMemo(() => {
         return tasks.filter(task => {
@@ -575,61 +577,91 @@ export default function TasksPage() {
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-white flex-shrink-0">Tasks</h1>
                     
-                    <div className="flex items-center gap-2 flex-wrap ml-auto">
-                        <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
-                            <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[160px]">
-                                <SelectValue placeholder="Client..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                                <SelectItem value="all">All Clients</SelectItem>
-                                {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                        <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
-                            <SelectTrigger className="bg-white/5 border-white/10 w-full sm:w-[160px]">
-                                <SelectValue placeholder="Priority..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                                <SelectItem value="all">All Priorities</SelectItem>
-                                <SelectItem value="low">Low</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Input 
-                            type="text" 
-                            placeholder="Filter by tag..."
-                            value={filters.tag}
-                            onChange={(e) => handleFilterChange('tag', e.target.value)}
-                            className="bg-white/5 border-white/10 w-full sm:w-[160px]"
-                        />
-                        {(filters.clientId !== 'all' || filters.priority !== 'all' || filters.tag !== '') && (
-                            <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10">
-                                <XIcon className="mr-2 h-4 w-4" /> Clear
-                            </Button>
-                        )}
-                    </div>
+                    <div className="ml-auto flex items-center gap-2">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" className="gap-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 relative">
+                                    <Filter className="h-4 w-4" />
+                                    <span>Filter</span>
+                                    {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="end">
+                                <div className="grid gap-4">
+                                <div className="space-y-2">
+                                    <h4 className="font-medium leading-none">Filters</h4>
+                                    <p className="text-sm text-white/60">
+                                    Adjust the filters to refine the task list.
+                                    </p>
+                                </div>
+                                <div className="grid gap-2">
+                                    <div className="grid grid-cols-3 items-center gap-4">
+                                        <Label>Client</Label>
+                                        <Select value={filters.clientId} onValueChange={(value) => handleFilterChange('clientId', value)}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                                <SelectValue placeholder="Client..." />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                                <SelectItem value="all">All Clients</SelectItem>
+                                                {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid grid-cols-3 items-center gap-4">
+                                        <Label>Priority</Label>
+                                        <Select value={filters.priority} onValueChange={(value) => handleFilterChange('priority', value)}>
+                                            <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                                <SelectValue placeholder="Priority..." />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                                <SelectItem value="all">All Priorities</SelectItem>
+                                                <SelectItem value="low">Low</SelectItem>
+                                                <SelectItem value="medium">Medium</SelectItem>
+                                                <SelectItem value="high">High</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid grid-cols-3 items-center gap-4">
+                                        <Label>Tag</Label>
+                                        <Input 
+                                            type="text" 
+                                            placeholder="Filter by tag..."
+                                            value={filters.tag}
+                                            onChange={(e) => handleFilterChange('tag', e.target.value)}
+                                            className="bg-white/5 border-white/10 col-span-2"
+                                        />
+                                    </div>
+                                </div>
+                                {hasActiveFilters && (
+                                    <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10 w-full justify-center">
+                                        <XIcon className="mr-2 h-4 w-4" /> Clear Filters
+                                    </Button>
+                                )}
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                     
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button
-                                size="sm"
-                                className="ml-4 gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0"
-                            >
-                                <PlusCircle className="h-4 w-4" />
-                                Add Task
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
-                            <DialogHeader>
-                            <DialogTitle>Add New Task</DialogTitle>
-                            <DialogDescription>
-                                Enter the details for the new task.
-                            </DialogDescription>
-                            </DialogHeader>
-                            <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
-                        </DialogContent>
-                    </Dialog>
+                        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    size="sm"
+                                    className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                                >
+                                    <PlusCircle className="h-4 w-4" />
+                                    Add Task
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                                <DialogHeader>
+                                <DialogTitle>Add New Task</DialogTitle>
+                                <DialogDescription>
+                                    Enter the details for the new task.
+                                </DialogDescription>
+                                </DialogHeader>
+                                <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
             </div>
             
@@ -704,3 +736,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
