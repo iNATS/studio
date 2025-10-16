@@ -41,9 +41,9 @@ import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Progress } from '@/components/ui/progress';
-import { initialProjects, Project } from '../projects/page';
-import { initialTasks, Task } from '../tasks/page';
-import { clientsData } from '../data';
+import { initialProjects, clientsData, initialTasks } from '../data';
+import type { Project } from '../projects/page';
+import type { Task } from '../tasks/page';
 
 
 type CalendarEvent = (
@@ -427,5 +427,7 @@ export default function TimelinePage() {
       </div>
     </main>
   );
+
+    
 
     
