@@ -52,14 +52,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format, differenceInCalendarDays, formatDistanceToNowStrict, isWithinInterval } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-
-const clientsData = [
-    { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
-    { id: '2', name: 'Michael Chen', avatar: 'https://picsum.photos/seed/michael/100/100' },
-    { id: '3', name: 'Emily Davis', avatar: 'https://picsum.photos/seed/emily/100/100' },
-    { id: '4', name: 'David Rodriguez', avatar: 'https://picsum.photos/seed/david/100/100' },
-    { id: '5', name: 'Jessica Lee', avatar: 'https://picsum.photos/seed/jessica/100/100' },
-];
+import { clientsData, initialProjects } from '../data';
 
 export type Project = {
   id: string;
@@ -73,25 +66,6 @@ export type Project = {
 };
 
 export type ProjectStatus = 'planning' | 'in-progress' | 'completed';
-
-export const initialProjects: Project[] = [
-  { id: 'proj-1', title: 'E-commerce Website', description: 'Full-stack development for online store', status: 'in-progress', clientId: '1', budget: 12000, startDate: new Date(2024, 5, 1), endDate: new Date(2024, 7, 30) },
-  { id: 'proj-2', title: 'Mobile App Design', description: 'UI/UX for a new banking app', status: 'planning', clientId: '3', budget: 8000, startDate: new Date(2024, 6, 15), endDate: new Date(2024, 8, 15) },
-  { id: 'proj-3', title: 'Corporate Branding', description: 'Complete brand identity refresh', status: 'completed', clientId: '2', budget: 5000, startDate: new Date(2024, 4, 1), endDate: new Date(2024, 5, 15) },
-  { id: 'proj-4', title: 'Marketing Campaign', description: 'Digital marketing assets for Q3', status: 'planning', clientId: '5', budget: 7500, startDate: new Date(2024, 7, 1), endDate: new Date(2024, 9, 1) },
-  { id: 'proj-5', title: 'Dashboard UI Kit', description: 'Component library for SaaS product', status: 'in-progress', clientId: '4', budget: 15000, startDate: new Date(2024, 5, 20), endDate: new Date(2024, 8, 20) },
-  { id: 'proj-6', title: 'AI Chatbot Integration', description: 'Integrate a new AI chatbot into the customer support portal.', status: 'planning', clientId: '1', budget: 9500, startDate: new Date(2024, 8, 1), endDate: new Date(2024, 9, 30) },
-  { id: 'proj-7', title: 'Cloud Migration', description: 'Migrate existing infrastructure to a cloud provider.', status: 'in-progress', clientId: '2', budget: 25000, startDate: new Date(2024, 8, 5), endDate: new Date(2024, 11, 20) },
-  { id: 'proj-8', title: 'Social Media Analytics Tool', description: 'Develop a tool to track social media engagement.', status: 'planning', clientId: '5', budget: 18000, startDate: new Date(2024, 9, 1), endDate: new Date(2025, 0, 15) },
-  { id: 'proj-9', title: 'Website Redesign', description: 'Complete redesign of the main corporate website.', status: 'planning', clientId: '3', budget: 14000, startDate: new Date(2024, 8, 10), endDate: new Date(2024, 11, 1) },
-  { id: 'proj-10', title: 'Internal CRM System', description: 'Build a custom CRM for the sales team.', status: 'in-progress', clientId: '4', budget: 30000, startDate: new Date(2024, 9, 15), endDate: new Date(2025, 2, 1) },
-  { id: 'proj-11', title: 'Video Streaming Service', description: 'Develop a video streaming platform for web and mobile.', status: 'planning', clientId: '1', budget: 50000, startDate: new Date(2024, 10, 1), endDate: new Date(2025, 4, 1) },
-  { id: 'proj-12', title: 'Augmented Reality App', description: 'AR application for furniture visualization.', status: 'planning', clientId: '5', budget: 22000, startDate: new Date(2024, 11, 1), endDate: new Date(2025, 3, 30) },
-  { id: 'proj-13', title: 'Blog Platform', description: 'Create a new blog platform with a modern design.', status: 'in-progress', clientId: '2', budget: 6000, startDate: new Date(2024, 8, 20), endDate: new Date(2024, 10, 20) },
-  { id: 'proj-14', title: 'API Security Audit', description: 'Conduct a full security audit of all public-facing APIs.', status: 'planning', clientId: '4', budget: 10000, startDate: new Date(2024, 9, 5), endDate: new Date(2024, 9, 25) },
-  { id: 'proj-15', title: 'New Feature Prototyping', description: 'Prototype and user-test a new major feature for the main product.', status: 'planning', clientId: '3', budget: 7000, startDate: new Date(2024, 8, 15), endDate: new Date(2024, 9, 15) },
-];
-
 
 const getStatusBadge = (status: ProjectStatus) => {
     switch (status) {
@@ -651,16 +625,5 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
-
-    
-
-    
-
-    
-
-
-    
-
-
 
     

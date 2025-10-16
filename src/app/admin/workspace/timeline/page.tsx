@@ -28,8 +28,6 @@ import {
   isPast,
   isFuture
 } from 'date-fns';
-import { initialProjects, Project } from '@/app/admin/workspace/projects/page';
-import { initialTasks, Task } from '@/app/admin/workspace/tasks/page';
 import { cn } from '@/lib/utils';
 import {
   Popover,
@@ -37,13 +35,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { clientsData } from '@/app/admin/workspace/clients/page';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Progress } from '@/components/ui/progress';
+import { initialProjects, Project } from '../projects/page';
+import { initialTasks, Task } from '../tasks/page';
+import { clientsData } from '../data';
 
 
 type CalendarEvent = (

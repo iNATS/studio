@@ -54,14 +54,7 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-const clientsData = [
-    { id: '1', name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
-    { id: '2', name: 'Michael Chen', avatar: 'https://picsum.photos/seed/michael/100/100' },
-    { id: '3', name: 'Emily Davis', avatar: 'https://picsum.photos/seed/emily/100/100' },
-    { id: '4', name: 'David Rodriguez', avatar: 'https://picsum.photos/seed/david/100/100' },
-    { id: '5', name: 'Jessica Lee', avatar: 'https://picsum.photos/seed/jessica/100/100' },
-];
+import { clientsData, initialTasks } from '../data';
 
 
 export type Task = {
@@ -77,17 +70,6 @@ export type Task = {
 
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high';
-
-
-export const initialTasks: Task[] = [
-  { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma for the new marketing campaign. Focus on a clean and modern design.', status: 'in-progress', priority: 'high', clientId: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
-  { id: '2', title: 'Develop API Endpoints', description: 'Setup new GraphQL routes for user authentication and profile management.', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'] },
-  { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile devices where the keyboard covers the password field.', status: 'in-progress', priority: 'medium', clientId: '3' },
-  { id: '4', title: 'Write Documentation', description: 'Create comprehensive documentation for the new credit card processing feature, including API specs and usage examples.', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
-  { id: '5', title: 'Deploy Staging Server', description: 'Update the staging environment with the latest build from the develop branch.', status: 'done', priority: 'high', clientId: '1', tags: ['devops'] },
-  { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides and a demo for the project update meeting with Michael Chen.', status: 'done', priority: 'medium', clientId: '2' },
-  { id: '7', title: 'Update Dependencies', description: 'Check for outdated npm packages and update them, focusing on any with known security vulnerabilities.', status: 'todo', priority: 'low', tags: ['maintenance'] },
-];
 
 const getPriorityBadge = (priority: Task['priority']) => {
     switch (priority) {
@@ -736,3 +718,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
