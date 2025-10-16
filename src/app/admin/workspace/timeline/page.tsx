@@ -129,16 +129,8 @@ export default function TimelinePage() {
   
   const days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth, { weekStartsOn: 0 }),
-    end: endOfWeek(endOfMonth(addMonths(firstDayCurrentMonth,1)), { weekStartsOn: 0 }),
+    end: endOfWeek(addMonths(firstDayCurrentMonth,0)),
   });
-  
-  // Ensure we have 6 full weeks
-   while (days.length < 42) {
-    days.push(addMonths(days[days.length - 1], 1));
-  }
-  if (days.length > 42) {
-    days.splice(42);
-  }
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -279,7 +271,7 @@ export default function TimelinePage() {
             <Button variant="outline" className="rounded-lg" onClick={goToToday}>Today</Button>
             <div className="flex items-center gap-1 rounded-lg border border-white/20 p-1">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
-              <h2 className="text-lg font-semibold text-white px-2 text-center">{format(currentMonth, 'MMMM yyyy')}</h2>
+              <h2 className="text-lg font-semibold text-white px-2 text-center w-32">{format(currentMonth, 'MMMM yyyy')}</h2>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
@@ -288,11 +280,11 @@ export default function TimelinePage() {
 
       <div className="flex-1 overflow-auto -mx-4 px-4 grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 flex flex-col min-h-0">
-             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
-                <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 pb-2">
+             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col">
+                <div className="grid grid-cols-7 text-center text-xs font-semibold text-white/60 border-b border-white/10 p-2">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => <div key={day}>{day}</div>)}
                 </div>
-                <div className="grid grid-cols-7 grid-rows-6 gap-1 flex-1">
+                <div className="grid grid-cols-7 grid-rows-5 flex-1 gap-px bg-white/10 p-px">
                 {days.map((day, dayIdx) => {
                     const dayEvents = getEventsForDay(day);
                     return (
@@ -302,8 +294,8 @@ export default function TimelinePage() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: dayIdx * 0.01 }}
                         className={cn(
-                            'relative flex flex-col rounded-lg p-1.5 transition-colors duration-300',
-                            isSameMonth(day, currentMonth) ? 'bg-white/5' : 'bg-black/10'
+                            'relative flex flex-col p-1.5 transition-colors duration-300 bg-black/10',
+                            isSameMonth(day, currentMonth) ? 'bg-opacity-20' : 'bg-opacity-40'
                         )}
                     >
                         <time
@@ -317,27 +309,21 @@ export default function TimelinePage() {
                         {format(day, 'd')}
                         </time>
                         <div className="flex-1 space-y-1 overflow-hidden">
-                          {dayEvents.filter(e => e.type === 'task').map(event => (
-                               <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setHoveredEventId(open ? event.id : null)}>
-                                <div className={cn("h-1.5 w-1.5 rounded-full mx-auto", "bg-orange-400", hoveredEventId === event.id && "ring-2 ring-orange-400 ring-offset-2 ring-offset-background/50")}/>
-                               </EventDetailsPopover>
-                           ))}
-                          {filteredEvents.filter(e => e.type === 'project' && isSameDay(day, e.startDate)).map(event => {
-                              const duration = differenceInCalendarDays(event.endDate, event.startDate) + 1;
-                              const offset = 0;
-                              return (
-                                 <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setHoveredEventId(open ? event.id : null)}>
-                                    <div
-                                      style={{ width: `calc(${duration * 100}% + ${duration - 1} * 0.25rem)` }}
-                                      className={cn("h-6 text-left p-1 rounded-md text-xs truncate border hover:bg-opacity-40 cursor-pointer text-white flex items-center",
-                                      "bg-blue-500/20 border-blue-500/40",
-                                      hoveredEventId === event.id && "ring-2 ring-primary bg-blue-500/30"
-                                    )}>
-                                       <p className="truncate pl-1">{event.title}</p>
-                                    </div>
-                                </EventDetailsPopover>
-                              )
-                          })}
+                        {dayEvents.map((event, eventIndex) => (
+                           <EventDetailsPopover key={event.id} event={event} onOpenChange={(open) => setHoveredEventId(open ? event.id : null)}>
+                             <div 
+                                className={cn("px-2 py-1 rounded-md text-xs truncate cursor-pointer",
+                                  "text-white transition-all duration-200",
+                                  event.type === 'project' ? 'bg-blue-500/80 hover:bg-blue-500' : 'bg-orange-500/80 hover:bg-orange-500',
+                                  hoveredEventId === event.id && "ring-2 ring-offset-2 ring-offset-background/80 ring-white"
+                                )}
+                                onMouseEnter={() => setHoveredEventId(event.id)}
+                                onMouseLeave={() => setHoveredEventId(null)}
+                              >
+                               {event.title}
+                             </div>
+                           </EventDetailsPopover>
+                         ))}
                         </div>
                     </motion.div>
                 )})}
@@ -427,7 +413,4 @@ export default function TimelinePage() {
       </div>
     </main>
   );
-
-    
-
-    
+}
