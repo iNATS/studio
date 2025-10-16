@@ -36,6 +36,7 @@ export default function AdminLayout({
       label: 'Portfolio', icon: Briefcase,
       subItems: [
         { href: '/admin/projects', label: 'My Works' },
+        { href: '/admin/portfolio/page-content', label: 'Page Content' },
       ]
     },
     {  
