@@ -319,31 +319,36 @@ export default function TimelinePage() {
   const hasActiveFilters =
     activeFilters.type !== 'all' || activeFilters.client !== 'all';
 
-  const allEvents: TimelineEvent[] = [
-    ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
-    ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
-  ];
+  const filteredEvents = React.useMemo(() => {
+      const allEvents: TimelineEvent[] = [
+        ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
+        ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
+      ];
 
-  const filteredEvents = allEvents.filter((event) => {
-    const typeMatch =
-      activeFilters.type === 'all' || event.type === activeFilters.type;
-    const clientMatch =
-      activeFilters.client === 'all' || event.clientId === activeFilters.client;
-    
-    if (event.type === 'project') {
-      const project = event as Project;
-      const projectInterval = { start: project.startDate, end: project.endDate };
-      const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
-      return typeMatch && clientMatch && isWithinInterval(project.startDate, gridInterval) || isWithinInterval(project.endDate, gridInterval);
-    }
-    
-    if (event.type === 'task') {
-        const task = event as Task;
-        return typeMatch && clientMatch && task.dueDate && isWithinInterval(task.dueDate, {start: firstDayOfGrid, end: lastDayOfGrid});
-    }
+      return allEvents.filter((event) => {
+        const typeMatch =
+          activeFilters.type === 'all' || event.type === activeFilters.type;
+        const clientMatch =
+          activeFilters.client === 'all' || event.clientId === activeFilters.client;
+        
+        if (event.type === 'project') {
+          const project = event as Project;
+          const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
+          const projectInGrid = isWithinInterval(project.startDate, gridInterval) || 
+                                isWithinInterval(project.endDate, gridInterval) ||
+                                (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
+          return typeMatch && clientMatch && projectInGrid;
+        }
+        
+        if (event.type === 'task') {
+            const task = event as Task;
+            return typeMatch && clientMatch && task.dueDate && isWithinInterval(task.dueDate, {start: firstDayOfGrid, end: lastDayOfGrid});
+        }
 
-    return false;
-  });
+        return false;
+      });
+  }, [activeFilters, firstDayOfGrid, lastDayOfGrid]);
+
 
   const getEventsForDay = (day: Date) => {
     const tasks = filteredEvents.filter(
@@ -362,44 +367,39 @@ export default function TimelinePage() {
     const newPositions: Record<string, number> = {};
     const weekSlots: Record<number, string[]> = {};
   
-    filteredEvents.filter(e => e.type === 'project').forEach(project => {
-        const proj = project as Project;
-        const startWeek = Math.floor((getDay(proj.startDate) + differenceInDays(proj.startDate, startOfWeek(startOfMonth(currentDate)))) / 7);
+    const projects = filteredEvents.filter(e => e.type === 'project') as Project[];
+  
+    projects.forEach(project => {
+      const startWeek = Math.floor(differenceInDays(project.startDate, firstDayOfGrid) / 7);
+      const endWeek = Math.floor(differenceInDays(project.endDate, firstDayOfGrid) / 7);
 
-        let slot = 0;
-        let placed = false;
-        while (!placed) {
-            let week = startWeek;
-            let canPlace = true;
-            while(new Date(proj.startDate).setDate(new Date(proj.startDate).getDate() + (week - startWeek)*7) <= proj.endDate) {
-                if(weekSlots[week]?.[slot]) {
-                    canPlace = false;
-                    break;
-                }
-                week++;
-            }
-
-            if(canPlace) {
-                let weekToFill = startWeek;
-                while(new Date(proj.startDate).setDate(new Date(proj.startDate).getDate() + (weekToFill - startWeek)*7) <= proj.endDate) {
-                    if(!weekSlots[weekToFill]) weekSlots[weekToFill] = [];
-                    weekSlots[weekToFill][slot] = proj.id;
-                    weekToFill++;
-                }
-                newPositions[proj.id] = slot;
-                placed = true;
-            } else {
-                slot++;
-            }
+      let slot = 0;
+      while (true) {
+        let isOccupied = false;
+        for (let week = startWeek; week <= endWeek; week++) {
+          if (weekSlots[week]?.[slot]) {
+            isOccupied = true;
+            break;
+          }
         }
+        if (!isOccupied) {
+          for (let week = startWeek; week <= endWeek; week++) {
+            if (!weekSlots[week]) weekSlots[week] = [];
+            weekSlots[week][slot] = project.id;
+          }
+          newPositions[project.id] = slot;
+          break;
+        }
+        slot++;
+      }
     });
 
     setProjectPositions(newPositions);
-  }, [currentDate, filteredEvents]);
+  }, [filteredEvents, firstDayOfGrid]);
 
 
-  const ongoingProjects = filteredEvents.filter(e => e.type === 'project' && (e as Project).status === 'in-progress') as Project[];
-  const upcomingTasks = filteredEvents.filter(e => e.type === 'task' && (e as Task).status !== 'done' && isWithinInterval(new Date(), { start: new Date(), end: add(new Date(), {days: 7})})) as Task[];
+  const ongoingProjects = initialProjects.filter(p => p.status === 'in-progress');
+  const upcomingTasks = initialTasks.filter(t => t.status !== 'done' && t.dueDate && isWithinInterval(t.dueDate, { start: new Date(), end: add(new Date(), {days: 7})}));
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -521,7 +521,7 @@ export default function TimelinePage() {
               </h2>
             </header>
 
-            <div className="grid grid-cols-7 gap-px flex-1 min-h-0 bg-white/5 p-px rounded-xl border border-white/10 relative">
+            <div ref={dayGridRef} className="grid grid-cols-7 gap-px flex-1 min-h-0 bg-white/5 p-px rounded-xl border border-white/10 relative">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                 <div
                   key={day}
@@ -589,24 +589,18 @@ export default function TimelinePage() {
               })}
               
               {(filteredEvents.filter(e => e.type === 'project') as Project[]).map(p => {
-                const projectStartInGrid = isWithinInterval(p.startDate, { start: firstDayOfGrid, end: lastDayOfGrid });
-                const projectEndInGrid = isWithinInterval(p.endDate, { start: firstDayOfGrid, end: lastDayOfGrid });
-                
-                const startDay = projectStartInGrid ? p.startDate : firstDayOfGrid;
-                const endDay = projectEndInGrid ? p.endDate : lastDayOfGrid;
-                
-                const startIndex = differenceInDays(startDay, firstDayOfGrid);
-                const endIndex = differenceInDays(endDay, firstDayOfGrid);
+                 const startDayInGrid = p.startDate > firstDayOfGrid ? p.startDate : firstDayOfGrid;
+                 const endDayInGrid = p.endDate < lastDayOfGrid ? p.endDate : lastDayOfGrid;
+                 
+                 const startIndex = differenceInDays(startDayInGrid, firstDayOfGrid);
+                 const duration = differenceInDays(endDayInGrid, startDayInGrid) + 1;
+ 
+                 if (duration <= 0) return null;
+ 
+                 const startCol = (startIndex % 7) + 1;
+                 const topOffset = (projectPositions[p.id] || 0) * 28 + 48;
+                 const startRow = Math.floor(startIndex / 7) + 2;
 
-                const duration = endIndex - startIndex + 1;
-                const startCol = (startIndex % 7) + 1;
-                const yOffset = (projectPositions[p.id] || 0) * 28 + 48; // Adjust y-offset
-                
-                const startRow = Math.floor(startIndex / 7) + 2;
-
-                const gridColumn = `${startCol} / span ${duration}`;
-                const gridRow = `${startRow}`;
-                
                 return (
                     <EventPopover key={p.id} event={p}>
                         <motion.div
@@ -616,16 +610,16 @@ export default function TimelinePage() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.1, duration: 0.3 }}
                             style={{ 
-                                top: `${yOffset}px`,
-                                gridColumn,
-                                gridRow
+                                top: `${topOffset}px`,
+                                gridColumn: `${startCol} / span ${duration > 0 ? duration : 1}`,
+                                gridRow: `${startRow}`,
                             }}
                             className={cn(
                                 "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded-sm transition-all duration-200 z-10",
                                 getProjectColor(p.id),
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-105 z-20',
-                                !projectStartInGrid && 'rounded-l-none',
-                                !projectEndInGrid && 'rounded-r-none'
+                                p.startDate >= firstDayOfGrid && 'rounded-l-md',
+                                p.endDate <= lastDayOfGrid && 'rounded-r-md'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
@@ -641,7 +635,7 @@ export default function TimelinePage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
             <AnimatePresence>
                 <motion.div key="projects-overview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-                    <ProjectsOverviewChart projects={filteredEvents.filter(e => e.type === 'project') as Project[]} />
+                    <ProjectsOverviewChart projects={initialProjects} />
                 </motion.div>
                 <motion.div key="ongoing-projects" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                     <OngoingProjectsList projects={ongoingProjects} onHover={setHoveredEvent} />
