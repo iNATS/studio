@@ -416,7 +416,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid]);
+  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid, days.length]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
@@ -428,85 +428,6 @@ export default function TimelinePage() {
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Timeline</h1>
-          <div className="flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="gap-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 relative"
-                >
-                  <Filter className="h-4 w-4" />
-                  <span>Filter</span>
-                  {hasActiveFilters && (
-                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-72 bg-background/80 backdrop-blur-xl border-white/10 text-white"
-                align="end"
-              >
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">Filters</h4>
-                    <p className="text-sm text-white/60">
-                      Refine your timeline view.
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label>Type</Label>
-                      <Select
-                        value={activeFilters.type}
-                        onValueChange={(value) =>
-                          handleFilterChange('type', value)
-                        }
-                      >
-                        <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                          <SelectItem value="all">All</SelectItem>
-                          <SelectItem value="project">Projects</SelectItem>
-                          <SelectItem value="task">Tasks</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label>Client</Label>
-                      <Select
-                        value={activeFilters.client}
-                        onValueChange={(value) =>
-                          handleFilterChange('client', value)
-                        }
-                      >
-                        <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
-                          <SelectItem value="all">All Clients</SelectItem>
-                          {clientsData.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  {hasActiveFilters && (
-                    <Button
-                      variant="ghost"
-                      onClick={clearFilters}
-                      className="rounded-lg text-white/70 hover:text-white hover:bg-white/10 w-full justify-center"
-                    >
-                      <X className="mr-2 h-4 w-4" /> Clear Filters
-                    </Button>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
         </div>
       </div>
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -615,12 +536,15 @@ export default function TimelinePage() {
                  const endDayInGrid = p.endDate < lastDayOfGrid ? p.endDate : lastDayOfGrid;
                  
                  const startIndex = differenceInDays(startDayInGrid, firstDayOfGrid);
-                 const duration = differenceInDays(endDayInGrid, startDayInGrid) + 1;
+                 let duration = differenceInDays(endDayInGrid, startDayInGrid) + 1;
  
                  if (startIndex < 0 || duration <= 0) return null;
  
                  const startCol = (startIndex % 7) + 1;
-                 const topOffset = (projectPositions[p.id] || 0) * 28 + 48;
+                 if (startCol + duration > 8) {
+                    duration = 8 - startCol;
+                 }
+                 const topOffset = (projectPositions[p.id] || 0) * 32 + 48; // 32px per slot
                  const startRow = Math.floor(startIndex / 7) + 2;
 
                 return (
@@ -637,12 +561,12 @@ export default function TimelinePage() {
                                 gridRow: `${startRow}`,
                             }}
                              className={cn(
-                                "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
+                                "absolute h-7 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
                                 getProjectColor(p.id),
+                                "bg-opacity-70 backdrop-blur-sm",
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                'bg-opacity-80 backdrop-blur-sm',
-                                p.startDate >= firstDayOfGrid ? 'rounded-l-md' : 'rounded-l-none',
-                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : 'rounded-r-none'
+                                p.startDate >= firstDayOfGrid ? 'rounded-l-lg' : '',
+                                p.endDate <= lastDayOfGrid ? 'rounded-r-lg' : ''
                             )}
                         >
                             <span className="truncate">{p.title}</span>
@@ -658,7 +582,7 @@ export default function TimelinePage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
             <AnimatePresence>
                 <motion.div key="projects-overview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-                    <ProjectsOverviewChart projects={initialProjects} />
+                    <ProjectsOverviewChart projects={filteredProjects} />
                 </motion.div>
                 <motion.div key="ongoing-projects" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                     <OngoingProjectsList projects={ongoingProjects} onHover={setHoveredEvent} />
