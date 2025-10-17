@@ -53,7 +53,6 @@ import { clientsData, initialProjects, initialTasks } from '../data';
 import { Project, ProjectStatus } from '../projects/page';
 import { Task, TaskPriority } from '../tasks/page';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
@@ -598,7 +597,7 @@ export default function TimelinePage() {
                  const startIndex = differenceInDays(startDayInGrid, firstDayOfGrid);
                  const duration = differenceInDays(endDayInGrid, startDayInGrid) + 1;
  
-                 if (duration <= 0) return null;
+                 if (startIndex < 0 || duration <= 0) return null;
  
                  const startCol = (startIndex % 7) + 1;
                  const topOffset = (projectPositions[p.id] || 0) * 28 + 48;
@@ -618,7 +617,7 @@ export default function TimelinePage() {
                                 gridRow: `${startRow}`,
                             }}
                             className={cn(
-                                "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded-sm transition-all duration-200 z-10",
+                                "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded transition-all duration-200 z-10",
                                 getProjectColor(p.id),
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-105 z-20',
                                 p.startDate >= firstDayOfGrid && 'rounded-l-md',
