@@ -42,6 +42,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -136,20 +137,20 @@ const EventPopover = React.memo(({
 EventPopover.displayName = 'EventPopover';
 
 const getProjectColor = (projectId: string) => {
-  const colors = [
-    'bg-cyan-500/80',
-    'bg-blue-500/80',
-    'bg-indigo-500/80',
-    'bg-purple-500/80',
-    'bg-fuchsia-500/80',
-    'bg-pink-500/80',
-    'bg-rose-500/80',
-  ];
-  const hash = projectId
-    .split('')
-    .reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-  return colors[hash % colors.length];
-};
+    const colors = [
+      'bg-cyan-500/80',
+      'bg-blue-500/80',
+      'bg-indigo-500/80',
+      'bg-purple-500/80',
+      'bg-fuchsia-500/80',
+      'bg-pink-500/80',
+      'bg-rose-500/80',
+    ];
+    const hash = projectId
+      .split('')
+      .reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    return colors[hash % colors.length];
+  };
 
 const getTaskColor = (priority: TaskPriority) => {
   switch (priority) {
@@ -305,11 +306,11 @@ export default function TimelinePage() {
   });
   const [hoveredEvent, setHoveredEvent] = React.useState<string | null>(null);
 
-  const firstDayOfMonth = startOfMonth(currentDate);
-  const lastDayOfMonth = endOfMonth(currentDate);
+  const firstDayOfMonth = React.useMemo(() => startOfMonth(currentDate), [currentDate]);
+  const lastDayOfMonth = React.useMemo(() => endOfMonth(currentDate), [currentDate]);
   
-  const firstDayOfGrid = startOfWeek(firstDayOfMonth);
-  const lastDayOfGrid = endOfWeek(lastDayOfMonth);
+  const firstDayOfGrid = React.useMemo(() => startOfWeek(firstDayOfMonth), [firstDayOfMonth]);
+  const lastDayOfGrid = React.useMemo(() => endOfWeek(lastDayOfMonth), [lastDayOfMonth]);
 
   const days = React.useMemo(() => eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid }), [firstDayOfGrid, lastDayOfGrid]);
 
@@ -317,21 +318,11 @@ export default function TimelinePage() {
   const nextMonth = () => setCurrentDate((d) => addMonths(d, 1));
   const goToToday = () => setCurrentDate(new Date());
 
-  const handleFilterChange = (filterType: string, value: string) => {
-    setActiveFilters((prev) => ({ ...prev, [filterType]: value }));
-  };
-
-  const clearFilters = () => {
-    setActiveFilters({ type: 'all', client: 'all' });
-  };
-  const hasActiveFilters =
-    activeFilters.type !== 'all' || activeFilters.client !== 'all';
-
   const filteredEvents = React.useMemo(() => {
     const allEvents: TimelineEvent[] = [
-      ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
-      ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
-    ];
+        ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
+        ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
+      ];
 
     const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
   
@@ -369,6 +360,8 @@ export default function TimelinePage() {
 
   const dayGridRef = React.useRef<HTMLDivElement>(null);
   const [projectPositions, setProjectPositions] = React.useState<Record<string, number>>({});
+
+  const filteredProjects = React.useMemo(() => filteredEvents.filter(e => e.type === 'project') as Project[], [filteredEvents]);
 
   React.useEffect(() => {
     const newPositions: Record<string, number> = {};
@@ -421,7 +414,7 @@ export default function TimelinePage() {
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
   const upcomingTasks = React.useMemo(() => initialTasks.filter(t => t.status !== 'done' && t.dueDate && isWithinInterval(t.dueDate, { start: new Date(), end: add(new Date(), {days: 7})})), []);
-  const filteredProjects = React.useMemo(() => filteredEvents.filter(e => e.type === 'project') as Project[], [filteredEvents]);
+  
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -547,6 +540,9 @@ export default function TimelinePage() {
                  const topOffset = (projectPositions[p.id] || 0) * 32 + 48; // 32px per slot
                  const startRow = Math.floor(startIndex / 7) + 2;
 
+                 const isStartInView = p.startDate >= firstDayOfGrid;
+                 const isEndInView = p.endDate <= lastDayOfGrid;
+
                 return (
                     <EventPopover key={p.id} event={p}>
                         <motion.div
@@ -565,6 +561,8 @@ export default function TimelinePage() {
                                 getProjectColor(p.id),
                                 "bg-opacity-70 backdrop-blur-sm",
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
+                                isStartInView && 'rounded-l-lg',
+                                isEndInView && 'rounded-r-lg',
                                 'rounded-lg'
                             )}
                         >
@@ -595,5 +593,6 @@ export default function TimelinePage() {
     </main>
   );
 }
+
 
     
