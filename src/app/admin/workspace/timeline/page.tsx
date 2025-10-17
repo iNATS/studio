@@ -30,6 +30,7 @@ import {
   isToday as isTodayDateFns,
   add,
   eachMonthOfInterval,
+  getDay,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -138,13 +139,13 @@ EventPopover.displayName = 'EventPopover';
 
 const getProjectColor = (projectId: string) => {
     const colors = [
-      'bg-cyan-500/80',
-      'bg-blue-500/80',
-      'bg-indigo-500/80',
-      'bg-purple-500/80',
-      'bg-fuchsia-500/80',
-      'bg-pink-500/80',
-      'bg-rose-500/80',
+      'bg-gradient-to-r from-cyan-500 to-blue-500',
+      'bg-gradient-to-r from-sky-500 to-indigo-500',
+      'bg-gradient-to-r from-violet-500 to-fuchsia-500',
+      'bg-gradient-to-r from-purple-500 to-pink-500',
+      'bg-gradient-to-r from-rose-500 to-red-500',
+      'bg-gradient-to-r from-orange-500 to-amber-500',
+      'bg-gradient-to-r from-lime-500 to-green-500',
     ];
     const hash = projectId
       .split('')
@@ -300,10 +301,6 @@ const getProjectStatusBadge = (status: ProjectStatus) => {
 
 export default function TimelinePage() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
-  const [activeFilters, setActiveFilters] = React.useState({
-    type: 'all',
-    client: 'all',
-  });
   const [hoveredEvent, setHoveredEvent] = React.useState<string | null>(null);
 
   const firstDayOfMonth = React.useMemo(() => startOfMonth(currentDate), [currentDate]);
@@ -327,11 +324,6 @@ export default function TimelinePage() {
     const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
   
     return allEvents.filter((event) => {
-      const typeMatch =
-        activeFilters.type === 'all' || event.type === activeFilters.type;
-      const clientMatch =
-        activeFilters.client === 'all' || event.clientId === activeFilters.client;
-      
       let dateMatch = false;
       if (event.type === 'project') {
         const project = event as Project;
@@ -343,9 +335,9 @@ export default function TimelinePage() {
           dateMatch = !!task.dueDate && isWithinInterval(task.dueDate, gridInterval);
       }
   
-      return typeMatch && clientMatch && dateMatch;
+      return dateMatch;
     });
-  }, [activeFilters, firstDayOfGrid, lastDayOfGrid]);
+  }, [firstDayOfGrid, lastDayOfGrid]);
 
 
   const getEventsForDay = React.useCallback((day: Date) => {
@@ -368,12 +360,10 @@ export default function TimelinePage() {
     const weekSlots: Record<number, string[]> = {};
   
     const projectsInView = initialProjects.filter(e => {
-        const typeMatch = activeFilters.type === 'all' || 'project' === activeFilters.type;
-        const clientMatch = activeFilters.client === 'all' || e.clientId === activeFilters.client;
         const dateMatch = isWithinInterval(e.startDate, { start: firstDayOfGrid, end: lastDayOfGrid }) || 
                             isWithinInterval(e.endDate, { start: firstDayOfGrid, end: lastDayOfGrid }) ||
                             (e.startDate < firstDayOfGrid && e.endDate > lastDayOfGrid);
-        return typeMatch && clientMatch && dateMatch;
+        return dateMatch;
     });
   
     projectsInView.sort((a, b) => differenceInDays(a.startDate, b.startDate));
@@ -409,7 +399,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid, days]);
+  }, [initialProjects, firstDayOfGrid, lastDayOfGrid, days]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
@@ -418,12 +408,12 @@ export default function TimelinePage() {
 
   return (
     <main className="flex flex-col h-full pt-4">
-      <div className="z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+      <div className="flex-shrink-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Timeline</h1>
         </div>
       </div>
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto -mx-4 px-4 pb-4">
         <div className="lg:col-span-2 flex flex-col">
           <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
             <header className="flex items-center justify-between px-2 pb-4">
@@ -533,10 +523,8 @@ export default function TimelinePage() {
  
                  if (startIndex < 0 || duration <= 0) return null;
  
-                 const startCol = (startIndex % 7) + 1;
-                 if (startCol + duration > 8) {
-                    duration = 8 - startCol;
-                 }
+                 const startCol = getDay(startDayInGrid) + 1;
+                 
                  const topOffset = (projectPositions[p.id] || 0) * 32 + 48; // 32px per slot
                  const startRow = Math.floor(startIndex / 7) + 2;
 
@@ -557,12 +545,12 @@ export default function TimelinePage() {
                                 gridRow: `${startRow}`,
                             }}
                              className={cn(
-                                "absolute h-7 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
+                                "absolute h-7 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm",
                                 getProjectColor(p.id),
-                                "bg-opacity-70 backdrop-blur-sm",
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
                                 isStartInView && 'rounded-l-lg',
                                 isEndInView && 'rounded-r-lg',
+                                !isStartInView && !isEndInView && '',
                                 'rounded-lg'
                             )}
                         >
@@ -593,6 +581,5 @@ export default function TimelinePage() {
     </main>
   );
 }
-
 
     
