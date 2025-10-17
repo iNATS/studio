@@ -5,8 +5,6 @@ import * as React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
-  Filter,
-  X,
   Calendar as CalendarIcon,
   Circle,
   Clock,
@@ -43,7 +41,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -51,14 +48,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { clientsData, initialProjects, initialTasks } from '../data';
 import { Project, ProjectStatus } from '../projects/page';
 import { Task, TaskPriority } from '../tasks/page';
@@ -139,13 +128,13 @@ EventPopover.displayName = 'EventPopover';
 
 const getProjectColor = (projectId: string) => {
     const colors = [
-      'bg-gradient-to-r from-cyan-500 to-blue-500',
-      'bg-gradient-to-r from-sky-500 to-indigo-500',
-      'bg-gradient-to-r from-violet-500 to-fuchsia-500',
-      'bg-gradient-to-r from-purple-500 to-pink-500',
-      'bg-gradient-to-r from-rose-500 to-red-500',
-      'bg-gradient-to-r from-orange-500 to-amber-500',
-      'bg-gradient-to-r from-lime-500 to-green-500',
+      'from-cyan-500 to-blue-500',
+      'from-sky-500 to-indigo-500',
+      'from-violet-500 to-fuchsia-500',
+      'from-purple-500 to-pink-500',
+      'from-rose-500 to-red-500',
+      'from-orange-500 to-amber-500',
+      'from-lime-500 to-green-500',
     ];
     const hash = projectId
       .split('')
@@ -245,7 +234,7 @@ const OngoingProjectsList = ({ projects, onHover }: { projects: Project[], onHov
                                     <h5 className="font-semibold text-white/80">{project.title}</h5>
                                     {getProjectStatusBadge(project.status)}
                                 </div>
-                                <Progress value={progress} className="h-1 mt-2 bg-white/10" indicatorClassName={getProjectColor(project.id)} />
+                                <Progress value={progress} className="h-1 mt-2 bg-white/10" indicatorClassName={`bg-gradient-to-r ${getProjectColor(project.id)}`} />
                             </motion.div>
                         )
                     })}
@@ -357,7 +346,7 @@ export default function TimelinePage() {
 
   React.useEffect(() => {
     const newPositions: Record<string, number> = {};
-    const weekSlots: Record<number, string[]> = {};
+    const dailySlots: boolean[][] = Array.from({ length: days.length }, () => []);
   
     const projectsInView = initialProjects.filter(e => {
         const dateMatch = isWithinInterval(e.startDate, { start: firstDayOfGrid, end: lastDayOfGrid }) || 
@@ -366,36 +355,37 @@ export default function TimelinePage() {
         return dateMatch;
     });
   
-    projectsInView.sort((a, b) => differenceInDays(a.startDate, b.startDate));
-
+    projectsInView.sort((a, b) => {
+        const diff = differenceInDays(a.startDate, b.startDate);
+        if (diff === 0) {
+            return differenceInDays(b.endDate, a.endDate); // Longer projects first
+        }
+        return diff;
+    });
+  
     projectsInView.forEach(project => {
-      const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
-      const endDayIndex = Math.min(days.length - 1, differenceInDays(project.endDate, firstDayOfGrid));
-
-      let slot = 0;
-      while (true) {
-        let isOccupied = false;
-        for (let i = startDayIndex; i <= endDayIndex; i++) {
-          const weekIndex = Math.floor(i / 7);
-          const dayOfWeek = i % 7;
-          if (weekSlots[weekIndex]?.[dayOfWeek]?.[slot]) {
-            isOccupied = true;
-            break;
-          }
+        const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
+        const endDayIndex = Math.min(days.length - 1, differenceInDays(project.endDate, firstDayOfGrid));
+  
+        let slot = 0;
+        while (true) {
+            let isOccupied = false;
+            for (let i = startDayIndex; i <= endDayIndex; i++) {
+                if (dailySlots[i]?.[slot]) {
+                    isOccupied = true;
+                    break;
+                }
+            }
+            if (!isOccupied) {
+                for (let i = startDayIndex; i <= endDayIndex; i++) {
+                    if (!dailySlots[i]) dailySlots[i] = [];
+                    dailySlots[i][slot] = true;
+                }
+                newPositions[project.id] = slot;
+                break;
+            }
+            slot++;
         }
-        if (!isOccupied) {
-          for (let i = startDayIndex; i <= endDayIndex; i++) {
-            const weekIndex = Math.floor(i / 7);
-            const dayOfWeek = i % 7;
-            if (!weekSlots[weekIndex]) weekSlots[weekIndex] = [];
-            if (!weekSlots[weekIndex][dayOfWeek]) weekSlots[weekIndex][dayOfWeek] = [];
-            weekSlots[weekIndex][dayOfWeek][slot] = project.id;
-          }
-          newPositions[project.id] = slot;
-          break;
-        }
-        slot++;
-      }
     });
 
     setProjectPositions(newPositions);
@@ -405,10 +395,9 @@ export default function TimelinePage() {
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
   const upcomingTasks = React.useMemo(() => initialTasks.filter(t => t.status !== 'done' && t.dueDate && isWithinInterval(t.dueDate, { start: new Date(), end: add(new Date(), {days: 7})})), []);
   
-
   return (
     <main className="flex flex-col h-full pt-4">
-      <div className="flex-shrink-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+      <div className="flex-shrink-0 sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Timeline</h1>
         </div>
@@ -528,8 +517,8 @@ export default function TimelinePage() {
                  const topOffset = (projectPositions[p.id] || 0) * 32 + 48; // 32px per slot
                  const startRow = Math.floor(startIndex / 7) + 2;
 
-                 const isStartInView = p.startDate >= firstDayOfGrid;
-                 const isEndInView = p.endDate <= lastDayOfGrid;
+                 const isStartInView = isSameMonth(p.startDate, currentDate) || p.startDate >= firstDayOfGrid;
+                 const isEndInView = isSameMonth(p.endDate, currentDate) || p.endDate <= lastDayOfGrid;
 
                 return (
                     <EventPopover key={p.id} event={p}>
@@ -542,16 +531,15 @@ export default function TimelinePage() {
                             style={{ 
                                 top: `${topOffset}px`,
                                 gridColumn: `${startCol} / span ${duration > 0 ? duration : 1}`,
-                                gridRow: `${startRow}`,
+                                gridRowStart: startRow,
                             }}
                              className={cn(
                                 "absolute h-7 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm",
-                                getProjectColor(p.id),
+                                `bg-gradient-to-r ${getProjectColor(p.id)}`,
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                isStartInView && 'rounded-l-lg',
-                                isEndInView && 'rounded-r-lg',
-                                !isStartInView && !isEndInView && '',
-                                'rounded-lg'
+                                isStartInView ? 'rounded-l-lg' : '',
+                                isEndInView ? 'rounded-r-lg' : '',
+                                (!isStartInView && !isEndInView) ? '' : 'rounded-lg'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
@@ -567,7 +555,7 @@ export default function TimelinePage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
             <AnimatePresence>
                 <motion.div key="projects-overview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-                    <ProjectsOverviewChart projects={filteredProjects} />
+                    <ProjectsOverviewChart projects={initialProjects} />
                 </motion.div>
                 <motion.div key="ongoing-projects" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                     <OngoingProjectsList projects={ongoingProjects} onHover={setHoveredEvent} />
@@ -581,5 +569,3 @@ export default function TimelinePage() {
     </main>
   );
 }
-
-    
