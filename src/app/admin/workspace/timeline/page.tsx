@@ -33,6 +33,15 @@ import {
   endOfQuarter,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    CartesianGrid,
+  } from 'recharts';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -55,9 +64,9 @@ type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
 const getProjectColor = (projectId: string) => {
     const colors = [
-      'from-cyan-500 to-blue-500', 'from-sky-500 to-indigo-500', 'from-violet-500 to-fuchsia-500',
-      'from-purple-500 to-pink-500', 'from-rose-500 to-red-500', 'from-orange-500 to-amber-500',
-      'from-lime-500 to-green-500',
+      'from-cyan-400 to-blue-500', 'from-sky-400 to-indigo-500', 'from-violet-400 to-fuchsia-500',
+      'from-purple-400 to-pink-500', 'from-rose-400 to-red-500', 'from-orange-400 to-amber-500',
+      'from-lime-400 to-green-500',
     ];
     const hash = projectId.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
     return colors[hash % colors.length];
@@ -157,60 +166,114 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
         }
     }, [view, viewStart, viewEnd]);
     
+    const projectPositions = React.useMemo(() => {
+        const positions: { project: Project; top: number; left: number; width: number; }[] = [];
+        const slots: Date[][] = [];
+
+        const sortedProjects = [...projects].sort((a,b) => a.startDate.getTime() - b.startDate.getTime());
+
+        sortedProjects.forEach(project => {
+            let placed = false;
+            for(let i = 0; i < slots.length; i++) {
+                if (!slots[i].some(date => isWithinInterval(date, { start: project.startDate, end: sub(project.endDate, {days: 1}) }))) {
+                    for(const day of eachDayOfInterval({start: project.startDate, end: project.endDate})) {
+                        slots[i].push(day);
+                    }
+                    const projectStartOffset = differenceInDays(project.startDate, viewStart);
+                    const projectDuration = differenceInDays(project.endDate, project.startDate) + 1;
+                    positions.push({
+                        project,
+                        top: 2 + i * 2.75,
+                        left: (projectStartOffset / totalDaysInView) * 100,
+                        width: (projectDuration / totalDaysInView) * 100,
+                    });
+                    placed = true;
+                    break;
+                }
+            }
+
+            if (!placed) {
+                const newSlot: Date[] = [];
+                for(const day of eachDayOfInterval({start: project.startDate, end: project.endDate})) {
+                    newSlot.push(day);
+                }
+                slots.push(newSlot);
+                const projectStartOffset = differenceInDays(project.startDate, viewStart);
+                const projectDuration = differenceInDays(project.endDate, project.startDate) + 1;
+
+                positions.push({
+                    project,
+                    top: 2 + (slots.length - 1) * 2.75,
+                    left: (projectStartOffset / totalDaysInView) * 100,
+                    width: (projectDuration / totalDaysInView) * 100,
+                });
+            }
+        })
+        return positions;
+
+    }, [projects, viewStart, viewEnd, totalDaysInView]);
+
+    const containerHeight = 4 + (Math.max(...projectPositions.map(p => p.top)) + 2.75) + 'rem';
+    
     return (
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 min-h-[500px]">
-            <div className="grid" style={{ gridTemplateColumns: `repeat(${headers.length}, 1fr)` }}>
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
+             <div className="grid" style={{ gridTemplateColumns: `repeat(${headers.length}, 1fr)` }}>
                 {headers.map((header, i) => (
                     <div key={i} className={cn("text-center py-2 text-xs font-medium text-white/50 border-r border-white/10 last:border-r-0", (header as any).isToday || (header as any).isCurrent ? "text-blue-400" : "" )}>
                         {header.label}
                     </div>
                 ))}
             </div>
-            <div className="relative border-t border-white/10 flex-1">
-                {projects.map((project, index) => {
-                    const projectStartOffset = differenceInDays(project.startDate, viewStart);
-                    const projectDuration = differenceInDays(project.endDate, project.startDate) + 1;
+            <ScrollArea className="flex-1">
+                <div className="relative border-t border-white/10" style={{ height: projectPositions.length > 0 ? containerHeight : '100%'}}>
+                    {projectPositions.map(({ project, top, left, width }) => {
+                        if (project.endDate < viewStart || project.startDate > viewEnd) return null;
 
-                    if (project.endDate < viewStart || project.startDate > viewEnd) return null;
+                        const startsBeforeView = project.startDate < viewStart;
+                        const endsAfterView = project.endDate > viewEnd;
+                        const finalLeft = Math.max(0, left);
+                        const finalWidth = startsBeforeView ? width + left : width;
 
-                    const left = (projectStartOffset / totalDaysInView) * 100;
-                    const width = (projectDuration / totalDaysInView) * 100;
-
-                    return (
-                        <Popover key={project.id}>
-                            <PopoverTrigger asChild>
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                                    className={cn(
-                                        "absolute h-8 text-white text-sm font-medium flex items-center px-3 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm rounded-lg cursor-pointer",
-                                        `bg-gradient-to-r ${getProjectColor(project.id)}`,
-                                        hoveredEvent === project.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                    )}
-                                    style={{
-                                        top: `${2 + index * 2.5}rem`,
-                                        left: `${Math.max(0, left)}%`,
-                                        width: `${left < 0 ? width + left : width}%`,
-                                    }}
-                                >
-                                    <span className="truncate">{project.title}</span>
-                                </motion.div>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80 bg-background/70 backdrop-blur-2xl border-white/10 text-white" side="bottom" align="start">
-                                <div className="space-y-2">
-                                    <h4 className="font-semibold text-white/90">{project.title}</h4>
-                                    <p className="text-sm text-white/60">{project.description}</p>
-                                    <div className="flex items-center gap-2 text-sm text-white/70">
-                                        <CalendarIcon className="h-4 w-4 text-white/50" />
-                                        <span>{format(project.startDate, 'MMM d')} - {format(project.endDate, 'MMM d, yyyy')}</span>
+                        return (
+                            <Popover key={project.id}>
+                                <PopoverTrigger asChild>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        whileHover={{ scale: 1.03, zIndex: 20, filter: 'brightness(1.1)' }}
+                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                        className={cn(
+                                            "absolute h-8 text-white text-sm font-medium flex items-center px-3 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner-lg",
+                                            `bg-gradient-to-r ${getProjectColor(project.id)}`,
+                                            startsBeforeView ? 'rounded-r-lg' : 'rounded-lg',
+                                            endsAfterView && !startsBeforeView ? 'rounded-l-lg rounded-r-none' : '',
+                                            endsAfterView && startsBeforeView ? 'rounded-none' : '',
+                                            hoveredEvent === project.id && 'ring-2 ring-white/80 scale-[1.03] z-20 brightness-110',
+                                        )}
+                                        style={{
+                                            top: `${top}rem`,
+                                            left: `${finalLeft}%`,
+                                            width: `${Math.min(finalWidth, 100 - finalLeft)}%`,
+                                        }}
+                                    >
+                                        <span className="truncate">{project.title}</span>
+                                    </motion.div>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80 bg-background/70 backdrop-blur-2xl border-white/10 text-white" side="bottom" align="start">
+                                    <div className="space-y-2">
+                                        <h4 className="font-semibold text-white/90">{project.title}</h4>
+                                        <p className="text-sm text-white/60">{project.description}</p>
+                                        <div className="flex items-center gap-2 text-sm text-white/70">
+                                            <CalendarIcon className="h-4 w-4 text-white/50" />
+                                            <span>{format(project.startDate, 'MMM d')} - {format(project.endDate, 'MMM d, yyyy')}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    )
-                })}
-            </div>
+                                </PopoverContent>
+                            </Popover>
+                        )
+                    })}
+                </div>
+            </ScrollArea>
         </div>
     );
 };
