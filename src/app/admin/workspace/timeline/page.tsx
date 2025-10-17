@@ -32,6 +32,15 @@ import {
   eachMonthOfInterval,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+  } from 'recharts';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -323,6 +332,8 @@ export default function TimelinePage() {
       ...initialProjects.map((p) => ({ ...p, type: 'project' as const })),
       ...initialTasks.map((t) => ({ ...t, type: 'task' as const })),
     ];
+
+    const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
   
     return allEvents.filter((event) => {
       const typeMatch =
@@ -330,22 +341,18 @@ export default function TimelinePage() {
       const clientMatch =
         activeFilters.client === 'all' || event.clientId === activeFilters.client;
       
-      const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
-      
+      let dateMatch = false;
       if (event.type === 'project') {
         const project = event as Project;
-        const projectInGrid = isWithinInterval(project.startDate, gridInterval) || 
+        dateMatch = isWithinInterval(project.startDate, gridInterval) || 
                               isWithinInterval(project.endDate, gridInterval) ||
                               (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
-        return typeMatch && clientMatch && projectInGrid;
-      }
-      
-      if (event.type === 'task') {
+      } else if (event.type === 'task') {
           const task = event as Task;
-          return typeMatch && clientMatch && task.dueDate && isWithinInterval(task.dueDate, gridInterval);
+          dateMatch = !!task.dueDate && isWithinInterval(task.dueDate, gridInterval);
       }
   
-      return false;
+      return typeMatch && clientMatch && dateMatch;
     });
   }, [activeFilters.type, activeFilters.client, firstDayOfGrid, lastDayOfGrid]);
 
@@ -367,14 +374,9 @@ export default function TimelinePage() {
     const newPositions: Record<string, number> = {};
     const weekSlots: Record<number, string[]> = {};
   
-    const projects = (initialProjects as Project[]).filter(project => {
-        const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
-        return isWithinInterval(project.startDate, gridInterval) || 
-               isWithinInterval(project.endDate, gridInterval) ||
-               (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
-    });
+    const projectsInView = filteredEvents.filter(e => e.type === 'project') as Project[];
   
-    projects.forEach(project => {
+    projectsInView.forEach(project => {
       const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
       const endDayIndex = Math.min(days.length - 1, differenceInDays(project.endDate, firstDayOfGrid));
 
@@ -402,7 +404,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [firstDayOfGrid, lastDayOfGrid, days]);
+  }, [filteredEvents, firstDayOfGrid, days]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
@@ -626,10 +628,11 @@ export default function TimelinePage() {
                                 "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
                                 getProjectColor(p.id),
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                p.startDate >= firstDayOfGrid ? 'rounded-l-md' : '',
+                                'bg-gradient-to-r from-transparent via-current to-current',
+                                p.startDate >= firstDayOfGrid ? 'rounded-l-md' : 'rounded-l-none',
                                 p.endDate <= lastDayOfGrid ? 'rounded-r-md' : 'rounded-r-none',
                                 startCol === 1 && 'rounded-l-md',
-                                (startCol + duration -1) === 7 && 'rounded-r-md'
+                                (startCol + duration -1) >= 7 && 'rounded-r-md'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
