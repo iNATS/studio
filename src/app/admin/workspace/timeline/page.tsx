@@ -6,31 +6,28 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
-  Circle,
-  BarChart2,
-  ListTodo,
   LayoutGrid,
+  BarChart2,
 } from 'lucide-react';
 import {
   startOfMonth,
   endOfMonth,
-  eachDayOfInterval,
-  isSameDay,
   addMonths,
   subMonths,
   format,
   isWithinInterval,
   isSameMonth,
-  startOfWeek,
-  endOfWeek,
   differenceInDays,
   isToday as isTodayDateFns,
   add,
-  sub,
   eachWeekOfInterval,
   eachMonthOfInterval,
   startOfQuarter,
   endOfQuarter,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  sub,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -50,17 +47,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { clientsData, initialProjects, initialTasks } from '../data';
+import { initialProjects } from '../data';
 import { Project, ProjectStatus } from '../projects/page';
-import { Task, TaskPriority } from '../tasks/page';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
 const getProjectColor = (projectId: string) => {
     const colors = [
@@ -83,14 +76,14 @@ const getProjectStatusBadge = (status: ProjectStatus) => {
     }
 }
 
-const OngoingProjectsList = ({ projects, onHover }: { projects: Project[], onHover: (id: string | null) => void }) => {
+const OngoingProjectsList = ({ projects, onHover, onClick, activeProjectId }: { projects: Project[], onHover: (id: string | null) => void, onClick: (id: string) => void, activeProjectId: string | null }) => {
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
             <CardHeader>
                 <CardTitle className="text-white/90 text-lg flex items-center gap-2"><LayoutGrid className="w-5 h-5"/>Projects</CardTitle>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="h-96">
+                <ScrollArea className="h-[calc(100vh-22rem)] sm:h-96">
                     <div className="space-y-4 pr-4">
                         {projects.map(project => {
                             const totalDays = differenceInDays(project.endDate, project.startDate) || 1;
@@ -100,12 +93,17 @@ const OngoingProjectsList = ({ projects, onHover }: { projects: Project[], onHov
                             return (
                                 <motion.div 
                                     key={project.id}
+                                    id={`project-list-item-${project.id}`}
                                     onMouseEnter={() => onHover(project.id)}
                                     onMouseLeave={() => onHover(null)}
+                                    onClick={() => onClick(project.id)}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
-                                    className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                                    className={cn(
+                                        "p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer",
+                                        activeProjectId === project.id && "bg-white/10 ring-2 ring-blue-400"
+                                    )}
                                 >
                                     <div className="flex justify-between items-start">
                                         <h5 className="font-semibold text-white/80">{project.title}</h5>
@@ -122,18 +120,54 @@ const OngoingProjectsList = ({ projects, onHover }: { projects: Project[], onHov
     );
 }
 
-const getUnitWidth = (view: 'week' | 'month' | 'quarter') => {
-    switch(view) {
-        case 'week': return 100;
-        case 'month': return 30;
-        case 'quarter': return 10;
-    }
-}
+const ProjectsOverviewChart = ({ projects }: { projects: Project[] }) => {
+    const projectsPerMonth = React.useMemo(() => {
+        const months = Array.from({ length: 6 }).map((_, i) => addMonths(startOfMonth(new Date()), i));
+        return months.map(month => {
+            const projectsInMonth = projects.filter(p => isWithinInterval(month, { start: startOfMonth(p.startDate), end: endOfMonth(p.endDate) }));
+            return {
+                name: format(month, 'MMM'),
+                count: projectsInMonth.length,
+            };
+        });
+    }, [projects]);
+    
+    return (
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+             <CardHeader>
+                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><BarChart2 className="w-5 h-5"/>Projects Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={projectsPerMonth} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                        <defs>
+                            <linearGradient id="colorProjects" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsla(210, 100%, 70%, 0.5)" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="hsla(210, 100%, 70%, 0)" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsla(0,0%,100%,0.1)" />
+                        <XAxis dataKey="name" stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                        <Tooltip
+                            contentStyle={{
+                                background: 'rgba(0, 0, 0, 0.8)',
+                                border: '1px solid hsla(0,0%,100%,0.1)',
+                                borderRadius: '0.75rem',
+                                color: '#fff',
+                            }}
+                            cursor={{ fill: 'hsla(0,0%,100%,0.1)' }}
+                         />
+                        <Bar dataKey="count" fill="url(#colorProjects)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+    );
+};
 
-const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects: Project[], view: 'week' | 'month' | 'quarter', currentDate: Date, hoveredEvent: string | null }) => {
-    const unitWidth = getUnitWidth(view);
-
-    const getTimelineInterval = () => {
+const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, activeProjectId }: { projects: Project[], view: 'week' | 'month' | 'quarter', currentDate: Date, hoveredEvent: string | null, onClick: (id: string) => void, activeProjectId: string | null }) => {
+    const getTimelineInterval = React.useCallback(() => {
         switch (view) {
             case 'week':
                 return { start: startOfWeek(currentDate, { weekStartsOn: 1 }), end: endOfWeek(currentDate, { weekStartsOn: 1 }) };
@@ -142,7 +176,8 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
             case 'quarter':
                 return { start: startOfQuarter(currentDate), end: endOfQuarter(currentDate) };
         }
-    };
+    }, [view, currentDate]);
+
     const { start: viewStart, end: viewEnd } = getTimelineInterval();
     const totalDaysInView = differenceInDays(viewEnd, viewStart) + 1;
 
@@ -213,10 +248,10 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
 
     }, [projects, viewStart, viewEnd, totalDaysInView]);
 
-    const containerHeight = 4 + (Math.max(...projectPositions.map(p => p.top)) + 2.75) + 'rem';
+    const containerHeight = 4 + (Math.max(0, ...projectPositions.map(p => p.top)) + 2.75) + 'rem';
     
     return (
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
+        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
              <div className="grid" style={{ gridTemplateColumns: `repeat(${headers.length}, 1fr)` }}>
                 {headers.map((header, i) => (
                     <div key={i} className={cn("text-center py-2 text-xs font-medium text-white/50 border-r border-white/10 last:border-r-0", (header as any).isToday || (header as any).isCurrent ? "text-blue-400" : "" )}>
@@ -225,7 +260,7 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
                 ))}
             </div>
             <ScrollArea className="flex-1">
-                <div className="relative border-t border-white/10" style={{ height: projectPositions.length > 0 ? containerHeight : '100%'}}>
+                <div id="timeline-grid" className="relative border-t border-white/10" style={{ height: projectPositions.length > 0 ? containerHeight : '100px'}}>
                     {projectPositions.map(({ project, top, left, width }) => {
                         if (project.endDate < viewStart || project.startDate > viewEnd) return null;
 
@@ -238,17 +273,19 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
                             <Popover key={project.id}>
                                 <PopoverTrigger asChild>
                                     <motion.div
+                                        id={`project-bar-${project.id}`}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        whileHover={{ scale: 1.03, zIndex: 20, filter: 'brightness(1.1)' }}
+                                        whileHover={{ scale: 1.03, zIndex: 20, filter: 'brightness(1.2)' }}
                                         transition={{ duration: 0.2, ease: 'easeOut' }}
+                                        onClick={() => onClick(project.id)}
                                         className={cn(
-                                            "absolute h-8 text-white text-sm font-medium flex items-center px-3 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner-lg",
+                                            "absolute h-8 text-white text-sm font-medium flex items-center px-3 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner",
                                             `bg-gradient-to-r ${getProjectColor(project.id)}`,
                                             startsBeforeView ? 'rounded-r-lg' : 'rounded-lg',
                                             endsAfterView && !startsBeforeView ? 'rounded-l-lg rounded-r-none' : '',
                                             endsAfterView && startsBeforeView ? 'rounded-none' : '',
-                                            hoveredEvent === project.id && 'ring-2 ring-white/80 scale-[1.03] z-20 brightness-110',
+                                            (hoveredEvent === project.id || activeProjectId === project.id) && 'ring-2 ring-white/80 scale-[1.03] z-20 brightness-125',
                                         )}
                                         style={{
                                             top: `${top}rem`,
@@ -274,13 +311,14 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent }: { projects
                     })}
                 </div>
             </ScrollArea>
-        </div>
+        </Card>
     );
 };
 
 export default function TimelinePage() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [hoveredEvent, setHoveredEvent] = React.useState<string | null>(null);
+  const [activeProjectId, setActiveProjectId] = React.useState<string | null>(null);
   const [view, setView] = React.useState<'week' | 'month' | 'quarter'>('month');
 
   const moveDate = (direction: 'prev' | 'next') => {
@@ -298,6 +336,27 @@ export default function TimelinePage() {
     }
   };
 
+  const handleProjectClick = (projectId: string) => {
+    setActiveProjectId(projectId);
+    const project = initialProjects.find(p => p.id === projectId);
+    if(project) {
+        // Center view on project start date if it's not in the current view
+        const { start, end } = getTimelineInterval(view, currentDate);
+        if(!isWithinInterval(project.startDate, { start, end })) {
+            setCurrentDate(project.startDate);
+        }
+    }
+    document.getElementById(`project-bar-${projectId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  
+  const getTimelineInterval = (view: 'week' | 'month' | 'quarter', date: Date) => {
+    switch (view) {
+        case 'week': return { start: startOfWeek(date, { weekStartsOn: 1 }), end: endOfWeek(date, { weekStartsOn: 1 }) };
+        case 'month': return { start: startOfMonth(date), end: endOfMonth(date) };
+        case 'quarter': return { start: startOfQuarter(date), end: endOfQuarter(date) };
+    }
+};
+
   const goToToday = () => setCurrentDate(new Date());
 
   const getLabelForCurrentDate = () => {
@@ -311,23 +370,12 @@ export default function TimelinePage() {
     }
   }
 
-  const projectsInView = React.useMemo(() => {
-    const { start, end } = (() => {
-        switch (view) {
-            case 'week': return { start: startOfWeek(currentDate, {weekStartsOn: 1}), end: endOfWeek(currentDate, {weekStartsOn: 1}) };
-            case 'month': return { start: startOfMonth(currentDate), end: endOfMonth(currentDate) };
-            case 'quarter': return { start: startOfQuarter(currentDate), end: endOfQuarter(currentDate) };
-        }
-    })();
-    return initialProjects.filter(p => isWithinInterval(p.startDate, {start, end}) || isWithinInterval(p.endDate, {start, end}) || (p.startDate < start && p.endDate > end));
-  }, [view, currentDate]);
-  
   return (
     <main className="flex flex-col h-full pt-4">
       <div className="flex-shrink-0 sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
             <h1 className="text-2xl font-bold text-white">Timeline</h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
                 <Button variant="ghost" onClick={goToToday} className="rounded-lg h-9 px-3 text-sm">
                     Today
                 </Button>
@@ -339,7 +387,7 @@ export default function TimelinePage() {
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
-                <h2 className="text-lg font-semibold text-white text-center w-48">
+                <h2 className="text-lg font-semibold text-white text-center w-48 hidden sm:block">
                     {getLabelForCurrentDate()}
                 </h2>
                 <ToggleGroup type="single" value={view} onValueChange={(v: 'week' | 'month' | 'quarter') => v && setView(v)} className="p-1 bg-white/10 rounded-lg">
@@ -350,18 +398,23 @@ export default function TimelinePage() {
             </div>
         </div>
       </div>
-      <div className="flex-1 grid grid-cols-1 xl:grid-cols-4 gap-6 -mx-4 px-4 pb-4 overflow-y-auto">
-        <div className="xl:col-span-1 flex flex-col gap-6">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 -mx-4 px-4 pb-4 overflow-y-auto">
+        <div className="lg:col-span-1 flex flex-col gap-6">
             <AnimatePresence>
                 <motion.div key="ongoing-projects" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-                    <OngoingProjectsList projects={initialProjects} onHover={setHoveredEvent} />
+                    <OngoingProjectsList projects={initialProjects} onHover={setHoveredEvent} onClick={handleProjectClick} activeProjectId={activeProjectId} />
+                </motion.div>
+                <motion.div key="overview-chart" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+                    <ProjectsOverviewChart projects={initialProjects} />
                 </motion.div>
             </AnimatePresence>
         </div>
-        <div className="xl:col-span-3 flex flex-col">
-            <GanttTimeline projects={initialProjects} view={view} currentDate={currentDate} hoveredEvent={hoveredEvent}/>
+        <div className="lg:col-span-3 flex flex-col">
+            <GanttTimeline projects={initialProjects} view={view} currentDate={currentDate} hoveredEvent={hoveredEvent} onClick={setActiveProjectId} activeProjectId={activeProjectId} />
         </div>
       </div>
     </main>
   );
 }
+
+    
