@@ -12,7 +12,7 @@ import {
   Clock,
   BarChart2,
   ListTodo,
-  LayoutGrid
+  LayoutGrid,
 } from 'lucide-react';
 import {
   startOfMonth,
@@ -33,14 +33,14 @@ import {
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-  } from 'recharts';
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -354,10 +354,10 @@ export default function TimelinePage() {
   
       return typeMatch && clientMatch && dateMatch;
     });
-  }, [activeFilters.type, activeFilters.client, firstDayOfGrid, lastDayOfGrid]);
+  }, [activeFilters, firstDayOfGrid, lastDayOfGrid]);
 
 
-  const getEventsForDay = (day: Date) => {
+  const getEventsForDay = React.useCallback((day: Date) => {
     const tasks = filteredEvents.filter(
       (event) =>
         event.type === 'task' &&
@@ -365,7 +365,7 @@ export default function TimelinePage() {
     ) as Task[];
 
     return { tasks };
-  };
+  }, [filteredEvents]);
 
   const dayGridRef = React.useRef<HTMLDivElement>(null);
   const [projectPositions, setProjectPositions] = React.useState<Record<string, number>>({});
@@ -374,8 +374,17 @@ export default function TimelinePage() {
     const newPositions: Record<string, number> = {};
     const weekSlots: Record<number, string[]> = {};
   
-    const projectsInView = filteredEvents.filter(e => e.type === 'project') as Project[];
+    const projectsInView = initialProjects.filter(e => {
+        const typeMatch = activeFilters.type === 'all' || 'project' === activeFilters.type;
+        const clientMatch = activeFilters.client === 'all' || e.clientId === activeFilters.client;
+        const dateMatch = isWithinInterval(e.startDate, { start: firstDayOfGrid, end: lastDayOfGrid }) || 
+                            isWithinInterval(e.endDate, { start: firstDayOfGrid, end: lastDayOfGrid }) ||
+                            (e.startDate < firstDayOfGrid && e.endDate > lastDayOfGrid);
+        return typeMatch && clientMatch && dateMatch;
+    });
   
+    projectsInView.sort((a, b) => differenceInDays(a.startDate, b.startDate));
+
     projectsInView.forEach(project => {
       const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
       const endDayIndex = Math.min(days.length - 1, differenceInDays(project.endDate, firstDayOfGrid));
@@ -385,7 +394,8 @@ export default function TimelinePage() {
         let isOccupied = false;
         for (let i = startDayIndex; i <= endDayIndex; i++) {
           const weekIndex = Math.floor(i / 7);
-          if (weekSlots[weekIndex]?.[slot]) {
+          const dayOfWeek = i % 7;
+          if (weekSlots[weekIndex]?.[dayOfWeek]?.[slot]) {
             isOccupied = true;
             break;
           }
@@ -393,8 +403,10 @@ export default function TimelinePage() {
         if (!isOccupied) {
           for (let i = startDayIndex; i <= endDayIndex; i++) {
             const weekIndex = Math.floor(i / 7);
+            const dayOfWeek = i % 7;
             if (!weekSlots[weekIndex]) weekSlots[weekIndex] = [];
-            weekSlots[weekIndex][slot] = project.id;
+            if (!weekSlots[weekIndex][dayOfWeek]) weekSlots[weekIndex][dayOfWeek] = [];
+            weekSlots[weekIndex][dayOfWeek][slot] = project.id;
           }
           newPositions[project.id] = slot;
           break;
@@ -404,7 +416,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [filteredEvents, firstDayOfGrid, days]);
+  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
@@ -628,11 +640,9 @@ export default function TimelinePage() {
                                 "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
                                 getProjectColor(p.id),
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                'bg-gradient-to-r from-transparent via-current to-current',
+                                'bg-opacity-80 backdrop-blur-sm',
                                 p.startDate >= firstDayOfGrid ? 'rounded-l-md' : 'rounded-l-none',
-                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : 'rounded-r-none',
-                                startCol === 1 && 'rounded-l-md',
-                                (startCol + duration -1) >= 7 && 'rounded-r-md'
+                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : 'rounded-r-none'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
