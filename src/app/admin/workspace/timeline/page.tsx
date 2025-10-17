@@ -32,7 +32,6 @@ import {
   eachMonthOfInterval,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -56,6 +54,7 @@ import { Task, TaskPriority } from '../tasks/page';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
 type TimelineEvent = (Project | Task) & { type: 'project' | 'task' };
 
@@ -348,7 +347,7 @@ export default function TimelinePage() {
   
       return false;
     });
-  }, [activeFilters, firstDayOfGrid, lastDayOfGrid]);
+  }, [activeFilters.type, activeFilters.client, firstDayOfGrid, lastDayOfGrid]);
 
 
   const getEventsForDay = (day: Date) => {
@@ -368,7 +367,12 @@ export default function TimelinePage() {
     const newPositions: Record<string, number> = {};
     const weekSlots: Record<number, string[]> = {};
   
-    const projects = filteredEvents.filter(e => e.type === 'project') as Project[];
+    const projects = (initialProjects as Project[]).filter(project => {
+        const gridInterval = { start: firstDayOfGrid, end: lastDayOfGrid };
+        return isWithinInterval(project.startDate, gridInterval) || 
+               isWithinInterval(project.endDate, gridInterval) ||
+               (project.startDate < firstDayOfGrid && project.endDate > lastDayOfGrid);
+    });
   
     projects.forEach(project => {
       const startDayIndex = Math.max(0, differenceInDays(project.startDate, firstDayOfGrid));
@@ -398,7 +402,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [filteredEvents, firstDayOfGrid, days]);
+  }, [firstDayOfGrid, lastDayOfGrid, days]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
