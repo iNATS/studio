@@ -416,7 +416,7 @@ export default function TimelinePage() {
     });
 
     setProjectPositions(newPositions);
-  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid, days.length]);
+  }, [initialProjects, activeFilters, firstDayOfGrid, lastDayOfGrid, days]);
 
 
   const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
@@ -425,12 +425,12 @@ export default function TimelinePage() {
 
   return (
     <main className="flex flex-col h-full pt-4">
-      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+      <div className="z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Timeline</h1>
         </div>
       </div>
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
         <div className="lg:col-span-2 flex flex-col">
           <div className="bg-white/5 backdrop-blur-2xl border border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4">
             <header className="flex items-center justify-between px-2 pb-4">
@@ -565,8 +565,7 @@ export default function TimelinePage() {
                                 getProjectColor(p.id),
                                 "bg-opacity-70 backdrop-blur-sm",
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
-                                p.startDate >= firstDayOfGrid ? 'rounded-l-lg' : '',
-                                p.endDate <= lastDayOfGrid ? 'rounded-r-lg' : ''
+                                'rounded-lg'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
@@ -596,3 +595,5 @@ export default function TimelinePage() {
     </main>
   );
 }
+
+    
