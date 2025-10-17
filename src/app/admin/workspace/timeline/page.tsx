@@ -218,7 +218,7 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
                     const projectDuration = differenceInDays(project.endDate, project.startDate) + 1;
                     positions.push({
                         project,
-                        top: 2 + i * 2.75,
+                        top: 1 + i * 2.25,
                         left: (projectStartOffset / totalDaysInView) * 100,
                         width: (projectDuration / totalDaysInView) * 100,
                     });
@@ -238,7 +238,7 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
 
                 positions.push({
                     project,
-                    top: 2 + (slots.length - 1) * 2.75,
+                    top: 1 + (slots.length - 1) * 2.25,
                     left: (projectStartOffset / totalDaysInView) * 100,
                     width: (projectDuration / totalDaysInView) * 100,
                 });
@@ -248,7 +248,7 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
 
     }, [projects, viewStart, viewEnd, totalDaysInView]);
 
-    const containerHeight = 4 + (Math.max(0, ...projectPositions.map(p => p.top)) + 2.75) + 'rem';
+    const containerHeight = 2 + (Math.max(0, ...projectPositions.map(p => p.top)) + 2.25) + 'rem';
     
     return (
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
@@ -280,10 +280,10 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
                                         transition={{ duration: 0.2, ease: 'easeOut' }}
                                         onClick={() => onClick(project.id)}
                                         className={cn(
-                                            "absolute h-8 text-white text-sm font-medium flex items-center px-3 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner",
+                                            "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner",
                                             `bg-gradient-to-r ${getProjectColor(project.id)}`,
-                                            startsBeforeView ? 'rounded-r-lg' : 'rounded-lg',
-                                            endsAfterView && !startsBeforeView ? 'rounded-l-lg rounded-r-none' : '',
+                                            startsBeforeView ? 'rounded-r-md' : 'rounded-md',
+                                            endsAfterView && !startsBeforeView ? 'rounded-l-md rounded-r-none' : '',
                                             endsAfterView && startsBeforeView ? 'rounded-none' : '',
                                             (hoveredEvent === project.id || activeProjectId === project.id) && 'ring-2 ring-white/80 scale-[1.03] z-20 brightness-125',
                                         )}
@@ -416,5 +416,3 @@ export default function TimelinePage() {
     </main>
   );
 }
-
-    
