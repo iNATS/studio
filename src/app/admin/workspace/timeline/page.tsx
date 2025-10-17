@@ -41,6 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -617,11 +618,12 @@ export default function TimelinePage() {
                                 gridRow: `${startRow}`,
                             }}
                             className={cn(
-                                "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none rounded transition-all duration-200 z-10",
+                                "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none transition-all duration-200 z-10",
                                 getProjectColor(p.id),
+                                "bg-gradient-to-r from-transparent via-white/10 to-transparent",
                                 hoveredEvent === p.id && 'ring-2 ring-white/80 scale-105 z-20',
-                                p.startDate >= firstDayOfGrid && 'rounded-l-md',
-                                p.endDate <= lastDayOfGrid && 'rounded-r-md'
+                                p.startDate >= firstDayOfGrid ? 'rounded-l-md' : '',
+                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : ''
                             )}
                         >
                             <span className="truncate">{p.title}</span>
