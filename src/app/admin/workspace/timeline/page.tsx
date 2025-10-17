@@ -158,12 +158,12 @@ const getTaskColor = (priority: TaskPriority) => {
 
 
 const ProjectsOverviewChart = ({ projects }: { projects: Project[] }) => {
-    const nextSixMonths = eachMonthOfInterval({
+    const nextSixMonths = React.useMemo(() => eachMonthOfInterval({
         start: startOfMonth(new Date()),
         end: add(new Date(), { months: 5 }),
-      });
+      }), []);
     
-      const projectsPerMonth = nextSixMonths.map(month => {
+      const projectsPerMonth = React.useMemo(() => nextSixMonths.map(month => {
         const projectsInMonth = projects.filter(project =>
           isWithinInterval(month, { start: startOfMonth(project.startDate), end: endOfMonth(project.endDate) })
         );
@@ -171,7 +171,7 @@ const ProjectsOverviewChart = ({ projects }: { projects: Project[] }) => {
           name: format(month, 'MMM'),
           projects: projectsInMonth.length,
         };
-      });
+      }), [projects, nextSixMonths]);
 
     return (
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
@@ -401,8 +401,9 @@ export default function TimelinePage() {
   }, [filteredEvents, firstDayOfGrid, days]);
 
 
-  const ongoingProjects = initialProjects.filter(p => p.status === 'in-progress');
-  const upcomingTasks = initialTasks.filter(t => t.status !== 'done' && t.dueDate && isWithinInterval(t.dueDate, { start: new Date(), end: add(new Date(), {days: 7})}));
+  const ongoingProjects = React.useMemo(() => initialProjects.filter(p => p.status === 'in-progress'), []);
+  const upcomingTasks = React.useMemo(() => initialTasks.filter(t => t.status !== 'done' && t.dueDate && isWithinInterval(t.dueDate, { start: new Date(), end: add(new Date(), {days: 7})})), []);
+  const filteredProjects = React.useMemo(() => filteredEvents.filter(e => e.type === 'project') as Project[], [filteredEvents]);
 
   return (
     <main className="flex flex-col h-full pt-4">
@@ -591,7 +592,7 @@ export default function TimelinePage() {
                 );
               })}
               
-              {(filteredEvents.filter(e => e.type === 'project') as Project[]).map(p => {
+              {filteredProjects.map(p => {
                  const startDayInGrid = p.startDate > firstDayOfGrid ? p.startDate : firstDayOfGrid;
                  const endDayInGrid = p.endDate < lastDayOfGrid ? p.endDate : lastDayOfGrid;
                  
@@ -617,13 +618,14 @@ export default function TimelinePage() {
                                 gridColumn: `${startCol} / span ${duration > 0 ? duration : 1}`,
                                 gridRow: `${startRow}`,
                             }}
-                            className={cn(
-                                "absolute h-6 text-white text-[10px] font-medium flex items-center px-1.5 select-none transition-all duration-200 z-10",
+                             className={cn(
+                                "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10",
                                 getProjectColor(p.id),
-                                "bg-gradient-to-r from-transparent via-white/10 to-transparent",
-                                hoveredEvent === p.id && 'ring-2 ring-white/80 scale-105 z-20',
+                                hoveredEvent === p.id && 'ring-2 ring-white/80 scale-[1.03] z-20',
                                 p.startDate >= firstDayOfGrid ? 'rounded-l-md' : '',
-                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : ''
+                                p.endDate <= lastDayOfGrid ? 'rounded-r-md' : 'rounded-r-none',
+                                startCol === 1 && 'rounded-l-md',
+                                (startCol + duration -1) === 7 && 'rounded-r-md'
                             )}
                         >
                             <span className="truncate">{p.title}</span>
