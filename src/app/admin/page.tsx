@@ -3,8 +3,7 @@
 
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus } from 'lucide-react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus, GripVertical } from 'lucide-react';
 import Link from 'next/link';
 import { initialProjects } from './workspace/data';
 import { initialTasks } from './workspace/data';
@@ -12,7 +11,13 @@ import { clientsData } from './workspace/data';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { formatDistanceToNow, differenceInCalendarDays } from 'date-fns';
+import { formatDistanceToNow, differenceInCalendarDays, isBefore, addDays } from 'date-fns';
+import { DndContext, useSensor, useSensors, PointerSensor, closestCenter, DragOverlay, DragStartEvent, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import type { Task } from './workspace/tasks/page';
 
 const activeProjectsCount = initialProjects.filter(p => p.status === 'in-progress').length;
 const pendingTasksCount = initialTasks.filter(t => t.status === 'todo' || t.status === 'in-progress').length;
@@ -29,14 +34,129 @@ const activeProjects = initialProjects
   .slice(0, 4);
 
 const recentClients = clientsData
-  .sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime()) // Assuming higher ID is newer, will fix to date if available
+  .sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime())
   .slice(0, 5);
 
-const taskStatusData = [
-  { name: 'To Do', value: initialTasks.filter(t => t.status === 'todo').length, color: '#3b82f6' },
-  { name: 'In Progress', value: initialTasks.filter(t => t.status === 'in-progress').length, color: '#f97316' },
-  { name: 'Done', value: initialTasks.filter(t => t.status === 'done').length, color: '#22c55e' },
-];
+type Quadrant = 'do' | 'schedule' | 'delegate' | 'eliminate';
+
+const TaskPriorityMatrix = () => {
+    const getQuadrant = (task: Task): Quadrant => {
+        const isUrgent = task.dueDate ? isBefore(task.dueDate, addDays(new Date(), 7)) : false;
+        if (task.priority === 'high') {
+            return isUrgent ? 'do' : 'schedule';
+        }
+        if (task.priority === 'medium') {
+            return isUrgent ? 'delegate' : 'schedule';
+        }
+        return 'eliminate';
+    };
+
+    const [tasks, setTasks] = React.useState<Record<Quadrant, Task[]>>(() => {
+        const initialQuadrants: Record<Quadrant, Task[]> = { do: [], schedule: [], delegate: [], eliminate: [] };
+        initialTasks.forEach(task => {
+            if (task.status !== 'done') {
+                const quadrant = getQuadrant(task);
+                initialQuadrants[quadrant].push(task);
+            }
+        });
+        return initialQuadrants;
+    });
+    
+    const [activeId, setActiveId] = React.useState<string | null>(null);
+    const sensors = useSensors(useSensor(PointerSensor));
+
+    const findTask = (id: string) => {
+        for (const quadrant of Object.keys(tasks) as Quadrant[]) {
+            const task = tasks[quadrant].find(t => t.id === id);
+            if (task) return { task, quadrant };
+        }
+        return null;
+    };
+
+    const handleDragStart = (event: DragStartEvent) => {
+        setActiveId(event.active.id as string);
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveId(null);
+
+        if (over && active.id !== over.id) {
+            const activeTaskInfo = findTask(active.id as string);
+            if (!activeTaskInfo) return;
+
+            const { task: activeTask, quadrant: sourceQuadrant } = activeTaskInfo;
+            const targetQuadrant = over.id as Quadrant;
+
+            if (sourceQuadrant !== targetQuadrant) {
+                setTasks(prev => {
+                    const newTasks = { ...prev };
+                    newTasks[sourceQuadrant] = newTasks[sourceQuadrant].filter(t => t.id !== active.id);
+                    newTasks[targetQuadrant] = [activeTask, ...newTasks[targetQuadrant]];
+                    return newTasks;
+                });
+            }
+        }
+    };
+    
+    const activeTask = activeId ? findTask(activeId)?.task : null;
+
+    const quadrants: { id: Quadrant; title: string; color: string; description: string }[] = [
+        { id: 'do', title: 'Do First', color: 'border-red-400/50 bg-red-900/10', description: 'Urgent & Important' },
+        { id: 'schedule', title: 'Schedule', color: 'border-blue-400/50 bg-blue-900/10', description: 'Important, Not Urgent' },
+        { id: 'delegate', title: 'Delegate', color: 'border-orange-400/50 bg-orange-900/10', description: 'Urgent, Not Important' },
+        { id: 'eliminate', title: 'Eliminate', color: 'border-white/20 bg-white/5', description: 'Not Urgent, Not Important' },
+    ];
+    
+    return (
+        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
+            <div className="grid md:grid-cols-2 gap-4">
+                {quadrants.map(quad => (
+                    <QuadrantColumn key={quad.id} id={quad.id} title={quad.title} description={quad.description} tasks={tasks[quad.id]} colorClass={quad.color} />
+                ))}
+            </div>
+             <DragOverlay>
+                {activeTask ? <TaskItem task={activeTask} isDragging /> : null}
+            </DragOverlay>
+        </DndContext>
+    );
+};
+
+const QuadrantColumn = ({ id, title, description, tasks, colorClass }: { id: Quadrant; title: string; description: string; tasks: Task[]; colorClass: string }) => {
+    const { setNodeRef } = useSortable({ id });
+    return (
+        <div ref={setNodeRef} className={cn("rounded-2xl border p-4 space-y-3 h-[250px] flex flex-col", colorClass)}>
+            <div>
+                <h4 className="font-bold text-white/90">{title}</h4>
+                <p className="text-xs text-white/50">{description}</p>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                    {tasks.map(task => <TaskItem key={task.id} task={task} />)}
+                </SortableContext>
+            </div>
+        </div>
+    );
+};
+
+const TaskItem = ({ task, isDragging }: { task: Task; isDragging?: boolean }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
+    const style = { transform: CSS.Transform.toString(transform), transition };
+    
+    const priorityColors = {
+        high: 'bg-red-500',
+        medium: 'bg-orange-500',
+        low: 'bg-blue-500'
+    };
+
+    return (
+        <div ref={setNodeRef} style={style} {...attributes} className={cn("bg-white/10 backdrop-blur-sm border border-white/20 p-2 rounded-lg text-sm text-white/80 flex items-center gap-2", isDragging && "opacity-50")}>
+            <div {...listeners} className="cursor-grab text-white/40 hover:text-white"><GripVertical className="h-4 w-4" /></div>
+            <span className={cn("h-2 w-2 rounded-full flex-shrink-0", priorityColors[task.priority])}></span>
+            <span className="truncate flex-1">{task.title}</span>
+        </div>
+    );
+};
 
 
 export default function AdminDashboard() {
@@ -172,40 +292,11 @@ export default function AdminDashboard() {
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-white/90">Task Breakdown</CardTitle>
+            <CardTitle className="text-white/90">Task Priority Matrix</CardTitle>
+             <CardContent className="p-0 pt-4">
+                <TaskPriorityMatrix />
+            </CardContent>
           </CardHeader>
-          <CardContent className="pl-2">
-            <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                    <Pie data={taskStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={false}
-                     label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-                        const RADIAN = Math.PI / 180;
-                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
-          
-                        return (
-                          <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-                            {`${(percent * 100).toFixed(0)}%`}
-                          </text>
-                        );
-                      }}>
-                        {taskStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} stroke={entry.color} className="focus:outline-none"/>
-                        ))}
-                    </Pie>
-                     <Tooltip
-                        contentStyle={{
-                            background: 'hsla(240, 10%, 3.9%, 0.8)',
-                            border: '1px solid hsla(0,0%,100%,0.1)',
-                            borderRadius: '0.75rem',
-                            color: '#fff',
-                        }}
-                     />
-                     <Legend iconType="circle" />
-                </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
         </Card>
        </div>
     </main>
