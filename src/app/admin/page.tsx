@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow, differenceInCalendarDays, isBefore, addDays } from 'date-fns';
-import { DndContext, useSensor, useSensors, PointerSensor, closestCenter, DragOverlay, DragStartEvent, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, useSensor, useSensors, PointerSensor, closestCenter, DragOverlay, DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
@@ -72,6 +72,17 @@ const TaskPriorityMatrix = () => {
         }
         return null;
     };
+    
+    const findQuadrantForTask = (taskId: string | null): Quadrant | null => {
+        if (!taskId) return null;
+        for (const quadrant of Object.keys(tasks) as Quadrant[]) {
+            if (tasks[quadrant].some(t => t.id === taskId)) {
+                return quadrant;
+            }
+        }
+        return null;
+    }
+
 
     const handleDragStart = (event: DragStartEvent) => {
         setActiveId(event.active.id as string);
@@ -80,19 +91,31 @@ const TaskPriorityMatrix = () => {
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         setActiveId(null);
-
+    
         if (over && active.id !== over.id) {
             const activeTaskInfo = findTask(active.id as string);
             if (!activeTaskInfo) return;
-
+    
             const { task: activeTask, quadrant: sourceQuadrant } = activeTaskInfo;
-            const targetQuadrant = over.id as Quadrant;
+            
+            const overIsQuadrant = ['do', 'schedule', 'delegate', 'eliminate'].includes(over.id as string);
+            let targetQuadrant: Quadrant | null;
 
+            if (overIsQuadrant) {
+                targetQuadrant = over.id as Quadrant;
+            } else {
+                targetQuadrant = findQuadrantForTask(over.id as string);
+            }
+            
+            if (!targetQuadrant) return;
+    
             if (sourceQuadrant !== targetQuadrant) {
                 setTasks(prev => {
                     const newTasks = { ...prev };
                     newTasks[sourceQuadrant] = newTasks[sourceQuadrant].filter(t => t.id !== active.id);
-                    newTasks[targetQuadrant] = [activeTask, ...newTasks[targetQuadrant]];
+                    // Ensure the target quadrant array exists before spreading
+                    const targetTasks = newTasks[targetQuadrant] || [];
+                    newTasks[targetQuadrant] = [activeTask, ...targetTasks];
                     return newTasks;
                 });
             }
@@ -123,7 +146,7 @@ const TaskPriorityMatrix = () => {
 };
 
 const QuadrantColumn = ({ id, title, description, tasks, colorClass }: { id: Quadrant; title: string; description: string; tasks: Task[]; colorClass: string }) => {
-    const { setNodeRef } = useSortable({ id });
+    const { setNodeRef } = useSortable({ id: id, data: {type: 'quadrant'} });
     return (
         <div ref={setNodeRef} className={cn("rounded-2xl border p-4 space-y-3 h-[250px] flex flex-col", colorClass)}>
             <div>
@@ -302,5 +325,3 @@ export default function AdminDashboard() {
     </main>
   );
 }
-
-    
