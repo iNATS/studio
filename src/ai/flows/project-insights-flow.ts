@@ -12,13 +12,13 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const ProjectVibeInputSchema = z.object({
+const ProjectVibeInputSchema = z.object({
   projectTitle: z.string().describe('The title of the project.'),
   projectDescription: z.string().describe('A detailed description of the project.'),
 });
 export type ProjectVibeInput = z.infer<typeof ProjectVibeInputSchema>;
 
-export const ProjectVibeOutputSchema = z.object({
+const ProjectVibeOutputSchema = z.object({
   aesthetic: z.string().describe('A 2-3 word summary of the overall design aesthetic (e.g., "Clean & Minimalist", "Bold & Energetic").'),
   keywords: z.array(z.string()).describe('A list of 3-5 keywords that capture the design essence (e.g., "monochromatic", "geometric", "playful").'),
 });

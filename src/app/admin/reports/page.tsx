@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { initialProjects, clientsData } from '../workspace/data';
 import type { Project } from '../workspace/projects/page';
-import { getProjectVibe, ProjectVibeInput } from '@/ai/flows/project-insights-flow';
+import { getProjectVibe, type ProjectVibeInput } from '@/ai/flows/project-insights-flow';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
