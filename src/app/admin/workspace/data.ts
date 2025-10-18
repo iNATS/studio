@@ -51,12 +51,13 @@ export const initialProjects: Project[] = [
 
 export const initialTasks: Task[] = [
     { id: '1', title: 'Design Landing Page', description: 'Create mockups in Figma for the new marketing campaign. Focus on a clean and modern design.', status: 'in-progress', priority: 'high', clientId: '1', dueDate: new Date(2024, 6, 20), tags: ['design', 'UI'] },
-    { id: '2', title: 'Develop API Endpoints', description: 'Setup new GraphQL routes for user authentication and profile management.', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'] },
-    { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile devices where the keyboard covers the password field.', status: 'in-progress', priority: 'medium', clientId: '3' },
-    { id: '4', title: 'Write Documentation', description: 'Create comprehensive documentation for the new credit card processing feature, including API specs and usage examples.', status: 'todo', priority: 'low', dueDate: new Date(2024, 7, 1) },
+    { id: '2', title: 'Develop API Endpoints', description: 'Setup new GraphQL routes for user authentication and profile management.', status: 'todo', priority: 'high', clientId: '2', tags: ['backend'], dueDate: new Date(2024, 8, 25) },
+    { id: '3', title: 'Fix Login Bug', description: 'Users reporting issues on mobile devices where the keyboard covers the password field.', status: 'in-progress', priority: 'medium', clientId: '3', dueDate: new Date(2024, 8, 30) },
+    { id: '4', title: 'Write Documentation', description: 'Create comprehensive documentation for the new credit card processing feature, including API specs and usage examples.', status: 'todo', priority: 'low', dueDate: new Date(2024, 9, 1) },
     { id: '5', title: 'Deploy Staging Server', description: 'Update the staging environment with the latest build from the develop branch.', status: 'done', priority: 'high', clientId: '1', tags: ['devops'] },
     { id: '6', title: 'Client Meeting Prep', description: 'Prepare slides and a demo for the project update meeting with Michael Chen.', status: 'done', priority: 'medium', clientId: '2' },
-    { id: '7', title: 'Update Dependencies', description: 'Check for outdated npm packages and update them, focusing on any with known security vulnerabilities.', status: 'todo', priority: 'low', tags: ['maintenance'] },
+    { id: '7', title: 'Update Dependencies', description: 'Check for outdated npm packages and update them, focusing on any with known security vulnerabilities.', status: 'todo', priority: 'low', tags: ['maintenance'], dueDate: new Date(2024, 9, 15) },
+    { id: '8', title: 'Overdue Task Example', description: 'This task is intentionally overdue to test the dashboard card.', status: 'todo', priority: 'high', dueDate: new Date(2024, 0, 1), tags: ['example'] },
 ];
 
     
