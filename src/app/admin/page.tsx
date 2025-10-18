@@ -11,13 +11,11 @@ import { clientsData } from './workspace/data';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format, formatDistanceToNow, differenceInCalendarDays, isToday, isThisWeek, isPast } from 'date-fns';
-import { DndContext, useSensor, useSensors, PointerSensor, closestCenter, DragOverlay, DragStartEvent, DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { format, formatDistanceToNow, differenceInCalendarDays, isPast, startOfMonth, endOfMonth, eachDayOfInterval, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import type { Task } from './workspace/tasks/page';
+import type { Project } from './workspace/projects/page';
+
 
 const activeProjectsCount = initialProjects.filter(p => p.status === 'in-progress').length;
 const pendingTasksCount = initialTasks.filter(t => t.status === 'todo' || t.status === 'in-progress').length;
@@ -37,133 +35,60 @@ const recentClients = clientsData
   .sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime())
   .slice(0, 5);
 
-type TaskLane = 'overdue' | 'today' | 'this-week';
+const ProjectsTimelineChart = () => {
+    const today = new Date();
+    const monthStart = startOfMonth(today);
+    const monthEnd = endOfMonth(today);
+    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    const projectsInView = initialProjects
+        .filter(p => p.startDate <= monthEnd && p.endDate >= monthStart && p.status === 'in-progress')
+        .slice(0, 6);
 
-const DailyTaskFocus = () => {
-    const getLane = (task: Task): TaskLane | null => {
-        if (!task.dueDate || task.status === 'done') return null;
-        if (isPast(task.dueDate) && !isToday(task.dueDate)) return 'overdue';
-        if (isToday(task.dueDate)) return 'today';
-        if (isThisWeek(task.dueDate, { weekStartsOn: 1 })) return 'this-week';
-        return null;
+    const getProjectColor = (projectId: string) => {
+        const colors = [
+          'from-cyan-400 to-blue-500', 'from-sky-400 to-indigo-500', 'from-violet-400 to-fuchsia-500',
+          'from-purple-400 to-pink-500', 'from-rose-400 to-red-500', 'from-orange-400 to-amber-500',
+          'from-lime-400 to-green-500',
+        ];
+        const hash = projectId.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+        return colors[hash % colors.length];
     };
 
-    const [tasks, setTasks] = React.useState<Record<TaskLane, Task[]>>(() => {
-        const initialLanes: Record<TaskLane, Task[]> = { overdue: [], today: [], 'this-week': [] };
-        initialTasks.forEach(task => {
-            const lane = getLane(task);
-            if (lane) {
-                initialLanes[lane].push(task);
-            }
-        });
-        return initialLanes;
-    });
-    
-    const [activeId, setActiveId] = React.useState<string | null>(null);
-    const sensors = useSensors(useSensor(PointerSensor));
-    
-    const findTaskAndLane = (taskId: string): { task: Task; lane: TaskLane } | null => {
-        for (const lane of Object.keys(tasks) as TaskLane[]) {
-            const task = tasks[lane].find(t => t.id === taskId);
-            if (task) return { task, lane };
-        }
-        return null;
-    };
-    
-    const handleDragStart = (event: DragStartEvent) => {
-        setActiveId(event.active.id as string);
-    };
-
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-        setActiveId(null);
-    
-        if (!over) return;
-    
-        const activeTaskInfo = findTaskAndLane(active.id as string);
-        if (!activeTaskInfo) return;
-    
-        const { task: activeTask, lane: sourceLane } = activeTaskInfo;
-        
-        // Determine the target lane. It can be the column or a task within the column.
-        let targetLane: TaskLane | undefined;
-        if (['overdue', 'today', 'this-week'].includes(over.id as string)) {
-            targetLane = over.id as TaskLane;
-        } else {
-            const overTaskInfo = findTaskAndLane(over.id as string);
-            targetLane = overTaskInfo?.lane;
-        }
-
-        if (!targetLane || targetLane === 'overdue') return;
-        
-        if (sourceLane !== targetLane) {
-             setTasks(prev => {
-                const newTasks = { ...prev };
-                newTasks[sourceLane] = prev[sourceLane].filter(t => t.id !== active.id);
-                newTasks[targetLane] = [activeTask, ...prev[targetLane]];
-                return newTasks;
-            });
-        }
-    };
-    
-    const activeTask = activeId ? findTaskAndLane(activeId)?.task : null;
-
-    const lanes: { id: TaskLane; title: string; color: string; }[] = [
-        { id: 'overdue', title: 'Overdue', color: 'border-red-400/50 bg-red-900/10' },
-        { id: 'today', title: 'Today', color: 'border-blue-400/50 bg-blue-900/10' },
-        { id: 'this-week', title: 'This Week', color: 'border-white/20 bg-white/5' },
-    ];
-    
     return (
-        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
-            <div className="grid md:grid-cols-3 gap-4">
-                {lanes.map(lane => (
-                    <TaskLaneColumn key={lane.id} id={lane.id} title={lane.title} tasks={tasks[lane.id]} colorClass={lane.color} />
+        <div className="space-y-4">
+            <div className="grid gap-x-2 text-xs text-center text-white/50" style={{gridTemplateColumns: `repeat(${daysInMonth.length}, minmax(0, 1fr))`}}>
+                {daysInMonth.map(day => (
+                    <div key={day.toISOString()} className={cn("relative h-6 flex items-center justify-center", isToday(day) && "text-blue-300")}>
+                        {format(day, 'd')}
+                        {isToday(day) && <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-blue-300"></span>}
+                    </div>
                 ))}
             </div>
-             <DragOverlay>
-                {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
-            </DragOverlay>
-        </DndContext>
-    );
-};
+            <div className="relative space-y-2">
+                {projectsInView.map((project, index) => {
+                    const startDay = Math.max(1, differenceInCalendarDays(project.startDate, monthStart) + 1);
+                    const endDay = Math.min(daysInMonth.length, differenceInCalendarDays(project.endDate, monthStart) + 1);
+                    if (endDay < 1 || startDay > daysInMonth.length) return null;
 
-const TaskLaneColumn = ({ id, title, tasks, colorClass }: { id: TaskLane; title: string; tasks: Task[]; colorClass: string }) => {
-    const { setNodeRef } = useSortable({ id, data: {type: 'lane'} });
-    return (
-        <div ref={setNodeRef} className={cn("rounded-2xl border p-4 space-y-3 h-[300px] flex flex-col", colorClass)}>
-            <div>
-                <h4 className="font-bold text-white/90">{title} <Badge variant="secondary" className="ml-1">{tasks.length}</Badge></h4>
-            </div>
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-                <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => <TaskCard key={task.id} task={task} />)}
-                </SortableContext>
-            </div>
-        </div>
-    );
-};
-
-const TaskCard = ({ task, isDragging }: { task: Task; isDragging?: boolean }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
-    const style = { transform: CSS.Transform.toString(transform), transition };
-    const project = initialProjects.find(p => p.id === task.clientId);
-    
-    const priorityColors = {
-        high: 'bg-red-500',
-        medium: 'bg-orange-500',
-        low: 'bg-blue-500'
-    };
-
-    return (
-        <div ref={setNodeRef} style={style} {...attributes} className={cn("bg-white/10 backdrop-blur-sm border border-white/20 p-2.5 rounded-lg text-white/80 flex items-start gap-3", isDragging && "opacity-50 ring-2 ring-primary")}>
-            <div {...listeners} className="cursor-grab text-white/40 hover:text-white pt-0.5"><GripVertical className="h-4 w-4" /></div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className={cn("h-2 w-2 rounded-full flex-shrink-0", priorityColors[task.priority])}></span>
-                <span className="font-medium truncate flex-1 text-sm">{task.title}</span>
-              </div>
-              <p className="text-xs text-white/50 mt-1">{project?.title || 'General Task'}</p>
+                    const gridColumn = `${Math.max(1, startDay)} / ${Math.min(daysInMonth.length + 1, endDay + 1)}`;
+                    const colorClass = getProjectColor(project.id);
+                    
+                    return (
+                        <div key={project.id} className="h-10 flex items-center relative rounded-lg" style={{ gridColumn: gridColumn, gridRow: index + 1}}>
+                           <div className={cn("absolute inset-0 bg-gradient-to-r rounded-lg opacity-20", colorClass)}></div>
+                           <div className={cn("absolute inset-0 rounded-lg border", "border-cyan-400/30")}></div>
+                           <p className="font-semibold text-white/90 text-sm truncate pl-3">{project.title}</p>
+                        </div>
+                    );
+                })}
+                 <div 
+                    className="grid gap-x-2 h-full absolute inset-0 -z-10" 
+                    style={{gridTemplateColumns: `repeat(${daysInMonth.length}, minmax(0, 1fr))`}}
+                 >
+                    {daysInMonth.map(day => (
+                        <div key={day.toISOString()} className={cn("border-r border-white/5 last:border-r-0", isToday(day) && "bg-blue-500/10")}></div>
+                    ))}
+                </div>
             </div>
         </div>
     );
@@ -303,11 +228,11 @@ export default function AdminDashboard() {
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-white/90">Daily Task Focus</CardTitle>
-            <CardDescription className="text-white/60">Drag tasks between Today and This Week to reschedule.</CardDescription>
+            <CardTitle className="text-white/90">Projects Timeline</CardTitle>
+            <CardDescription className="text-white/60">A visual overview of your active project schedules for this month.</CardDescription>
           </CardHeader>
            <CardContent>
-              <DailyTaskFocus />
+              <ProjectsTimelineChart />
           </CardContent>
         </Card>
        </div>
@@ -315,4 +240,3 @@ export default function AdminDashboard() {
   );
 }
 
-    
