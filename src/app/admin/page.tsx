@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus, GripVertical } from 'lucide-react';
+import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { initialProjects } from './workspace/data';
 import { initialTasks } from './workspace/data';
@@ -11,9 +11,9 @@ import { clientsData } from './workspace/data';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format, formatDistanceToNow, differenceInCalendarDays, isPast, startOfMonth, endOfMonth, eachDayOfInterval, isToday } from 'date-fns';
+import { format, formatDistanceToNow, isPast } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import type { Project } from './workspace/projects/page';
 
 
@@ -34,61 +34,84 @@ const activeProjects = initialProjects
 const recentClients = clientsData
   .sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime())
   .slice(0, 5);
+  
+const projectColors = [
+    '#2dd4bf', '#38bdf8', '#818cf8', '#c084fc', '#f472b6', '#fb923c'
+];
 
-const ProjectsTimelineChart = () => {
-    const today = new Date();
-    const monthStart = startOfMonth(today);
-    const monthEnd = endOfMonth(today);
-    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
-    const projectsInView = initialProjects
-        .filter(p => p.startDate <= monthEnd && p.endDate >= monthStart && p.status === 'in-progress')
-        .slice(0, 6);
+const ProjectOrbit = () => {
+    const projectsToShow = initialProjects.filter(p => p.status === 'in-progress').slice(0, 6);
+    const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
+    const orbitSize = 300;
+    const center = orbitSize / 2;
 
-    const getProjectColor = (projectId: string) => {
-        const colors = [
-          'from-cyan-400 to-blue-500', 'from-sky-400 to-indigo-500', 'from-violet-400 to-fuchsia-500',
-          'from-purple-400 to-pink-500', 'from-rose-400 to-red-500', 'from-orange-400 to-amber-500',
-          'from-lime-400 to-green-500',
-        ];
-        const hash = projectId.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-        return colors[hash % colors.length];
+    const getPosition = (index: number, total: number) => {
+        const angle = (index / total) * 2 * Math.PI;
+        const radius = orbitSize * 0.4;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        return { x, y };
     };
 
     return (
-        <div className="space-y-4">
-            <div className="grid gap-x-2 text-xs text-center text-white/50" style={{gridTemplateColumns: `repeat(${daysInMonth.length}, minmax(0, 1fr))`}}>
-                {daysInMonth.map(day => (
-                    <div key={day.toISOString()} className={cn("relative h-6 flex items-center justify-center", isToday(day) && "text-blue-300")}>
-                        {format(day, 'd')}
-                        {isToday(day) && <span className="absolute -bottom-1 w-1 h-1 rounded-full bg-blue-300"></span>}
-                    </div>
-                ))}
-            </div>
-            <div className="relative space-y-2">
-                {projectsInView.map((project, index) => {
-                    const startDay = Math.max(1, differenceInCalendarDays(project.startDate, monthStart) + 1);
-                    const endDay = Math.min(daysInMonth.length, differenceInCalendarDays(project.endDate, monthStart) + 1);
-                    if (endDay < 1 || startDay > daysInMonth.length) return null;
+        <div className="relative w-full h-[400px] flex items-center justify-center">
+            <div 
+                className="absolute w-[300px] h-[300px] border-2 border-dashed border-white/10 rounded-full"
+                style={{
+                    maskImage: 'radial-gradient(circle, transparent 70%, black 100%)',
+                }}
+            />
+             <div 
+                className="absolute w-[180px] h-[180px] border-2 border-dashed border-white/5 rounded-full"
+                 style={{
+                    maskImage: 'radial-gradient(circle, transparent 70%, black 100%)',
+                }}
+            />
+            
+            <AnimatePresence>
+                {selectedProject && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="absolute z-10 text-center"
+                    >
+                        <h3 className="font-bold text-lg text-white">{selectedProject.title}</h3>
+                        <p className="text-sm text-white/70">{selectedProject.description}</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                    const gridColumn = `${Math.max(1, startDay)} / ${Math.min(daysInMonth.length + 1, endDay + 1)}`;
-                    const colorClass = getProjectColor(project.id);
+            <div className="absolute inset-0">
+                {projectsToShow.map((project, index) => {
+                    const { x, y } = getPosition(index, projectsToShow.length);
+                    const color = projectColors[index % projectColors.length];
                     
                     return (
-                        <div key={project.id} className="h-10 flex items-center relative rounded-lg" style={{ gridColumn: gridColumn, gridRow: index + 1}}>
-                           <div className={cn("absolute inset-0 bg-gradient-to-r rounded-lg opacity-20", colorClass)}></div>
-                           <div className={cn("absolute inset-0 rounded-lg border", "border-cyan-400/30")}></div>
-                           <p className="font-semibold text-white/90 text-sm truncate pl-3">{project.title}</p>
-                        </div>
+                        <motion.div
+                            key={project.id}
+                            initial={{ x: center - 10, y: center - 10 }}
+                            animate={{ x: x-10, y: y-10 }}
+                            transition={{ 
+                                duration: 2, 
+                                ease: "easeInOut",
+                                delay: index * 0.2
+                            }}
+                            onMouseEnter={() => setSelectedProject(project)}
+                            onMouseLeave={() => setSelectedProject(null)}
+                            className="absolute w-5 h-5 rounded-full cursor-pointer"
+                        >
+                            <motion.div 
+                                className="w-full h-full rounded-full"
+                                style={{ 
+                                    backgroundColor: color,
+                                    boxShadow: `0 0 12px 2px ${color}`,
+                                }}
+                                whileHover={{ scale: 2 }}
+                            />
+                        </motion.div>
                     );
                 })}
-                 <div 
-                    className="grid gap-x-2 h-full absolute inset-0 -z-10" 
-                    style={{gridTemplateColumns: `repeat(${daysInMonth.length}, minmax(0, 1fr))`}}
-                 >
-                    {daysInMonth.map(day => (
-                        <div key={day.toISOString()} className={cn("border-r border-white/5 last:border-r-0", isToday(day) && "bg-blue-500/10")}></div>
-                    ))}
-                </div>
             </div>
         </div>
     );
@@ -146,35 +169,12 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3 mt-6">
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-white/90">Active Projects</CardTitle>
-            <Button variant="ghost" size="sm" asChild className="rounded-lg">
-                <Link href="/admin/workspace/projects">View All <ArrowRight className="ml-2 h-4 w-4"/></Link>
-            </Button>
+          <CardHeader>
+            <CardTitle className="text-white/90">Project Orbit</CardTitle>
+            <CardDescription className="text-white/60">A creative overview of your active projects.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-6">
-            {activeProjects.map(project => {
-                const totalDays = differenceInCalendarDays(project.endDate, project.startDate) || 1;
-                const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
-                const progress = Math.min(100, Math.max(0, (daysPassed / totalDays) * 100));
-                const client = clientsData.find(c => c.id === project.clientId);
-                return (
-                    <div key={project.id} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                            <span className="font-semibold text-white/90">{project.title}</span>
-                            {client && <div className="flex items-center gap-2 text-sm text-white/60">
-                                <Avatar className="h-6 w-6"><AvatarImage src={client.avatar}/><AvatarFallback>{client.name.charAt(0)}</AvatarFallback></Avatar>
-                                {client.company}
-                                </div>}
-                        </div>
-                        <Progress value={progress} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
-                        <div className="flex justify-between items-center text-xs text-white/50">
-                            <span>{Math.round(progress)}% complete</span>
-                            <span>Due in {formatDistanceToNow(project.endDate)}</span>
-                        </div>
-                    </div>
-                )
-            })}
+           <CardContent>
+              <ProjectOrbit />
           </CardContent>
         </Card>
         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1">
@@ -226,13 +226,36 @@ export default function AdminDashboard() {
                 </div>
             </CardContent>
         </Card>
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-white/90">Projects Timeline</CardTitle>
-            <CardDescription className="text-white/60">A visual overview of your active project schedules for this month.</CardDescription>
+         <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-white/90">Active Projects</CardTitle>
+            <Button variant="ghost" size="sm" asChild className="rounded-lg">
+                <Link href="/admin/workspace/projects">View All <ArrowRight className="ml-2 h-4 w-4"/></Link>
+            </Button>
           </CardHeader>
-           <CardContent>
-              <ProjectsTimelineChart />
+          <CardContent className="grid gap-6">
+            {activeProjects.map(project => {
+                const totalDays = Math.max(1, (project.endDate.getTime() - project.startDate.getTime()) / (1000 * 3600 * 24));
+                const daysPassed = Math.max(0, (new Date().getTime() - project.startDate.getTime()) / (1000 * 3600 * 24));
+                const progress = Math.min(100, (daysPassed / totalDays) * 100);
+                const client = clientsData.find(c => c.id === project.clientId);
+                return (
+                    <div key={project.id} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                            <span className="font-semibold text-white/90">{project.title}</span>
+                            {client && <div className="flex items-center gap-2 text-sm text-white/60">
+                                <Avatar className="h-6 w-6"><AvatarImage src={client.avatar}/><AvatarFallback>{client.name.charAt(0)}</AvatarFallback></Avatar>
+                                {client.company}
+                                </div>}
+                        </div>
+                        <Progress value={progress} className="h-2 bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
+                        <div className="flex justify-between items-center text-xs text-white/50">
+                            <span>{Math.round(progress)}% complete</span>
+                            <span>Due in {formatDistanceToNow(project.endDate)}</span>
+                        </div>
+                    </div>
+                )
+            })}
           </CardContent>
         </Card>
        </div>
@@ -240,3 +263,4 @@ export default function AdminDashboard() {
   );
 }
 
+    
