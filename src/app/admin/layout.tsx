@@ -78,7 +78,10 @@ export default function AdminLayout({
                     return (
                       <SidebarMenuItem key={item.label}>
                         <SidebarMenuSub>
-                          <SidebarMenuSubTrigger className={cn("text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg", isSubActive && "bg-black/10 dark:bg-white/20 text-foreground dark:text-white")}>
+                          <SidebarMenuSubTrigger 
+                            className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg" 
+                            data-active={isSubActive}
+                          >
                             <Icon />
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>
@@ -103,7 +106,8 @@ export default function AdminLayout({
                         <SidebarMenuButton 
                           asChild 
                           tooltip={item.label} 
-                          className={cn("text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg", isActive && "bg-black/10 dark:bg-white/20 text-foreground dark:text-white")}
+                          className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg"
+                          data-active={isActive}
                         >
                         <Link href={item.href!}>
                             <Icon />
@@ -118,7 +122,7 @@ export default function AdminLayout({
           <SidebarFooter className="p-3">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings" className={cn("text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg")}>
+                <SidebarMenuButton asChild tooltip="Settings" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg">
                   <Link href="#">
                     <Settings />
                     <span>Settings</span>
@@ -126,7 +130,7 @@ export default function AdminLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
                <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Security" className={cn("text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg")}>
+                <SidebarMenuButton asChild tooltip="Security" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg">
                   <Link href="#">
                     <Shield />
                     <span>Security</span>
