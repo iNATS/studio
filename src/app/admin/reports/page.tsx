@@ -44,7 +44,7 @@ export default function ReportsPage() {
     const incomeData = React.useMemo(() => {
         const months = Array.from({ length: 6 }).map((_, i) => subMonths(startOfMonth(new Date()), 5 - i));
         return months.map(month => {
-            const projectsInMonth = completedProjects.filter(p => isSameMonth(p.endDate, month));
+            const projectsInMonth = completedProjects.filter(p => p.endDate && isSameMonth(p.endDate, month));
             const income = projectsInMonth.reduce((acc, p) => acc + p.budget, 0);
             return {
                 name: format(month, 'MMM'),
@@ -77,7 +77,7 @@ export default function ReportsPage() {
 
     return (
         <main className="flex flex-col h-full">
-            <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md pt-4 pb-4 -mx-4 -mt-4 px-4">
+            <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                 <motion.h1 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
