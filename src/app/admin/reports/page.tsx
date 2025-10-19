@@ -3,27 +3,16 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Bot, DollarSign, Briefcase, Users, Palette } from 'lucide-react';
+import { DollarSign, Briefcase, Users, Palette, Activity, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, RadialBar, RadialBarChart, Legend } from 'recharts';
 import { initialProjects, clientsData } from '../workspace/data';
-import type { Project } from '../workspace/projects/page';
 import { getProjectVibe, type ProjectVibeInput } from '@/ai/flows/project-insights-flow';
 import { useToast } from '@/hooks/use-toast';
-import { ScrollArea } from '@/components/ui/scroll-area';
-
-type ProjectWithVibe = Project & {
-    vibe?: {
-        aesthetic: string;
-        keywords: string[];
-    };
-    clientName?: string;
-};
+import { addMonths, format, startOfMonth } from 'date-fns';
 
 const completedProjects = initialProjects.filter(p => p.status === 'completed');
 const totalBilled = completedProjects.reduce((acc, p) => acc + p.budget, 0);
-const avgBudget = totalBilled / (completedProjects.length || 1);
 
 const clientLeaderboard = clientsData.map(client => {
     const clientProjects = initialProjects.filter(p => p.clientId === client.id);
@@ -33,44 +22,7 @@ const clientLeaderboard = clientsData.map(client => {
 
 
 export default function ReportsPage() {
-    const [projectsWithVibes, setProjectsWithVibes] = React.useState<ProjectWithVibe[]>(completedProjects.map(p => ({
-        ...p,
-        clientName: clientsData.find(c => c.id === p.clientId)?.name
-    })));
-    const [isLoading, setIsLoading] = React.useState<Record<string, boolean>>({});
     const { toast } = useToast();
-
-    const handleGenerateVibe = async (projectId: string) => {
-        const project = projectsWithVibes.find(p => p.id === projectId);
-        if (!project) return;
-
-        setIsLoading(prev => ({ ...prev, [projectId]: true }));
-
-        try {
-            const input: ProjectVibeInput = {
-                projectTitle: project.title,
-                projectDescription: project.description,
-            };
-            const result = await getProjectVibe(input);
-            
-            setProjectsWithVibes(prev => prev.map(p => p.id === projectId ? { ...p, vibe: result } : p));
-
-            toast({
-                title: 'Vibe Generated!',
-                description: `AI analysis for "${project.title}" is complete.`,
-            });
-
-        } catch (error) {
-            console.error('Error generating project vibe:', error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Could not generate AI insights for this project.',
-            });
-        } finally {
-            setIsLoading(prev => ({ ...prev, [projectId]: false }));
-        }
-    };
     
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -89,6 +41,33 @@ export default function ReportsPage() {
         },
     };
 
+    const incomeData = React.useMemo(() => {
+        const months = Array.from({ length: 6 }).map((_, i) => subMonths(startOfMonth(new Date()), 5 - i));
+        return months.map(month => {
+            const projectsInMonth = completedProjects.filter(p => isSameMonth(p.endDate, month));
+            const income = projectsInMonth.reduce((acc, p) => acc + p.budget, 0);
+            return {
+                name: format(month, 'MMM'),
+                income: income,
+            };
+        });
+    }, []);
+
+    const workloadData = React.useMemo(() => {
+        const categories = ['web', 'mobile', 'design'];
+        const totalProjects = initialProjects.length;
+        const colors = ['#38bdf8', '#818cf8', '#f472b6'];
+
+        return categories.map((cat, index) => {
+             const count = initialProjects.filter(p => p.category === cat).length;
+             return {
+                name: cat.charAt(0).toUpperCase() + cat.slice(1),
+                value: count,
+                fill: colors[index % colors.length],
+             }
+        })
+    }, []);
+
     return (
         <main className="flex flex-col h-full">
             <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4">
@@ -103,7 +82,7 @@ export default function ReportsPage() {
             </div>
             
             <motion.div 
-                className="grid gap-6 md:grid-cols-3 mb-6"
+                className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -111,7 +90,7 @@ export default function ReportsPage() {
                 <motion.div variants={itemVariants}>
                     <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-white/70">Total Billed</CardTitle>
+                            <CardTitle className="text-sm font-medium text-white/70">Total Revenue</CardTitle>
                             <DollarSign className="h-5 w-5 text-green-400" />
                         </CardHeader>
                         <CardContent>
@@ -123,12 +102,24 @@ export default function ReportsPage() {
                 <motion.div variants={itemVariants}>
                      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-medium text-white/70">Avg. Project Budget</CardTitle>
+                            <CardTitle className="text-sm font-medium text-white/70">Completed Projects</CardTitle>
                             <Briefcase className="h-5 w-5 text-blue-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-white">{avgBudget.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</div>
-                             <p className="text-xs text-white/50">Across all projects</p>
+                            <div className="text-3xl font-bold text-white">{completedProjects.length}</div>
+                             <p className="text-xs text-white/50">Across all time</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                     <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-sm font-medium text-white/70">Total Clients</CardTitle>
+                            <Users className="h-5 w-5 text-purple-400" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-white">{clientsData.length}</div>
+                             <p className="text-xs text-white/50">All-time client count</p>
                         </CardContent>
                     </Card>
                 </motion.div>
@@ -136,92 +127,127 @@ export default function ReportsPage() {
                     <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-white/70 flex items-center justify-between">
-                                Client Leaderboard
-                                <Users className="h-5 w-5 text-purple-400" />
+                                Active Projects
+                                <Activity className="h-5 w-5 text-orange-400" />
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-1">
-                                {clientLeaderboard.map((client, index) => (
-                                    <div key={client.id} className="flex justify-between items-center text-xs">
-                                        <span className="text-white/80">{index + 1}. {client.name}</span>
-                                        <span className="font-mono text-purple-300">{client.totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</span>
-                                    </div>
-                                ))}
-                            </div>
+                           <div className="text-3xl font-bold text-white">{initialProjects.filter(p => p.status === 'in-progress').length}</div>
+                           <p className="text-xs text-white/50">Currently in progress</p>
                         </CardContent>
                     </Card>
                 </motion.div>
             </motion.div>
 
-            <motion.div 
-                className="flex-1"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+             <motion.div 
+                className="grid gap-6 lg:grid-cols-3"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
             >
-                <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
-                    <CardHeader>
-                        <CardTitle className="text-white/90 text-xl">Project Insights</CardTitle>
-                        <CardContent className="text-white/60 p-0 pt-2">
-                            Generate AI-powered creative analyses for your completed projects to uncover design trends and themes in your work.
+                <motion.div variants={itemVariants} className="lg:col-span-2">
+                     <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
+                        <CardHeader>
+                            <CardTitle className="text-white/90 text-lg flex items-center gap-2"><TrendingUp className="h-5 w-5"/>6-Month Income</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <BarChart data={incomeData}>
+                                     <defs>
+                                        <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
+                                        <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis dataKey="name" stroke="hsla(0, 0%, 100%, 0.4)" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis stroke="hsla(0, 0%, 100%, 0.4)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} />
+                                    <Tooltip
+                                        cursor={{ fill: 'hsla(0, 0%, 100%, 0.1)', radius: 4 }}
+                                        contentStyle={{
+                                            background: 'rgba(20, 20, 22, 0.8)',
+                                            border: '1px solid hsla(0,0%,100%,0.1)',
+                                            borderRadius: '0.75rem',
+                                            color: '#fff',
+                                            backdropFilter: 'blur(4px)',
+                                        }}
+                                        formatter={(value) => [value.toLocaleString('en-US', { style: 'currency', currency: 'USD' }), "Income"]}
+                                     />
+                                    <Bar dataKey="income" fill="url(#incomeGradient)" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </CardContent>
+                    </Card>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                    <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
+                        <CardHeader>
+                             <CardTitle className="text-white/90 text-lg flex items-center gap-2"><Palette className="h-5 w-5"/>Workload</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <ResponsiveContainer width="100%" height={250}>
+                                <RadialBarChart 
+                                    innerRadius="30%" 
+                                    outerRadius="100%" 
+                                    data={workloadData} 
+                                    startAngle={90} 
+                                    endAngle={-270}
+                                >
+                                    <RadialBar
+                                        background
+                                        dataKey='value'
+                                        className="[&_.recharts-radial-bar-background-sector]:fill-white/5"
+                                     />
+                                    <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{color: 'white', fontSize: '14px'}} />
+                                     <Tooltip
+                                        contentStyle={{
+                                            background: 'rgba(20, 20, 22, 0.8)',
+                                            border: '1px solid hsla(0,0%,100%,0.1)',
+                                            borderRadius: '0.75rem',
+                                            color: '#fff',
+                                            backdropFilter: 'blur(4px)',
+                                        }}
+                                        formatter={(value, name) => [`${value} projects`, name]}
+                                     />
+                                </RadialBarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </motion.div>
+
+            <motion.div
+                 className="mt-6"
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.5, delay: 0.4 }}
+            >
+                <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+                    <CardHeader>
+                        <CardTitle className="text-white/90 text-lg flex items-center gap-2"><Users className="h-5 w-5"/>Top Clients by Value</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 overflow-hidden">
-                        <ScrollArea className="h-full pr-4 -mr-4">
-                            <motion.div 
-                                className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
-                                variants={containerVariants}
-                                initial="hidden"
-                                animate="visible"
-                            >
-                                {projectsWithVibes.map((project) => (
-                                    <motion.div key={project.id} variants={itemVariants}>
-                                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 h-full flex flex-col justify-between hover:bg-white/10 transition-colors group">
-                                            <div>
-                                                <div className="flex justify-between items-start">
-                                                    <h4 className="font-bold text-white/90">{project.title}</h4>
-                                                    <span className="font-mono text-xs text-green-300/80">{project.budget.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</span>
-                                                </div>
-                                                <p className="text-xs text-white/60 mb-3">{project.clientName}</p>
-                                                {project.vibe ? (
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <Palette className="h-4 w-4 text-purple-300" />
-                                                            <p className="text-sm font-semibold text-white/80">{project.vibe.aesthetic}</p>
-                                                        </div>
-                                                        <div className="flex flex-wrap gap-1.5">
-                                                            {project.vibe.keywords.map(kw => (
-                                                                <Badge key={kw} variant="outline" className="text-xs text-white/70 bg-white/5 border-white/10">{kw}</Badge>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <p className="text-sm text-white/50 italic">No AI insights generated yet.</p>
-                                                )}
-                                            </div>
-                                             <Button 
-                                                variant="ghost" 
-                                                size="sm" 
-                                                className="w-full mt-4 rounded-lg bg-white/5 text-white/70 hover:bg-white/10 hover:text-white/90"
-                                                onClick={() => handleGenerateVibe(project.id)}
-                                                disabled={isLoading[project.id]}
-                                            >
-                                                {isLoading[project.id] ? (
-                                                    <Bot className="mr-2 h-4 w-4 animate-spin" />
-                                                ) : (
-                                                     <Bot className="mr-2 h-4 w-4" />
-                                                )}
-                                                Generate Vibe
-                                            </Button>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </motion.div>
-                        </ScrollArea>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {clientLeaderboard.map((client, index) => (
+                                <div key={client.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-sm font-bold text-white/50 w-4">{index + 1}.</span>
+                                        <div className="font-medium text-white/90">{client.name}</div>
+                                        <div className="text-xs text-white/60">{client.company}</div>
+                                    </div>
+                                    <div className="font-mono text-lg text-green-300">{client.totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</div>
+                                </div>
+                            ))}
+                        </div>
                     </CardContent>
                 </Card>
             </motion.div>
+
         </main>
     );
 }
+
+const isSameMonth = (d1: Date, d2: Date) => {
+    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
+}
+
+    
