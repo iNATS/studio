@@ -1,3 +1,4 @@
+
 'use client';
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
@@ -6,8 +7,35 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useInView } from '@/hooks/use-in-view';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { useFormState, useFormStatus } from 'react-dom';
+import { Loader2 } from 'lucide-react';
+
+const SubmitButton = () => {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" size="lg" disabled={pending} className="rounded-full text-base shadow-lg w-full sm:w-auto">
+            {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Send Message
+        </Button>
+    );
+};
 
 const ContactForm = () => {
+    const { toast } = useToast();
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        // Simulate form submission
+        toast({
+            variant: 'success',
+            title: "Message Sent!",
+            description: "Thanks for reaching out. I'll get back to you soon.",
+        });
+        (e.target as HTMLFormElement).reset();
+    }
+    
     return (
       <div className="w-full max-w-4xl mx-auto px-4">
         <div className="text-center mb-8">
@@ -16,25 +44,23 @@ const ContactForm = () => {
             Have a project in mind or just want to say hello? Drop me a line.
           </p>
         </div>
-        <form className="grid gap-6 max-w-2xl mx-auto">
+        <form onSubmit={handleSubmit} className="grid gap-6 max-w-2xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-foreground/80 dark:text-white/80">Your Name</Label>
-              <Input id="name" placeholder="John Doe" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+              <Input id="name" name="name" placeholder="John Doe" required className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground/80 dark:text-white/80">Your Email</Label>
-              <Input id="email" type="email" placeholder="john.doe@example.com" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+              <Input id="email" name="email" type="email" required placeholder="john.doe@example.com" className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="message" className="text-foreground/80 dark:text-white/80">Your Message</Label>
-            <Textarea id="message" placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
+            <Textarea id="message" name="message" required placeholder="I'd like to discuss..." rows={5} className="bg-foreground/5 border-border/50 dark:bg-white/5 dark:border-white/10" />
           </div>
           <div className="flex justify-center sm:justify-end">
-            <Button type="submit" size="lg" className="rounded-full text-base shadow-lg w-full sm:w-auto">
-              Send Message
-            </Button>
+            <SubmitButton />
           </div>
         </form>
       </div>

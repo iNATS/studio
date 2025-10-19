@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -56,7 +57,7 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const XIconSvg = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
@@ -72,35 +73,46 @@ export function SocialFab() {
   const socialLinks = [
     {
         label: 'Phone',
-        href: '#',
+        href: 'tel:+1234567890', // Replace with your phone number
         icon: <Phone strokeWidth={2.5} className="h-6 w-6" />,
       },
     {
       label: 'WhatsApp',
-      href: '#',
+      href: 'https://wa.me/1234567890', // Replace with your WhatsApp number
       icon: <WhatsAppIcon strokeWidth={1.5} className="h-6 w-6" />,
     },
     {
         label: 'Facebook',
-        href: '#',
+        href: 'https://facebook.com', // Replace with your Facebook profile
         icon: <FacebookIcon strokeWidth={2.5} className="h-6 w-6" />,
       },
       {
         label: 'Instagram',
-        href: '#',
+        href: 'https://instagram.com', // Replace with your Instagram profile
         icon: <InstagramIcon strokeWidth={2.5} className="h-6 w-6" />,
       },
     {
       label: 'Twitter',
-      href: '#',
-      icon: <XIcon className="h-5 w-5" />,
+      href: 'https://twitter.com', // Replace with your Twitter profile
+      icon: <XIconSvg className="h-5 w-5" />,
     },
     {
       label: 'LinkedIn',
-      href: '#',
+      href: 'https://linkedin.com', // Replace with your LinkedIn profile
       icon: <Linkedin strokeWidth={2.5} className="h-6 w-6" />,
     },
   ];
+
+  const handleMainButtonClick = () => {
+    if (isOpen) {
+      setIsOpen(false);
+    } else {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2">
@@ -124,7 +136,8 @@ export function SocialFab() {
       <Button
         size="icon"
         className="rounded-full shadow-lg w-14 h-14"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleMainButtonClick}
+        onMouseEnter={() => setIsOpen(true)}
         aria-expanded={isOpen}
         aria-label="Toggle social media links"
       >
