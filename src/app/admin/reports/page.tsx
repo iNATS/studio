@@ -205,7 +205,7 @@ export default function ReportsPage() {
                                             dataKey='value'
                                             className="[&_.recharts-radial-bar-background-sector]:fill-black/5 dark:[&_.recharts-radial-bar-background-sector]:fill-white/5"
                                         />
-                                        <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{color: 'hsl(var(--foreground))', fontSize: '14px'}} />
+                                        <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" align="center" wrapperStyle={{color: 'hsl(var(--foreground))', fontSize: '14px', padding: '10px'}} />
                                         <Tooltip
                                             contentStyle={{
                                                 background: 'hsla(var(--background), 0.8)',
@@ -252,4 +252,4 @@ export default function ReportsPage() {
             </div>
         </main>
     );
-}
+    
