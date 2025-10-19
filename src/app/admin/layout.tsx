@@ -19,7 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, MessageSquare } from 'lucide-react';
+import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -33,7 +33,7 @@ export default function AdminLayout({
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
-    { href: '/admin/workspace/meeting-room', label: 'Meeting Room', icon: MessageSquare },
+    { href: '/admin/workspace/meeting-room', label: 'Communications', icon: Users },
     {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
@@ -88,7 +88,7 @@ export default function AdminLayout({
                           </SidebarMenuSubTrigger>
                           <SidebarMenuSubContent>
                             {item.subItems.map(subItem => {
-                                const SubIcon = subItem.href.includes('meeting') ? MessageSquare : Users; // Just an example for icon variety
+                                const SubIcon = Users; // Just an example for icon variety
                                 return (
                                 <SidebarMenuSubItem key={subItem.href}>
                                     <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
