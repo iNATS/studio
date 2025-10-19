@@ -40,10 +40,10 @@ export default function AdminLayout({
         { href: '/admin/portfolio/page-content', label: 'Page Content' },
       ]
     },
+    { href: '/admin/workspace/meeting-room', label: 'Meeting Room', icon: MessageSquare },
     {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
-        { href: '/admin/workspace/meeting-room', label: 'Meeting Room' },
         { href: '/admin/workspace/clients', label: 'Clients' },
         { href: '/admin/workspace/tasks', label: 'Tasks' },
         { href: '/admin/workspace/projects', label: 'Projects' },
