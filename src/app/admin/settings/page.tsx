@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload, KeyRound, Bell, Languages } from 'lucide-react';
+import { Upload, KeyRound, Bell, Languages, Mail, MessageSquare, BarChart, Settings2, Code, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -46,10 +46,11 @@ export default function SettingsPage() {
       </div>
       <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
          <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
             <TabsTrigger value="profile" className="rounded-lg">Profile</TabsTrigger>
             <TabsTrigger value="security" className="rounded-lg">Security</TabsTrigger>
             <TabsTrigger value="preferences" className="rounded-lg">Preferences</TabsTrigger>
+            <TabsTrigger value="integrations" className="rounded-lg">Integrations</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile">
@@ -183,9 +184,74 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
           </TabsContent>
+          
+          <TabsContent value="integrations">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><BarChart className="h-5 w-5" />Marketing & Analytics</CardTitle>
+                        <CardDescription>Connect your marketing and analytics tools.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                         <div className="space-y-2">
+                            <Label htmlFor="ga-id" className="flex items-center gap-2"><Code className="h-4 w-4" /> Google Analytics ID</Label>
+                            <Input id="ga-id" placeholder="G-XXXXXXXXXX" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="meta-pixel" className="flex items-center gap-2"><Bot className="h-4 w-4" /> Meta Pixel ID</Label>
+                            <Input id="meta-pixel" placeholder="Your Meta Pixel ID" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                        </div>
+                         <div className="flex justify-end">
+                            <Button type="submit" className="rounded-lg">Save Analytics</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" />Communication</CardTitle>
+                        <CardDescription>Configure your mail and chat settings.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
+                            <h4 className="font-semibold flex items-center gap-2"><Mail className="h-4 w-4" /> Mail Server</h4>
+                             <Select defaultValue="default">
+                                <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
+                                    <SelectValue placeholder="Select mail provider" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+                                    <SelectItem value="default">Default (No-reply)</SelectItem>
+                                    <SelectItem value="smtp">SMTP</SelectItem>
+                                    <SelectItem value="resend">Resend</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <div className="space-y-2">
+                                <Label htmlFor="mail-api-key">API Key</Label>
+                                <Input id="mail-api-key" type="password" placeholder="Enter API Key" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                            </div>
+                        </div>
+                         <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
+                             <div className="flex items-center justify-between">
+                                <h4 className="font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Chat Widget</h4>
+                                <Switch id="chat-enabled" />
+                             </div>
+                             <p className="text-sm text-zinc-600 dark:text-white/60">Enable or disable the customer chat widget on your portfolio.</p>
+                            <div className="space-y-2">
+                                <Label htmlFor="chat-script">Chat Provider Script/ID</Label>
+                                <Textarea id="chat-script" placeholder="Paste your chat widget script or ID here" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10 text-xs" rows={3}/>
+                            </div>
+                        </div>
+                         <div className="flex justify-end">
+                            <Button type="submit" className="rounded-lg">Save Communication</Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+          </TabsContent>
 
         </Tabs>
       </div>
     </main>
   );
 }
+
+    
