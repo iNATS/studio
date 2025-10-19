@@ -9,7 +9,7 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, RadialBar, R
 import { initialProjects, clientsData } from '../workspace/data';
 import { getProjectVibe, type ProjectVibeInput } from '@/ai/flows/project-insights-flow';
 import { useToast } from '@/hooks/use-toast';
-import { addMonths, format, startOfMonth } from 'date-fns';
+import { addMonths, format, startOfMonth, subMonths, isSameMonth } from 'date-fns';
 
 const completedProjects = initialProjects.filter(p => p.status === 'completed');
 const totalBilled = completedProjects.reduce((acc, p) => acc + p.budget, 0);
@@ -59,10 +59,17 @@ export default function ReportsPage() {
         const colors = ['#38bdf8', '#818cf8', '#f472b6'];
 
         return categories.map((cat, index) => {
-             const count = initialProjects.filter(p => p.category === cat).length;
+             const projectCount = initialProjects.filter(p => {
+                // This is a simplified categorization logic, we can make it more robust
+                if (cat === 'web') return p.title.toLowerCase().includes('website') || p.title.toLowerCase().includes('web');
+                if (cat === 'mobile') return p.title.toLowerCase().includes('mobile') || p.title.toLowerCase().includes('app');
+                if (cat === 'design') return p.title.toLowerCase().includes('design') || p.title.toLowerCase().includes('branding');
+                return false;
+            }).length;
+
              return {
                 name: cat.charAt(0).toUpperCase() + cat.slice(1),
-                value: count,
+                value: projectCount,
                 fill: colors[index % colors.length],
              }
         })
@@ -244,10 +251,6 @@ export default function ReportsPage() {
 
         </main>
     );
-}
-
-const isSameMonth = (d1: Date, d2: Date) => {
-    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
 }
 
     
