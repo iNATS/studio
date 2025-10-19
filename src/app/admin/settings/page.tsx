@@ -44,7 +44,7 @@ export default function SettingsPage() {
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md pt-4 pb-4 -mx-4 -mt-4 px-4">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
-      <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
+      <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-8">
          <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
             <TabsTrigger value="profile" className="rounded-lg">Profile</TabsTrigger>
