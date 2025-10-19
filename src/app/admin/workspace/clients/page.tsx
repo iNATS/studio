@@ -423,7 +423,7 @@ export default function ClientsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
+      <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-8">
         <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
             <CardHeader>
                 <CardTitle>Your Clients</CardTitle>
@@ -501,6 +501,9 @@ export default function ClientsPage() {
                 />
             </CardFooter>
         </Card>
+      </div>
     </main>
   );
 }
+
+    

@@ -542,7 +542,7 @@ export default function ProjectsPage() {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto -mx-4 px-4 pb-4">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                   <div className="flex flex-col lg:flex-row gap-6 h-full">
                       {columns.map(status => (
@@ -625,3 +625,5 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    

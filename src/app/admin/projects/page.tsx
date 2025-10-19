@@ -183,109 +183,112 @@ export default function AdminProjectsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
-      <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
-        <CardHeader>
-          <CardTitle>Manage Your Portfolio</CardTitle>
-          <CardDescription className="text-zinc-600 dark:text-white/60">
-            View, edit, or delete your works.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto">
-          <Table>
-            <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
-              <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
-                <TableHead className="hidden w-[100px] sm:table-cell text-zinc-700 dark:text-white/80">
-                  <span className="sr-only">Image</span>
-                </TableHead>
-                <TableHead className="text-zinc-700 dark:text-white/80">Title</TableHead>
-                <TableHead className="text-zinc-700 dark:text-white/80">Category</TableHead>
-                <TableHead className="hidden md:table-cell text-zinc-700 dark:text-white/80">
-                  Tags
-                </TableHead>
-                <TableHead className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedItems.map((project) => (
-                <TableRow
-                  key={project.slug}
-                  className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
-                >
-                  <TableCell className="hidden sm:table-cell">
-                    <Image
-                      alt={project.title}
-                      className="aspect-square rounded-md object-cover"
-                      height="64"
-                      src={project.image}
-                      width="64"
+        <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-8">
+            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
+                <CardHeader>
+                <CardTitle>Manage Your Portfolio</CardTitle>
+                <CardDescription className="text-zinc-600 dark:text-white/60">
+                    View, edit, or delete your works.
+                </CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 overflow-y-auto">
+                <Table>
+                    <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                    <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
+                        <TableHead className="hidden w-[100px] sm:table-cell text-zinc-700 dark:text-white/80">
+                        <span className="sr-only">Image</span>
+                        </TableHead>
+                        <TableHead className="text-zinc-700 dark:text-white/80">Title</TableHead>
+                        <TableHead className="text-zinc-700 dark:text-white/80">Category</TableHead>
+                        <TableHead className="hidden md:table-cell text-zinc-700 dark:text-white/80">
+                        Tags
+                        </TableHead>
+                        <TableHead className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                        <span className="sr-only">Actions</span>
+                        </TableHead>
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {paginatedItems.map((project) => (
+                        <TableRow
+                        key={project.slug}
+                        className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
+                        >
+                        <TableCell className="hidden sm:table-cell">
+                            <Image
+                            alt={project.title}
+                            className="aspect-square rounded-md object-cover"
+                            height="64"
+                            src={project.image}
+                            width="64"
+                            />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                            {project.title}
+                        </TableCell>
+                        <TableCell>
+                            <Badge
+                            variant="outline"
+                            className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20"
+                            >
+                            {project.category}
+                            </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                            <div className="flex flex-wrap gap-1">
+                            {project.tags.slice(0, 3).map((tag) => (
+                                <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-zinc-500 dark:text-white/60 border-zinc-200/80 dark:border-white/10 text-xs"
+                                >
+                                {tag}
+                                </Badge>
+                            ))}
+                            </div>
+                        </TableCell>
+                        <TableCell>
+                            <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white"
+                                >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="end"
+                                className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white"
+                            >
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => window.open(`/projects/${project.slug}`, '_blank')}>View</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:bg-red-400/20 focus:text-red-500 dark:focus:text-white" onSelect={() => setProjectToDelete(project)}>
+                                Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+                </CardContent>
+                <CardFooter className="border-t border-zinc-200/80 dark:border-white/10 px-6 py-4">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
                     />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {project.title}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20"
-                    >
-                      {project.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <div className="flex flex-wrap gap-1">
-                      {project.tags.slice(0, 3).map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="text-zinc-500 dark:text-white/60 border-zinc-200/80 dark:border-white/10 text-xs"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white"
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => window.open(`/projects/${project.slug}`, '_blank')}>View</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:bg-red-400/20 focus:text-red-500 dark:focus:text-white" onSelect={() => setProjectToDelete(project)}>
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-         <CardFooter className="border-t border-zinc-200/80 dark:border-white/10 px-6 py-4">
-            <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-            />
-        </CardFooter>
-      </Card>
+                </CardFooter>
+            </Card>
+        </div>
     </main>
   );
 }
+
+    

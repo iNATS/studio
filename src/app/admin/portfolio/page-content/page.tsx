@@ -111,7 +111,7 @@ export default function PageContentPage() {
         <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
             <h1 className="text-2xl font-bold">Page Content</h1>
         </div>
-        <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
+        <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-8">
             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                 <CardHeader>
                 <CardTitle>Manage Landing Page</CardTitle>
@@ -242,3 +242,5 @@ export default function PageContentPage() {
     </main>
   );
 }
+
+    
