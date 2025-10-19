@@ -122,8 +122,8 @@ export default function AdminLayout({
           <SidebarFooter className="p-3">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg">
-                  <Link href="#">
+                <SidebarMenuButton asChild tooltip="Settings" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-lg" data-active={pathname === '/admin/settings'}>
+                  <Link href="/admin/settings">
                     <Settings />
                     <span>Settings</span>
                   </Link>
