@@ -12,10 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format, formatDistanceToNow, isPast } from 'date-fns';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import type { Project } from './workspace/projects/page';
-
+import { motion } from 'framer-motion';
 
 const activeProjectsCount = initialProjects.filter(p => p.status === 'in-progress').length;
 const pendingTasksCount = initialTasks.filter(t => t.status === 'todo' || t.status === 'in-progress').length;
@@ -36,22 +33,47 @@ const recentClients = clientsData
   .slice(0, 5);
   
 export default function AdminDashboard() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+      hidden: { y: 20, opacity: 0 },
+      visible: {
+          y: 0,
+          opacity: 1,
+          transition: { type: 'spring', stiffness: 100 },
+      },
+  };
+  
   return (
     <main className="flex flex-col h-full">
         <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Active Projects</CardTitle>
-            <Briefcase className="h-5 w-5 text-zinc-500 dark:text-white/50" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{activeProjectsCount}</div>
-            <Link href="/admin/workspace/projects" className="text-xs text-blue-500 dark:text-blue-400 hover:underline flex items-center gap-1">View projects <ArrowRight className="h-3 w-3" /></Link>
-          </CardContent>
-        </Card>
+      <motion.div 
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Active Projects</CardTitle>
+              <Briefcase className="h-5 w-5 text-zinc-500 dark:text-white/50" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold">{activeProjectsCount}</div>
+              <Link href="/admin/workspace/projects" className="text-xs text-blue-500 dark:text-blue-400 hover:underline flex items-center gap-1">View projects <ArrowRight className="h-3 w-3" /></Link>
+            </CardContent>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
         <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Pending Tasks</CardTitle>
@@ -62,6 +84,8 @@ export default function AdminDashboard() {
             <Link href="/admin/workspace/tasks" className="text-xs text-blue-500 dark:text-blue-400 hover:underline flex items-center gap-1">Manage tasks <ArrowRight className="h-3 w-3" /></Link>
           </CardContent>
         </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
         <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">New Clients</CardTitle>
@@ -72,6 +96,8 @@ export default function AdminDashboard() {
              <Link href="/admin/workspace/clients" className="text-xs text-blue-500 dark:text-blue-400 hover:underline flex items-center gap-1">View clients <ArrowRight className="h-3 w-3" /></Link>
           </CardContent>
         </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
         <Card className="bg-red-500/10 backdrop-blur-2xl border-red-400/20 shadow-xl rounded-2xl transition-all duration-300 hover:border-red-400/30 hover:scale-105 hover:shadow-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-red-500 dark:text-red-300">Overdue Tasks</CardTitle>
@@ -82,10 +108,17 @@ export default function AdminDashboard() {
             <p className="text-xs text-red-600/80 dark:text-red-400/70">{overdueTasksCount > 0 ? "Action required" : "All tasks on track"}</p>
           </CardContent>
         </Card>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <div className="grid gap-6 lg:grid-cols-3 mt-6">
-        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl col-span-1 lg:col-span-2">
+      <motion.div 
+        className="grid gap-6 lg:grid-cols-3 mt-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants} className="lg:col-span-2">
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Active Projects</CardTitle>
             <Button variant="ghost" size="sm" asChild className="rounded-lg">
@@ -117,6 +150,8 @@ export default function AdminDashboard() {
             })}
           </CardContent>
         </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
         <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
@@ -124,7 +159,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {upcomingDeadlines.map((task) => {
-                    const project = initialProjects.find(p => p.id === (initialTasks.find(t => t.id === task.id)?.clientId));
+                    const project = initialProjects.find(p => p.id === (task.clientId));
                     return (
                         <div key={task.id} className="flex items-start gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
                             <div className="flex-1">
@@ -142,9 +177,16 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
-      </div>
+        </motion.div>
+      </motion.div>
 
-       <div className="grid gap-6 lg:grid-cols-3 mt-6">
+       <motion.div 
+          className="grid gap-6 lg:grid-cols-3 mt-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+        <motion.div variants={itemVariants}>
         <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
@@ -166,7 +208,10 @@ export default function AdminDashboard() {
                 </div>
             </CardContent>
         </Card>
-       </div>
+        </motion.div>
+       </motion.div>
     </main>
   );
 }
+
+    
