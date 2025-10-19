@@ -58,7 +58,7 @@ export default function AdminLayout({
         <Sidebar
           variant="floating"
           collapsible="icon"
-          className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 text-foreground"
+          className="bg-white/60 dark:bg-zinc-900/80 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 text-foreground"
         >
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
@@ -76,10 +76,11 @@ export default function AdminLayout({
                   const isActive = pathname === item.href;
 
                   if (item.subItems) {
+                    const isSubActive = item.subItems.some(subItem => pathname.startsWith(subItem.href));
                     return (
                       <SidebarMenuItem key={item.label}>
                         <SidebarMenuSub>
-                          <SidebarMenuSubTrigger className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg">
+                          <SidebarMenuSubTrigger className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg" data-active={isSubActive}>
                             <Icon />
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>

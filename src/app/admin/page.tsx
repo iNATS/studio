@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         </Card>
         </motion.div>
         <motion.div variants={itemVariants}>
-        <Card className="bg-red-500/10 backdrop-blur-2xl border-red-400/20 shadow-xl rounded-2xl transition-all duration-300 hover:border-red-400/30 hover:scale-105 hover:shadow-2xl">
+        <Card className="bg-red-500/10 dark:bg-red-500/10 backdrop-blur-2xl border-red-400/20 dark:border-red-400/20 shadow-xl rounded-2xl transition-all duration-300 hover:border-red-400/30 dark:hover:border-red-400/30 hover:scale-105 hover:shadow-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-red-500 dark:text-red-300">Overdue Tasks</CardTitle>
             <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -213,5 +213,3 @@ export default function AdminDashboard() {
     </main>
   );
 }
-
-    

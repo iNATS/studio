@@ -280,7 +280,7 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
                                         transition={{ duration: 0.2, ease: 'easeOut' }}
                                         onClick={() => onClick(project.id)}
                                         className={cn(
-                                            "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10 bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner",
+                                            "absolute h-6 text-white text-xs font-medium flex items-center px-2 select-none transition-all duration-200 z-10 bg-black/20 dark:bg-black/20 backdrop-blur-sm cursor-pointer shadow-inner",
                                             `bg-gradient-to-r ${getProjectColor(project.id)}`,
                                             startsBeforeView ? 'rounded-r-md' : 'rounded-md',
                                             endsAfterView && !startsBeforeView ? 'rounded-l-md rounded-r-none' : '',
@@ -391,9 +391,9 @@ export default function TimelinePage() {
                     {getLabelForCurrentDate()}
                 </h2>
                 <ToggleGroup type="single" value={view} onValueChange={(v: 'week' | 'month' | 'quarter') => v && setView(v)} className="p-1 bg-black/5 dark:bg-white/10 rounded-lg">
-                    <ToggleGroupItem value="week" aria-label="Week view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Week</ToggleGroupItem>
-                    <ToggleGroupItem value="month" aria-label="Month view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Month</ToggleGroupItem>
-                    <ToggleGroupItem value="quarter" aria-label="Quarter view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Quarter</ToggleGroupItem>
+                    <ToggleGroupItem value="week" aria-label="Week view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-zinc-900/80 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Week</ToggleGroupItem>
+                    <ToggleGroupItem value="month" aria-label="Month view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-zinc-900/80 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Month</ToggleGroupItem>
+                    <ToggleGroupItem value="quarter" aria-label="Quarter view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-zinc-900/80 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Quarter</ToggleGroupItem>
                 </ToggleGroup>
             </div>
         </div>

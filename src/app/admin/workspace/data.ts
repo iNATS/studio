@@ -59,5 +59,3 @@ export const initialTasks: Task[] = [
     { id: '7', title: 'Update Dependencies', description: 'Check for outdated npm packages and update them, focusing on any with known security vulnerabilities.', status: 'todo', priority: 'low', tags: ['maintenance'], dueDate: new Date(2024, 9, 15) },
     { id: '8', title: 'Overdue Task Example', description: 'This task is intentionally overdue to test the dashboard card.', status: 'todo', priority: 'high', dueDate: new Date(2024, 0, 1), tags: ['example'] },
 ];
-
-    
