@@ -107,15 +107,15 @@ export default function PageContentPage() {
     };
 
   return (
-    <main className="flex flex-col h-full pt-4">
-        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
-            <h1 className="text-2xl font-bold text-white">Page Content</h1>
+    <main className="flex flex-col h-full">
+        <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+            <h1 className="text-2xl font-bold">Page Content</h1>
         </div>
         <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
-            <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                 <CardHeader>
-                <CardTitle className="text-white/90">Manage Landing Page</CardTitle>
-                <CardDescription className="text-white/60">
+                <CardTitle>Manage Landing Page</CardTitle>
+                <CardDescription className="text-zinc-600 dark:text-white/60">
                     Update the content for the different sections of your landing page.
                 </CardDescription>
                 </CardHeader>
@@ -123,20 +123,20 @@ export default function PageContentPage() {
                 <Accordion type="single" collapsible className="w-full">
                     
                     <AccordionItem value="hero">
-                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">Hero Section</AccordionTrigger>
+                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">Hero Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10" onSubmit={(e) => handleGenericSave(e, 'Hero')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => handleGenericSave(e, 'Hero')}>
                         <div className="space-y-2">
-                            <Label htmlFor="hero-title" className="text-white/70">Title</Label>
-                            <Input id="hero-title" defaultValue="Mohamed Aref" className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="hero-title" className="text-zinc-700 dark:text-white/70">Title</Label>
+                            <Input id="hero-title" defaultValue="Mohamed Aref" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="hero-subtitle" className="text-white/70">Subtitle</Label>
-                            <Input id="hero-subtitle" defaultValue="Creative Developer & Designer" className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="hero-subtitle" className="text-zinc-700 dark:text-white/70">Subtitle</Label>
+                            <Input id="hero-subtitle" defaultValue="Creative Developer & Designer" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="hero-description" className="text-white/70">Description</Label>
-                            <Textarea id="hero-description" defaultValue="I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together." className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="hero-description" className="text-zinc-700 dark:text-white/70">Description</Label>
+                            <Textarea id="hero-description" defaultValue="I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <Button className="rounded-lg" type="submit">Save Hero Content</Button>
                         </form>
@@ -144,13 +144,13 @@ export default function PageContentPage() {
                     </AccordionItem>
 
                     <AccordionItem value="about">
-                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">About Me Section</AccordionTrigger>
+                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10" onSubmit={(e) => handleGenericSave(e, 'About')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => handleGenericSave(e, 'About')}>
                         <div className="space-y-2">
-                            <Label className="text-white/70">Avatar</Label>
+                            <Label className="text-zinc-700 dark:text-white/70">Avatar</Label>
                             <div className="flex items-center gap-4">
-                                <Avatar className="w-20 h-20 border-2 border-white/10">
+                                <Avatar className="w-20 h-20 border-2 border-zinc-200 dark:border-white/10">
                                     {avatarPreview && <AvatarImage src={avatarPreview} alt="Avatar Preview" />}
                                     <AvatarFallback>MA</AvatarFallback>
                                 </Avatar>
@@ -160,21 +160,21 @@ export default function PageContentPage() {
                                         <Upload className="mr-2 h-4 w-4" />
                                         Upload New Image
                                     </Label>
-                                    <p className="text-xs text-white/50 mt-2">Recommended size: 200x200px. PNG or JPG.</p>
+                                    <p className="text-xs text-zinc-500 dark:text-white/50 mt-2">Recommended size: 200x200px. PNG or JPG.</p>
                                 </div>
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="about-title" className="text-white/70">Title</Label>
-                            <Input id="about-title" defaultValue="Mohamed Aref" className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="about-title" className="text-zinc-700 dark:text-white/70">Title</Label>
+                            <Input id="about-title" defaultValue="Mohamed Aref" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="about-description" className="text-white/70">Description</Label>
-                            <Textarea id="about-description" rows={4} defaultValue="I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product." className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="about-description" className="text-zinc-700 dark:text-white/70">Description</Label>
+                            <Textarea id="about-description" rows={4} defaultValue="I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="about-skills" className="text-white/70">Skills (comma-separated)</Label>
-                            <Textarea id="about-skills" rows={3} defaultValue="UI/UX Design, Web Design, Mobile Design, Logo Design, Visual Identity, Wire-framing, Prototyping, Figma, Adobe XD, Photoshop, Illustrator, Web Development, HTML, CSS, JavaScript, Bootstrap, Tailwind, Webflow, Wordpress, Restfull API, Google maps API, AI Vibe coding, dev ops, hosting, CPanel, VPS, Shared Host" className="bg-white/10 border-white/20"/>
+                            <Label htmlFor="about-skills" className="text-zinc-700 dark:text-white/70">Skills (comma-separated)</Label>
+                            <Textarea id="about-skills" rows={3} defaultValue="UI/UX Design, Web Design, Mobile Design, Logo Design, Visual Identity, Wire-framing, Prototyping, Figma, Adobe XD, Photoshop, Illustrator, Web Development, HTML, CSS, JavaScript, Bootstrap, Tailwind, Webflow, Wordpress, Restfull API, Google maps API, AI Vibe coding, dev ops, hosting, CPanel, VPS, Shared Host" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <Button className="rounded-lg" type="submit">Save About Content</Button>
                         </form>
@@ -182,18 +182,18 @@ export default function PageContentPage() {
                     </AccordionItem>
 
                     <AccordionItem value="process">
-                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">Process Section</AccordionTrigger>
+                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">Process Section</AccordionTrigger>
                     <AccordionContent>
-                        <div className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                        <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10">
                         {processSteps.map((step, index) => (
-                            <form key={index} className="space-y-3 p-3 rounded-md bg-white/5 border border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleProcessStepSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
+                            <form key={index} className="space-y-3 p-3 rounded-md bg-black/5 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleProcessStepSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
                                 <div className="space-y-2">
-                                    <Label htmlFor={`process-title-${index}`} className="text-white/70">Step {index + 1} Title</Label>
-                                    <Input id={`process-title-${index}`} name="title" defaultValue={step.title} className="bg-white/10 border-white/20" />
+                                    <Label htmlFor={`process-title-${index}`} className="text-zinc-700 dark:text-white/70">Step {index + 1} Title</Label>
+                                    <Input id={`process-title-${index}`} name="title" defaultValue={step.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor={`process-desc-${index}`} className="text-white/70">Description</Label>
-                                    <Input id={`process-desc-${index}`} name="description" defaultValue={step.description} className="bg-white/10 border-white/20" />
+                                    <Label htmlFor={`process-desc-${index}`} className="text-zinc-700 dark:text-white/70">Description</Label>
+                                    <Input id={`process-desc-${index}`} name="description" defaultValue={step.description} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20" />
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <Button type="submit" size="sm" className="rounded-lg">Save Step</Button>
@@ -207,22 +207,22 @@ export default function PageContentPage() {
                     </AccordionItem>
 
                     <AccordionItem value="testimonials">
-                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-white/80">Testimonials Section</AccordionTrigger>
+                    <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">Testimonials Section</AccordionTrigger>
                     <AccordionContent>
-                        <div className="space-y-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                        <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10">
                         {testimonials.map((testimonial, index) => (
-                            <form key={index} className="space-y-3 p-3 rounded-md bg-white/5 border border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleTestimonialSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
+                            <form key={index} className="space-y-3 p-3 rounded-md bg-black/5 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleTestimonialSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
                                 <div className="space-y-2">
-                                    <Label htmlFor={`testimonial-name-${index}`} className="text-white/70">Name</Label>
-                                    <Input id={`testimonial-name-${index}`} name="name" defaultValue={testimonial.name} className="bg-white/10 border-white/20"/>
+                                    <Label htmlFor={`testimonial-name-${index}`} className="text-zinc-700 dark:text-white/70">Name</Label>
+                                    <Input id={`testimonial-name-${index}`} name="name" defaultValue={testimonial.name} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor={`testimonial-company-${index}`} className="text-white/70">Company</Label>
-                                    <Input id={`testimonial-company-${index}`} name="company" defaultValue={testimonial.company} className="bg-white/10 border-white/20"/>
+                                    <Label htmlFor={`testimonial-company-${index}`} className="text-zinc-700 dark:text-white/70">Company</Label>
+                                    <Input id={`testimonial-company-${index}`} name="company" defaultValue={testimonial.company} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor={`testimonial-feedback-${index}`} className="text-white/70">Feedback</Label>
-                                    <Textarea id={`testimonial-feedback-${index}`} name="feedback" rows={3} defaultValue={testimonial.feedback} className="bg-white/10 border-white/20"/>
+                                    <Label htmlFor={`testimonial-feedback-${index}`} className="text-zinc-700 dark:text-white/70">Feedback</Label>
+                                    <Textarea id={`testimonial-feedback-${index}`} name="feedback" rows={3} defaultValue={testimonial.feedback} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <Button type="submit" size="sm" className="rounded-lg">Save Testimonial</Button>
@@ -242,5 +242,3 @@ export default function PageContentPage() {
     </main>
   );
 }
-
-    

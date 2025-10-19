@@ -85,41 +85,41 @@ const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit:
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
-              <Input id="name" name="name" defaultValue={client?.name} className="col-span-3 bg-white/5 border-white/10" required />
+              <Input id="name" name="name" defaultValue={client?.name} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
-              <Input id="email" name="email" type="email" defaultValue={client?.email} className="col-span-3 bg-white/5 border-white/10" required />
+              <Input id="email" name="email" type="email" defaultValue={client?.email} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" required />
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone" className="text-right">
                 Phone
               </Label>
-              <Input id="phone" name="phone" defaultValue={client?.phone} className="col-span-3 bg-white/5 border-white/10" />
+              <Input id="phone" name="phone" defaultValue={client?.phone} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="company" className="text-right">
                 Company
               </Label>
-              <Input id="company" name="company" defaultValue={client?.company} className="col-span-3 bg-white/5 border-white/10" required />
+              <Input id="company" name="company" defaultValue={client?.company} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" required />
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="address" className="text-right">
                 Address
               </Label>
-              <Input id="address" name="address" defaultValue={client?.address} className="col-span-3 bg-white/5 border-white/10" />
+              <Input id="address" name="address" defaultValue={client?.address} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="status" className="text-right">
                 Status
               </Label>
                <Select name="status" defaultValue={client?.status}>
-                <SelectTrigger id="status" className="col-span-3 bg-white/5 border-white/10">
+                <SelectTrigger id="status" className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
                     <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
-                <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
                     <SelectItem value="new">New</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="archived">Archived</SelectItem>
@@ -130,7 +130,7 @@ const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit:
                 <Label htmlFor="notes" className="text-right pt-2">
                     Notes
                 </Label>
-                <Textarea id="notes" name="notes" defaultValue={client?.notes} className="col-span-3 bg-white/5 border-white/10" />
+                <Textarea id="notes" name="notes" defaultValue={client?.notes} className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
             </div>
             <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
@@ -143,11 +143,11 @@ const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit:
 const getStatusBadge = (status: Client['status']) => {
     switch (status) {
         case 'active':
-            return <Badge variant="outline" className="text-green-400 border-green-400/40 bg-green-400/10">Active</Badge>;
+            return <Badge variant="outline" className="text-green-600 dark:text-green-400 border-green-500/40 dark:border-green-400/40 bg-green-500/10 dark:bg-green-400/10">Active</Badge>;
         case 'new':
-            return <Badge variant="outline" className="text-blue-400 border-blue-400/40 bg-blue-400/10">New</Badge>;
+            return <Badge variant="outline" className="text-blue-600 dark:text-blue-400 border-blue-500/40 dark:border-blue-400/40 bg-blue-500/10 dark:bg-blue-400/10">New</Badge>;
         case 'archived':
-            return <Badge variant="outline" className="text-white/50 border-white/20 bg-white/10">Archived</Badge>;
+            return <Badge variant="outline" className="text-zinc-500 dark:text-white/50 border-zinc-300 dark:border-white/20 bg-zinc-500/10 dark:bg-white/10">Archived</Badge>;
     }
 }
 
@@ -156,9 +156,9 @@ const ClientViewDialog = ({ client, open, onOpenChange }: { client: Client | nul
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-md">
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-md">
                 <DialogHeader className="items-center text-center">
-                    <Avatar className="h-24 w-24 border-4 border-white/20">
+                    <Avatar className="h-24 w-24 border-4 border-zinc-200 dark:border-white/20">
                         <AvatarImage src={client.avatar} alt={client.name} />
                         <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -167,24 +167,24 @@ const ClientViewDialog = ({ client, open, onOpenChange }: { client: Client | nul
                 </DialogHeader>
                 <div className="space-y-4 mt-4">
                     <div className="flex items-start gap-4">
-                        <Mail className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
-                        <span className="text-white/80">{client.email}</span>
+                        <Mail className="h-5 w-5 text-zinc-500 dark:text-white/50 mt-1 flex-shrink-0" />
+                        <span className="text-zinc-700 dark:text-white/80">{client.email}</span>
                     </div>
                     <div className="flex items-start gap-4">
-                        <Phone className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
-                        <span className="text-white/80">{client.phone}</span>
+                        <Phone className="h-5 w-5 text-zinc-500 dark:text-white/50 mt-1 flex-shrink-0" />
+                        <span className="text-zinc-700 dark:text-white/80">{client.phone}</span>
                     </div>
                     <div className="flex items-start gap-4">
-                        <Building className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
-                        <span className="text-white/80">{client.company}</span>
+                        <Building className="h-5 w-5 text-zinc-500 dark:text-white/50 mt-1 flex-shrink-0" />
+                        <span className="text-zinc-700 dark:text-white/80">{client.company}</span>
                     </div>
                     <div className="flex items-start gap-4">
-                        <MapPin className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
-                        <span className="text-white/80">{client.address}</span>
+                        <MapPin className="h-5 w-5 text-zinc-500 dark:text-white/50 mt-1 flex-shrink-0" />
+                        <span className="text-zinc-700 dark:text-white/80">{client.address}</span>
                     </div>
                     <div className="flex items-start gap-4">
-                        <FileText className="h-5 w-5 text-white/50 mt-1 flex-shrink-0" />
-                        <p className="text-white/80">{client.notes}</p>
+                        <FileText className="h-5 w-5 text-zinc-500 dark:text-white/50 mt-1 flex-shrink-0" />
+                        <p className="text-zinc-700 dark:text-white/80">{client.notes}</p>
                     </div>
                 </div>
                 <DialogFooter className="mt-6">
@@ -301,24 +301,24 @@ export default function ClientsPage() {
   }
   
   return (
-    <main className="flex flex-col h-full pt-4">
-      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+    <main className="flex flex-col h-full">
+      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-white flex-shrink-0">Clients</h1>
+            <h1 className="text-2xl font-bold flex-shrink-0">Clients</h1>
             <div className="ml-auto flex items-center gap-2">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" className="gap-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 relative">
+                        <Button variant="ghost" className="gap-1.5 rounded-lg text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 relative">
                             <Filter className="h-4 w-4" />
                             <span>Filter</span>
                             {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-white/10 text-white" align="end">
+                    <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white" align="end">
                         <div className="grid gap-4">
                             <div className="space-y-2">
                                 <h4 className="font-medium leading-none">Filters</h4>
-                                <p className="text-sm text-white/60">
+                                <p className="text-sm text-zinc-600 dark:text-white/60">
                                 Refine your client list.
                                 </p>
                             </div>
@@ -326,22 +326,22 @@ export default function ClientsPage() {
                                 <div className="grid grid-cols-3 items-center gap-4">
                                   <Label>Search</Label>
                                   <div className="relative col-span-2">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-white/50" />
                                     <Input 
                                         placeholder="Name, email, company..."
                                         value={filters.searchTerm}
                                         onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-                                        className="bg-white/5 border-white/10 pl-10"
+                                        className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10"
                                     />
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-3 items-center gap-4">
                                   <Label>Status</Label>
                                     <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                                        <SelectTrigger className="bg-white/5 border-white/10 col-span-2">
+                                        <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 col-span-2">
                                             <SelectValue placeholder="Status..." />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
                                             <SelectItem value="all">All Statuses</SelectItem>
                                             <SelectItem value="new">New</SelectItem>
                                             <SelectItem value="active">Active</SelectItem>
@@ -351,7 +351,7 @@ export default function ClientsPage() {
                                 </div>
                             </div>
                             {hasActiveFilters && (
-                                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-white/70 hover:text-white hover:bg-white/10 w-full justify-center">
+                                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-zinc-600 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 w-full justify-center">
                                     <X className="mr-2 h-4 w-4" /> Clear Filters
                                 </Button>
                             )}
@@ -363,16 +363,16 @@ export default function ClientsPage() {
                 <DialogTrigger asChild>
                     <Button
                     size="sm"
-                    className="gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg flex-shrink-0"
+                    className="gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg flex-shrink-0"
                     >
                     <PlusCircle className="h-4 w-4" />
                     Add Client
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+                <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-lg">
                     <DialogHeader>
                     <DialogTitle>Add New Client</DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-zinc-600 dark:text-white/60">
                         Enter the details for the new client.
                     </DialogDescription>
                     </DialogHeader>
@@ -385,10 +385,10 @@ export default function ClientsPage() {
 
         {/* Edit Client Dialog */}
         <Dialog open={!!editingClient} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
-           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-lg">
+           <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>Edit Client</DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-zinc-600 dark:text-white/60">
                  Update the details of your client below.
               </DialogDescription>
             </DialogHeader>
@@ -405,7 +405,7 @@ export default function ClientsPage() {
 
          {/* Delete Confirmation Dialog */}
          <AlertDialog open={!!clientToDelete} onOpenChange={(isOpen) => !isOpen && setClientToDelete(null)}>
-          <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+          <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -424,21 +424,21 @@ export default function ClientsPage() {
           </AlertDialogContent>
         </AlertDialog>
 
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
             <CardHeader>
-                <CardTitle className="text-white/90">Your Clients</CardTitle>
-                <CardDescription className="text-white/60">
+                <CardTitle>Your Clients</CardTitle>
+                <CardDescription className="text-zinc-600 dark:text-white/60">
                     Manage your client relationships.
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto">
                 <Table>
-                    <TableHeader className="sticky top-0 bg-white/5 backdrop-blur-xl">
-                    <TableRow className="border-white/10 hover:bg-white/10">
-                        <TableHead className="text-white/80">Client</TableHead>
-                        <TableHead className="text-white/80 hidden md:table-cell">Email</TableHead>
-                        <TableHead className="text-white/80 hidden lg:table-cell">Company</TableHead>
-                        <TableHead className="text-white/80">Status</TableHead>
+                    <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                    <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
+                        <TableHead className="text-zinc-700 dark:text-white/80">Client</TableHead>
+                        <TableHead className="text-zinc-700 dark:text-white/80 hidden md:table-cell">Email</TableHead>
+                        <TableHead className="text-zinc-700 dark:text-white/80 hidden lg:table-cell">Company</TableHead>
+                        <TableHead className="text-zinc-700 dark:text-white/80">Status</TableHead>
                         <TableHead>
                         <span className="sr-only">Actions</span>
                         </TableHead>
@@ -448,19 +448,19 @@ export default function ClientsPage() {
                     {paginatedClients.map((client) => (
                         <TableRow
                         key={client.id}
-                        className="border-white/10 hover:bg-white/5"
+                        className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                         >
                         <TableCell>
                             <div className="flex items-center gap-3">
-                                <Avatar className="hidden h-9 w-9 sm:flex border-2 border-white/20">
+                                <Avatar className="hidden h-9 w-9 sm:flex border-2 border-zinc-200 dark:border-white/20">
                                     <AvatarImage src={client.avatar} alt={client.name} />
                                     <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
-                                <div className="font-medium text-white/90">{client.name}</div>
+                                <div className="font-medium">{client.name}</div>
                             </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell text-white/70">{client.email}</TableCell>
-                        <TableCell className="hidden lg:table-cell text-white/70">{client.company}</TableCell>
+                        <TableCell className="hidden md:table-cell text-zinc-600 dark:text-white/70">{client.email}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-zinc-600 dark:text-white/70">{client.company}</TableCell>
                         <TableCell>{getStatusBadge(client.status)}</TableCell>
                         <TableCell>
                             <DropdownMenu>
@@ -469,7 +469,7 @@ export default function ClientsPage() {
                                 aria-haspopup="true"
                                 size="icon"
                                 variant="ghost"
-                                className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white rounded-full"
+                                className="h-8 w-8 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-full"
                                 >
                                 <MoreHorizontal className="h-4 w-4" />
                                 <span className="sr-only">Toggle menu</span>
@@ -477,12 +477,12 @@ export default function ClientsPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 align="end"
-                                className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
+                                className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white"
                             >
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleView(client); }}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
                                 <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleEdit(client); }}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={(e) => { e.preventDefault(); setClientToDelete(client); }}>
+                                <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:bg-red-400/20 focus:text-red-500 dark:focus:text-white" onSelect={(e) => { e.preventDefault(); setClientToDelete(client); }}>
                                 <Trash2 className="mr-2 h-4 w-4" />Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -493,7 +493,7 @@ export default function ClientsPage() {
                     </TableBody>
                 </Table>
             </CardContent>
-            <CardFooter className="border-t border-white/10 px-6 py-4">
+            <CardFooter className="border-t border-zinc-200/80 dark:border-white/10 px-6 py-4">
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
@@ -504,5 +504,3 @@ export default function ClientsPage() {
     </main>
   );
 }
-
-    

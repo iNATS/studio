@@ -22,6 +22,7 @@ import {
 import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function AdminLayout({
   children,
@@ -57,15 +58,15 @@ export default function AdminLayout({
         <Sidebar
           variant="floating"
           collapsible="icon"
-          className="bg-white/5 backdrop-blur-2xl border-white/10 text-white/90"
+          className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 text-foreground"
         >
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="text-white/80 hover:text-white" />
+              <SidebarTrigger className="text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white" />
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
                 <LayoutGrid className="w-5 h-5 text-primary-foreground" />
               </div>
-              <h1 className="text-lg font-semibold text-white">Dashboard</h1>
+              <h1 className="text-lg font-semibold">Dashboard</h1>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-3">
@@ -78,7 +79,7 @@ export default function AdminLayout({
                     return (
                       <SidebarMenuItem key={item.label}>
                         <SidebarMenuSub>
-                          <SidebarMenuSubTrigger className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
+                          <SidebarMenuSubTrigger className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg">
                             <Icon />
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>
@@ -101,7 +102,7 @@ export default function AdminLayout({
                         <SidebarMenuButton 
                         asChild 
                         tooltip={item.label} 
-                        className={cn("text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg")}
+                        className={cn("text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg")}
                         data-active={isActive}
                         >
                         <Link href={item.href!}>
@@ -117,7 +118,7 @@ export default function AdminLayout({
           <SidebarFooter className="p-3">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
+                <SidebarMenuButton asChild tooltip="Settings" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg">
                   <Link href="#">
                     <Settings />
                     <span>Settings</span>
@@ -125,12 +126,15 @@ export default function AdminLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
                <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Security" className="text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg">
+                <SidebarMenuButton asChild tooltip="Security" className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg">
                   <Link href="#">
                     <Shield />
                     <span>Security</span>
                   </Link>
                 </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ThemeToggle />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>

@@ -101,24 +101,24 @@ export default function AdminProjectsPage() {
   }
 
   return (
-    <main className="flex flex-col h-full pt-4">
-      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+    <main className="flex flex-col h-full">
+      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-white">My Works</h1>
+            <h1 className="text-2xl font-bold">My Works</h1>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
                 <Button
                 size="sm"
-                className="ml-auto gap-1 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                className="ml-auto gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg"
                 >
                 <PlusCircle className="h-4 w-4" />
                 Add Work
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-2xl">
                 <DialogHeader>
                 <DialogTitle>Add New Work</DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-zinc-600 dark:text-white/60">
                     Follow the steps to add a new work to your portfolio.
                 </DialogDescription>
                 </DialogHeader>
@@ -140,10 +140,10 @@ export default function AdminProjectsPage() {
 
         {/* Edit Project Dialog */}
         <Dialog open={!!editingProject} onOpenChange={(isOpen) => !isOpen && closeEditDialog()}>
-           <DialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white sm:max-w-2xl">
+           <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-2xl">
             <DialogHeader>
               <DialogTitle>Edit Work</DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-zinc-600 dark:text-white/60">
                  Update the details of your work below.
               </DialogDescription>
             </DialogHeader>
@@ -164,7 +164,7 @@ export default function AdminProjectsPage() {
 
          {/* Delete Confirmation Dialog */}
          <AlertDialog open={!!projectToDelete} onOpenChange={(isOpen) => !isOpen && setProjectToDelete(null)}>
-          <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+          <AlertDialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -184,26 +184,26 @@ export default function AdminProjectsPage() {
           </AlertDialogContent>
         </AlertDialog>
 
-      <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
+      <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
         <CardHeader>
-          <CardTitle className="text-white/90">Manage Your Portfolio</CardTitle>
-          <CardDescription className="text-white/60">
+          <CardTitle>Manage Your Portfolio</CardTitle>
+          <CardDescription className="text-zinc-600 dark:text-white/60">
             View, edit, or delete your works.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto">
           <Table>
-            <TableHeader className="sticky top-0 bg-white/5 backdrop-blur-xl">
-              <TableRow className="border-white/10 hover:bg-white/10">
-                <TableHead className="hidden w-[100px] sm:table-cell text-white/80">
+            <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+              <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
+                <TableHead className="hidden w-[100px] sm:table-cell text-zinc-700 dark:text-white/80">
                   <span className="sr-only">Image</span>
                 </TableHead>
-                <TableHead className="text-white/80">Title</TableHead>
-                <TableHead className="text-white/80">Category</TableHead>
-                <TableHead className="hidden md:table-cell text-white/80">
+                <TableHead className="text-zinc-700 dark:text-white/80">Title</TableHead>
+                <TableHead className="text-zinc-700 dark:text-white/80">Category</TableHead>
+                <TableHead className="hidden md:table-cell text-zinc-700 dark:text-white/80">
                   Tags
                 </TableHead>
-                <TableHead className="sticky top-0 bg-white/5 backdrop-blur-xl">
+                <TableHead className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
@@ -212,7 +212,7 @@ export default function AdminProjectsPage() {
               {paginatedItems.map((project) => (
                 <TableRow
                   key={project.slug}
-                  className="border-white/10 hover:bg-white/5"
+                  className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                 >
                   <TableCell className="hidden sm:table-cell">
                     <Image
@@ -223,13 +223,13 @@ export default function AdminProjectsPage() {
                       width="64"
                     />
                   </TableCell>
-                  <TableCell className="font-medium text-white/90">
+                  <TableCell className="font-medium">
                     {project.title}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="text-white/70 border-white/20"
+                      className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20"
                     >
                       {project.category}
                     </Badge>
@@ -240,7 +240,7 @@ export default function AdminProjectsPage() {
                         <Badge
                           key={tag}
                           variant="outline"
-                          className="text-white/60 border-white/10 text-xs"
+                          className="text-zinc-500 dark:text-white/60 border-zinc-200/80 dark:border-white/10 text-xs"
                         >
                           {tag}
                         </Badge>
@@ -254,7 +254,7 @@ export default function AdminProjectsPage() {
                           aria-haspopup="true"
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8 text-white/70 hover:bg-white/10 hover:text-white"
+                          className="h-8 w-8 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
@@ -262,12 +262,12 @@ export default function AdminProjectsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="bg-background/80 backdrop-blur-xl border-white/10 text-white"
+                        className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white"
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onSelect={() => handleEdit(project)}>Edit</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => window.open(`/projects/${project.slug}`, '_blank')}>View</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-400 focus:bg-red-400/20 focus:text-white" onSelect={() => setProjectToDelete(project)}>
+                        <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:bg-red-400/20 focus:text-red-500 dark:focus:text-white" onSelect={() => setProjectToDelete(project)}>
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -278,7 +278,7 @@ export default function AdminProjectsPage() {
             </TableBody>
           </Table>
         </CardContent>
-         <CardFooter className="border-t border-white/10 px-6 py-4">
+         <CardFooter className="border-t border-zinc-200/80 dark:border-white/10 px-6 py-4">
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -289,5 +289,3 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
-
-    

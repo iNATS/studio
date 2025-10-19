@@ -77,12 +77,12 @@ export default function ReportsPage() {
 
     return (
         <main className="flex flex-col h-full">
-            <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md pt-4 pb-4 -mx-4 px-4">
+            <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md pt-4 pb-4 -mx-4 -mt-4 px-4">
                 <motion.h1 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-3xl font-bold text-white tracking-tight"
+                    className="text-3xl font-bold tracking-tight"
                 >
                     Analytics & Insights
                 </motion.h1>
@@ -96,52 +96,52 @@ export default function ReportsPage() {
                     animate="visible"
                 >
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium text-white/70">Total Revenue</CardTitle>
-                                <DollarSign className="h-5 w-5 text-green-400" />
+                                <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Total Revenue</CardTitle>
+                                <DollarSign className="h-5 w-5 text-green-500 dark:text-green-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold text-white">{totalBilled.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
-                                <p className="text-xs text-white/50">From {completedProjects.length} completed projects</p>
+                                <div className="text-3xl font-bold">{totalBilled.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+                                <p className="text-xs text-zinc-500 dark:text-white/50">From {completedProjects.length} completed projects</p>
                             </CardContent>
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium text-white/70">Completed Projects</CardTitle>
-                                <Briefcase className="h-5 w-5 text-blue-400" />
+                                <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Completed Projects</CardTitle>
+                                <Briefcase className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold text-white">{completedProjects.length}</div>
-                                <p className="text-xs text-white/50">Across all time</p>
+                                <div className="text-3xl font-bold">{completedProjects.length}</div>
+                                <p className="text-xs text-zinc-500 dark:text-white/50">Across all time</p>
                             </CardContent>
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium text-white/70">Total Clients</CardTitle>
-                                <Users className="h-5 w-5 text-purple-400" />
+                                <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Total Clients</CardTitle>
+                                <Users className="h-5 w-5 text-purple-500 dark:text-purple-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold text-white">{clientsData.length}</div>
-                                <p className="text-xs text-white/50">All-time client count</p>
+                                <div className="text-3xl font-bold">{clientsData.length}</div>
+                                <p className="text-xs text-zinc-500 dark:text-white/50">All-time client count</p>
                             </CardContent>
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-white/70 flex items-center justify-between">
+                                <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70 flex items-center justify-between">
                                     Active Projects
-                                    <Activity className="h-5 w-5 text-orange-400" />
+                                    <Activity className="h-5 w-5 text-orange-500 dark:text-orange-400" />
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                            <div className="text-3xl font-bold text-white">{initialProjects.filter(p => p.status === 'in-progress').length}</div>
-                            <p className="text-xs text-white/50">Currently in progress</p>
+                            <div className="text-3xl font-bold">{initialProjects.filter(p => p.status === 'in-progress').length}</div>
+                            <p className="text-xs text-zinc-500 dark:text-white/50">Currently in progress</p>
                             </CardContent>
                         </Card>
                     </motion.div>
@@ -154,28 +154,28 @@ export default function ReportsPage() {
                     animate="visible"
                 >
                     <motion.div variants={itemVariants} className="lg:col-span-2">
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full">
                             <CardHeader>
-                                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><TrendingUp className="h-5 w-5"/>6-Month Income</CardTitle>
+                                <CardTitle className="text-lg flex items-center gap-2"><TrendingUp className="h-5 w-5"/>6-Month Income</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ResponsiveContainer width="100%" height={250}>
                                     <BarChart data={incomeData}>
                                         <defs>
                                             <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
-                                            <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                                             </linearGradient>
                                         </defs>
-                                        <XAxis dataKey="name" stroke="hsla(0, 0%, 100%, 0.4)" fontSize={12} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="hsla(0, 0%, 100%, 0.4)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} />
+                                        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value) / 1000}k`} />
                                         <Tooltip
-                                            cursor={{ fill: 'hsla(0, 0%, 100%, 0.1)', radius: 4 }}
+                                            cursor={{ fill: 'hsla(var(--primary-rgb), 0.1)', radius: 4 }}
                                             contentStyle={{
-                                                background: 'rgba(20, 20, 22, 0.8)',
-                                                border: '1px solid hsla(0,0%,100%,0.1)',
+                                                background: 'hsla(var(--background), 0.8)',
+                                                border: '1px solid hsl(var(--border))',
                                                 borderRadius: '0.75rem',
-                                                color: '#fff',
+                                                color: 'hsl(var(--foreground))',
                                                 backdropFilter: 'blur(4px)',
                                             }}
                                             formatter={(value) => [value.toLocaleString('en-US', { style: 'currency', currency: 'USD' }), "Income"]}
@@ -187,9 +187,9 @@ export default function ReportsPage() {
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full">
                             <CardHeader>
-                                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><Palette className="h-5 w-5"/>Workload</CardTitle>
+                                <CardTitle className="text-lg flex items-center gap-2"><Palette className="h-5 w-5"/>Workload</CardTitle>
                             </CardHeader>
                             <CardContent>
                             <ResponsiveContainer width="100%" height={250}>
@@ -203,15 +203,15 @@ export default function ReportsPage() {
                                         <RadialBar
                                             background
                                             dataKey='value'
-                                            className="[&_.recharts-radial-bar-background-sector]:fill-white/5"
+                                            className="[&_.recharts-radial-bar-background-sector]:fill-black/5 dark:[&_.recharts-radial-bar-background-sector]:fill-white/5"
                                         />
-                                        <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{color: 'white', fontSize: '14px'}} />
+                                        <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{color: 'hsl(var(--foreground))', fontSize: '14px'}} />
                                         <Tooltip
                                             contentStyle={{
-                                                background: 'rgba(20, 20, 22, 0.8)',
-                                                border: '1px solid hsla(0,0%,100%,0.1)',
+                                                background: 'hsla(var(--background), 0.8)',
+                                                border: '1px solid hsl(var(--border))',
                                                 borderRadius: '0.75rem',
-                                                color: '#fff',
+                                                color: 'hsl(var(--foreground))',
                                                 backdropFilter: 'blur(4px)',
                                             }}
                                             formatter={(value, name) => [`${value} projects`, name]}
@@ -229,20 +229,20 @@ export default function ReportsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                    <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+                    <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                         <CardHeader>
-                            <CardTitle className="text-white/90 text-lg flex items-center gap-2"><Users className="h-5 w-5"/>Top Clients by Value</CardTitle>
+                            <CardTitle className="text-lg flex items-center gap-2"><Users className="h-5 w-5"/>Top Clients by Value</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 {clientLeaderboard.map((client, index) => (
-                                    <div key={client.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
+                                    <div key={client.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-sm font-bold text-white/50 w-4">{index + 1}.</span>
-                                            <div className="font-medium text-white/90">{client.name}</div>
-                                            <div className="text-xs text-white/60">{client.company}</div>
+                                            <span className="text-sm font-bold text-zinc-500 dark:text-white/50 w-4">{index + 1}.</span>
+                                            <div className="font-medium">{client.name}</div>
+                                            <div className="text-xs text-zinc-600 dark:text-white/60">{client.company}</div>
                                         </div>
-                                        <div className="font-mono text-lg text-green-300">{client.totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</div>
+                                        <div className="font-mono text-lg text-green-600 dark:text-green-300">{client.totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}</div>
                                     </div>
                                 ))}
                             </div>

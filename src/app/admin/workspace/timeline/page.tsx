@@ -68,19 +68,19 @@ const getProjectColor = (projectId: string) => {
 const getProjectStatusBadge = (status: ProjectStatus) => {
     switch (status) {
       case 'in-progress':
-        return <Badge variant="outline" className="text-orange-400 border-orange-400/40 bg-orange-400/10">In Progress</Badge>;
+        return <Badge variant="outline" className="text-orange-500 dark:text-orange-400 border-orange-500/40 dark:border-orange-400/40 bg-orange-500/10 dark:bg-orange-400/10">In Progress</Badge>;
       case 'planning':
-        return <Badge variant="outline" className="text-blue-400 border-blue-400/40 bg-blue-400/10">Planning</Badge>;
+        return <Badge variant="outline" className="text-blue-500 dark:text-blue-400 border-blue-500/40 dark:border-blue-400/40 bg-blue-500/10 dark:bg-blue-400/10">Planning</Badge>;
       case 'completed':
-        return <Badge variant="outline" className="text-green-400 border-green-400/40 bg-green-400/10">Completed</Badge>;
+        return <Badge variant="outline" className="text-green-500 dark:text-green-400 border-green-500/40 dark:border-green-400/40 bg-green-500/10 dark:bg-green-400/10">Completed</Badge>;
     }
 }
 
 const OngoingProjectsList = ({ projects, onHover, onClick, activeProjectId }: { projects: Project[], onHover: (id: string | null) => void, onClick: (id: string) => void, activeProjectId: string | null }) => {
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl h-full">
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full">
             <CardHeader>
-                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><LayoutGrid className="w-5 h-5"/>Projects</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2"><LayoutGrid className="w-5 h-5"/>Projects</CardTitle>
             </CardHeader>
             <CardContent>
                 <ScrollArea className="h-[calc(100vh-22rem)] sm:h-96">
@@ -101,15 +101,15 @@ const OngoingProjectsList = ({ projects, onHover, onClick, activeProjectId }: { 
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
                                     className={cn(
-                                        "p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer",
-                                        activeProjectId === project.id && "bg-white/10 ring-2 ring-blue-400"
+                                        "p-3 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer",
+                                        activeProjectId === project.id && "bg-black/10 dark:bg-white/10 ring-2 ring-blue-400"
                                     )}
                                 >
                                     <div className="flex justify-between items-start">
-                                        <h5 className="font-semibold text-white/80">{project.title}</h5>
+                                        <h5 className="font-semibold text-zinc-800 dark:text-white/80">{project.title}</h5>
                                         {getProjectStatusBadge(project.status)}
                                     </div>
-                                    <Progress value={progress} className="h-1 mt-2 bg-white/10" indicatorClassName={`bg-gradient-to-r ${getProjectColor(project.id)}`} />
+                                    <Progress value={progress} className="h-1 mt-2 bg-black/10 dark:bg-white/10" indicatorClassName={`bg-gradient-to-r ${getProjectColor(project.id)}`} />
                                 </motion.div>
                             )
                         })}
@@ -133,30 +133,30 @@ const ProjectsOverviewChart = ({ projects }: { projects: Project[] }) => {
     }, [projects]);
     
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl">
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
              <CardHeader>
-                <CardTitle className="text-white/90 text-lg flex items-center gap-2"><BarChart2 className="w-5 h-5"/>Projects Overview</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2"><BarChart2 className="w-5 h-5"/>Projects Overview</CardTitle>
             </CardHeader>
             <CardContent>
                 <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={projectsPerMonth} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                         <defs>
                             <linearGradient id="colorProjects" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsla(210, 100%, 70%, 0.5)" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="hsla(210, 100%, 70%, 0)" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.5}/>
+                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsla(0,0%,100%,0.1)" />
-                        <XAxis dataKey="name" stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="hsla(0,0%,100%,0.4)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                         <Tooltip
                             contentStyle={{
-                                background: 'rgba(0, 0, 0, 0.8)',
-                                border: '1px solid hsla(0,0%,100%,0.1)',
+                                background: 'hsla(var(--background), 0.8)',
+                                border: '1px solid hsl(var(--border))',
                                 borderRadius: '0.75rem',
-                                color: '#fff',
+                                color: 'hsl(var(--foreground))',
                             }}
-                            cursor={{ fill: 'hsla(0,0%,100%,0.1)' }}
+                            cursor={{ fill: 'hsla(var(--primary-rgb), 0.1)' }}
                          />
                         <Bar dataKey="count" fill="url(#colorProjects)" radius={[4, 4, 0, 0]} />
                     </BarChart>
@@ -251,16 +251,16 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
     const containerHeight = 2 + (Math.max(0, ...projectPositions.map(p => p.top)) + 2.25) + 'rem';
     
     return (
-        <Card className="bg-white/5 backdrop-blur-2xl border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
              <div className="grid" style={{ gridTemplateColumns: `repeat(${headers.length}, 1fr)` }}>
                 {headers.map((header, i) => (
-                    <div key={i} className={cn("text-center py-2 text-xs font-medium text-white/50 border-r border-white/10 last:border-r-0", (header as any).isToday || (header as any).isCurrent ? "text-blue-400" : "" )}>
+                    <div key={i} className={cn("text-center py-2 text-xs font-medium text-zinc-500 dark:text-white/50 border-r border-zinc-200/80 dark:border-white/10 last:border-r-0", (header as any).isToday || (header as any).isCurrent ? "text-blue-500 dark:text-blue-400" : "" )}>
                         {header.label}
                     </div>
                 ))}
             </div>
             <ScrollArea className="flex-1">
-                <div id="timeline-grid" className="relative border-t border-white/10" style={{ height: projectPositions.length > 0 ? containerHeight : '100px'}}>
+                <div id="timeline-grid" className="relative border-t border-zinc-200/80 dark:border-white/10" style={{ height: projectPositions.length > 0 ? containerHeight : '100px'}}>
                     {projectPositions.map(({ project, top, left, width }) => {
                         if (project.endDate < viewStart || project.startDate > viewEnd) return null;
 
@@ -296,12 +296,12 @@ const GanttTimeline = ({ projects, view, currentDate, hoveredEvent, onClick, act
                                         <span className="truncate">{project.title}</span>
                                     </motion.div>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-80 bg-background/70 backdrop-blur-2xl border-white/10 text-white" side="bottom" align="start">
+                                <PopoverContent className="w-80 bg-background/70 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white" side="bottom" align="start">
                                     <div className="space-y-2">
-                                        <h4 className="font-semibold text-white/90">{project.title}</h4>
-                                        <p className="text-sm text-white/60">{project.description}</p>
-                                        <div className="flex items-center gap-2 text-sm text-white/70">
-                                            <CalendarIcon className="h-4 w-4 text-white/50" />
+                                        <h4 className="font-semibold text-zinc-800 dark:text-white/90">{project.title}</h4>
+                                        <p className="text-sm text-zinc-600 dark:text-white/60">{project.description}</p>
+                                        <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-white/70">
+                                            <CalendarIcon className="h-4 w-4 text-zinc-400 dark:text-white/50" />
                                             <span>{format(project.startDate, 'MMM d')} - {format(project.endDate, 'MMM d, yyyy')}</span>
                                         </div>
                                     </div>
@@ -371,29 +371,29 @@ export default function TimelinePage() {
   }
 
   return (
-    <main className="flex flex-col h-full pt-4">
-      <div className="flex-shrink-0 sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pb-4 -mx-4">
+    <main className="flex flex-col h-full">
+      <div className="flex-shrink-0 sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
-            <h1 className="text-2xl font-bold text-white">Timeline</h1>
+            <h1 className="text-2xl font-bold">Timeline</h1>
             <div className="flex items-center gap-2 flex-wrap">
                 <Button variant="ghost" onClick={goToToday} className="rounded-lg h-9 px-3 text-sm">
                     Today
                 </Button>
-                <div className="flex items-center gap-1 p-1 rounded-lg bg-white/10">
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-white/70 hover:bg-white/10 hover:text-white rounded-md" onClick={() => moveDate('prev')}>
+                <div className="flex items-center gap-1 p-1 rounded-lg bg-black/5 dark:bg-white/10">
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-md" onClick={() => moveDate('prev')}>
                         <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-white/70 hover:bg-white/10 hover:text-white rounded-md" onClick={() => moveDate('next')}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-600 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white rounded-md" onClick={() => moveDate('next')}>
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
-                <h2 className="text-lg font-semibold text-white text-center w-48 hidden sm:block">
+                <h2 className="text-lg font-semibold text-center w-48 hidden sm:block">
                     {getLabelForCurrentDate()}
                 </h2>
-                <ToggleGroup type="single" value={view} onValueChange={(v: 'week' | 'month' | 'quarter') => v && setView(v)} className="p-1 bg-white/10 rounded-lg">
-                    <ToggleGroupItem value="week" aria-label="Week view" className="rounded-md px-3 text-white/70 data-[state=on]:bg-white/20 data-[state=on]:text-white">Week</ToggleGroupItem>
-                    <ToggleGroupItem value="month" aria-label="Month view" className="rounded-md px-3 text-white/70 data-[state=on]:bg-white/20 data-[state=on]:text-white">Month</ToggleGroupItem>
-                    <ToggleGroupItem value="quarter" aria-label="Quarter view" className="rounded-md px-3 text-white/70 data-[state=on]:bg-white/20 data-[state=on]:text-white">Quarter</ToggleGroupItem>
+                <ToggleGroup type="single" value={view} onValueChange={(v: 'week' | 'month' | 'quarter') => v && setView(v)} className="p-1 bg-black/5 dark:bg-white/10 rounded-lg">
+                    <ToggleGroupItem value="week" aria-label="Week view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Week</ToggleGroupItem>
+                    <ToggleGroupItem value="month" aria-label="Month view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Month</ToggleGroupItem>
+                    <ToggleGroupItem value="quarter" aria-label="Quarter view" className="rounded-md px-3 text-zinc-600 dark:text-white/70 data-[state=on]:bg-background dark:data-[state=on]:bg-white/20 data-[state=on]:text-foreground dark:data-[state=on]:text-white">Quarter</ToggleGroupItem>
                 </ToggleGroup>
             </div>
         </div>

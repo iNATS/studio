@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -71,7 +72,7 @@ interface ProjectWizardProps {
 
 
 const FileUploadPreview = ({ file, onRemove }: { file: File, onRemove: () => void }) => (
-    <div className="p-2 mt-2 bg-white/10 rounded-md flex items-center justify-between text-sm text-white/80">
+    <div className="p-2 mt-2 bg-black/5 dark:bg-white/10 rounded-md flex items-center justify-between text-sm text-zinc-700 dark:text-white/80">
         <div className="flex items-center gap-2 overflow-hidden">
             <FileIcon className="h-4 w-4 flex-shrink-0" />
             <span className="truncate">{file.name}</span>
@@ -88,8 +89,8 @@ const StepIndicator = ({ currentStep, steps }: { currentStep: number; steps: num
         <motion.div
           key={index}
           className={cn(
-            'h-2 rounded-full bg-white/20 transition-all duration-300',
-            index === currentStep ? 'w-6 bg-white' : 'w-2'
+            'h-2 rounded-full bg-zinc-300 dark:bg-white/20 transition-all duration-300',
+            index === currentStep ? 'w-6 bg-foreground dark:bg-white' : 'w-2'
           )}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -174,7 +175,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         reader.readAsDataURL(file);
     }, [file]);
 
-    if (!preview) return <div className={cn("bg-white/10 animate-pulse", className)} />;
+    if (!preview) return <div className={cn("bg-black/10 dark:bg-white/10 animate-pulse", className)} />;
     
     if (fill) {
         return <Image src={preview} alt={alt || "preview"} fill className={cn("object-cover", className)} />
@@ -209,7 +210,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormItem>
                                     <FormLabel>Title</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="E.g., E-commerce Platform" {...field} className="bg-white/5 border-white/10" />
+                                        <Input placeholder="E.g., E-commerce Platform" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -222,7 +223,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormItem>
                                     <FormLabel>Slug</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="e-commerce-platform" {...field} className="bg-white/5 border-white/10" />
+                                        <Input placeholder="e-commerce-platform" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -239,7 +240,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         placeholder="A short summary of the work..."
                                         rows={2}
                                         {...field}
-                                        className="bg-white/5 border-white/10"
+                                        className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -257,7 +258,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         placeholder="The full, detailed description of the work..."
                                         rows={3}
                                         {...field}
-                                        className="bg-white/5 border-white/10"
+                                        className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -276,10 +277,10 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         <FormItem>
                                             <FormLabel>Main Image</FormLabel>
                                             <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover:border-white/40 transition-colors">
+                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
                                                     <div className="text-center">
-                                                        <Upload className="mx-auto h-8 w-8 text-white/50" />
-                                                        <p className="mt-2 text-sm text-white/60">Click or drag to upload</p>
+                                                        <Upload className="mx-auto h-8 w-8 text-zinc-500 dark:text-white/50" />
+                                                        <p className="mt-2 text-sm text-zinc-600 dark:text-white/60">Click or drag to upload</p>
                                                     </div>
                                                     <Input type="file" className="sr-only" onChange={(e) => onChange(e.target.files?.[0])} {...rest} />
                                                 </label>
@@ -296,10 +297,10 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         <FormItem>
                                             <FormLabel>Screenshots</FormLabel>
                                             <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-white/20 bg-white/5 hover-border-white/40 transition-colors">
+                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover-border-white/40 transition-colors">
                                                     <div className="text-center">
-                                                    <Upload className="mx-auto h-8 w-8 text-white/50" />
-                                                    <p className="mt-2 text-sm text-white/60">Upload one or more files</p>
+                                                    <Upload className="mx-auto h-8 w-8 text-zinc-500 dark:text-white/50" />
+                                                    <p className="mt-2 text-sm text-zinc-600 dark:text-white/60">Upload one or more files</p>
                                                     </div>
                                                     <Input type="file" multiple className="sr-only" {...screenshotsRef} onChange={(e) => onChange(e.target.files)} />
                                                 </label>
@@ -329,7 +330,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormItem>
                                     <FormLabel>Live Site URL</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="https://..." {...field} className="bg-white/5 border-white/10" />
+                                        <Input placeholder="https://..." {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -350,11 +351,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         defaultValue={field.value}
                                     >
                                         <FormControl>
-                                        <SelectTrigger className="bg-white/5 border-white/10">
+                                        <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
                                             <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-white/10 text-white">
+                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
                                         <SelectItem value="web">Web</SelectItem>
                                         <SelectItem value="mobile">Mobile</SelectItem>
                                         <SelectItem value="design">Design</SelectItem>
@@ -371,7 +372,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormItem>
                                     <FormLabel>Tags</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="React, Node.js, Figma" {...field} className="bg-white/5 border-white/10"/>
+                                        <Input placeholder="React, Node.js, Figma" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10"/>
                                     </FormControl>
                                     <FormDescription>
                                         Comma-separated list of tags.
@@ -383,9 +384,9 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                          </div>
                      )}
                      {currentStep === 3 && (
-                        <div className="text-white/90 overflow-y-auto h-full">
+                        <div className="text-foreground dark:text-white/90 overflow-y-auto h-full">
                             <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
-                            <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+                            <div className="bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10 rounded-lg overflow-hidden">
                                 <div className="relative w-full h-48">
                                     {watchedValues.image && <ImagePreview file={watchedValues.image} alt={watchedValues.title} fill />}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
@@ -394,13 +395,13 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     </div>
                                 </div>
                                 <div className="p-4 space-y-4">
-                                    <div className="prose prose-sm max-w-none text-white/80 dark:prose-invert">
+                                    <div className="prose prose-sm max-w-none text-zinc-700 dark:text-white/80 dark:prose-invert">
                                         <p>{watchedValues.fullDescription}</p>
                                     </div>
 
                                     <div className="flex flex-wrap gap-2">
-                                        <Badge variant="outline" className="text-white/70 border-white/20">{watchedValues.category}</Badge>
-                                        {watchedValues.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-white/10 text-white/80">{tag.trim()}</Badge>)}
+                                        <Badge variant="outline" className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20">{watchedValues.category}</Badge>
+                                        {watchedValues.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
                                     {watchedValues.screenshots && watchedValues.screenshots.length > 0 && (
@@ -408,7 +409,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                             <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
                                             <div className="grid grid-cols-3 gap-2">
                                                 {Array.from(watchedValues.screenshots).map((file: any, index) => (
-                                                    <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-white/10">
+                                                    <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
                                                       <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
                                                     </div>
                                                 ))}
