@@ -35,18 +35,18 @@ export default function AdminLayout({
     { href: '/admin', label: 'Dashboard', icon: Home },
     { href: '/admin/workspace/meeting-room', label: 'Meeting Room', icon: MessageSquare },
     {  
-      label: 'Portfolio', icon: Briefcase,
-      subItems: [
-        { href: '/admin/projects', label: 'My Works' },
-        { href: '/admin/portfolio/page-content', label: 'Page Content' },
-      ]
-    },
-    {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
         { href: '/admin/workspace/clients', label: 'Clients' },
         { href: '/admin/workspace/tasks', label: 'Tasks' },
         { href: '/admin/workspace/projects', label: 'Projects' },
+      ]
+    },
+    {  
+      label: 'Portfolio', icon: Briefcase,
+      subItems: [
+        { href: '/admin/projects', label: 'My Works' },
+        { href: '/admin/portfolio/page-content', label: 'Page Content' },
       ]
     },
     { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
