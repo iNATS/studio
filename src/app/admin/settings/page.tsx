@@ -41,7 +41,7 @@ export default function SettingsPage() {
 
   return (
     <main className="flex flex-col h-full">
-      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md pt-4 pb-4 -mx-4 -mt-4 px-4">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
       <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
@@ -57,7 +57,7 @@ export default function SettingsPage() {
             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Update your public profile details.</CardDescription>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Update your public profile details.</CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="space-y-6" onSubmit={(e) => handleFormSubmit(e, 'Profile')}>
@@ -104,7 +104,7 @@ export default function SettingsPage() {
             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5" />Security</CardTitle>
-                <CardDescription>Manage your account security settings.</CardDescription>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Manage your account security settings.</CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="space-y-6" onSubmit={(e) => handleFormSubmit(e, 'Security')}>
@@ -138,7 +138,7 @@ export default function SettingsPage() {
              <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5" />Notifications</CardTitle>
-                <CardDescription>Manage how you receive notifications.</CardDescription>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Manage how you receive notifications.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-black/5 dark:bg-white/5">
@@ -168,7 +168,7 @@ export default function SettingsPage() {
              <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Languages className="h-5 w-5" />Language</CardTitle>
-                <CardDescription>Choose your preferred language for the interface.</CardDescription>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Choose your preferred language for the interface.</CardDescription>
               </CardHeader>
               <CardContent>
                  <Select defaultValue="en">
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><BarChart className="h-5 w-5" />Marketing & Analytics</CardTitle>
-                        <CardDescription>Connect your marketing and analytics tools.</CardDescription>
+                        <CardDescription className="text-zinc-600 dark:text-white/60">Connect your marketing and analytics tools.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                          <div className="space-y-2">
@@ -209,7 +209,7 @@ export default function SettingsPage() {
                  <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" />Communication</CardTitle>
-                        <CardDescription>Configure your mail and chat settings.</CardDescription>
+                        <CardDescription className="text-zinc-600 dark:text-white/60">Configure your mail and chat settings.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
@@ -253,5 +253,3 @@ export default function SettingsPage() {
     </main>
   );
 }
-
-    
