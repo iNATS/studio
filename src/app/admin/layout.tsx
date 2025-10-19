@@ -19,7 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
+import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -43,6 +43,7 @@ export default function AdminLayout({
     {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
+        { href: '/admin/workspace/meeting-room', label: 'Meeting Room' },
         { href: '/admin/workspace/clients', label: 'Clients' },
         { href: '/admin/workspace/tasks', label: 'Tasks' },
         { href: '/admin/workspace/projects', label: 'Projects' },
@@ -86,13 +87,16 @@ export default function AdminLayout({
                             <span>{item.label}</span>
                           </SidebarMenuSubTrigger>
                           <SidebarMenuSubContent>
-                            {item.subItems.map(subItem => (
-                               <SidebarMenuSubItem key={subItem.href}>
-                                <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
-                                  <Link href={subItem.href}>{subItem.label}</Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
+                            {item.subItems.map(subItem => {
+                                const SubIcon = subItem.href.includes('meeting') ? MessageSquare : Users; // Just an example for icon variety
+                                return (
+                                <SidebarMenuSubItem key={subItem.href}>
+                                    <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
+                                    <Link href={subItem.href}>{subItem.label}</Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                                )
+                            })}
                           </SidebarMenuSubContent>
                         </SidebarMenuSub>
                       </SidebarMenuItem>
