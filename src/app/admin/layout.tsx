@@ -33,6 +33,7 @@ export default function AdminLayout({
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
+    { href: '/admin/workspace/meeting-room', label: 'Meeting Room', icon: MessageSquare },
     {  
       label: 'Portfolio', icon: Briefcase,
       subItems: [
@@ -40,7 +41,6 @@ export default function AdminLayout({
         { href: '/admin/portfolio/page-content', label: 'Page Content' },
       ]
     },
-    { href: '/admin/workspace/meeting-room', label: 'Meeting Room', icon: MessageSquare },
     {  
       label: 'Workspace', icon: LayoutGrid, 
       subItems: [
