@@ -24,8 +24,98 @@ export type PortfolioItem = {
 
 export const portfolioItems: PortfolioItem[] = [
   {
+    title: 'Gamo - E-commerce Platform',
+    slug: 'gamo-ecommerce',
+    description: 'A modern and sleek e-commerce platform for gaming products, built with Webflow.',
+    image: 'https://picsum.photos/seed/gamo-store/600/400',
+    hint: 'gaming store',
+    tags: ['Webflow', 'UI/UX Design', 'E-commerce'],
+    category: 'web',
+    link: 'https://gamo-template.webflow.io/',
+    fullDescription: 'Gamo is a Webflow template designed for gaming and e-commerce stores. It features a clean and modern design with a focus on user experience, providing a seamless shopping journey for customers looking for gaming gear and accessories.',
+    screenshots: [
+      'https://picsum.photos/seed/gamo-s1/1200/800',
+      'https://picsum.photos/seed/gamo-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Aqar - Real Estate App',
+    slug: 'aqar-real-estate',
+    description: 'A mobile application concept for a real estate platform to find and explore properties.',
+    image: 'https://picsum.photos/seed/aqar-app/400/600',
+    hint: 'property app',
+    tags: ['Mobile Design', 'UI/UX Design', 'Figma', 'Prototyping'],
+    category: 'mobile',
+    link: '#',
+    fullDescription: 'Aqar is a UI/UX concept for a real estate mobile app. The design focuses on providing a simple, intuitive, and map-centric experience for users to search for properties, view details, and connect with agents. The prototype was created in Figma.',
+    screenshots: [
+      'https://picsum.photos/seed/aqar-s1/800/1200',
+      'https://picsum.photos/seed/aqar-s2/800/1200',
+    ],
+  },
+  {
+    title: 'Mentor - Online Courses App',
+    slug: 'mentor-courses-app',
+    description: 'A mobile app UI for an online learning platform, connecting students with mentors.',
+    image: 'https://picsum.photos/seed/mentor-app/400/600',
+    hint: 'learning app',
+    tags: ['Mobile Design', 'UI/UX Design', 'Figma'],
+    category: 'mobile',
+    link: '#',
+    fullDescription: 'Mentor is a UI concept for a mobile app that facilitates online learning. The design aims to create an engaging and user-friendly environment for students to browse courses, interact with content, and connect with mentors for guidance.',
+    screenshots: [
+        'https://picsum.photos/seed/mentor-s1/800/1200',
+        'https://picsum.photos/seed/mentor-s2/800/1200',
+    ],
+  },
+   {
+    title: 'Matador - Food Delivery App',
+    slug: 'matador-food-delivery',
+    description: 'UI/UX design for a food delivery mobile application with a focus on a simple and delightful ordering experience.',
+    image: 'https://picsum.photos/seed/matador-app/400/600',
+    hint: 'food delivery',
+    tags: ['UI/UX Design', 'Mobile Design', 'Figma'],
+    category: 'mobile',
+    link: '#',
+    fullDescription: 'Matador is a UI/UX concept for a food delivery app. The design prioritizes a visually appealing menu, easy navigation, and a streamlined checkout process to make ordering food a quick and enjoyable experience for the user.',
+    screenshots: [
+      'https://picsum.photos/seed/matador-s1/800/1200',
+      'https://picsum.photos/seed/matador-s2/800/1200',
+    ],
+  },
+  {
+    title: "Let's Git - Developer Platform",
+    slug: 'lets-git-platform',
+    description: 'A Webflow template for developers to showcase their projects and skills.',
+    image: 'https://picsum.photos/seed/lets-git/600/400',
+    hint: 'developer portfolio',
+    tags: ['Webflow', 'Web Design', 'UI/UX'],
+    category: 'web',
+    link: 'https://lets-git.webflow.io/',
+    fullDescription: "Let's Git is a sleek, dark-mode Webflow template designed for developers. It serves as a portfolio and personal site, allowing developers to present their projects, share their skills, and write blog posts in a modern and professional layout.",
+    screenshots: [
+        'https://picsum.photos/seed/lets-git-s1/1200/800',
+        'https://picsum.photos/seed/lets-git-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Brand & Logo Design',
+    slug: 'brand-logo-design',
+    description: 'A collection of logos and brand identities created for various clients.',
+    image: 'https://picsum.photos/seed/logo-collection/600/400',
+    hint: 'logo designs',
+    tags: ['Branding', 'Logo Design', 'Visual Identity', 'Illustrator'],
+    category: 'design',
+    link: '#',
+    fullDescription: 'This project is a showcase of various brand identity and logo design work for a diverse range of clients. Each logo is crafted to be unique, memorable, and reflective of the brand\'s core values and mission. The process involves extensive research, conceptualization, and refinement to deliver a powerful visual identity.',
+    screenshots: [
+      'https://picsum.photos/seed/logo-s1/1200/800',
+      'https://picsum.photos/seed/logo-s2/1200/800',
+    ],
+  },
+  {
     title: 'Artisan E-commerce Marketplace',
-    slug: 'artisan-ecommerce',
+    slug: 'artisan-ecommerce-old',
     description: 'A multi-vendor marketplace for handmade goods, featuring custom vendor dashboards and Stripe Connect integration.',
     image: 'https://picsum.photos/seed/craft-market/600/400',
     hint: 'online store',
@@ -41,7 +131,7 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     title: 'Fintech Mobile App UI/UX',
-    slug: 'fintech-mobile-app',
+    slug: 'fintech-mobile-app-old',
     description: 'A secure and intuitive mobile banking application for iOS and Android, focusing on a clean user experience.',
     image: 'https://picsum.photos/seed/finance-app/400/600',
     hint: 'banking app',
@@ -57,7 +147,7 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     title: 'SaaS Analytics Dashboard',
-    slug: 'saas-analytics-dashboard',
+    slug: 'saas-analytics-dashboard-old',
     description: 'A responsive web application for data visualization and business intelligence, built with React and D3.js.',
     image: 'https://picsum.photos/seed/analytics-ui/600/400',
     hint: 'data dashboard',
@@ -72,7 +162,7 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     title: 'AI-Powered Copywriting Tool',
-    slug: 'ai-copywriting-tool',
+    slug: 'ai-copywriting-tool-old',
     description: 'A web-based tool that leverages generative AI to help marketing teams create content for their campaigns.',
     image: 'https://picsum.photos/seed/ai-writing-tool/600/400',
     hint: 'AI interface',
@@ -83,96 +173,6 @@ export const portfolioItems: PortfolioItem[] = [
     screenshots: [
         'https://picsum.photos/seed/ai-tool-s1/1200/800',
         'https://picsum.photos/seed/ai-tool-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Real Estate Listing Platform',
-    slug: 'real-estate-platform',
-    description: 'A comprehensive real estate platform with advanced search, interactive maps, and agent profiles.',
-    image: 'https://picsum.photos/seed/property-search/600/400',
-    hint: 'real estate',
-    tags: ['Web Development', 'Google Maps API', 'React', 'Node.js'],
-    category: 'web',
-    link: '#',
-    fullDescription: 'I built a full-featured real estate platform with a React frontend and a Node.js backend. A key feature is the deep integration of the Google Maps API to provide interactive map-based search, property location visualization, and neighborhood insights. The platform also includes features for agents to manage their listings and for users to save their favorite properties.',
-    screenshots: [
-        'https://picsum.photos/seed/property-search-s1/1200/800',
-        'https://picsum.photos/seed/property-search-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Food Delivery App',
-    slug: 'food-delivery-app',
-    description: 'A cross-platform mobile app for a local restaurant chain, enabling online ordering and delivery tracking.',
-    image: 'https://picsum.photos/seed/food-order-app/400/600',
-    hint: 'food app',
-    tags: ['Mobile', 'React Native', 'Firebase', 'UI/UX Design'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'This React Native app provides a seamless ordering experience for customers of a local restaurant chain. It includes features like menu browsing, order customization, secure online payments, and real-time delivery tracking on a map. I used Firebase for the backend, including Authentication, Firestore for real-time order updates, and Cloud Functions for payment processing.',
-    screenshots: [
-      'https://picsum.photos/seed/food-order-s1/800/1200',
-      'https://picsum.photos/seed/food-order-s2/800/1200',
-    ],
-  },
-  {
-    title: 'Tech Startup Rebrand',
-    slug: 'tech-startup-rebrand',
-    description: 'A complete visual identity and branding overhaul for a growing technology startup.',
-    image: 'https://picsum.photos/seed/brand-identity/600/400',
-    hint: 'corporate branding',
-    tags: ['Design', 'Visual Identity', 'Logo Design', 'Figma', 'Illustrator'],
-    category: 'design',
-    link: '#',
-    fullDescription: 'I led the complete rebranding of a tech startup, which included creating a new logo, defining a color palette and typography system, and designing a full suite of marketing materials. The process involved extensive research and collaboration with the client to create a modern and memorable brand identity that reflects their innovative spirit. All assets were designed in Figma and Illustrator.',
-    screenshots: [
-        'https://picsum.photos/seed/brand-identity-s1/1200/800',
-        'https://picsum.photos/seed/brand-identity-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Healthcare Telemedicine App',
-    slug: 'telemedicine-app',
-    description: 'A secure mobile app connecting patients with doctors for virtual consultations.',
-    image: 'https://picsum.photos/seed/health-app/400/600',
-    hint: 'medical app',
-    tags: ['Mobile', 'Flutter', 'WebRTC', 'Firebase', 'Security'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'Developed a HIPAA-compliant telemedicine app using Flutter for the frontend and Firebase for secure data storage and authentication. The app facilitates video consultations between patients and doctors through a WebRTC integration. Security and privacy were paramount, so I implemented end-to-end encryption for all communications and adhered to strict data handling protocols.',
-    screenshots: [
-      'https://picsum.photos/seed/health-app-s1/800/1200',
-      'https://picsum.photos/seed/health-app-s2/800/1200',
-    ],
-  },
-  {
-    title: 'Boutique Hotel Website',
-    slug: 'hotel-website',
-    description: 'An elegant and responsive website for a boutique hotel, featuring a custom booking engine.',
-    image: 'https://picsum.photos/seed/luxury-hotel/600/400',
-    hint: 'hotel website',
-    tags: ['Web Design', 'Wordpress', 'PHP', 'JavaScript', 'CSS'],
-    category: 'web',
-    link: '#',
-    fullDescription: 'Designed and developed a custom WordPress theme for a luxury boutique hotel. The website showcases the hotel\'s unique character through beautiful design and immersive visuals. I built a custom booking engine with PHP and JavaScript that integrates with their existing reservation system, allowing guests to book their stay directly on the site. The entire site is fully responsive and optimized for performance.',
-    screenshots: [
-        'https://picsum.photos/seed/luxury-hotel-s1/1200/800',
-        'https://picsum.photos/seed/luxury-hotel-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Packaging Design for a Coffee Brand',
-    slug: 'coffee-packaging',
-    description: 'Vibrant and eco-friendly packaging design for a new artisanal coffee brand.',
-    image: 'https://picsum.photos/seed/coffee-bag/600/400',
-    hint: 'coffee packaging',
-    tags: ['Design', 'Branding', 'Illustrator', 'Photoshop', 'Packaging'],
-    category: 'design',
-    link: '#',
-    fullDescription: 'Created a full range of packaging for a new artisanal coffee brand, including bags, boxes, and labels. The design concept was centered around sustainability and the brand\'s unique story. I used Adobe Illustrator and Photoshop to create custom illustrations and typography that resulted in a visually striking and cohesive product line that stands out on the shelf.',
-    screenshots: [
-      'https://picsum.photos/seed/coffee-bag-s1/1200/800',
-      'https://picsum.photos/seed/coffee-bag-s2/1200/800',
     ],
   },
 ];
@@ -292,7 +292,7 @@ export function Portfolio() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
         {visibleItems.map((item, index) => (
-          <PortfolioCard key={`${filter}-${item.title}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
+          <PortfolioCard key={`${filter}-${item.slug}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
         ))}
       </div>
        {visibleCount < filteredItems.length && (
