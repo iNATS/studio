@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -23,99 +24,156 @@ export type PortfolioItem = {
 
 export const portfolioItems: PortfolioItem[] = [
   {
-    title: 'E-commerce Platform',
-    slug: 'ecommerce-platform',
-    description: 'A full-stack e-commerce solution with a custom CMS and payment gateway integration.',
-    image: 'https://picsum.photos/seed/ecom/600/400',
-    hint: 'online store',
-    tags: ['Web', 'React', 'Node.js', 'PostgreSQL', 'Stripe'],
+    title: 'Artisan E-commerce Marketplace',
+    slug: 'artisan-ecommerce',
+    description: 'A multi-vendor marketplace for handmade goods, featuring custom vendor dashboards and Stripe Connect integration.',
+    image: 'https://picsum.photos/seed/artisan-web/600/400',
+    hint: 'ecommerce website',
+    tags: ['Next.js', 'Tailwind CSS', 'Node.js', 'PostgreSQL', 'Stripe'],
     category: 'web',
     link: '#',
-    fullDescription: 'This project involved building a robust backend with Node.js and a dynamic front-end with React, ensuring a seamless user experience from browsing to checkout. The platform includes features like product management, order tracking, and secure payments with Stripe. The custom CMS allows for easy content updates and management of the entire e-commerce store.',
+    fullDescription: 'Developed a full-stack e-commerce platform using Next.js for a dynamic frontend and a Node.js backend with a PostgreSQL database. The project included integrating Stripe Connect to handle complex payment flows for a multi-vendor marketplace. I designed and built custom dashboards for vendors to manage their products, view sales analytics, and handle orders, providing a complete solution for small businesses to sell their handmade goods.',
     screenshots: [
-        'https://picsum.photos/seed/ecom-s1/1200/800',
-        'https://picsum.photos/seed/ecom-s2/1200/800',
-        'https://picsum.photos/seed/ecom-s3/1200/800',
-        'https://picsum.photos/seed/ecom-s4/1200/800',
-      ],
+      'https://picsum.photos/seed/artisan-s1/1200/800',
+      'https://picsum.photos/seed/artisan-s2/1200/800',
+      'https://picsum.photos/seed/artisan-s3/1200/800',
+    ],
   },
   {
-    title: 'Mobile Banking App',
-    slug: 'mobile-banking-app',
-    description: 'A secure and intuitive mobile banking application for iOS and Android, built with Flutter.',
-    image: 'https://picsum.photos/seed/bank/600/400',
-    hint: 'mobile banking',
-    tags: ['Mobile', 'Flutter', 'Firebase', 'Security'],
+    title: 'Fintech Mobile App UI/UX',
+    slug: 'fintech-mobile-app',
+    description: 'A secure and intuitive mobile banking application for iOS and Android, focusing on a clean user experience.',
+    image: 'https://picsum.photos/seed/fintech-mobile/600/400',
+    hint: 'mobile finance',
+    tags: ['Flutter', 'UI/UX Design', 'Firebase', 'Figma', 'Prototyping'],
     category: 'mobile',
     link: '#',
-    fullDescription: 'It features biometric authentication, real-time transaction updates, and a user-friendly interface for managing accounts and payments. Security was a top priority, implementing end-to-end encryption and leveraging Firebase for secure authentication and database management. The app provides a seamless and safe banking experience on the go.',
+    fullDescription: 'Designed and developed a cross-platform mobile banking app with Flutter, ensuring a native feel on both iOS and Android. The app features biometric authentication, real-time transaction updates, and P2P payments. I conducted extensive user research to create a user-friendly interface, prototyped the entire app in Figma, and used Firebase for secure authentication and real-time database capabilities, resulting in a highly-rated, secure financial tool.',
     screenshots: [
-        'https://picsum.photos/seed/bank-s1/1200/800',
-        'https://picsum.photos/seed/bank-s2/1200/800',
-      ],
+        'https://picsum.photos/seed/fintech-s1/800/1200',
+        'https://picsum.photos/seed/fintech-s2/800/1200',
+        'https://picsum.photos/seed/fintech-s3/800/1200',
+    ],
   },
   {
-    title: 'Corporate Branding',
-    slug: 'corporate-branding',
-    description: 'A complete brand identity design for a major tech startup.',
-    image: 'https://picsum.photos/seed/brand/600/400',
-    hint: 'brand design',
-    tags: ['Design', 'Branding', 'Illustrator', 'Figma'],
-    category: 'design',
-    link: '#',
-    fullDescription: 'This included logo design, a comprehensive style guide, marketing collateral, and UI mockups to ensure a consistent and powerful brand presence across all platforms. The goal was to create a memorable and impactful brand that resonates with the target audience and stands out in a competitive market.',
-    screenshots: [
-        'https://picsum.photos/seed/brand-s1/1200/800',
-        'https://picsum.photos/seed/brand-s2/1200/800',
-        'https://picsum.photos/seed/brand-s3/1200/800',
-      ],
-  },
-  {
-    title: 'Project Management Tool',
-    slug: 'project-management-tool',
-    description: 'A collaborative project management tool designed to streamline team workflows.',
-    image: 'https://picsum.photos/seed/pm/600/400',
-    hint: 'team collaboration',
-    tags: ['Web', 'Vue.js', 'GraphQL', 'Apollo'],
+    title: 'SaaS Analytics Dashboard',
+    slug: 'saas-analytics-dashboard',
+    description: 'A responsive web application for data visualization and business intelligence, built with React and D3.js.',
+    image: 'https://picsum.photos/seed/saas-dashboard/600/400',
+    hint: 'data dashboard',
+    tags: ['React', 'Web Development', 'D3.js', 'Restful API', 'UI/UX'],
     category: 'web',
     link: '#',
-    fullDescription: 'Built with Vue.js and GraphQL, it offers features like task tracking, team communication, and file sharing to enhance productivity. The real-time updates and collaborative features make it an essential tool for any team looking to improve their project management process.',
-    screenshots: [
-        'https://picsum.photos/seed/pm-s1/1200/800',
-        'https://picsum.photos/seed/pm-s2/1200/800',
-        'https://picsum.photos/seed/pm-s3/1200/800',
-      ],
-  },
-  {
-    title: 'Fitness Tracker App',
-    slug: 'fitness-tracker-app',
-    description: 'A mobile app to track workouts, nutrition, and progress with social features.',
-    image: 'https://picsum.photos/seed/fit/600/400',
-    hint: 'fitness app',
-    tags: ['Mobile', 'React Native', 'HealthKit'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'Using React Native, it provides a cross-platform solution with a focus on user engagement and data visualization. Integration with HealthKit allows for seamless tracking of health data, while social features encourage users to stay motivated and connected with their fitness community.',
-    screenshots: [
-        'https://picsum.photos/seed/fit-s1/1200/800',
-      ],
-  },
-  {
-    title: 'SaaS Dashboard UI Kit',
-    slug: 'saas-dashboard-ui-kit',
-    description: 'A comprehensive UI kit for designing modern and responsive SaaS dashboards.',
-    image: 'https://picsum.photos/seed/saas/600/400',
-    hint: 'dashboard interface',
-    tags: ['Design', 'UI/UX', 'Figma', 'Component Library'],
-    category: 'design',
-    link: '#',
-    fullDescription: 'This kit, created in Figma, includes a wide range of components, templates, and styles to accelerate the design process for data-heavy applications. It is designed to be fully customizable and scalable, allowing designers to create beautiful and functional dashboards with ease.',
+    fullDescription: 'This project involved creating a powerful and responsive analytics dashboard for a SaaS company. I used React and Tailwind CSS to build a modular component library and integrated D3.js for complex, interactive data visualizations. The dashboard securely fetches data from a RESTful API and presents it in an intuitive and actionable way, enabling users to gain insights into their business metrics.',
     screenshots: [
         'https://picsum.photos/seed/saas-s1/1200/800',
         'https://picsum.photos/seed/saas-s2/1200/800',
-        'https://picsum.photos/seed/saas-s3/1200/800',
-        'https://picsum.photos/seed/saas-s4/1200/800',
-      ],
+    ],
+  },
+  {
+    title: 'AI-Powered Copywriting Tool',
+    slug: 'ai-copywriting-tool',
+    description: 'A web-based tool that leverages generative AI to help marketing teams create content for their campaigns.',
+    image: 'https://picsum.photos/seed/ai-writer/600/400',
+    hint: 'AI application',
+    tags: ['AI Vibe coding', 'Next.js', 'Webflow', 'GenAI'],
+    category: 'web',
+    link: '#',
+    fullDescription: 'This innovative tool integrates a generative AI model through a custom API to generate marketing copy, blog post ideas, and social media content. The frontend was built with Next.js and styled with Tailwind CSS, offering a clean and intuitive interface for users to interact with the AI. I also developed a public-facing marketing site using Webflow to promote the tool.',
+    screenshots: [
+        'https://picsum.photos/seed/ai-writer-s1/1200/800',
+        'https://picsum.photos/seed/ai-writer-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Real Estate Listing Platform',
+    slug: 'real-estate-platform',
+    description: 'A comprehensive real estate platform with advanced search, interactive maps, and agent profiles.',
+    image: 'https://picsum.photos/seed/real-estate/600/400',
+    hint: 'property listings',
+    tags: ['Web Development', 'Google Maps API', 'React', 'Node.js'],
+    category: 'web',
+    link: '#',
+    fullDescription: 'I built a full-featured real estate platform with a React frontend and a Node.js backend. A key feature is the deep integration of the Google Maps API to provide interactive map-based search, property location visualization, and neighborhood insights. The platform also includes features for agents to manage their listings and for users to save their favorite properties.',
+    screenshots: [
+        'https://picsum.photos/seed/real-estate-s1/1200/800',
+        'https://picsum.photos/seed/real-estate-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Food Delivery App',
+    slug: 'food-delivery-app',
+    description: 'A cross-platform mobile app for a local restaurant chain, enabling online ordering and delivery tracking.',
+    image: 'https://picsum.photos/seed/food-app/600/400',
+    hint: 'delivery app',
+    tags: ['Mobile', 'React Native', 'Firebase', 'UI/UX Design'],
+    category: 'mobile',
+    link: '#',
+    fullDescription: 'This React Native app provides a seamless ordering experience for customers of a local restaurant chain. It includes features like menu browsing, order customization, secure online payments, and real-time delivery tracking on a map. I used Firebase for the backend, including Authentication, Firestore for real-time order updates, and Cloud Functions for payment processing.',
+    screenshots: [
+      'https://picsum.photos/seed/food-app-s1/800/1200',
+      'https://picsum.photos/seed/food-app-s2/800/1200',
+    ],
+  },
+  {
+    title: 'Tech Startup Rebrand',
+    slug: 'tech-startup-rebrand',
+    description: 'A complete visual identity and branding overhaul for a growing technology startup.',
+    image: 'https://picsum.photos/seed/startup-rebrand/600/400',
+    hint: 'corporate branding',
+    tags: ['Design', 'Visual Identity', 'Logo Design', 'Figma', 'Illustrator'],
+    category: 'design',
+    link: '#',
+    fullDescription: 'I led the complete rebranding of a tech startup, which included creating a new logo, defining a color palette and typography system, and designing a full suite of marketing materials. The process involved extensive research and collaboration with the client to create a modern and memorable brand identity that reflects their innovative spirit. All assets were designed in Figma and Illustrator.',
+    screenshots: [
+        'https://picsum.photos/seed/rebrand-s1/1200/800',
+        'https://picsum.photos/seed/rebrand-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Healthcare Telemedicine App',
+    slug: 'telemedicine-app',
+    description: 'A secure mobile app connecting patients with doctors for virtual consultations.',
+    image: 'https://picsum.photos/seed/telemedicine-app/600/400',
+    hint: 'doctor patient',
+    tags: ['Mobile', 'Flutter', 'WebRTC', 'Firebase', 'Security'],
+    category: 'mobile',
+    link: '#',
+    fullDescription: 'Developed a HIPAA-compliant telemedicine app using Flutter for the frontend and Firebase for secure data storage and authentication. The app facilitates video consultations between patients and doctors through a WebRTC integration. Security and privacy were paramount, so I implemented end-to-end encryption for all communications and adhered to strict data handling protocols.',
+    screenshots: [
+      'https://picsum.photos/seed/telemedicine-s1/800/1200',
+      'https://picsum.photos/seed/telemedicine-s2/800/1200',
+    ],
+  },
+  {
+    title: 'Boutique Hotel Website',
+    slug: 'hotel-website',
+    description: 'An elegant and responsive website for a boutique hotel, featuring a custom booking engine.',
+    image: 'https://picsum.photos/seed/hotel-web/600/400',
+    hint: 'luxury hotel',
+    tags: ['Web Design', 'Wordpress', 'PHP', 'JavaScript', 'CSS'],
+    category: 'web',
+    link: '#',
+    fullDescription: 'Designed and developed a custom WordPress theme for a luxury boutique hotel. The website showcases the hotel\'s unique character through beautiful design and immersive visuals. I built a custom booking engine with PHP and JavaScript that integrates with their existing reservation system, allowing guests to book their stay directly on the site. The entire site is fully responsive and optimized for performance.',
+    screenshots: [
+        'https://picsum.photos/seed/hotel-s1/1200/800',
+        'https://picsum.photos/seed/hotel-s2/1200/800',
+    ],
+  },
+  {
+    title: 'Packaging Design for a Coffee Brand',
+    slug: 'coffee-packaging',
+    description: 'Vibrant and eco-friendly packaging design for a new artisanal coffee brand.',
+    image: 'https://picsum.photos/seed/coffee-design/600/400',
+    hint: 'coffee package',
+    tags: ['Design', 'Branding', 'Illustrator', 'Photoshop', 'Packaging'],
+    category: 'design',
+    link: '#',
+    fullDescription: 'Created a full range of packaging for a new artisanal coffee brand, including bags, boxes, and labels. The design concept was centered around sustainability and the brand\'s unique story. I used Adobe Illustrator and Photoshop to create custom illustrations and typography that resulted in a visually striking and cohesive product line that stands out on the shelf.',
+    screenshots: [
+      'https://picsum.photos/seed/coffee-s1/1200/800',
+      'https://picsum.photos/seed/coffee-s2/1200/800',
+    ],
   },
 ];
 
@@ -162,7 +220,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 export function Portfolio() {
   const [filter, setFilter] = useState('all');
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(6);
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.05 });
   const [cardsVisible, setCardsVisible] = useState(false);
@@ -178,7 +236,7 @@ export function Portfolio() {
 
   const handleFilterChange = (newFilter: string) => {
     if (filter === newFilter) return;
-    setVisibleCount(4); // Reset visible count on filter change
+    setVisibleCount(6); // Reset visible count on filter change
     setCardsVisible(false);
     setTimeout(() => {
       setFilter(newFilter);
@@ -187,7 +245,7 @@ export function Portfolio() {
   };
 
   const handleLoadMore = () => {
-    setVisibleCount(prevCount => prevCount + 3);
+    setVisibleCount(prevCount => prevCount + 4);
   };
 
   const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
