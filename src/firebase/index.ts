@@ -34,6 +34,14 @@ function initializeFirebase(options?: FirebaseOptions) {
     app = initializeApp(options || firebaseConfig);
     auth = getAuth(app);
     firestore = getFirestore(app);
+  } else {
+    app = apps[0];
+    if (!auth) {
+        auth = getAuth(app);
+    }
+    if (!firestore) {
+        firestore = getFirestore(app);
+    }
   }
   return { app, auth, firestore };
 }
@@ -53,5 +61,4 @@ export {
   updateDocumentNonBlocking,
   deleteDocumentNonBlocking,
   FirebaseErrorListener,
-  getFirestore,
 };

@@ -29,7 +29,6 @@ import {
   type DocumentSnapshot,
   type QuerySnapshot,
 } from 'firebase/firestore';
-import { getFirestore } from './index';
 
 // Non-blocking Firestore updates
 export const addDocumentNonBlocking = (
@@ -52,21 +51,15 @@ export const setDocumentNonBlocking = (
 };
 
 export const updateDocumentNonBlocking = (
-  docPath: string,
+  docRef: DocumentReference,
   data: DocumentData
 ) => {
-  const db = getFirestore();
-  if (!db) return;
-  const docRef = firestoreDoc(db, docPath);
   updateDoc(docRef, data).catch((error) =>
     console.error('Error updating document: ', error)
   );
 };
 
-export const deleteDocumentNonBlocking = (docPath: string) => {
-  const db = getFirestore();
-  if (!db) return;
-  const docRef = firestoreDoc(db, docPath);
+export const deleteDocumentNonBlocking = (docRef: DocumentReference) => {
   deleteDoc(docRef).catch((error) =>
     console.error('Error deleting document: ', error)
   );
@@ -88,9 +81,11 @@ export function useCollection<T>(
   useEffect(() => {
     if (!ref) {
       setLoading(false);
+      setData([]);
       return;
     }
 
+    setLoading(true);
     const unsubscribe = onSnapshot(
       ref,
       (snapshot: QuerySnapshot) => {
@@ -127,6 +122,7 @@ export function useDoc<T>(
       return;
     }
 
+    setLoading(true);
     const unsubscribe = onSnapshot(
       ref,
       (snapshot: DocumentSnapshot) => {

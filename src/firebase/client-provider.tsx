@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { initializeFirebase, FirebaseProvider } from './index';
 
 export function FirebaseClientProvider({ children }: { children: ReactNode }) {

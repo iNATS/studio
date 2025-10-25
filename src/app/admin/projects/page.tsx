@@ -51,7 +51,7 @@ import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -82,13 +82,13 @@ export default function AdminProjectsPage() {
 
 
   const handleAddWork = (values: any) => {
-    if (!firestore) return;
+    if (!firestore || !portfolioCollection) return;
     const { tags, ...rest } = values;
     const newWork = {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    addDocumentNonBlocking(collection(firestore, 'portfolioItems'), newWork);
+    addDocumentNonBlocking(portfolioCollection, newWork);
     setIsAddDialogOpen(false);
     toast({
       variant: 'success',
@@ -99,12 +99,13 @@ export default function AdminProjectsPage() {
 
   const handleEditWork = (values: any) => {
     if (!editingProject?.id || !firestore) return;
+    const docRef = doc(firestore, `portfolioItems/${editingProject.id}`);
     const { tags, ...rest } = values;
     const updatedWork = {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    updateDocumentNonBlocking(`portfolioItems/${editingProject.id}`, updatedWork);
+    updateDocumentNonBlocking(docRef, updatedWork);
     setEditingProject(null);
     toast({
       variant: 'success',
@@ -122,8 +123,9 @@ export default function AdminProjectsPage() {
   };
 
   const handleDeleteConfirm = () => {
-    if (projectToDelete?.id) {
-      deleteDocumentNonBlocking(`portfolioItems/${projectToDelete.id}`);
+    if (projectToDelete?.id && firestore) {
+      const docRef = doc(firestore, `portfolioItems/${projectToDelete.id}`);
+      deleteDocumentNonBlocking(docRef);
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',
