@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -70,7 +70,9 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 export function Portfolio() {
   const firestore = useFirestore();
-  const portfolioCollection = firestore ? collection(firestore, 'portfolioItems') : null;
+  const portfolioCollection = useMemo(() => {
+      return firestore ? collection(firestore, 'portfolioItems') : null;
+  }, [firestore]);
   const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
   
   const [filter, setFilter] = useState('all');

@@ -57,7 +57,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProjectsPage() {
   const firestore = useFirestore();
-  const portfolioCollection = firestore ? collection(firestore, 'portfolioItems') : null;
+  const portfolioCollection = React.useMemo(() => {
+    return firestore ? collection(firestore, 'portfolioItems') : null;
+  }, [firestore]);
   const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
@@ -88,7 +90,7 @@ export default function AdminProjectsPage() {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    addDocumentNonBlocking(portfolioCollection, newWork);
+    addDocumentNonBlocking(firestore, portfolioCollection, newWork);
     setIsAddDialogOpen(false);
     toast({
       variant: 'success',
@@ -105,7 +107,7 @@ export default function AdminProjectsPage() {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    updateDocumentNonBlocking(docRef, updatedWork);
+    updateDocumentNonBlocking(firestore, docRef, updatedWork);
     setEditingProject(null);
     toast({
       variant: 'success',
@@ -125,7 +127,7 @@ export default function AdminProjectsPage() {
   const handleDeleteConfirm = () => {
     if (projectToDelete?.id && firestore) {
       const docRef = doc(firestore, `portfolioItems/${projectToDelete.id}`);
-      deleteDocumentNonBlocking(docRef);
+      deleteDocumentNonBlocking(firestore, docRef);
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',
