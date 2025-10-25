@@ -28,7 +28,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import Image from 'next/image';
 import {
   Dialog,
@@ -51,8 +50,14 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
+import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, getFirestore } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import type { PortfolioItem } from '@/components/landing/Portfolio';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProjectsPage() {
+  const firestore = getFirestore();
+  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(collection(firestore, 'portfolioItems'));
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -60,13 +65,51 @@ export default function AdminProjectsPage() {
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(portfolioItems.length / itemsPerPage);
+  
+  const paginatedItems = React.useMemo(() => {
+    if (!portfolioItems) return [];
+    return portfolioItems.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [portfolioItems, currentPage]);
 
-  const paginatedItems = portfolioItems.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = React.useMemo(() => {
+    if (!portfolioItems) return 1;
+    return Math.ceil(portfolioItems.length / itemsPerPage);
+  }, [portfolioItems]);
 
+
+  const handleAddWork = (values: any) => {
+    const { tags, ...rest } = values;
+    const newWork = {
+      ...rest,
+      tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
+    };
+    addDocumentNonBlocking(collection(firestore, 'portfolioItems'), newWork);
+    setIsAddDialogOpen(false);
+    toast({
+      variant: 'success',
+      title: "Work Published!",
+      description: "Your new work has been added to the portfolio.",
+    });
+  }
+
+  const handleEditWork = (values: any) => {
+    if (!editingProject?.id) return;
+    const { tags, ...rest } = values;
+    const updatedWork = {
+      ...rest,
+      tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
+    };
+    updateDocumentNonBlocking(`portfolioItems/${editingProject.id}`, updatedWork);
+    setEditingProject(null);
+    toast({
+      variant: 'success',
+      title: "Work Updated!",
+      description: "Your work has been successfully updated.",
+    });
+  }
 
   const handleEdit = (project: PortfolioItem) => {
     setEditingProject(project);
@@ -77,9 +120,8 @@ export default function AdminProjectsPage() {
   };
 
   const handleDeleteConfirm = () => {
-    if (projectToDelete) {
-      console.log('Deleting project:', projectToDelete.title);
-      // Here you would add the actual logic to delete the project
+    if (projectToDelete?.id) {
+      deleteDocumentNonBlocking(`portfolioItems/${projectToDelete.id}`);
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',
@@ -123,15 +165,7 @@ export default function AdminProjectsPage() {
                 </DialogDescription>
                 </DialogHeader>
                 <ProjectWizard
-                onSubmit={(values) => {
-                    console.log('Adding work:', values);
-                    setIsAddDialogOpen(false);
-                    toast({
-                        variant: 'success',
-                        title: "Work Published!",
-                        description: "Your new work has been added to the portfolio.",
-                    });
-                }}
+                  onSubmit={handleAddWork}
                 />
             </DialogContent>
             </Dialog>
@@ -149,15 +183,7 @@ export default function AdminProjectsPage() {
             </DialogHeader>
             <ProjectWizard
               project={getProjectForForm(editingProject)}
-              onSubmit={(values) => {
-                console.log('Editing work:', values);
-                closeEditDialog();
-                toast({
-                  variant: 'success',
-                  title: "Work Updated!",
-                  description: "Your work has been successfully updated.",
-                });
-              }}
+              onSubmit={handleEditWork}
             />
           </DialogContent>
         </Dialog>
@@ -209,19 +235,34 @@ export default function AdminProjectsPage() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {paginatedItems.map((project) => (
+                    {loading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell className="hidden sm:table-cell">
+                             <Skeleton className="h-16 w-16 rounded-md" />
+                          </TableCell>
+                           <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                           <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                           <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-60" /></TableCell>
+                           <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                    paginatedItems.map((project) => (
                         <TableRow
-                        key={project.slug}
+                        key={project.id}
                         className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                         >
                         <TableCell className="hidden sm:table-cell">
-                            <Image
-                            alt={project.title}
-                            className="aspect-square rounded-md object-cover"
-                            height="64"
-                            src={project.image}
-                            width="64"
-                            />
+                            {project.image && (
+                              <Image
+                                alt={project.title}
+                                className="aspect-square rounded-md object-cover"
+                                height="64"
+                                src={project.image}
+                                width="64"
+                              />
+                            )}
                         </TableCell>
                         <TableCell className="font-medium">
                             {project.title}
@@ -274,7 +315,7 @@ export default function AdminProjectsPage() {
                             </DropdownMenu>
                         </TableCell>
                         </TableRow>
-                    ))}
+                    )))}
                     </TableBody>
                 </Table>
                 </CardContent>
@@ -290,5 +331,3 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
-
-    

@@ -8,8 +8,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
+import { useCollection, getFirestore } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 export type PortfolioItem = {
+  id?: string; // Firestore document ID
   title: string;
   slug: string;
   description: string;
@@ -21,99 +26,6 @@ export type PortfolioItem = {
   fullDescription: string;
   screenshots: string[];
 };
-
-export const portfolioItems: PortfolioItem[] = [
-  {
-    title: 'Gamo - E-commerce Platform',
-    slug: 'gamo-ecommerce',
-    description: 'A modern and sleek e-commerce platform for gaming products, built with Webflow.',
-    image: 'https://picsum.photos/seed/gamo-store/600/400',
-    hint: 'gaming store',
-    tags: ['Webflow', 'UI/UX Design', 'E-commerce'],
-    category: 'web',
-    link: 'https://gamo-template.webflow.io/',
-    fullDescription: 'Gamo is a Webflow template designed for gaming and e-commerce stores. It features a clean and modern design with a focus on user experience, providing a seamless shopping journey for customers looking for gaming gear and accessories.',
-    screenshots: [
-      'https://picsum.photos/seed/gamo-s1/1200/800',
-      'https://picsum.photos/seed/gamo-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Aqar - Real Estate App',
-    slug: 'aqar-real-estate',
-    description: 'A mobile application concept for a real estate platform to find and explore properties.',
-    image: 'https://picsum.photos/seed/aqar-app/400/600',
-    hint: 'property app',
-    tags: ['Mobile Design', 'UI/UX Design', 'Figma', 'Prototyping'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'Aqar is a UI/UX concept for a real estate mobile app. The design focuses on providing a simple, intuitive, and map-centric experience for users to search for properties, view details, and connect with agents. The prototype was created in Figma.',
-    screenshots: [
-      'https://picsum.photos/seed/aqar-s1/800/1200',
-      'https://picsum.photos/seed/aqar-s2/800/1200',
-    ],
-  },
-  {
-    title: 'Mentor - Online Courses App',
-    slug: 'mentor-courses-app',
-    description: 'A mobile app UI for an online learning platform, connecting students with mentors.',
-    image: 'https://picsum.photos/seed/mentor-app/400/600',
-    hint: 'learning app',
-    tags: ['Mobile Design', 'UI/UX Design', 'Figma'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'Mentor is a UI concept for a mobile app that facilitates online learning. The design aims to create an engaging and user-friendly environment for students to browse courses, interact with content, and connect with mentors for guidance.',
-    screenshots: [
-        'https://picsum.photos/seed/mentor-s1/800/1200',
-        'https://picsum.photos/seed/mentor-s2/800/1200',
-    ],
-  },
-   {
-    title: 'Matador - Food Delivery App',
-    slug: 'matador-food-delivery',
-    description: 'UI/UX design for a food delivery mobile application with a focus on a simple and delightful ordering experience.',
-    image: 'https://picsum.photos/seed/matador-app/400/600',
-    hint: 'food delivery',
-    tags: ['UI/UX Design', 'Mobile Design', 'Figma'],
-    category: 'mobile',
-    link: '#',
-    fullDescription: 'Matador is a UI/UX concept for a food delivery app. The design prioritizes a visually appealing menu, easy navigation, and a streamlined checkout process to make ordering food a quick and enjoyable experience for the user.',
-    screenshots: [
-      'https://picsum.photos/seed/matador-s1/800/1200',
-      'https://picsum.photos/seed/matador-s2/800/1200',
-    ],
-  },
-  {
-    title: "Let's Git - Developer Platform",
-    slug: 'lets-git-platform',
-    description: 'A Webflow template for developers to showcase their projects and skills.',
-    image: 'https://picsum.photos/seed/lets-git/600/400',
-    hint: 'developer portfolio',
-    tags: ['Webflow', 'Web Design', 'UI/UX'],
-    category: 'web',
-    link: 'https://lets-git.webflow.io/',
-    fullDescription: "Let's Git is a sleek, dark-mode Webflow template designed for developers. It serves as a portfolio and personal site, allowing developers to present their projects, share their skills, and write blog posts in a modern and professional layout.",
-    screenshots: [
-        'https://picsum.photos/seed/lets-git-s1/1200/800',
-        'https://picsum.photos/seed/lets-git-s2/1200/800',
-    ],
-  },
-  {
-    title: 'Brand & Logo Design',
-    slug: 'brand-logo-design',
-    description: 'A collection of logos and brand identities created for various clients.',
-    image: 'https://picsum.photos/seed/logo-collection/600/400',
-    hint: 'logo designs',
-    tags: ['Branding', 'Logo Design', 'Visual Identity', 'Illustrator'],
-    category: 'design',
-    link: '#',
-    fullDescription: 'This project is a showcase of various brand identity and logo design work for a diverse range of clients. Each logo is crafted to be unique, memorable, and reflective of the brand\'s core values and mission. The process involves extensive research, conceptualization, and refinement to deliver a powerful visual identity.',
-    screenshots: [
-      'https://picsum.photos/seed/logo-s1/1200/800',
-      'https://picsum.photos/seed/logo-s2/1200/800',
-    ],
-  },
-];
 
 const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioItem, index: number, isVisible: boolean, onClick: () => void }) => {
   return (
@@ -157,6 +69,9 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 
 export function Portfolio() {
+  const firestore = getFirestore();
+  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(collection(firestore, 'portfolioItems'));
+  
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -186,8 +101,15 @@ export function Portfolio() {
     setVisibleCount(prevCount => prevCount + 4);
   };
 
-  const filteredItems = filter === 'all' ? portfolioItems : portfolioItems.filter((item) => item.category === filter);
-  const visibleItems = filteredItems.slice(0, visibleCount);
+  const filteredItems = React.useMemo(() => {
+    if (!portfolioItems) return [];
+    if (filter === 'all') return portfolioItems;
+    return portfolioItems.filter((item) => item.category === filter);
+  }, [portfolioItems, filter]);
+
+  const visibleItems = React.useMemo(() => {
+    return filteredItems.slice(0, visibleCount);
+  }, [filteredItems, visibleCount]);
 
   return (
     <>
@@ -229,9 +151,15 @@ export function Portfolio() {
           </Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
-        {visibleItems.map((item, index) => (
-          <PortfolioCard key={`${filter}-${item.slug}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
-        ))}
+        {loading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="bg-card/60 dark:bg-black/20 p-4 rounded-3xl"><Skeleton className="w-full h-64" /></div>
+          ))
+        ) : (
+          visibleItems.map((item, index) => (
+            <PortfolioCard key={`${filter}-${item.slug}-${index}`} item={item} index={index} isVisible={cardsVisible} onClick={() => setSelectedProject(item)} />
+          ))
+        )}
       </div>
        {visibleCount < filteredItems.length && (
         <div className="mt-12 text-center px-4">
