@@ -6,7 +6,8 @@ import type { Auth } from 'firebase/auth';
 
 import { firebaseConfig } from './config';
 
-import { FirebaseProvider, FirebaseClientProvider } from './provider';
+import { FirebaseProvider } from './provider';
+import { FirebaseClientProvider } from './client-provider';
 import {
   useFirebase,
   useFirebaseApp,

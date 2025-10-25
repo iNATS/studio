@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
-import { useCollection, getFirestore } from '@/firebase';
+import { useCollection, useFirestore } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -69,8 +69,9 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 
 export function Portfolio() {
-  const firestore = getFirestore();
-  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(collection(firestore, 'portfolioItems'));
+  const firestore = useFirestore();
+  const portfolioCollection = firestore ? collection(firestore, 'portfolioItems') : null;
+  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
   
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);

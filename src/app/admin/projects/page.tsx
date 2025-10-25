@@ -50,14 +50,15 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, getFirestore } from '@/firebase';
+import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProjectsPage() {
-  const firestore = getFirestore();
-  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(collection(firestore, 'portfolioItems'));
+  const firestore = useFirestore();
+  const portfolioCollection = firestore ? collection(firestore, 'portfolioItems') : null;
+  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -81,6 +82,7 @@ export default function AdminProjectsPage() {
 
 
   const handleAddWork = (values: any) => {
+    if (!firestore) return;
     const { tags, ...rest } = values;
     const newWork = {
       ...rest,
@@ -96,7 +98,7 @@ export default function AdminProjectsPage() {
   }
 
   const handleEditWork = (values: any) => {
-    if (!editingProject?.id) return;
+    if (!editingProject?.id || !firestore) return;
     const { tags, ...rest } = values;
     const updatedWork = {
       ...rest,
