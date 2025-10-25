@@ -1,16 +1,15 @@
 'use client';
 
-import { portfolioItems, PortfolioItem } from '@/components/landing/Portfolio';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -18,6 +17,10 @@ import {
     CarouselNext,
     CarouselPrevious,
   } from "@/components/ui/carousel"
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import type { PortfolioItem } from '@/components/landing/Portfolio';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ImageLightbox = ({
     images,
@@ -181,9 +184,32 @@ const ImageLightbox = ({
 
 
 export default function ProjectPage({ params }: { params: { slug: string } }) {
-  const project = portfolioItems.find(p => p.slug === params.slug);
+  const firestore = useFirestore();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  const projectQuery = useMemo(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, "portfolioItems"), where("slug", "==", params.slug));
+  }, [firestore, params.slug]);
+
+  const { data: projects, loading } = useCollection<PortfolioItem>(projectQuery);
+  const project = projects?.[0];
+
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <Header />
+        <main className="flex-1 w-full pt-24 sm:pt-32 pb-24 flex items-center justify-center">
+            <div className="container max-w-5xl mx-auto px-4 space-y-8">
+                <Skeleton className="h-10 w-48 rounded-full" />
+                <Skeleton className="h-[400px] w-full rounded-3xl" />
+            </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!project) {
     notFound();
