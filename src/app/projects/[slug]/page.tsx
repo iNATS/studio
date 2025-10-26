@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, use } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -184,14 +184,15 @@ const ImageLightbox = ({
 };
 
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
+export default function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const firestore = useFirestore();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const resolvedParams = use(params);
 
   const projectQuery = useMemo(() => {
     if (!firestore) return null;
-    return query(collection(firestore, "portfolioItems"), where("slug", "==", params.slug));
-  }, [firestore, params.slug]);
+    return query(collection(firestore, "portfolioItems"), where("slug", "==", resolvedParams.slug));
+  }, [firestore, resolvedParams.slug]);
 
   const { data: projects, loading } = useCollection<PortfolioItem>(projectQuery);
   const project = projects?.[0];
