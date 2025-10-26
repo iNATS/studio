@@ -79,7 +79,10 @@ const getStatusBadge = (status: ProjectStatus) => {
     }
 }
 
-const toDate = (date: Date | Timestamp): Date => {
+const toDate = (date: Date | Timestamp | undefined): Date => {
+    if (!date) {
+        return new Date();
+    }
     return date instanceof Date ? date : date.toDate();
 }
 
@@ -637,6 +640,8 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    
 
     
 
