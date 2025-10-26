@@ -50,13 +50,15 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore } from '@/firebase';
+import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useFirebase } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
+import { uploadFile } from '@/firebase/storage';
 
 export default function AdminProjectsPage() {
-  const firestore = useFirestore();
+  const { firestore, storage } = useFirebase();
+
   const portfolioCollectionRef = React.useMemo(() => {
     return firestore ? collection(firestore, 'portfolioItems') : null;
   }, [firestore]);
@@ -84,37 +86,96 @@ export default function AdminProjectsPage() {
   }, [portfolioItems]);
 
 
-  const handleAddWork = (values: any) => {
-    if (!firestore) return;
-    const { tags, ...rest } = values;
-    const newWork = {
+  const handleAddWork = async (values: any) => {
+    if (!firestore || !storage) {
+        toast({
+            variant: 'destructive',
+            title: "Error",
+            description: "Database connection not available.",
+        });
+        return;
+    }
+
+    const { tags, imageFile, screenshotFiles, ...rest } = values;
+    const newWork: Partial<PortfolioItem> = {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
-    setIsAddDialogOpen(false);
-    toast({
-      variant: 'success',
-      title: "Work Published!",
-      description: "Your new work has been added to the portfolio.",
-    });
+    
+    try {
+        if (imageFile) {
+            const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
+            newWork.image = await uploadFile(storage, imagePath, imageFile);
+        }
+
+        if (screenshotFiles && screenshotFiles.length > 0) {
+            newWork.screenshots = await Promise.all(
+                Array.from(screenshotFiles as FileList).map(async (file) => {
+                    const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
+                    return await uploadFile(storage, screenshotPath, file);
+                })
+            );
+        }
+
+        await addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
+
+        setIsAddDialogOpen(false);
+        toast({
+          variant: 'success',
+          title: "Work Published!",
+          description: "Your new work has been added to the portfolio.",
+        });
+    } catch(e) {
+        console.error(e);
+        toast({
+            variant: 'destructive',
+            title: "Upload Failed",
+            description: "There was an error saving your project. Please try again.",
+        });
+    }
   }
 
-  const handleEditWork = (values: any) => {
-    if (!editingProject?.id || !firestore) return;
-    const { tags, ...rest } = values;
-    const updatedWork = {
+  const handleEditWork = async (values: any) => {
+    if (!editingProject?.id || !firestore || !storage) return;
+
+    const { tags, imageFile, screenshotFiles, ...rest } = values;
+    const updatedWork: Partial<PortfolioItem> = {
       ...editingProject,
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
-    setEditingProject(null);
-    toast({
-      variant: 'success',
-      title: "Work Updated!",
-      description: "Your work has been successfully updated.",
-    });
+
+    try {
+        if (imageFile) {
+            const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
+            updatedWork.image = await uploadFile(storage, imagePath, imageFile);
+        }
+
+        if (screenshotFiles && screenshotFiles.length > 0) {
+            updatedWork.screenshots = await Promise.all(
+                Array.from(screenshotFiles as FileList).map(async (file) => {
+                    const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
+                    return await uploadFile(storage, screenshotPath, file);
+                })
+            );
+        }
+        
+        await updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
+
+        setEditingProject(null);
+        toast({
+          variant: 'success',
+          title: "Work Updated!",
+          description: "Your work has been successfully updated.",
+        });
+    } catch (e) {
+        console.error(e);
+        toast({
+            variant: 'destructive',
+            title: "Update Failed",
+            description: "There was an error updating your project. Please try again.",
+        });
+    }
   }
 
   const handleEdit = (project: PortfolioItem) => {

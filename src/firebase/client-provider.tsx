@@ -13,6 +13,7 @@ export function FirebaseClientProvider({ children }: { children: ReactNode }) {
         app: firebase.app || null,
         auth: firebase.auth || null,
         firestore: firebase.firestore || null,
+        storage: firebase.storage || null,
       }}
     >
       {children}

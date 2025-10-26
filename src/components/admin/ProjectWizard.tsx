@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { PortfolioItem } from '../landing/Portfolio';
-import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send, Rocket, GalleryHorizontal } from 'lucide-react';
+import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send, Rocket, GalleryHorizontal, Loader2 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -31,13 +31,6 @@ import Image from 'next/image';
 import { Badge } from '../ui/badge';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = error => reject(error);
-});
 
 const stepSchemas = [
   z.object({
@@ -56,7 +49,6 @@ const stepSchemas = [
         .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "Only .jpg, .jpeg, .png and .webp formats are supported.")
         .optional(),
     link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
-    hint: z.string().optional()
   }),
   z.object({
     category: z.enum(['web', 'mobile', 'design']),
@@ -67,10 +59,10 @@ const stepSchemas = [
 
 
 interface ProjectWizardProps {
-  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags' | 'hint'> & {
+  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags'> & {
     tags: string;
   };
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any) => Promise<void>;
 }
 
 
@@ -106,45 +98,44 @@ const StepIndicator = ({ currentStep, steps }: { currentStep: number; steps: num
 export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const isEditing = !!project;
 
-    const combinedSchema = stepSchemas.reduce((acc, schema) => acc.merge(schema), z.object({}));
-     const resolver = zodResolver(isEditing ? stepSchemas[currentStep].partial() : stepSchemas[currentStep]);
+    // Use a different schema for editing to make file inputs optional
+    const editStepSchemas = [
+        stepSchemas[0],
+        stepSchemas[1].extend({
+            imageFile: stepSchemas[1].shape.imageFile.optional(),
+        }),
+        stepSchemas[2],
+        stepSchemas[3],
+    ];
 
+    const currentSchemas = isEditing ? editStepSchemas : stepSchemas;
 
-  const form = useForm({
-    resolver,
-    defaultValues: project || {
-      title: '',
-      slug: '',
-      description: '',
-      fullDescription: '',
-      category: 'web',
-      tags: '',
-      imageFile: undefined,
-      link: '',
-      screenshotFiles: undefined,
-      hint: '',
-    },
-    mode: "onChange",
-  });
+    const form = useForm({
+        resolver: zodResolver(currentSchemas[currentStep]),
+        defaultValues: project || {
+        title: '',
+        slug: '',
+        description: '',
+        fullDescription: '',
+        category: 'web',
+        tags: '',
+        imageFile: undefined,
+        link: '',
+        screenshotFiles: undefined,
+        },
+        mode: "onChange",
+    });
   
   const watchedValues = form.watch();
 
   const handleSubmit = async (values: any) => {
-    const finalValues: Partial<PortfolioItem> = {...values};
-    if (values.imageFile) {
-        finalValues.image = await toBase64(values.imageFile);
-    }
-    if (values.screenshotFiles && values.screenshotFiles.length > 0) {
-        finalValues.screenshots = await Promise.all(Array.from(values.screenshotFiles as FileList).map(file => toBase64(file)));
-    }
-    
-    delete finalValues.imageFile;
-    delete finalValues.screenshotFiles;
-
-    onSubmit(finalValues);
+    setIsSubmitting(true);
+    await onSubmit(values);
+    setIsSubmitting(false);
   };
   
   const screenshotsRef = form.register("screenshotFiles");
@@ -153,11 +144,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const isStepValid = await form.trigger();
     if (!isStepValid) return;
 
-    if (currentStep < stepSchemas.length - 1) {
+    if (currentStep < currentSchemas.length - 1) {
         setDirection(1);
         setCurrentStep(step => step + 1);
     } else {
-      form.handleSubmit(handleSubmit)();
+      await form.handleSubmit(handleSubmit)();
     }
   };
 
@@ -208,7 +199,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
   return (
     <FormProvider {...form}>
       <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(handleSubmit)(e); }} className="space-y-6">
-        <StepIndicator currentStep={currentStep} steps={stepSchemas.length} />
+        <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
             <AnimatePresence initial={false} custom={direction}>
@@ -357,20 +348,6 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="hint"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>AI Image Hint</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="e.g. 'abstract art'" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
-                                    </FormControl>
-                                    <FormDescription>One or two keywords for AI image generation.</FormDescription>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
                     )}
                      {currentStep === 2 && (
@@ -423,7 +400,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                             <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
                             <div className="bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10 rounded-lg overflow-hidden">
                                 <div className="relative w-full h-48">
-                                    {watchedValues.imageFile && <ImagePreview file={watchedValues.imageFile} alt={watchedValues.title} fill />}
+                                    {watchedValues.imageFile ? <ImagePreview file={watchedValues.imageFile} alt={watchedValues.title} fill /> : <div className="w-full h-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-zinc-500 dark:text-white/50">No Image</div>}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     <div className="absolute bottom-0 left-0 p-4">
                                         <h1 className="text-2xl font-bold text-white shadow-2xl">{watchedValues.title}</h1>
@@ -460,13 +437,15 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         </div>
         
         <div className="flex justify-between pt-6">
-            <Button type="button" variant="ghost" onClick={prevStep} disabled={currentStep === 0} className="rounded-full">
+            <Button type="button" variant="ghost" onClick={prevStep} disabled={currentStep === 0 || isSubmitting} className="rounded-full">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
-            <Button type="button" onClick={processStep} size="lg" className="rounded-full">
-            {currentStep === stepSchemas.length - 1 ? (
+            <Button type="button" onClick={processStep} size="lg" className="rounded-full" disabled={isSubmitting}>
+            {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+            ) : currentStep === currentSchemas.length - 1 ? (
                 <>Publish Work <Rocket className="ml-2 h-4 w-4" /></>
-            ) : currentStep === stepSchemas.length - 2 ? (
+            ) : currentStep === currentSchemas.length - 2 ? (
                 <>Review <Send className="ml-2 h-4 w-4" /></>
             ) : (
                 <>Next <ArrowRight className="ml-2 h-4 w-4" /></>

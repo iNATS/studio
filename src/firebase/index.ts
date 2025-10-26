@@ -1,6 +1,7 @@
 import { getFirestore } from 'firebase/firestore';
 import { initializeApp, getApps, type FirebaseOptions } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import type { Firestore } from 'firebase/firestore';
 import type { Auth } from 'firebase/auth';
 
@@ -27,6 +28,7 @@ import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 let app: ReturnType<typeof initializeApp> | undefined;
 let auth: Auth | undefined;
 let firestore: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
 
 function initializeFirebase(options?: FirebaseOptions) {
   const apps = getApps();
@@ -34,6 +36,7 @@ function initializeFirebase(options?: FirebaseOptions) {
     app = initializeApp(options || firebaseConfig);
     auth = getAuth(app);
     firestore = getFirestore(app);
+    storage = getStorage(app);
   } else {
     app = apps[0];
     if (!auth) {
@@ -42,8 +45,11 @@ function initializeFirebase(options?: FirebaseOptions) {
     if (!firestore) {
         firestore = getFirestore(app);
     }
+    if(!storage) {
+        storage = getStorage(app);
+    }
   }
-  return { app, auth, firestore };
+  return { app, auth, firestore, storage };
 }
 
 export {
