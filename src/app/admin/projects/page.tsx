@@ -57,10 +57,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProjectsPage() {
   const firestore = useFirestore();
-  const portfolioCollection = React.useMemo(() => {
+  const portfolioCollectionRef = React.useMemo(() => {
     return firestore ? collection(firestore, 'portfolioItems') : null;
   }, [firestore]);
-  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
+
+  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollectionRef);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -84,13 +85,13 @@ export default function AdminProjectsPage() {
 
 
   const handleAddWork = (values: any) => {
-    if (!firestore || !portfolioCollection) return;
+    if (!firestore) return;
     const { tags, ...rest } = values;
     const newWork = {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    addDocumentNonBlocking(firestore, portfolioCollection, newWork);
+    addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
     setIsAddDialogOpen(false);
     toast({
       variant: 'success',
@@ -101,13 +102,12 @@ export default function AdminProjectsPage() {
 
   const handleEditWork = (values: any) => {
     if (!editingProject?.id || !firestore) return;
-    const docRef = doc(firestore, `portfolioItems/${editingProject.id}`);
     const { tags, ...rest } = values;
     const updatedWork = {
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
-    updateDocumentNonBlocking(firestore, docRef, updatedWork);
+    updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
     setEditingProject(null);
     toast({
       variant: 'success',
@@ -126,8 +126,7 @@ export default function AdminProjectsPage() {
 
   const handleDeleteConfirm = () => {
     if (projectToDelete?.id && firestore) {
-      const docRef = doc(firestore, `portfolioItems/${projectToDelete.id}`);
-      deleteDocumentNonBlocking(firestore, docRef);
+      deleteDocumentNonBlocking(firestore, `portfolioItems/${projectToDelete.id}`);
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',

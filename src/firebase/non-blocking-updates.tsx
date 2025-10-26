@@ -32,34 +32,44 @@ import {
 
 // Non-blocking Firestore updates
 export const addDocumentNonBlocking = (
-  collectionRef: CollectionReference,
+  firestore: Firestore,
+  collectionPath: string,
   data: DocumentData
 ) => {
+  const collectionRef = collection(firestore, collectionPath);
   addDoc(collectionRef, data).catch((error) =>
     console.error('Error adding document: ', error)
   );
 };
 
 export const setDocumentNonBlocking = (
-  docRef: DocumentReference,
+  firestore: Firestore,
+  docPath: string,
   data: DocumentData,
   options?: SetOptions
 ) => {
+  const docRef = doc(firestore, docPath);
   setDoc(docRef, data, options || {}).catch((error) =>
     console.error('Error setting document: ', error)
   );
 };
 
 export const updateDocumentNonBlocking = (
-  docRef: DocumentReference,
+  firestore: Firestore,
+  docPath: string,
   data: DocumentData
 ) => {
+  const docRef = doc(firestore, docPath);
   updateDoc(docRef, data).catch((error) =>
     console.error('Error updating document: ', error)
   );
 };
 
-export const deleteDocumentNonBlocking = (docRef: DocumentReference) => {
+export const deleteDocumentNonBlocking = (
+  firestore: Firestore,
+  docPath: string
+) => {
+  const docRef = doc(firestore, docPath);
   deleteDoc(docRef).catch((error) =>
     console.error('Error deleting document: ', error)
   );
