@@ -97,25 +97,30 @@ export default function AdminProjectsPage() {
     }
 
     const { tags, imageFile, screenshotFiles, ...rest } = values;
-    const newWork: Partial<PortfolioItem> = {
-      ...rest,
-      tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
-    };
     
     try {
+        let imageUrl = '';
         if (imageFile) {
             const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
-            newWork.image = await uploadFile(storage, imagePath, imageFile);
+            imageUrl = await uploadFile(storage, imagePath, imageFile);
         }
 
+        let screenshotUrls: string[] = [];
         if (screenshotFiles && screenshotFiles.length > 0) {
-            newWork.screenshots = await Promise.all(
+            screenshotUrls = await Promise.all(
                 Array.from(screenshotFiles as FileList).map(async (file) => {
                     const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
                     return await uploadFile(storage, screenshotPath, file);
                 })
             );
         }
+
+        const newWork: Omit<PortfolioItem, 'id'> = {
+          ...rest,
+          tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
+          image: imageUrl,
+          screenshots: screenshotUrls,
+        };
 
         addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
 
@@ -139,13 +144,14 @@ export default function AdminProjectsPage() {
     if (!editingProject?.id || !firestore || !storage) return;
 
     const { tags, imageFile, screenshotFiles, ...rest } = values;
-    const updatedWork: Partial<PortfolioItem> = {
-      ...editingProject,
-      ...rest,
-      tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
-    };
-
+    
     try {
+        const updatedWork: Partial<PortfolioItem> = {
+            ...editingProject,
+            ...rest,
+            tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
+        };
+
         if (imageFile) {
             const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
             updatedWork.image = await uploadFile(storage, imagePath, imageFile);
@@ -204,8 +210,8 @@ export default function AdminProjectsPage() {
     return {
       ...project,
       tags: project.tags.join(', '),
-      image: undefined, // Don't pass existing image URL, wizard expects file or data URL for updates
-      screenshots: undefined,
+      imageFile: undefined,
+      screenshotFiles: undefined,
     }
   }
 
@@ -398,5 +404,3 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
-
-    

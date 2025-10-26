@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { PortfolioItem } from '../landing/Portfolio';
+import type { PortfolioItem } from '../landing/Portfolio';
 import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send, Rocket, GalleryHorizontal, Loader2 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -31,6 +31,7 @@ import Image from 'next/image';
 import { Badge } from '../ui/badge';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const MAX_IMAGE_SIZE = 5000000; // 5MB
 
 const stepSchemas = [
   z.object({
@@ -38,15 +39,16 @@ const stepSchemas = [
     slug: z.string().min(2, 'Slug must be at least 2 characters.').regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens.'),
     description: z.string().min(10, 'Description is too short.'),
     fullDescription: z.string().min(20, 'Full description is too short.'),
+    hint: z.string().min(2, 'Hint must be at least 2 characters long.').optional(),
   }),
   z.object({
     imageFile: z.any()
         .refine((file) => file, "Main image is required.")
-        .refine((file) => file?.size <= 5000000, `Max image size is 5MB.`)
+        .refine((file) => file?.size <= MAX_IMAGE_SIZE, `Max image size is 5MB.`)
         .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),"Only .jpg, .jpeg, .png and .webp formats are supported."),
     screenshotFiles: z.any()
-        .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => file.size <= 5000000) : true, `Max image size is 5MB.`)
-        .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "Only .jpg, .jpeg, .png and .webp formats are supported.")
+        .refine((files) => files ? Array.from(files).every((file: any) => file.size <= MAX_IMAGE_SIZE) : true, `Max image size is 5MB.`)
+        .refine((files) => files ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "Only .jpg, .jpeg, .png and .webp formats are supported.")
         .optional(),
     link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
   }),
@@ -61,6 +63,8 @@ const stepSchemas = [
 interface ProjectWizardProps {
   project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'tags'> & {
     tags: string;
+    imageFile?: File;
+    screenshotFiles?: FileList;
   };
   onSubmit: (values: any) => Promise<void>;
 }
@@ -121,6 +125,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         slug: '',
         description: '',
         fullDescription: '',
+        hint: '',
         category: 'web',
         tags: '',
         imageFile: undefined,
@@ -134,8 +139,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   const handleSubmit = async (values: any) => {
     setIsSubmitting(true);
-    await onSubmit(values);
-    setIsSubmitting(false);
+    try {
+      await onSubmit(values);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const screenshotsRef = form.register("screenshotFiles");
@@ -277,6 +285,22 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     </FormItem>
                                 )}
                             />
+                             <FormField
+                                control={form.control}
+                                name="hint"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>AI Image Hint</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g. 'abstract gradients'" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        One or two keywords for AI image generation.
+                                    </FormDescription>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                     )}
                     {currentStep === 1 && (
@@ -309,7 +333,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         <FormItem>
                                             <FormLabel>Screenshots</FormLabel>
                                             <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover-border-white/40 transition-colors">
+                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
                                                     <div className="text-center">
                                                     <Upload className="mx-auto h-8 w-8 text-zinc-500 dark:text-white/50" />
                                                     <p className="mt-2 text-sm text-zinc-600 dark:text-white/60">Upload one or more files</p>
@@ -456,5 +480,3 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
-
-    
