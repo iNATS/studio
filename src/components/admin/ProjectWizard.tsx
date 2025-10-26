@@ -59,7 +59,7 @@ const stepSchemas = [
 
 
 interface ProjectWizardProps {
-  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags'> & {
+  project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'tags'> & {
     tags: string;
   };
   onSubmit: (values: any) => Promise<void>;
@@ -198,7 +198,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(handleSubmit)(e); }} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
@@ -456,3 +456,5 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
+
+    

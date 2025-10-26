@@ -3,9 +3,11 @@
 
 import { ref, uploadBytes, getDownloadURL, type FirebaseStorage } from 'firebase/storage';
 
-export const uploadFile = async (storage: FirebaseStorage, path: string, file: File) => {
+export const uploadFile = async (storage: FirebaseStorage, path: string, file: File): Promise<string> => {
     const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
 };
+
+    

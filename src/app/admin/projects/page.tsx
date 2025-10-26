@@ -50,8 +50,8 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirestore, useFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 import { uploadFile } from '@/firebase/storage';
@@ -117,7 +117,7 @@ export default function AdminProjectsPage() {
             );
         }
 
-        await addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
+        addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
 
         setIsAddDialogOpen(false);
         toast({
@@ -160,7 +160,7 @@ export default function AdminProjectsPage() {
             );
         }
         
-        await updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
+        updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
 
         setEditingProject(null);
         toast({
@@ -398,3 +398,5 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
+
+    
