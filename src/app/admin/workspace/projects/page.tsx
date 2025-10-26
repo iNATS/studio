@@ -53,6 +53,7 @@ import { format, differenceInCalendarDays, formatDistanceToNowStrict, isWithinIn
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { clientsData, initialProjects } from '../data';
+import type { Timestamp } from 'firebase/firestore';
 
 export type Project = {
   id: string;
@@ -61,8 +62,8 @@ export type Project = {
   status: 'planning' | 'in-progress' | 'completed';
   clientId: string;
   budget: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | Timestamp;
+  endDate: Date | Timestamp;
 };
 
 export type ProjectStatus = 'planning' | 'in-progress' | 'completed';
@@ -78,6 +79,10 @@ const getStatusBadge = (status: ProjectStatus) => {
     }
 }
 
+const toDate = (date: Date | Timestamp): Date => {
+    return date instanceof Date ? date : date.toDate();
+}
+
 const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id, data: {type: 'Project', project} });
     const client = clientsData.find(c => c.id === project.clientId);
@@ -88,9 +93,12 @@ const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, 
         opacity: isDragging ? 0.5 : 1,
     };
     
-    const totalDays = differenceInCalendarDays(project.endDate, project.startDate);
-    const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
-    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > project.endDate ? 100 : 0);
+    const startDate = toDate(project.startDate);
+    const endDate = toDate(project.endDate);
+
+    const totalDays = differenceInCalendarDays(endDate, startDate);
+    const daysPassed = differenceInCalendarDays(new Date(), startDate);
+    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > endDate ? 100 : 0);
 
     return (
         <div ref={setNodeRef} style={style} {...attributes}>
@@ -137,8 +145,8 @@ const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, 
                         </div>
                         <div className="space-y-2">
                             <div className="flex justify-between items-center text-xs text-zinc-500 dark:text-white/50">
-                                <span>{format(project.startDate, 'MMM d, yyyy')}</span>
-                                <span>{format(project.endDate, 'MMM d, yyyy')}</span>
+                                <span>{format(startDate, 'MMM d, yyyy')}</span>
+                                <span>{format(endDate, 'MMM d, yyyy')}</span>
                             </div>
                              <Progress value={progress} className="h-2 bg-black/10 dark:bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
                         </div>
@@ -166,8 +174,8 @@ const ProjectColumn = ({ title, status, projects, onEdit, onDelete, onView }: { 
 };
 
 const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSubmit: (values: any) => void, onCancel: () => void }) => {
-    const [startDate, setStartDate] = React.useState<Date | undefined>(project?.startDate);
-    const [endDate, setEndDate] = React.useState<Date | undefined>(project?.endDate);
+    const [startDate, setStartDate] = React.useState<Date | undefined>(project ? toDate(project.startDate) : undefined);
+    const [endDate, setEndDate] = React.useState<Date | undefined>(project ? toDate(project.endDate) : undefined);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -240,10 +248,14 @@ const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project |
     if (!project) return null;
     
     const client = clientsData.find(c => c.id === project.clientId);
-    const totalDays = differenceInCalendarDays(project.endDate, project.startDate);
-    const daysPassed = differenceInCalendarDays(new Date(), project.startDate);
-    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > project.endDate ? 100 : 0);
-    const timeRemaining = formatDistanceToNowStrict(project.endDate, { addSuffix: true });
+
+    const startDate = toDate(project.startDate);
+    const endDate = toDate(project.endDate);
+
+    const totalDays = differenceInCalendarDays(endDate, startDate);
+    const daysPassed = differenceInCalendarDays(new Date(), startDate);
+    const progress = totalDays > 0 ? Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100) : (new Date() > endDate ? 100 : 0);
+    const timeRemaining = formatDistanceToNowStrict(endDate, { addSuffix: true });
 
     return (
          <Dialog open={open} onOpenChange={onOpenChange}>
@@ -276,7 +288,7 @@ const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project |
                         </div>
                          <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
                             <h4 className="font-semibold text-zinc-700 dark:text-white/80 mb-2 flex items-center gap-2"><CalendarIcon className="h-4 w-4"/> Timeline</h4>
-                             <p className="text-sm text-zinc-600 dark:text-white/70">{format(project.startDate, "MMM d")} - {format(project.endDate, "MMM d, yyyy")}</p>
+                             <p className="text-sm text-zinc-600 dark:text-white/70">{format(startDate, "MMM d")} - {format(endDate, "MMM d, yyyy")}</p>
                              <p className="text-xs text-zinc-500 dark:text-white/50">{timeRemaining}</p>
                         </div>
                     </div>
@@ -625,5 +637,7 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    
 
     
