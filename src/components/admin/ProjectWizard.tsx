@@ -24,13 +24,20 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { PortfolioItem } from '../landing/Portfolio';
 import { Upload, File as FileIcon, X, ArrowLeft, ArrowRight, Send, Rocket, GalleryHorizontal } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+});
 
 const stepSchemas = [
   z.object({
@@ -40,15 +47,16 @@ const stepSchemas = [
     fullDescription: z.string().min(20, 'Full description is too short.'),
   }),
   z.object({
-    image: z.any()
+    imageFile: z.any()
         .refine((file) => file, "Main image is required.")
         .refine((file) => file?.size <= 5000000, `Max image size is 5MB.`)
         .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),"Only .jpg, .jpeg, .png and .webp formats are supported."),
-    screenshots: z.any()
+    screenshotFiles: z.any()
         .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => file.size <= 5000000) : true, `Max image size is 5MB.`)
         .refine((files) => files?.length > 0 ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "Only .jpg, .jpeg, .png and .webp formats are supported.")
         .optional(),
     link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
+    hint: z.string().optional()
   }),
   z.object({
     category: z.enum(['web', 'mobile', 'design']),
@@ -57,17 +65,12 @@ const stepSchemas = [
   z.object({})
 ];
 
-const formSchema = stepSchemas.reduce((acc, schema) => acc.merge(schema), z.object({}));
-
-type ProjectFormValues = z.infer<typeof formSchema>;
 
 interface ProjectWizardProps {
-  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags'> & {
+  project?: Omit<PortfolioItem, 'image' | 'screenshots' | 'tags' | 'hint'> & {
     tags: string;
-    image: any;
-    screenshots: any;
   };
-  onSubmit: (values: ProjectFormValues) => void;
+  onSubmit: (values: any) => void;
 }
 
 
@@ -103,9 +106,15 @@ const StepIndicator = ({ currentStep, steps }: { currentStep: number; steps: num
 export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
+    
+    const isEditing = !!project;
 
-  const form = useForm<ProjectFormValues>({
-    resolver: zodResolver(stepSchemas[currentStep]),
+    const combinedSchema = stepSchemas.reduce((acc, schema) => acc.merge(schema), z.object({}));
+     const resolver = zodResolver(isEditing ? stepSchemas[currentStep].partial() : stepSchemas[currentStep]);
+
+
+  const form = useForm({
+    resolver,
     defaultValues: project || {
       title: '',
       slug: '',
@@ -113,20 +122,32 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
       fullDescription: '',
       category: 'web',
       tags: '',
-      image: undefined,
+      imageFile: undefined,
       link: '',
-      screenshots: undefined,
+      screenshotFiles: undefined,
+      hint: '',
     },
     mode: "onChange",
   });
   
   const watchedValues = form.watch();
 
-  const handleSubmit = (values: ProjectFormValues) => {
-    onSubmit(values);
+  const handleSubmit = async (values: any) => {
+    const finalValues: Partial<PortfolioItem> = {...values};
+    if (values.imageFile) {
+        finalValues.image = await toBase64(values.imageFile);
+    }
+    if (values.screenshotFiles && values.screenshotFiles.length > 0) {
+        finalValues.screenshots = await Promise.all(Array.from(values.screenshotFiles as FileList).map(file => toBase64(file)));
+    }
+    
+    delete finalValues.imageFile;
+    delete finalValues.screenshotFiles;
+
+    onSubmit(finalValues);
   };
   
-  const screenshotsRef = form.register("screenshots");
+  const screenshotsRef = form.register("screenshotFiles");
 
   const processStep = async () => {
     const isStepValid = await form.trigger();
@@ -166,7 +187,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
   
   const ImagePreview = ({file, className, fill, alt}: {file: File, className?: string, fill?: boolean, alt?: string}) => {
     const [preview, setPreview] = useState<string | null>(null);
-    React.useEffect(() => {
+    useEffect(() => {
         if (!file) return;
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -186,7 +207,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(handleSubmit)(e); }} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={stepSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
@@ -272,7 +293,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                <FormField
                                     control={form.control}
-                                    name="image"
+                                    name="imageFile"
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
                                             <FormLabel>Main Image</FormLabel>
@@ -292,7 +313,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="screenshots"
+                                    name="screenshotFiles"
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
                                             <FormLabel>Screenshots</FormLabel>
@@ -332,6 +353,20 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     <FormControl>
                                         <Input placeholder="https://..." {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
                                     </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="hint"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>AI Image Hint</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g. 'abstract art'" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
+                                    </FormControl>
+                                    <FormDescription>One or two keywords for AI image generation.</FormDescription>
                                     <FormMessage />
                                     </FormItem>
                                 )}
@@ -388,7 +423,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                             <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
                             <div className="bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10 rounded-lg overflow-hidden">
                                 <div className="relative w-full h-48">
-                                    {watchedValues.image && <ImagePreview file={watchedValues.image} alt={watchedValues.title} fill />}
+                                    {watchedValues.imageFile && <ImagePreview file={watchedValues.imageFile} alt={watchedValues.title} fill />}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     <div className="absolute bottom-0 left-0 p-4">
                                         <h1 className="text-2xl font-bold text-white shadow-2xl">{watchedValues.title}</h1>
@@ -404,11 +439,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         {watchedValues.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
-                                    {watchedValues.screenshots && watchedValues.screenshots.length > 0 && (
+                                    {watchedValues.screenshotFiles && watchedValues.screenshotFiles.length > 0 && (
                                         <div>
                                             <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {Array.from(watchedValues.screenshots).map((file: any, index) => (
+                                                {Array.from(watchedValues.screenshotFiles).map((file: any, index) => (
                                                     <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
                                                       <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
                                                     </div>

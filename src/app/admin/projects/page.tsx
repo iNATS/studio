@@ -104,6 +104,7 @@ export default function AdminProjectsPage() {
     if (!editingProject?.id || !firestore) return;
     const { tags, ...rest } = values;
     const updatedWork = {
+      ...editingProject,
       ...rest,
       tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
     };
@@ -142,7 +143,7 @@ export default function AdminProjectsPage() {
     return {
       ...project,
       tags: project.tags.join(', '),
-      image: undefined,
+      image: undefined, // Don't pass existing image URL, wizard expects file or data URL for updates
       screenshots: undefined,
     }
   }
