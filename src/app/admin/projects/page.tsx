@@ -120,6 +120,7 @@ export default function AdminProjectsPage() {
           tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
           image: imageUrl,
           screenshots: screenshotUrls,
+          hint: '', // Added hint to satisfy type
         };
         
         addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
@@ -404,5 +405,3 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
-
-    

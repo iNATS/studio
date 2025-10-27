@@ -9,5 +9,3 @@ export const uploadFile = async (storage: FirebaseStorage, path: string, file: F
     const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
 };
-
-    

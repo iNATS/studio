@@ -39,7 +39,6 @@ const stepSchemas = [
     slug: z.string().min(2, 'Slug must be at least 2 characters.').regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens.'),
     description: z.string().min(10, 'Description is too short.'),
     fullDescription: z.string().min(20, 'Full description is too short.'),
-    hint: z.string().min(2, 'Hint must be at least 2 characters long.').optional(),
   }),
   z.object({
     imageFile: z.any()
@@ -61,7 +60,7 @@ const stepSchemas = [
 
 
 interface ProjectWizardProps {
-  project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'tags'> & {
+  project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'tags' | 'hint'> & {
     tags: string;
     imageFile?: File;
     screenshotFiles?: FileList;
@@ -125,7 +124,6 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         slug: '',
         description: '',
         fullDescription: '',
-        hint: '',
         category: 'web',
         tags: '',
         imageFile: undefined,
@@ -281,22 +279,6 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10"
                                         />
                                     </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={form.control}
-                                name="hint"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>AI Image Hint</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="e.g. 'abstract gradients'" {...field} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        One or two keywords for AI image generation.
-                                    </FormDescription>
                                     <FormMessage />
                                     </FormItem>
                                 )}
