@@ -32,9 +32,11 @@ import {
 
 // Non-blocking Firestore updates
 export const addDocumentNonBlocking = (
-  collectionRef: CollectionReference,
+  firestore: Firestore,
+  collectionName: string,
   data: DocumentData
 ) => {
+  const collectionRef = firestoreCollection(firestore, collectionName);
   addDoc(collectionRef, data).catch((error) =>
     console.error('Error adding document: ', error)
   );
@@ -153,3 +155,5 @@ export function useDoc<T>(
 
   return { data, loading, error };
 }
+
+    

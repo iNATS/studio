@@ -122,9 +122,7 @@ export default function AdminProjectsPage() {
           screenshots: screenshotUrls,
         };
         
-        if (portfolioCollectionRef) {
-          addDocumentNonBlocking(portfolioCollectionRef, newWork);
-        }
+        addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
 
         setIsAddDialogOpen(false);
         toast({
@@ -406,3 +404,5 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
+
+    
