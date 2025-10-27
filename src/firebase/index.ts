@@ -24,6 +24,7 @@ import {
   deleteDocumentNonBlocking,
 } from './non-blocking-updates';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { errorEmitter } from './error-emitter';
 
 let app: ReturnType<typeof initializeApp> | undefined;
 let auth: Auth | undefined;
@@ -67,4 +68,5 @@ export {
   updateDocumentNonBlocking,
   deleteDocumentNonBlocking,
   FirebaseErrorListener,
+  errorEmitter
 };

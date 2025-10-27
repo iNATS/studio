@@ -29,6 +29,9 @@ import {
   type DocumentSnapshot,
   type QuerySnapshot,
 } from 'firebase/firestore';
+import { FirestorePermissionError } from './errors';
+import { errorEmitter } from './error-emitter';
+
 
 // Non-blocking Firestore updates
 export const addDocumentNonBlocking = (
@@ -37,9 +40,18 @@ export const addDocumentNonBlocking = (
   data: DocumentData
 ) => {
   const collectionRef = firestoreCollection(firestore, collectionName);
-  addDoc(collectionRef, data).catch((error) =>
+  addDoc(collectionRef, data).catch((error) => {
+    if (error.code === 'permission-denied') {
+        const customError = new FirestorePermissionError(
+            'Firestore permission denied while adding a document.',
+            'add',
+            collectionName,
+            data
+        );
+        errorEmitter.emit('permission-error', customError);
+    }
     console.error('Error adding document: ', error)
-  );
+  });
 };
 
 export const setDocumentNonBlocking = (
@@ -49,9 +61,18 @@ export const setDocumentNonBlocking = (
   options?: SetOptions
 ) => {
   const docRef = doc(firestore, docPath);
-  setDoc(docRef, data, options || {}).catch((error) =>
+  setDoc(docRef, data, options || {}).catch((error) => {
+    if (error.code === 'permission-denied') {
+        const customError = new FirestorePermissionError(
+            'Firestore permission denied while setting a document.',
+            'set',
+            docPath,
+            data
+        );
+        errorEmitter.emit('permission-error', customError);
+    }
     console.error('Error setting document: ', error)
-  );
+  });
 };
 
 export const updateDocumentNonBlocking = (
@@ -60,9 +81,18 @@ export const updateDocumentNonBlocking = (
   data: DocumentData
 ) => {
   const docRef = doc(firestore, docPath);
-  updateDoc(docRef, data).catch((error) =>
+  updateDoc(docRef, data).catch((error) => {
+    if (error.code === 'permission-denied') {
+        const customError = new FirestorePermissionError(
+            'Firestore permission denied while updating a document.',
+            'update',
+            docPath,
+            data
+        );
+        errorEmitter.emit('permission-error', customError);
+    }
     console.error('Error updating document: ', error)
-  );
+  });
 };
 
 export const deleteDocumentNonBlocking = (
@@ -70,9 +100,17 @@ export const deleteDocumentNonBlocking = (
   docPath: string
 ) => {
   const docRef = doc(firestore, docPath);
-  deleteDoc(docRef).catch((error) =>
+  deleteDoc(docRef).catch((error) => {
+    if (error.code === 'permission-denied') {
+        const customError = new FirestorePermissionError(
+            'Firestore permission denied while deleting a document.',
+            'delete',
+            docPath
+        );
+        errorEmitter.emit('permission-error', customError);
+    }
     console.error('Error deleting document: ', error)
-  );
+  });
 };
 
 // Firestore data hooks
@@ -106,6 +144,14 @@ export function useCollection<T>(
         setLoading(false);
       },
       (err) => {
+        if (err.code === 'permission-denied') {
+            const customError = new FirestorePermissionError(
+                'Firestore permission denied while listening to a collection.',
+                'listen',
+                ref.path
+            );
+            errorEmitter.emit('permission-error', customError);
+        }
         console.error(err);
         setError(err);
         setLoading(false);
@@ -144,6 +190,14 @@ export function useDoc<T>(
         setLoading(false);
       },
       (err) => {
+        if (err.code === 'permission-denied') {
+            const customError = new FirestorePermissionError(
+                'Firestore permission denied while listening to a document.',
+                'listen',
+                ref.path
+            );
+            errorEmitter.emit('permission-error', customError);
+        }
         console.error(err);
         setError(err);
         setLoading(false);
@@ -155,5 +209,3 @@ export function useDoc<T>(
 
   return { data, loading, error };
 }
-
-    
