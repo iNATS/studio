@@ -1,0 +1,15 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /portfolioItems/{documentId} {
+      // Anyone can read portfolio items
+      allow read;
+      
+      // For now, allow anyone to write to the portfolio.
+      // TODO: Restrict this to authenticated admins.
+      allow write: if true;
+    }
+  }
+}

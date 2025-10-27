@@ -1,0 +1,9 @@
+
+{
+  "hosting": {
+    "headers": []
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
