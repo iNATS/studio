@@ -121,8 +121,10 @@ export default function AdminProjectsPage() {
           image: imageUrl,
           screenshots: screenshotUrls,
         };
-
-        addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
+        
+        if (portfolioCollectionRef) {
+          addDocumentNonBlocking(portfolioCollectionRef, newWork);
+        }
 
         setIsAddDialogOpen(false);
         toast({

@@ -32,11 +32,9 @@ import {
 
 // Non-blocking Firestore updates
 export const addDocumentNonBlocking = (
-  firestore: Firestore,
-  collectionPath: string,
+  collectionRef: CollectionReference,
   data: DocumentData
 ) => {
-  const collectionRef = collection(firestore, collectionPath);
   addDoc(collectionRef, data).catch((error) =>
     console.error('Error adding document: ', error)
   );
