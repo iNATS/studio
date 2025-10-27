@@ -74,7 +74,8 @@ export default function AdminProjectsPage() {
   
   const paginatedItems = React.useMemo(() => {
     if (!portfolioItems) return [];
-    return portfolioItems.slice(
+    const sortedItems = [...portfolioItems].sort((a, b) => (a.title > b.title ? 1 : -1));
+    return sortedItems.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
@@ -148,7 +149,6 @@ export default function AdminProjectsPage() {
     
     try {
         const updatedWork: Partial<PortfolioItem> = {
-            ...editingProject,
             ...rest,
             tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
         };
@@ -159,12 +159,13 @@ export default function AdminProjectsPage() {
         }
 
         if (screenshotFiles && screenshotFiles.length > 0) {
-            updatedWork.screenshots = await Promise.all(
+            const newScreenshots = await Promise.all(
                 Array.from(screenshotFiles as FileList).map(async (file) => {
                     const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
                     return await uploadFile(storage, screenshotPath, file);
                 })
             );
+            updatedWork.screenshots = [...(editingProject.screenshots || []), ...newScreenshots];
         }
         
         updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
