@@ -60,11 +60,10 @@ const stepSchemas = [
 
 
 interface ProjectWizardProps {
-  project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'tags' | 'hint'> & {
+  project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'hint'> & {
     tags: string;
     imageFile?: File;
     screenshotFiles?: FileList;
-    link?: string;
   };
   onSubmit: (values: any) => Promise<void>;
 }
@@ -136,8 +135,6 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         mode: "onChange",
     });
     
-    const watchedValues = form.watch();
-
   const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -211,7 +208,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(formData) }} className="space-y-6">
+      <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
@@ -469,5 +466,3 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
-
-    
