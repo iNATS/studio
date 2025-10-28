@@ -24,13 +24,17 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
       <DialogContent className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border-border/40 dark:border-white/20 sm:max-w-4xl p-0 rounded-3xl overflow-hidden shadow-2xl">
         <div className="grid md:grid-cols-2">
           <div className="relative h-64 md:h-full min-h-[300px] md:min-h-[500px]">
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-              data-ai-hint={project.hint}
-            />
+            {project.image ? (
+                <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover"
+                data-ai-hint={project.hint}
+                />
+            ) : (
+                <div className="w-full h-full bg-muted" />
+            )}
           </div>
           <div className="flex flex-col">
             <ScrollArea className="flex-grow">
