@@ -18,11 +18,9 @@ import {
     CarouselNext,
     CarouselPrevious,
   } from "@/components/ui/carousel"
-import { useDatabase } from '@/firebase';
-import { ref, query, orderByChild, equalTo } from 'firebase/database';
-import { useRTDBList } from '@/firebase/non-blocking-updates';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
+import { placeholderProjects } from '@/lib/placeholder-data';
 
 const ImageLightbox = ({
     images,
@@ -185,18 +183,18 @@ const ImageLightbox = ({
 };
 
 
-export default function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-  const database = useDatabase();
+export default function ProjectPage({ params }: { params: { slug: string } }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const resolvedParams = use(params);
+  const [project, setProject] = useState<PortfolioItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const projectQuery = useMemo(() => {
-    if (!database) return null;
-    return query(ref(database, "portfolioItems"), orderByChild("slug"), equalTo(resolvedParams.slug));
-  }, [database, resolvedParams.slug]);
-
-  const { data: projects, loading } = useRTDBList<PortfolioItem>(projectQuery);
-  const project = projects?.[0];
+  useEffect(() => {
+    const foundProject = placeholderProjects.find(p => p.slug === params.slug);
+    if (foundProject) {
+        setProject(foundProject as PortfolioItem);
+    }
+    setLoading(false);
+  }, [params.slug]);
 
 
   if (loading) {

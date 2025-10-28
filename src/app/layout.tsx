@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { CursorGlow } from '@/components/CursorGlow';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'Mohamed Aref | Portfolio',
@@ -28,7 +27,6 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen font-sans')}>
-        <FirebaseClientProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
               <div className="fixed inset-0 -z-50">
                 <div className="absolute inset-0 -z-40 bg-background"></div>
@@ -41,7 +39,6 @@ export default function RootLayout({
             {children}
             <Toaster />
           </ThemeProvider>
-        </FirebaseClientProvider>
       </body>
     </html>
   );

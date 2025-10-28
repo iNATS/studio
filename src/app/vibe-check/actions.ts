@@ -1,7 +1,5 @@
 'use server';
 
-import { codeFeedback, CodeFeedbackInput } from '@/ai/flows/code-feedback';
-import { videoEditFeedback, VideoEditFeedbackInput } from '@/ai/flows/video-edit-feedback';
 import { z } from 'zod';
 
 const codeSchema = z.object({
@@ -24,7 +22,8 @@ export async function getCodeFeedback(prevState: any, formData: FormData) {
   }
 
   try {
-    const result = await codeFeedback(validatedFields.data as CodeFeedbackInput);
+    // const result = await codeFeedback(validatedFields.data as CodeFeedbackInput);
+    const result = { feedback: "AI feedback is currently disabled." };
     return { message: 'Success', feedback: result.feedback, errors: null };
   } catch (error) {
     console.error(error);
@@ -52,7 +51,8 @@ export async function getVideoFeedback(prevState: any, formData: FormData) {
   }
 
   try {
-    const result = await videoEditFeedback(validatedFields.data as VideoEditFeedbackInput);
+    // const result = await videoEditFeedback(validatedFields.data as VideoEditFeedbackInput);
+    const result = { feedback: "AI feedback is currently disabled." };
     return { message: 'Success', feedback: result.feedback, errors: null };
   } catch (error) {
     console.error(error);

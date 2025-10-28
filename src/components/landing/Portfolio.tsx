@@ -1,17 +1,15 @@
 
 'use client';
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
-import { useDatabase } from '@/firebase';
-import { ref } from 'firebase/database';
-import { useRTDBList } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
+import { placeholderProjects } from '@/lib/placeholder-data';
 
 
 export type PortfolioItem = {
@@ -74,12 +72,14 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 
 export function Portfolio() {
-  const database = useDatabase();
-  const portfolioItemsRef = useMemo(() => {
-      return database ? ref(database, 'portfolioItems') : null;
-  }, [database]);
-  const { data: portfolioItems, loading } = useRTDBList<PortfolioItem>(portfolioItemsRef);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [loading, setLoading] = useState(true);
   
+  useEffect(() => {
+    setPortfolioItems(placeholderProjects as PortfolioItem[]);
+    setLoading(false);
+  }, []);
+
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);
   const sectionRef = useRef<HTMLDivElement>(null);

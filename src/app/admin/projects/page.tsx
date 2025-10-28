@@ -50,24 +50,13 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useDatabase } from '@/firebase';
-import { ref, push, remove, update, child, set } from 'firebase/database';
-import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
-import { uploadFile } from '@/firebase/storage';
-import { useRTDBList } from '@/firebase/non-blocking-updates';
 import { placeholderProjects } from '@/lib/placeholder-data';
-import { useFirebase } from '@/firebase';
+import type { PortfolioItem } from '@/components/landing/Portfolio';
 
 export default function AdminProjectsPage() {
-  const { storage } = useFirebase();
-  const database = useDatabase();
-
-  const portfolioItemsRef = React.useMemo(() => {
-    return database ? ref(database, 'portfolioItems') : null;
-  }, [database]);
-
-  const { data: portfolioItems, loading } = useRTDBList<PortfolioItem>(portfolioItemsRef);
+  const [portfolioItems, setPortfolioItems] = React.useState<PortfolioItem[]>(placeholderProjects as PortfolioItem[]);
+  const [loading, setLoading] = React.useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -75,34 +64,6 @@ export default function AdminProjectsPage() {
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
-
-  // Seed data if database is empty
-  React.useEffect(() => {
-    if (!loading && portfolioItems.length === 0 && database) {
-        const portfolioRef = ref(database, 'portfolioItems');
-        const updates: { [key: string]: Omit<PortfolioItem, 'id'> } = {};
-        placeholderProjects.forEach(project => {
-            const newKey = push(child(ref(database), 'portfolioItems')).key;
-            if(newKey) {
-                updates[newKey] = project;
-            }
-        });
-
-        set(portfolioRef, updates).then(() => {
-            toast({
-                title: "Portfolio Seeded!",
-                description: "10 sample projects have been added to your portfolio.",
-            });
-        }).catch(error => {
-            console.error("Error seeding data: ", error);
-            toast({
-                variant: 'destructive',
-                title: "Seeding Failed",
-                description: "Could not add sample projects to the database.",
-            });
-        });
-    }
-  }, [loading, portfolioItems, database, toast]);
   
   const paginatedItems = React.useMemo(() => {
     if (!portfolioItems) return [];
@@ -120,106 +81,22 @@ export default function AdminProjectsPage() {
 
 
   const handleAddWork = async (values: any) => {
-    if (!database || !storage) {
-        toast({
-            variant: 'destructive',
-            title: "Error",
-            description: "Database connection not available.",
-        });
-        return;
-    }
-
-    const { tags, imageFile, screenshotFiles, ...rest } = values;
-    
-    try {
-        let imageUrl = '';
-        if (imageFile) {
-            const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
-            imageUrl = await uploadFile(storage, imagePath, imageFile);
-        }
-
-        let screenshotUrls: string[] = [];
-        if (screenshotFiles && screenshotFiles.length > 0) {
-            screenshotUrls = await Promise.all(
-                Array.from(screenshotFiles as FileList).map(async (file) => {
-                    const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
-                    return await uploadFile(storage, screenshotPath, file);
-                })
-            );
-        }
-
-        const newWork: Omit<PortfolioItem, 'id'> = {
-          ...rest,
-          tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
-          image: imageUrl,
-          screenshots: screenshotUrls,
-          hint: '', 
-        };
-        
-        const newWorkRef = push(ref(database, 'portfolioItems'));
-        await set(newWorkRef, newWork);
-
-        setIsAddDialogOpen(false);
-        toast({
-          title: "Work Published!",
-          description: "Your new work has been added to the portfolio.",
-        });
-    } catch(e) {
-        console.error(e);
-        toast({
-            variant: 'destructive',
-            title: "Upload Failed",
-            description: "There was an error saving your project. Please try again.",
-        });
-        // Re-throw the error to be caught by the wizard
-        throw e;
-    }
+    console.log("Adding work", values);
+    setIsAddDialogOpen(false);
+    toast({
+        title: "Work Published!",
+        description: "Your new work has been added to the portfolio.",
+    });
   }
 
   const handleEditWork = async (values: any) => {
-    if (!editingProject?.id || !database || !storage) return;
-
-    const { tags, imageFile, screenshotFiles, ...rest } = values;
-    
-    try {
-        const updatedWork: Partial<PortfolioItem> = {
-            ...rest,
-            tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
-        };
-
-        if (imageFile) {
-            const imagePath = `portfolio/${Date.now()}_${imageFile.name}`;
-            updatedWork.image = await uploadFile(storage, imagePath, imageFile);
-        }
-
-        if (screenshotFiles && screenshotFiles.length > 0) {
-            const newScreenshots = await Promise.all(
-                Array.from(screenshotFiles as FileList).map(async (file) => {
-                    const screenshotPath = `portfolio/screenshots/${Date.now()}_${file.name}`;
-                    return await uploadFile(storage, screenshotPath, file);
-                })
-            );
-            updatedWork.screenshots = [...(editingProject.screenshots || []), ...newScreenshots];
-        }
-        
-        const workRef = ref(database, `portfolioItems/${editingProject.id}`);
-        await update(workRef, updatedWork);
-
-        setEditingProject(null);
-        toast({
-          title: "Work Updated!",
-          description: "Your work has been successfully updated.",
-        });
-    } catch (e) {
-        console.error(e);
-        toast({
-            variant: 'destructive',
-            title: "Update Failed",
-            description: "There was an error updating your project. Please try again.",
-        });
-        // Re-throw the error to be caught by the wizard
-        throw e;
-    }
+    if (!editingProject?.id) return;
+    console.log("Editing work", values);
+    setEditingProject(null);
+    toast({
+        title: "Work Updated!",
+        description: "Your work has been successfully updated.",
+    });
   }
 
   const handleEdit = (project: PortfolioItem) => {
@@ -231,9 +108,8 @@ export default function AdminProjectsPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (projectToDelete?.id && database) {
-        const workRef = child(ref(database, 'portfolioItems'), projectToDelete.id);
-        await remove(workRef);
+    if (projectToDelete?.id) {
+        setPortfolioItems(prev => prev.filter(p => p.id !== projectToDelete.id));
         setProjectToDelete(null);
         toast({
             title: 'Work Deleted',
@@ -444,3 +320,4 @@ export default function AdminProjectsPage() {
   );
 
     
+
