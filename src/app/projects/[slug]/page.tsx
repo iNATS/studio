@@ -18,8 +18,9 @@ import {
     CarouselNext,
     CarouselPrevious,
   } from "@/components/ui/carousel"
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { useDatabase } from '@/firebase';
+import { ref, query, orderByChild, equalTo } from 'firebase/database';
+import { useRTDBList } from '@/firebase/non-blocking-updates';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -185,16 +186,16 @@ const ImageLightbox = ({
 
 
 export default function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-  const firestore = useFirestore();
+  const database = useDatabase();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const resolvedParams = use(params);
 
   const projectQuery = useMemo(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, "portfolioItems"), where("slug", "==", resolvedParams.slug));
-  }, [firestore, resolvedParams.slug]);
+    if (!database) return null;
+    return query(ref(database, "portfolioItems"), orderByChild("slug"), equalTo(resolvedParams.slug));
+  }, [database, resolvedParams.slug]);
 
-  const { data: projects, loading } = useCollection<PortfolioItem>(projectQuery);
+  const { data: projects, loading } = useRTDBList<PortfolioItem>(projectQuery);
   const project = projects?.[0];
 
 

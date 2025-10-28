@@ -50,20 +50,22 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking, useFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useFirebase, useDatabase } from '@/firebase';
+import { ref, push, remove, update } from 'firebase/database';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 import { uploadFile } from '@/firebase/storage';
+import { useRTDBList } from '@/firebase/non-blocking-updates';
 
 export default function AdminProjectsPage() {
-  const { firestore, storage } = useFirebase();
+  const { storage } = useFirebase();
+  const database = useDatabase();
 
-  const portfolioCollectionRef = React.useMemo(() => {
-    return firestore ? collection(firestore, 'portfolioItems') : null;
-  }, [firestore]);
+  const portfolioItemsRef = React.useMemo(() => {
+    return database ? ref(database, 'portfolioItems') : null;
+  }, [database]);
 
-  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollectionRef);
+  const { data: portfolioItems, loading } = useRTDBList<PortfolioItem>(portfolioItemsRef);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -88,7 +90,7 @@ export default function AdminProjectsPage() {
 
 
   const handleAddWork = async (values: any) => {
-    if (!firestore || !storage) {
+    if (!database || !storage) {
         toast({
             variant: 'destructive',
             title: "Error",
@@ -121,10 +123,11 @@ export default function AdminProjectsPage() {
           tags: tags ? tags.split(',').map((t: string) => t.trim()) : [],
           image: imageUrl,
           screenshots: screenshotUrls,
-          hint: '', // Added hint to satisfy type
+          hint: '', 
         };
         
-        addDocumentNonBlocking(firestore, 'portfolioItems', newWork);
+        const newWorkRef = push(ref(database, 'portfolioItems'));
+        await push(newWorkRef, newWork);
 
         setIsAddDialogOpen(false);
         toast({
@@ -143,7 +146,7 @@ export default function AdminProjectsPage() {
   }
 
   const handleEditWork = async (values: any) => {
-    if (!editingProject?.id || !firestore || !storage) return;
+    if (!editingProject?.id || !database || !storage) return;
 
     const { tags, imageFile, screenshotFiles, ...rest } = values;
     
@@ -168,7 +171,8 @@ export default function AdminProjectsPage() {
             updatedWork.screenshots = [...(editingProject.screenshots || []), ...newScreenshots];
         }
         
-        updateDocumentNonBlocking(firestore, `portfolioItems/${editingProject.id}`, updatedWork);
+        const workRef = ref(database, `portfolioItems/${editingProject.id}`);
+        await update(workRef, updatedWork);
 
         setEditingProject(null);
         toast({
@@ -194,9 +198,10 @@ export default function AdminProjectsPage() {
     setEditingProject(null);
   };
 
-  const handleDeleteConfirm = () => {
-    if (projectToDelete?.id && firestore) {
-      deleteDocumentNonBlocking(firestore, `portfolioItems/${projectToDelete.id}`);
+  const handleDeleteConfirm = async () => {
+    if (projectToDelete?.id && database) {
+      const workRef = ref(database, `portfolioItems/${projectToDelete.id}`);
+      await remove(workRef);
       setProjectToDelete(null); // Close the dialog
       toast({
         variant: 'success',

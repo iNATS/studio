@@ -9,7 +9,7 @@ import type { Auth } from 'firebase/auth';
 
 import { firebaseConfig } from './config';
 
-import { FirebaseProvider } from './provider';
+import { FirebaseProvider, useFirebase, useFirebaseApp, useAuth, useFirestore, useStorage, useDatabase } from './provider';
 import { FirebaseClientProvider } from './client-provider';
 import {
   useCollection,
@@ -18,6 +18,7 @@ import {
   setDocumentNonBlocking,
   updateDocumentNonBlocking,
   deleteDocumentNonBlocking,
+  useRTDBList
 } from './non-blocking-updates';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 import { errorEmitter } from './error-emitter';
@@ -64,10 +65,13 @@ export {
   useFirebaseApp,
   useFirestore,
   useAuth,
+  useStorage,
+  useDatabase,
   addDocumentNonBlocking,
   setDocumentNonBlocking,
   updateDocumentNonBlocking,
   deleteDocumentNonBlocking,
   FirebaseErrorListener,
-  errorEmitter
+  errorEmitter,
+  useRTDBList
 };

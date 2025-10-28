@@ -8,13 +8,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useDatabase } from '@/firebase/provider';
+import { ref } from 'firebase/database';
+import { useRTDBList } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
 export type PortfolioItem = {
-  id?: string; // Firestore document ID
+  id?: string; // Realtime Database key
   title: string;
   slug: string;
   description: string;
@@ -69,11 +70,11 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 
 export function Portfolio() {
-  const firestore = useFirestore();
-  const portfolioCollection = useMemo(() => {
-      return firestore ? collection(firestore, 'portfolioItems') : null;
-  }, [firestore]);
-  const { data: portfolioItems, loading } = useCollection<PortfolioItem>(portfolioCollection);
+  const database = useDatabase();
+  const portfolioItemsRef = useMemo(() => {
+      return database ? ref(database, 'portfolioItems') : null;
+  }, [database]);
+  const { data: portfolioItems, loading } = useRTDBList<PortfolioItem>(portfolioItemsRef);
   
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);

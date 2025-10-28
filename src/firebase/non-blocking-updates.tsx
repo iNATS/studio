@@ -22,13 +22,18 @@ import {
   collection as firestoreCollection,
   type DocumentData,
   type DocumentReference,
-  type Query,
+  type Query as FirestoreQuery,
   type Firestore,
   type CollectionReference,
   type SetOptions,
   type DocumentSnapshot,
   type QuerySnapshot,
 } from 'firebase/firestore';
+import { 
+    ref, 
+    onValue,
+    type Query as RTDBQuery
+} from 'firebase/database';
 import { FirestorePermissionError } from './errors';
 import { errorEmitter } from './error-emitter';
 
@@ -120,7 +125,7 @@ interface UseCollectionOptions {
 }
 
 export function useCollection<T>(
-  ref: CollectionReference | Query | null,
+  ref: CollectionReference | FirestoreQuery | null,
 ) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -148,7 +153,7 @@ export function useCollection<T>(
             const customError = new FirestorePermissionError(
                 'Firestore permission denied while listening to a collection.',
                 'listen',
-                ref.path
+                (ref as CollectionReference).path
             );
             errorEmitter.emit('permission-error', customError);
         }
@@ -209,3 +214,46 @@ export function useDoc<T>(
 
   return { data, loading, error };
 }
+
+
+export function useRTDBList<T>(query: RTDBQuery | null) {
+    const [data, setData] = useState<T[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+  
+    useEffect(() => {
+      if (!query) {
+        setLoading(false);
+        setData([]);
+        return;
+      }
+  
+      setLoading(true);
+      const unsubscribe = onValue(
+        query,
+        (snapshot) => {
+          const val = snapshot.val();
+          if (val) {
+            const list = Object.keys(val).map(key => ({
+              id: key,
+              ...val[key]
+            })) as T[];
+            setData(list);
+          } else {
+            setData([]);
+          }
+          setLoading(false);
+        },
+        (err) => {
+          // Realtime Database permission errors are less detailed
+          console.error(err);
+          setError(err);
+          setLoading(false);
+        }
+      );
+  
+      return () => unsubscribe();
+    }, [query]);
+  
+    return { data, loading, error };
+  }
