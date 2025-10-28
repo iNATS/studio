@@ -47,8 +47,7 @@ const stepSchemas = [
         .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),"Only .jpg, .jpeg, .png and .webp formats are supported."),
     screenshotFiles: z.any()
         .refine((files) => files ? Array.from(files).every((file: any) => file.size <= MAX_IMAGE_SIZE) : true, `Max image size is 5MB.`)
-        .refine((files) => files ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "Only .jpg, .jpeg, .png and .webp formats are supported.")
-        .optional(),
+        .refine((files) => files ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "optional"),
     link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
   }),
   z.object({
@@ -113,8 +112,8 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         link: project?.link || '',
         category: project?.category || 'web',
         tags: project?.tags || '',
-        imageFile: project?.imageFile,
-        screenshotFiles: project?.screenshotFiles,
+        imageFile: undefined,
+        screenshotFiles: undefined,
     });
 
     // Use a different schema for editing to make file inputs optional
@@ -163,6 +162,10 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
   };
 
   const prevStep = () => {
+    const currentValues = form.getValues();
+    const newFormData = {...formData, ...currentValues};
+    setFormData(newFormData);
+
     if (currentStep > 0) {
         setDirection(-1);
         setCurrentStep(step => step - 1);
@@ -426,11 +429,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         {formData.tags?.split(',').map((tag: string) => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
-                                    {formData.screenshotFiles && formData.screenshotFiles.length > 0 && (
+                                    {formData.screenshotFiles && Array.from(formData.screenshotFiles as FileList).length > 0 && (
                                         <div>
                                             <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {Array.from(formData.screenshotFiles).map((file: any, index) => (
+                                                {Array.from(formData.screenshotFiles as FileList).map((file: any, index) => (
                                                     <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
                                                       <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
                                                     </div>

@@ -156,7 +156,6 @@ export default function AdminProjectsPage() {
           hint: '', 
         };
         
-        console.log("Data being sent to Firebase:", newWork);
         const newWorkRef = push(ref(database, 'portfolioItems'));
         await set(newWorkRef, newWork);
 
@@ -172,6 +171,8 @@ export default function AdminProjectsPage() {
             title: "Upload Failed",
             description: "There was an error saving your project. Please try again.",
         });
+        // Re-throw the error to be caught by the wizard
+        throw e;
     }
   }
 
@@ -216,6 +217,8 @@ export default function AdminProjectsPage() {
             title: "Update Failed",
             description: "There was an error updating your project. Please try again.",
         });
+        // Re-throw the error to be caught by the wizard
+        throw e;
     }
   }
 
@@ -246,7 +249,6 @@ export default function AdminProjectsPage() {
       ...project,
       tags: project.tags?.join(', ') || '',
       link: project.link || '',
-      image: project.image || '',
       imageFile: undefined,
       screenshotFiles: undefined,
     }
