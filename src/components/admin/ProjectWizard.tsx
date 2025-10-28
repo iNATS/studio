@@ -102,17 +102,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState(project || {
-        title: '',
-        slug: '',
-        description: '',
-        fullDescription: '',
-        category: 'web',
-        tags: '',
-        imageFile: undefined,
-        link: '',
-        screenshotFiles: undefined,
-    });
+    const [formData, setFormData] = useState(project || {});
     
     const isEditing = !!project;
 
@@ -133,17 +123,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         defaultValues: formData,
         mode: "onChange",
     });
-  
-  const watchedValues = form.watch();
 
-  useEffect(() => {
-    setFormData(prev => ({...prev, ...watchedValues}))
-  }, [watchedValues]);
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(formData);
+      await onSubmit(data);
     } finally {
       setIsSubmitting(false);
     }
@@ -155,18 +139,22 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const isStepValid = await form.trigger();
     if (!isStepValid) return;
     
-    setFormData(prev => ({ ...prev, ...form.getValues() }));
+    const currentValues = form.getValues();
+    const newFormData = {...formData, ...currentValues};
+    setFormData(newFormData);
 
     if (currentStep < currentSchemas.length - 1) {
         setDirection(1);
         setCurrentStep(step => step + 1);
     } else {
-      await handleSubmit();
+      await handleSubmit(newFormData);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
+        const currentValues = form.getValues();
+        setFormData(prev => ({ ...prev, ...currentValues }));
         setDirection(-1);
         setCurrentStep(step => step - 1);
     }
@@ -211,7 +199,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit()}} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(formData) }} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
@@ -426,7 +414,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
                                     <div className="flex flex-wrap gap-2">
                                         <Badge variant="outline" className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20">{formData.category}</Badge>
-                                        {formData.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
+                                        {formData.tags?.split(',').map((tag: string) => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
                                     {formData.screenshotFiles && formData.screenshotFiles.length > 0 && (
@@ -469,3 +457,5 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
+
+    
