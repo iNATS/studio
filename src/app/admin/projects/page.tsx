@@ -156,6 +156,7 @@ export default function AdminProjectsPage() {
           hint: '', 
         };
         
+        console.log("Data being sent to Firebase:", newWork);
         const newWorkRef = push(ref(database, 'portfolioItems'));
         await set(newWorkRef, newWork);
 
@@ -439,6 +440,5 @@ export default function AdminProjectsPage() {
         </div>
     </main>
   );
-}
 
     
