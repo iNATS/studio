@@ -23,6 +23,7 @@ import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Button } from '@/components/ui/button';
 
 export default function AdminLayout({
   children,
@@ -149,6 +150,15 @@ export default function AdminLayout({
         </Sidebar>
         <SidebarInset>
             <div className="flex flex-col h-full">
+                 <header className="md:hidden flex items-center justify-between p-4 border-b border-border/50">
+                    <div className="flex items-center gap-3">
+                        <SidebarTrigger />
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
+                            <LayoutGrid className="w-5 h-5 text-primary-foreground" />
+                        </div>
+                        <h1 className="text-lg font-semibold">Dashboard</h1>
+                    </div>
+                </header>
                 <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
                     {children}
                 </div>
