@@ -76,7 +76,7 @@ export default function AdminProjectsPage() {
   const itemsPerPage = 10;
 
   // Seed data if database is empty
-  useEffect(() => {
+  React.useEffect(() => {
     if (!loading && portfolioItems.length === 0 && database) {
         const portfolioRef = ref(database, 'portfolioItems');
         const updates: { [key: string]: Omit<PortfolioItem, 'id'> } = {};
