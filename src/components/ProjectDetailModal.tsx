@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -41,7 +42,7 @@ export function ProjectDetailModal({ isOpen, onOpenChange, project }: ProjectDet
                   {project.description}
                 </DialogDescription>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {project.tags.map((tag, i) => (
+                  {(project.tags || []).map((tag, i) => (
                     <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-sm font-medium pointer-events-none">
                         {tag}
                     </Button>
