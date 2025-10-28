@@ -51,11 +51,12 @@ import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { useFirebase, useDatabase } from '@/firebase';
-import { ref, push, remove, update, child } from 'firebase/database';
+import { ref, push, remove, update, child, set } from 'firebase/database';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 import { uploadFile } from '@/firebase/storage';
 import { useRTDBList } from '@/firebase/non-blocking-updates';
+import { placeholderProjects } from '@/lib/placeholder-data';
 
 export default function AdminProjectsPage() {
   const { storage } = useFirebase();
@@ -73,6 +74,35 @@ export default function AdminProjectsPage() {
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
+
+  // Seed data if database is empty
+  useEffect(() => {
+    if (!loading && portfolioItems.length === 0 && database) {
+        const portfolioRef = ref(database, 'portfolioItems');
+        const updates: { [key: string]: Omit<PortfolioItem, 'id'> } = {};
+        placeholderProjects.forEach(project => {
+            const newKey = push(child(ref(database), 'portfolioItems')).key;
+            if(newKey) {
+                updates[newKey] = project;
+            }
+        });
+
+        set(portfolioRef, updates).then(() => {
+            toast({
+                variant: 'success',
+                title: "Portfolio Seeded!",
+                description: "10 sample projects have been added to your portfolio.",
+            });
+        }).catch(error => {
+            console.error("Error seeding data: ", error);
+            toast({
+                variant: 'destructive',
+                title: "Seeding Failed",
+                description: "Could not add sample projects to the database.",
+            });
+        });
+    }
+  }, [loading, portfolioItems, database, toast]);
   
   const paginatedItems = React.useMemo(() => {
     if (!portfolioItems) return [];
