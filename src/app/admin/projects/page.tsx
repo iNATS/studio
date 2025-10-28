@@ -50,13 +50,14 @@ import {
 import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
-import { useFirebase, useDatabase } from '@/firebase';
+import { useDatabase } from '@/firebase';
 import { ref, push, remove, update, child, set } from 'firebase/database';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 import { uploadFile } from '@/firebase/storage';
 import { useRTDBList } from '@/firebase/non-blocking-updates';
 import { placeholderProjects } from '@/lib/placeholder-data';
+import { useFirebase } from '@/firebase';
 
 export default function AdminProjectsPage() {
   const { storage } = useFirebase();
@@ -244,6 +245,7 @@ export default function AdminProjectsPage() {
       ...project,
       tags: project.tags?.join(', ') || '',
       link: project.link || '',
+      image: project.image || '',
       imageFile: undefined,
       screenshotFiles: undefined,
     }
@@ -437,5 +439,4 @@ export default function AdminProjectsPage() {
         </div>
     </main>
   );
-
-    
+}

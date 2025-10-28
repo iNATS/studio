@@ -102,6 +102,17 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState(project || {
+        title: '',
+        slug: '',
+        description: '',
+        fullDescription: '',
+        category: 'web',
+        tags: '',
+        imageFile: undefined,
+        link: '',
+        screenshotFiles: undefined,
+    });
     
     const isEditing = !!project;
 
@@ -119,26 +130,20 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
     const form = useForm({
         resolver: zodResolver(currentSchemas[currentStep]),
-        defaultValues: project || {
-        title: '',
-        slug: '',
-        description: '',
-        fullDescription: '',
-        category: 'web',
-        tags: '',
-        imageFile: undefined,
-        link: '',
-        screenshotFiles: undefined,
-        },
+        defaultValues: formData,
         mode: "onChange",
     });
   
   const watchedValues = form.watch();
 
-  const handleSubmit = async (values: any) => {
+  useEffect(() => {
+    setFormData(prev => ({...prev, ...watchedValues}))
+  }, [watchedValues]);
+
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await onSubmit(values);
+      await onSubmit(formData);
     } finally {
       setIsSubmitting(false);
     }
@@ -149,12 +154,14 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
   const processStep = async () => {
     const isStepValid = await form.trigger();
     if (!isStepValid) return;
+    
+    setFormData(prev => ({ ...prev, ...form.getValues() }));
 
     if (currentStep < currentSchemas.length - 1) {
         setDirection(1);
         setCurrentStep(step => step + 1);
     } else {
-      await form.handleSubmit(handleSubmit)();
+      await handleSubmit();
     }
   };
 
@@ -204,7 +211,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit()}} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
@@ -406,27 +413,27 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                             <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
                             <div className="bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10 rounded-lg overflow-hidden">
                                 <div className="relative w-full h-48">
-                                    {watchedValues.imageFile ? <ImagePreview file={watchedValues.imageFile} alt={watchedValues.title} fill /> : <div className="w-full h-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-zinc-500 dark:text-white/50">No Image</div>}
+                                    {formData.imageFile ? <ImagePreview file={formData.imageFile} alt={formData.title} fill /> : (project?.image ? <Image src={project.image} alt={project.title} fill className="object-cover" /> : <div className="w-full h-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-zinc-500 dark:text-white/50">No Image</div>)}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     <div className="absolute bottom-0 left-0 p-4">
-                                        <h1 className="text-2xl font-bold text-white shadow-2xl">{watchedValues.title}</h1>
+                                        <h1 className="text-2xl font-bold text-white shadow-2xl">{formData.title}</h1>
                                     </div>
                                 </div>
                                 <div className="p-4 space-y-4">
                                     <div className="prose prose-sm max-w-none text-zinc-700 dark:text-white/80 dark:prose-invert">
-                                        <p>{watchedValues.fullDescription}</p>
+                                        <p>{formData.fullDescription}</p>
                                     </div>
 
                                     <div className="flex flex-wrap gap-2">
-                                        <Badge variant="outline" className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20">{watchedValues.category}</Badge>
-                                        {watchedValues.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
+                                        <Badge variant="outline" className="text-zinc-600 dark:text-white/70 border-zinc-300 dark:border-white/20">{formData.category}</Badge>
+                                        {formData.tags?.split(',').map(tag => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
-                                    {watchedValues.screenshotFiles && watchedValues.screenshotFiles.length > 0 && (
+                                    {formData.screenshotFiles && formData.screenshotFiles.length > 0 && (
                                         <div>
                                             <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {Array.from(watchedValues.screenshotFiles).map((file: any, index) => (
+                                                {Array.from(formData.screenshotFiles).map((file: any, index) => (
                                                     <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
                                                       <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
                                                     </div>
