@@ -89,7 +89,6 @@ export default function AdminProjectsPage() {
 
         set(portfolioRef, updates).then(() => {
             toast({
-                variant: 'success',
                 title: "Portfolio Seeded!",
                 description: "10 sample projects have been added to your portfolio.",
             });
@@ -161,7 +160,6 @@ export default function AdminProjectsPage() {
 
         setIsAddDialogOpen(false);
         toast({
-          variant: 'success',
           title: "Work Published!",
           description: "Your new work has been added to the portfolio.",
         });
@@ -206,7 +204,6 @@ export default function AdminProjectsPage() {
 
         setEditingProject(null);
         toast({
-          variant: 'success',
           title: "Work Updated!",
           description: "Your work has been successfully updated.",
         });
@@ -234,7 +231,6 @@ export default function AdminProjectsPage() {
         await remove(workRef);
         setProjectToDelete(null);
         toast({
-            variant: 'success',
             title: 'Work Deleted',
             description: `"${projectToDelete.title}" has been removed.`,
         });
@@ -247,6 +243,7 @@ export default function AdminProjectsPage() {
     return {
       ...project,
       tags: project.tags?.join(', ') || '',
+      link: project.link || '',
       imageFile: undefined,
       screenshotFiles: undefined,
     }
