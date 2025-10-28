@@ -51,7 +51,7 @@ import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { useFirebase, useDatabase } from '@/firebase';
-import { ref, push, remove, update } from 'firebase/database';
+import { ref, push, remove, update, child } from 'firebase/database';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
 import { uploadFile } from '@/firebase/storage';
@@ -127,7 +127,7 @@ export default function AdminProjectsPage() {
         };
         
         const newWorkRef = push(ref(database, 'portfolioItems'));
-        await push(newWorkRef, newWork);
+        await set(newWorkRef, newWork);
 
         setIsAddDialogOpen(false);
         toast({
@@ -200,14 +200,14 @@ export default function AdminProjectsPage() {
 
   const handleDeleteConfirm = async () => {
     if (projectToDelete?.id && database) {
-      const workRef = ref(database, `portfolioItems/${projectToDelete.id}`);
-      await remove(workRef);
-      setProjectToDelete(null); // Close the dialog
-      toast({
-        variant: 'success',
-        title: "Work Deleted",
-        description: `"${projectToDelete.title}" has been removed.`,
-      });
+        const workRef = child(ref(database, 'portfolioItems'), projectToDelete.id);
+        await remove(workRef);
+        setProjectToDelete(null);
+        toast({
+            variant: 'success',
+            title: 'Work Deleted',
+            description: `"${projectToDelete.title}" has been removed.`,
+        });
     }
   };
   
@@ -216,7 +216,7 @@ export default function AdminProjectsPage() {
     
     return {
       ...project,
-      tags: project.tags.join(', '),
+      tags: project.tags?.join(', ') || '',
       imageFile: undefined,
       screenshotFiles: undefined,
     }
@@ -357,7 +357,7 @@ export default function AdminProjectsPage() {
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                             <div className="flex flex-wrap gap-1">
-                            {project.tags.slice(0, 3).map((tag) => (
+                            {(project.tags || []).slice(0, 3).map((tag) => (
                                 <Badge
                                 key={tag}
                                 variant="outline"
