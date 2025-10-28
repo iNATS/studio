@@ -55,7 +55,7 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
               {item.description}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {item.tags.slice(0, 3).map((tag, i) => (
+              {(item.tags || []).slice(0, 3).map((tag, i) => (
                 <Button key={i} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none">
                   {tag}
                 </Button>
