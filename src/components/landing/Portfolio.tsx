@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
-import { useDatabase } from '@/firebase/provider';
+import { useDatabase } from '@/firebase';
 import { ref } from 'firebase/database';
 import { useRTDBList } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -41,13 +41,17 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
       <div className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border border-border/40 dark:border-white/20 shadow-2xl overflow-hidden rounded-3xl transition-all duration-300 group-hover:shadow-primary/20 group-hover:border-border/80 dark:group-hover:border-white/30 h-full">
         <div className="grid md:grid-cols-2 h-full">
           <div className="relative h-48 md:h-full w-full">
-            <Image
-              src={item.image}
-              alt={item.title}
-              fill
-              className="object-cover"
-              data-ai-hint={item.hint}
-            />
+            {item.image ? (
+                <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover"
+                data-ai-hint={item.hint}
+                />
+            ) : (
+                <div className="w-full h-full bg-muted" />
+            )}
           </div>
           <div className="p-6 flex flex-col">
             <h3 className="text-xl font-bold font-headline text-foreground">{item.title}</h3>
