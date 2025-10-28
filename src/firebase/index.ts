@@ -1,7 +1,9 @@
+
 import { getFirestore } from 'firebase/firestore';
 import { initializeApp, getApps, type FirebaseOptions } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
+import { getDatabase, type Database } from 'firebase/database';
 import type { Firestore } from 'firebase/firestore';
 import type { Auth } from 'firebase/auth';
 
@@ -9,12 +11,6 @@ import { firebaseConfig } from './config';
 
 import { FirebaseProvider } from './provider';
 import { FirebaseClientProvider } from './client-provider';
-import {
-  useFirebase,
-  useFirebaseApp,
-  useFirestore,
-  useAuth,
-} from './provider';
 import {
   useCollection,
   useDoc,
@@ -29,6 +25,7 @@ import { errorEmitter } from './error-emitter';
 let app: ReturnType<typeof initializeApp> | undefined;
 let auth: Auth | undefined;
 let firestore: Firestore | undefined;
+let database: Database | undefined;
 let storage: FirebaseStorage | undefined;
 
 function initializeFirebase(options?: FirebaseOptions) {
@@ -38,6 +35,7 @@ function initializeFirebase(options?: FirebaseOptions) {
     auth = getAuth(app);
     firestore = getFirestore(app);
     storage = getStorage(app);
+    database = getDatabase(app);
   } else {
     app = apps[0];
     if (!auth) {
@@ -49,8 +47,11 @@ function initializeFirebase(options?: FirebaseOptions) {
     if(!storage) {
         storage = getStorage(app);
     }
+    if(!database) {
+        database = getDatabase(app);
+    }
   }
-  return { app, auth, firestore, storage };
+  return { app, auth, firestore, storage, database };
 }
 
 export {

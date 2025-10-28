@@ -6,6 +6,7 @@ import type { FirebaseApp } from 'firebase/app';
 import type { Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import type { FirebaseStorage } from 'firebase/storage';
+import type { Database } from 'firebase/database';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
 interface FirebaseContextValue {
@@ -13,6 +14,7 @@ interface FirebaseContextValue {
   auth: Auth | null;
   firestore: Firestore | null;
   storage: FirebaseStorage | null;
+  database: Database | null;
 }
 
 const FirebaseContext = createContext<FirebaseContextValue | null>(null);
@@ -45,3 +47,4 @@ export const useFirebaseApp = () => useFirebase().app;
 export const useFirestore = () => useFirebase().firestore;
 export const useAuth = () => useFirebase().auth;
 export const useStorage = () => useFirebase().storage;
+export const useDatabase = () => useFirebase().database;
