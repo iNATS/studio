@@ -64,6 +64,7 @@ interface ProjectWizardProps {
     tags: string;
     imageFile?: File;
     screenshotFiles?: FileList;
+    link?: string;
   };
   onSubmit: (values: any) => Promise<void>;
 }
@@ -102,7 +103,6 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState(project || {});
     
     const isEditing = !!project;
 
@@ -120,7 +120,17 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
     const form = useForm({
         resolver: zodResolver(currentSchemas[currentStep]),
-        defaultValues: formData,
+        defaultValues: {
+          title: project?.title || '',
+          slug: project?.slug || '',
+          description: project?.description || '',
+          fullDescription: project?.fullDescription || '',
+          link: project?.link || '',
+          category: project?.category || 'web',
+          tags: project?.tags || '',
+          imageFile: project?.imageFile,
+          screenshotFiles: project?.screenshotFiles,
+        },
         mode: "onChange",
     });
 
@@ -140,21 +150,17 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     if (!isStepValid) return;
     
     const currentValues = form.getValues();
-    const newFormData = {...formData, ...currentValues};
-    setFormData(newFormData);
 
     if (currentStep < currentSchemas.length - 1) {
         setDirection(1);
         setCurrentStep(step => step + 1);
     } else {
-      await handleSubmit(newFormData);
+      await handleSubmit(currentValues);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
-        const currentValues = form.getValues();
-        setFormData(prev => ({ ...prev, ...currentValues }));
         setDirection(-1);
         setCurrentStep(step => step - 1);
     }
@@ -197,9 +203,11 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     return <Image src={preview} alt={alt || "preview"} width={200} height={112} className={cn("aspect-video w-full object-cover", className)} />
   }
 
+  const formData = form.watch();
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(formData) }} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(form.getValues()) }} className="space-y-6">
         <StepIndicator currentStep={currentStep} steps={currentSchemas.length} />
 
         <div className="overflow-hidden relative h-[450px] p-1">
