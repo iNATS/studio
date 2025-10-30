@@ -54,7 +54,8 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { clientsData, initialTasks } from '../data';
+import { getClients, getTasks, addTask, updateTask, deleteTask } from '@/lib/db';
+import type { Client } from '../clients/page';
 
 
 export type Task = {
@@ -159,9 +160,9 @@ const CreativeNotesWidget = () => {
 };
 
 
-const TaskCard = ({ task, onEdit, onDelete, onView }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void }) => {
+const TaskCard = ({ task, onEdit, onDelete, onView, clients }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, clients: Client[] }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: {type: 'Task', task} });
-    const client = clientsData.find(c => c.id === task.clientId);
+    const client = clients.find(c => c.id === task.clientId);
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -189,7 +190,7 @@ const TaskCard = ({ task, onEdit, onDelete, onView }: { task: Task, onEdit: (tas
                                     {task.dueDate && (
                                         <div className="flex items-center gap-1.5">
                                             <CalendarIcon className="h-4 w-4"/>
-                                            <span>{format(task.dueDate, 'MMM d')}</span>
+                                            <span>{format(new Date(task.dueDate), 'MMM d')}</span>
                                         </div>
                                     )}
                                     {client && (
@@ -236,7 +237,7 @@ const TaskCard = ({ task, onEdit, onDelete, onView }: { task: Task, onEdit: (tas
     );
 };
 
-const TaskColumn = ({ title, status, tasks, onEdit, onDelete, onView }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void }) => {
+const TaskColumn = ({ title, status, tasks, ...props }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, clients: Client[] }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
 
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
@@ -246,15 +247,15 @@ const TaskColumn = ({ title, status, tasks, onEdit, onDelete, onView }: { title:
             <h3 className="text-lg font-semibold text-foreground dark:text-white/90 mb-4 px-1">{title}</h3>
             <div className="bg-white/50 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10 rounded-2xl p-4 h-full">
                 <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onView={onView} />)}
+                    {tasks.map(task => <TaskCard key={task.id} task={task} {...props} />)}
                 </SortableContext>
             </div>
         </div>
     );
 };
 
-const TaskForm = ({ task, onSubmit, onCancel }: { task?: Task, onSubmit: (values: any) => void, onCancel: () => void }) => {
-    const [dueDate, setDueDate] = React.useState<Date | undefined>(task?.dueDate);
+const TaskForm = ({ task, onSubmit, onCancel, clients }: { task?: Task, onSubmit: (values: any) => void, onCancel: () => void, clients: Client[] }) => {
+    const [dueDate, setDueDate] = React.useState<Date | undefined>(task?.dueDate ? new Date(task.dueDate) : undefined);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -286,7 +287,8 @@ const TaskForm = ({ task, onSubmit, onCancel }: { task?: Task, onSubmit: (values
                     <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                    {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                    <SelectItem value="">None</SelectItem>
+                    {clients.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
                 </SelectContent>
                 </Select>
             </div>
@@ -344,10 +346,10 @@ const TaskForm = ({ task, onSubmit, onCancel }: { task?: Task, onSubmit: (values
     )
 }
 
-const TaskViewDialog = ({ task, open, onOpenChange }: { task: Task | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+const TaskViewDialog = ({ task, open, onOpenChange, clients }: { task: Task | null, open: boolean, onOpenChange: (open: boolean) => void, clients: Client[] }) => {
     if (!task) return null;
 
-    const client = clientsData.find(c => c.id === task.clientId);
+    const client = clients.find(c => c.id === task.clientId);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -369,7 +371,7 @@ const TaskViewDialog = ({ task, open, onOpenChange }: { task: Task | null, open:
                     {task.dueDate && (
                         <div className="flex items-center gap-4">
                             <CalendarIcon className="h-5 w-5 text-zinc-500 dark:text-white/50" />
-                            <span className="text-zinc-700 dark:text-white/80">{format(task.dueDate, "PPP")}</span>
+                            <span className="text-zinc-700 dark:text-white/80">{format(new Date(task.dueDate), "PPP")}</span>
                         </div>
                     )}
                     
@@ -407,7 +409,9 @@ const TaskViewDialog = ({ task, open, onOpenChange }: { task: Task | null, open:
 
 
 export default function TasksPage() {
-    const [tasks, setTasks] = React.useState<Task[]>(initialTasks);
+    const [tasks, setTasks] = React.useState<Task[]>([]);
+    const [clients, setClients] = React.useState<Client[]>([]);
+    const [loading, setLoading] = React.useState(true);
     const [activeTask, setActiveTask] = React.useState<Task | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
     const [editingTask, setEditingTask] = React.useState<Task | null>(null);
@@ -424,6 +428,18 @@ export default function TasksPage() {
 
     const columns: TaskStatus[] = ['todo', 'in-progress', 'done'];
     const columnTitles = { todo: 'To Do', 'in-progress': 'In Progress', done: 'Done' };
+
+    const fetchData = React.useCallback(async () => {
+        setLoading(true);
+        const [tasksData, clientsData] = await Promise.all([getTasks(), getClients()]);
+        setTasks(tasksData as Task[]);
+        setClients(clientsData as Client[]);
+        setLoading(false);
+    }, []);
+
+    React.useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const handleFilterChange = (filterType: keyof typeof filters, value: string) => {
         setFilters(prev => ({ ...prev, [filterType]: value }));
@@ -451,6 +467,35 @@ export default function TasksPage() {
             setActiveTask(active.data.current.task);
         }
     }, []);
+    
+    const handleDragEnd = React.useCallback(async (event: DragEndEvent) => {
+        setActiveTask(null);
+        const { active, over } = event;
+
+        if (!over) return;
+        if (active.id === over.id) return;
+
+        const originalTask = tasks.find(t => t.id === active.id);
+        const newStatus = over.data.current?.status;
+        
+        if (originalTask && newStatus && originalTask.status !== newStatus) {
+            const updatedTask = { ...originalTask, status: newStatus };
+            // Optimistically update UI
+            setTasks(tasks => tasks.map(t => t.id === active.id ? updatedTask : t));
+
+            const result = await updateTask(String(active.id), { status: newStatus });
+            if (!result.success) {
+                // Revert on failure
+                setTasks(tasks);
+                toast({
+                    variant: "destructive",
+                    title: "Update failed",
+                    description: "Could not update task status.",
+                });
+            }
+        }
+    }, [tasks, toast]);
+
 
     const handleDragOver = React.useCallback((event: DragOverEvent) => {
         const { active, over } = event;
@@ -470,14 +515,8 @@ export default function TasksPage() {
                 if (currentTasks[activeIndex].status === over.data.current?.status) {
                     return currentTasks;
                 }
-                const updatedTask = {
-                    ...currentTasks[activeIndex],
-                    status: over.data.current?.status as TaskStatus,
-                };
-                const newTasks = [...currentTasks];
-                newTasks[activeIndex] = updatedTask;
-
-                return arrayMove(newTasks, activeIndex, activeIndex);
+                currentTasks[activeIndex].status = over.data.current?.status as TaskStatus;
+                return arrayMove(currentTasks, activeIndex, activeIndex);
             });
         }
         
@@ -497,61 +536,70 @@ export default function TasksPage() {
         }
     }, []);
 
-    const handleDragEnd = React.useCallback((event: DragEndEvent) => {
-      setActiveTask(null);
-    }, []);
-    
     const handleView = (task: Task) => setViewingTask(task);
     const handleEdit = (task: Task) => setEditingTask(task);
     const closeEditDialog = () => setEditingTask(null);
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (taskToDelete) {
-            setTasks(tasks.filter(t => t.id !== taskToDelete.id));
+            const result = await deleteTask(taskToDelete.id);
+            if (result.success) {
+                setTasks(tasks.filter(t => t.id !== taskToDelete.id));
+                toast({
+                    title: 'Task Removed',
+                    description: `"${taskToDelete.title}" has been removed.`,
+                });
+            } else {
+                 toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: result.error,
+                });
+            }
             setTaskToDelete(null);
+        }
+    };
+
+    const handleAddTask = async (values: any) => {
+        const result = await addTask(values);
+        if (result.success) {
+            await fetchData();
+            setIsAddDialogOpen(false);
             toast({
-                variant: 'success',
-                title: 'Task Removed',
-                description: `"${taskToDelete.title}" has been removed.`,
+                title: 'Task Added',
+                description: `"${values.title}" has been added to 'To Do'.`,
+            });
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: result.error,
             });
         }
     };
 
-    const handleAddTask = (values: any) => {
-        const newTask: Task = {
-            id: `task-${Date.now()}`,
-            title: values.title,
-            description: values.description,
-            priority: values.priority,
-            status: 'todo',
-            clientId: values.clientId,
-            dueDate: values.dueDate,
-            tags: values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [],
-        };
-        setTasks([...tasks, newTask]);
-        setIsAddDialogOpen(false);
-        toast({
-            variant: 'success',
-            title: 'Task Added',
-            description: `"${newTask.title}" has been added to 'To Do'.`,
-        });
+    const handleEditTask = async (values: any) => {
+        if (!editingTask) return;
+        const result = await updateTask(editingTask.id, values);
+        if (result.success) {
+            await fetchData();
+            closeEditDialog();
+            toast({
+                title: 'Task Updated',
+                description: `"${values.title}" has been updated.`,
+            });
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: result.error,
+            });
+        }
     };
 
-    const handleEditTask = (values: any) => {
-        if (!editingTask) return;
-        const updatedTask = { 
-            ...editingTask, 
-            ...values,
-            tags: values.tags ? values.tags.split(',').map((t: string) => t.trim()) : [],
-        };
-        setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t));
-        closeEditDialog();
-        toast({
-            variant: 'success',
-            title: 'Task Updated',
-            description: `"${updatedTask.title}" has been updated.`,
-        });
-    };
+    if (loading) {
+        return <div className="p-8">Loading tasks and clients...</div>;
+    }
 
     return (
         <main className="flex flex-col h-full">
@@ -585,7 +633,7 @@ export default function TasksPage() {
                                             </SelectTrigger>
                                             <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
                                                 <SelectItem value="all">All Clients</SelectItem>
-                                                {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                                                {clients.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -640,7 +688,7 @@ export default function TasksPage() {
                                     Enter the details for the new task.
                                 </DialogDescription>
                                 </DialogHeader>
-                                <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} />
+                                <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} clients={clients} />
                             </DialogContent>
                         </Dialog>
                     </div>
@@ -660,6 +708,7 @@ export default function TasksPage() {
                                     onEdit={handleEdit}
                                     onDelete={setTaskToDelete}
                                     onView={handleView}
+                                    clients={clients}
                                 />
                             ))}
                         </div>
@@ -667,7 +716,7 @@ export default function TasksPage() {
                     <DragOverlay>
                         {activeTask ? (
                             <div className="w-[300px] md:w-[340px]">
-                            <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
+                            <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} clients={clients} />
                             </div>
                         ) : null}
                     </DragOverlay>
@@ -678,7 +727,8 @@ export default function TasksPage() {
              <TaskViewDialog 
                 task={viewingTask} 
                 open={!!viewingTask} 
-                onOpenChange={(isOpen) => !isOpen && setViewingTask(null)} 
+                onOpenChange={(isOpen) => !isOpen && setViewingTask(null)}
+                clients={clients}
             />
 
             {/* Edit Task Dialog */}
@@ -690,7 +740,7 @@ export default function TasksPage() {
                         Update the details of your task below.
                     </DialogDescription>
                     </DialogHeader>
-                    <TaskForm task={editingTask!} onSubmit={handleEditTask} onCancel={closeEditDialog} />
+                    <TaskForm task={editingTask!} onSubmit={handleEditTask} onCancel={closeEditDialog} clients={clients} />
                 </DialogContent>
             </Dialog>
 

@@ -56,7 +56,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Pagination } from '@/components/ui/pagination';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { clientsData } from '../data';
+import { getClients, addClient, updateClient, deleteClient } from '@/lib/db';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export type Client = {
@@ -115,7 +116,7 @@ const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit:
               <Label htmlFor="status" className="text-right">
                 Status
               </Label>
-               <Select name="status" defaultValue={client?.status}>
+               <Select name="status" defaultValue={client?.status || 'new'}>
                 <SelectTrigger id="status" className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
                     <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
@@ -197,7 +198,8 @@ const ClientViewDialog = ({ client, open, onOpenChange }: { client: Client | nul
 
 
 export default function ClientsPage() {
-  const [clients, setClients] = React.useState(clientsData);
+  const [clients, setClients] = React.useState<Client[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingClient, setEditingClient] = React.useState<Client | null>(null);
   const [viewingClient, setViewingClient] = React.useState<Client | null>(null);
@@ -214,6 +216,17 @@ export default function ClientsPage() {
     searchTerm: '',
     status: 'all',
   });
+
+  const fetchClients = React.useCallback(async () => {
+    setLoading(true);
+    const clientsData = await getClients();
+    setClients(clientsData as Client[]);
+    setLoading(false);
+  }, []);
+
+  React.useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
 
   const handleFilterChange = (filterType: keyof typeof filters, value: any) => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
@@ -260,44 +273,66 @@ export default function ClientsPage() {
     setEditingClient(null);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (clientToDelete) {
-      setClients(clients.filter(c => c.id !== clientToDelete.id));
-      setClientToDelete(null); // Close the dialog
-      toast({
-        variant: 'success',
-        title: 'Client Removed',
-        description: `"${clientToDelete.name}" has been removed.`,
-      });
+      const result = await deleteClient(clientToDelete.id);
+      if (result.success) {
+        setClients(clients.filter(c => c.id !== clientToDelete.id));
+        toast({
+          title: 'Client Removed',
+          description: `"${clientToDelete.name}" has been removed.`,
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: result.error,
+        });
+      }
+      setClientToDelete(null);
     }
   };
 
-  const handleAddClient = (values: any) => {
-    const newClient = {
+  const handleAddClient = async (values: any) => {
+    const newClientData = {
         ...values,
-        id: (clients.length + 1).toString(),
         avatar: `https://picsum.photos/seed/${values.name}/100/100`,
-    } as Client;
-    setClients([...clients, newClient]);
-    setIsAddDialogOpen(false);
-    toast({
-        variant: 'success',
-        title: 'Client Added',
-        description: `"${newClient.name}" has been added.`,
-      });
+    };
+    const result = await addClient(newClientData);
+    if(result.success) {
+        await fetchClients();
+        setIsAddDialogOpen(false);
+        toast({
+            title: 'Client Added',
+            description: `"${values.name}" has been added.`,
+        });
+    } else {
+         toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: result.error,
+        });
+    }
   }
 
-  const handleEditClient = (values: any) => {
+  const handleEditClient = async (values: any) => {
     if(!editingClient) return;
 
-    const updatedClient = { ...editingClient, ...values };
-    setClients(clients.map(c => c.id === editingClient.id ? updatedClient : c));
-    closeEditDialog();
-    toast({
-        variant: 'success',
-        title: 'Client Updated',
-        description: `"${updatedClient.name}" has been updated.`,
-      });
+    const result = await updateClient(editingClient.id, values);
+    if (result.success) {
+        await fetchClients();
+        closeEditDialog();
+        toast({
+            title: 'Client Updated',
+            description: `"${values.name}" has been updated.`,
+        });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: result.error,
+        });
+    }
   }
   
   return (
@@ -445,7 +480,18 @@ export default function ClientsPage() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {paginatedClients.map((client) => (
+                     {loading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <TableRow key={i}>
+                                <TableCell><Skeleton className="h-6 w-32" /></TableCell>
+                                <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-40" /></TableCell>
+                                <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-24" /></TableCell>
+                                <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                                <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
+                            </TableRow>
+                        ))
+                    ) : (
+                    paginatedClients.map((client) => (
                         <TableRow
                         key={client.id}
                         className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
@@ -489,7 +535,7 @@ export default function ClientsPage() {
                             </DropdownMenu>
                         </TableCell>
                         </TableRow>
-                    ))}
+                    )))}
                     </TableBody>
                 </Table>
             </CardContent>

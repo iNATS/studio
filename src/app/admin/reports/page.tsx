@@ -6,23 +6,33 @@ import { motion } from 'framer-motion';
 import { DollarSign, Briefcase, Users, Palette, Activity, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, RadialBar, RadialBarChart, Legend } from 'recharts';
-import { initialProjects, clientsData } from '../workspace/data';
-import { getProjectVibe, type ProjectVibeInput } from '@/ai/flows/project-insights-flow';
 import { useToast } from '@/hooks/use-toast';
 import { addMonths, format, startOfMonth, subMonths, isSameMonth } from 'date-fns';
+import { getReportsData } from '@/lib/db';
 
-const completedProjects = initialProjects.filter(p => p.status === 'completed');
-const totalBilled = completedProjects.reduce((acc, p) => acc + p.budget, 0);
-
-const clientLeaderboard = clientsData.map(client => {
-    const clientProjects = initialProjects.filter(p => p.clientId === client.id);
-    const totalValue = clientProjects.reduce((acc, p) => acc + p.budget, 0);
-    return { ...client, totalValue };
-}).sort((a, b) => b.totalValue - a.totalValue).slice(0, 5);
-
+interface ReportsData {
+    totalBilled: number;
+    completedProjectsCount: number;
+    totalClientsCount: number;
+    activeProjectsCount: number;
+    incomeData: { name: string; income: number }[];
+    workloadData: { name: string; value: number; fill: string }[];
+    clientLeaderboard: any[];
+}
 
 export default function ReportsPage() {
     const { toast } = useToast();
+    const [data, setData] = React.useState<ReportsData | null>(null);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        async function fetchData() {
+            const reportsData = await getReportsData();
+            setData(reportsData);
+            setLoading(false);
+        }
+        fetchData();
+    }, []);
     
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -40,40 +50,26 @@ export default function ReportsPage() {
             transition: { type: 'spring', stiffness: 100 },
         },
     };
-
-    const incomeData = React.useMemo(() => {
-        const months = Array.from({ length: 6 }).map((_, i) => subMonths(startOfMonth(new Date()), 5 - i));
-        return months.map(month => {
-            const projectsInMonth = completedProjects.filter(p => p.endDate && isSameMonth(p.endDate, month));
-            const income = projectsInMonth.reduce((acc, p) => acc + p.budget, 0);
-            return {
-                name: format(month, 'MMM'),
-                income: income,
-            };
-        });
-    }, []);
-
-    const workloadData = React.useMemo(() => {
-        const categories = ['web', 'mobile', 'design'];
-        const totalProjects = initialProjects.length;
-        const colors = ['#38bdf8', '#818cf8', '#f472b6'];
-
-        return categories.map((cat, index) => {
-             const projectCount = initialProjects.filter(p => {
-                // This is a simplified categorization logic, we can make it more robust
-                if (cat === 'web') return p.title.toLowerCase().includes('website') || p.title.toLowerCase().includes('web');
-                if (cat === 'mobile') return p.title.toLowerCase().includes('mobile') || p.title.toLowerCase().includes('app');
-                if (cat === 'design') return p.title.toLowerCase().includes('design') || p.title.toLowerCase().includes('branding');
-                return false;
-            }).length;
-
-             return {
-                name: cat.charAt(0).toUpperCase() + cat.slice(1),
-                value: projectCount,
-                fill: colors[index % colors.length],
-             }
-        })
-    }, []);
+    
+    if (loading || !data) {
+        return (
+             <main className="flex flex-col h-full">
+                <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+                    <motion.h1 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        className="text-3xl font-bold tracking-tight"
+                    >
+                        Analytics & Insights
+                    </motion.h1>
+                </div>
+                <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
+                    <p>Loading...</p>
+                </div>
+            </main>
+        )
+    }
 
     return (
         <main className="flex flex-col h-full">
@@ -102,8 +98,8 @@ export default function ReportsPage() {
                                 <DollarSign className="h-5 w-5 text-green-500 dark:text-green-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold">{totalBilled.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
-                                <p className="text-xs text-zinc-500 dark:text-white/50">From {completedProjects.length} completed projects</p>
+                                <div className="text-3xl font-bold">{data.totalBilled.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+                                <p className="text-xs text-zinc-500 dark:text-white/50">From {data.completedProjectsCount} completed projects</p>
                             </CardContent>
                         </Card>
                     </motion.div>
@@ -114,7 +110,7 @@ export default function ReportsPage() {
                                 <Briefcase className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold">{completedProjects.length}</div>
+                                <div className="text-3xl font-bold">{data.completedProjectsCount}</div>
                                 <p className="text-xs text-zinc-500 dark:text-white/50">Across all time</p>
                             </CardContent>
                         </Card>
@@ -126,7 +122,7 @@ export default function ReportsPage() {
                                 <Users className="h-5 w-5 text-purple-500 dark:text-purple-400" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-bold">{clientsData.length}</div>
+                                <div className="text-3xl font-bold">{data.totalClientsCount}</div>
                                 <p className="text-xs text-zinc-500 dark:text-white/50">All-time client count</p>
                             </CardContent>
                         </Card>
@@ -140,7 +136,7 @@ export default function ReportsPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                            <div className="text-3xl font-bold">{initialProjects.filter(p => p.status === 'in-progress').length}</div>
+                            <div className="text-3xl font-bold">{data.activeProjectsCount}</div>
                             <p className="text-xs text-zinc-500 dark:text-white/50">Currently in progress</p>
                             </CardContent>
                         </Card>
@@ -160,7 +156,7 @@ export default function ReportsPage() {
                             </CardHeader>
                             <CardContent>
                                 <ResponsiveContainer width="100%" height={250}>
-                                    <BarChart data={incomeData}>
+                                    <BarChart data={data.incomeData}>
                                         <defs>
                                             <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -196,7 +192,7 @@ export default function ReportsPage() {
                                     <RadialBarChart 
                                         innerRadius="30%" 
                                         outerRadius="100%" 
-                                        data={workloadData} 
+                                        data={data.workloadData} 
                                         startAngle={90} 
                                         endAngle={-270}
                                     >
@@ -235,7 +231,7 @@ export default function ReportsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {clientLeaderboard.map((client, index) => (
+                                {data.clientLeaderboard.map((client, index) => (
                                     <div key={client.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                                         <div className="flex items-center gap-3">
                                             <span className="text-sm font-bold text-zinc-500 dark:text-white/50 w-4">{index + 1}.</span>
@@ -252,4 +248,5 @@ export default function ReportsPage() {
             </div>
         </main>
     );
+}
     
