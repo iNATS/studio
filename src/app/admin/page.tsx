@@ -128,72 +128,73 @@ export default function AdminDashboard() {
           </motion.div>
 
           <motion.div 
-            className="grid gap-6 lg:grid-cols-3 mt-6"
+            className="grid gap-6 mt-6"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-            <motion.div variants={itemVariants} className="lg:col-span-2">
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Active Projects</CardTitle>
-                <Button variant="ghost" size="sm" asChild className="rounded-lg">
-                    <Link href="/admin/workspace/projects">View All <ArrowRight className="ml-2 h-4 w-4"/></Link>
-                </Button>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                {data.activeProjects.map(project => {
-                    const startDate = new Date(project.startDate);
-                    const endDate = new Date(project.endDate);
-                    const totalDays = Math.max(1, (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-                    const daysPassed = Math.max(0, (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-                    const progress = Math.min(100, (daysPassed / totalDays) * 100);
-                    return (
-                        <div key={project.id} className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <span className="font-semibold">{project.title}</span>
-                                {project.client && <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-white/60">
-                                    <Avatar className="h-6 w-6"><AvatarImage src={project.client.avatar}/><AvatarFallback>{project.client.name.charAt(0)}</AvatarFallback></Avatar>
-                                    {project.client.company}
-                                    </div>}
-                            </div>
-                            <Progress value={progress} className="h-2 bg-black/10 dark:bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
-                            <div className="flex justify-between items-center text-xs text-zinc-500 dark:text-white/50">
-                                <span>{Math.round(progress)}% complete</span>
-                                <span>Due in {formatDistanceToNow(endDate)}</span>
-                            </div>
-                        </div>
-                    )
-                })}
-              </CardContent>
-            </Card>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {data.upcomingDeadlines.map((task) => {
-                        const dueDate = new Date(task.dueDate);
-                        return (
-                            <div key={task.id} className="flex items-start gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
-                                <div className="flex-1">
-                                <p className="text-sm font-semibold">{task.title}</p>
-                                <p className="text-xs text-zinc-600 dark:text-white/50">{task.projectTitle || 'General Task'}</p>
+             <motion.div variants={itemVariants}>
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                    <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                    <div className="space-y-4">
+                        {data.upcomingDeadlines.map((task) => {
+                            const dueDate = new Date(task.dueDate);
+                            return (
+                                <div key={task.id} className="flex items-start gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
+                                    <div className="flex-1">
+                                    <p className="text-sm font-semibold">{task.title}</p>
+                                    <p className="text-xs text-zinc-600 dark:text-white/50">{task.projectTitle || 'General Task'}</p>
+                                    </div>
+                                    <div className="text-right flex-shrink-0">
+                                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{formatDistanceToNow(dueDate, { addSuffix: true })}</span>
+                                        <p className="text-xs text-zinc-500 dark:text-white/50">{dueDate.toLocaleDateString()}</p>
+                                    </div>
                                 </div>
-                                <div className="text-right flex-shrink-0">
-                                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{formatDistanceToNow(dueDate, { addSuffix: true })}</span>
-                                    <p className="text-xs text-zinc-500 dark:text-white/50">{dueDate.toLocaleDateString()}</p>
+                            )
+                        })}
+                        {data.upcomingDeadlines.length === 0 && <p className="text-sm text-zinc-500 dark:text-white/50 text-center py-8">No upcoming deadlines. Great job!</p>}
+                    </div>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Active Projects</CardTitle>
+                    <Button variant="ghost" size="sm" asChild className="rounded-lg">
+                        <Link href="/admin/workspace/projects">View All <ArrowRight className="ml-2 h-4 w-4"/></Link>
+                    </Button>
+                </CardHeader>
+                <CardContent className="grid gap-6">
+                    {data.activeProjects.map(project => {
+                        const startDate = new Date(project.startDate);
+                        const endDate = new Date(project.endDate);
+                        const totalDays = Math.max(1, (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+                        const daysPassed = Math.max(0, (new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+                        const progress = Math.min(100, (daysPassed / totalDays) * 100);
+                        return (
+                            <div key={project.id} className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-semibold">{project.title}</span>
+                                    {project.client && <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-white/60">
+                                        <Avatar className="h-6 w-6"><AvatarImage src={project.client.avatar}/><AvatarFallback>{project.client.name.charAt(0)}</AvatarFallback></Avatar>
+                                        {project.client.company}
+                                        </div>}
+                                </div>
+                                <Progress value={progress} className="h-2 bg-black/10 dark:bg-white/10" indicatorClassName="bg-gradient-to-r from-cyan-400 to-blue-500" />
+                                <div className="flex justify-between items-center text-xs text-zinc-500 dark:text-white/50">
+                                    <span>{Math.round(progress)}% complete</span>
+                                    <span>Due in {formatDistanceToNow(endDate)}</span>
                                 </div>
                             </div>
                         )
                     })}
-                     {data.upcomingDeadlines.length === 0 && <p className="text-sm text-zinc-500 dark:text-white/50 text-center py-8">No upcoming deadlines. Great job!</p>}
-                  </div>
                 </CardContent>
-              </Card>
+                </Card>
             </motion.div>
           </motion.div>
 
@@ -230,4 +231,5 @@ export default function AdminDashboard() {
         </div>
     </main>
   );
-}
+
+    
