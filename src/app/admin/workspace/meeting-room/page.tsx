@@ -132,7 +132,7 @@ const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) =
 const MailView = () => {
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(emails[0]);
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
             {/* Mailbox Filters/Folders */}
             <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2 h-full">
                 <div className="p-2">
@@ -409,7 +409,7 @@ const MeetingsView = () => {
                  </Card>
                 <Dialog open={isScheduling} onOpenChange={handleCloseDialog}>
                     <DialogTrigger asChild>
-                         <Button className="w-full mt-4 rounded-lg gap-2" onClick={() => setIsScheduling(true)}>
+                         <Button className="w-full mt-4 rounded-lg gap-2">
                             <Plus className="h-4 w-4" />
                             Schedule New Meeting
                         </Button>
@@ -502,13 +502,13 @@ export default function CommunicationsPage() {
 
             <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
                 <TabsContent value="inbox" className="h-full mt-0">
-                <MailView />
+                  <MailView />
                 </TabsContent>
                 <TabsContent value="meetings" className="h-full mt-0">
-                <MeetingsView />
+                  <MeetingsView />
                 </TabsContent>
                 <TabsContent value="contacts" className="h-full mt-0">
-                <ContactsView />
+                  <ContactsView />
                 </TabsContent>
             </div>
       </Tabs>
