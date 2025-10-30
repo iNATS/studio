@@ -378,10 +378,10 @@ const MeetingsView = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
-                                                <DropdownMenuItem onClick={() => handleEditClick(meeting)}>
+                                                <DropdownMenuItem onSelect={() => handleEditClick(meeting)}>
                                                     <Edit className="mr-2 h-4 w-4" /> Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={() => handleDeleteMeeting(meeting.id)}>
+                                                <DropdownMenuItem className="text-red-500 focus:text-red-500" onSelect={() => handleDeleteMeeting(meeting.id)}>
                                                     <Trash2 className="mr-2 h-4 w-4" /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -516,5 +516,7 @@ export default function CommunicationsPage() {
   );
 }
 
+
+    
 
     
