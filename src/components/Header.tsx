@@ -49,6 +49,15 @@ export function Header() {
               </Link>
             </Button>
           ))}
+           <Button
+              variant="ghost"
+              asChild
+              className={cn(
+                "rounded-full text-foreground/80 hover:bg-foreground/10 hover:text-foreground transition-colors px-4 py-2"
+              )}
+            >
+              <Link href="/admin">Admin Panel</Link>
+            </Button>
         </nav>
 
         <div className="flex items-center gap-1 pl-2">
@@ -91,6 +100,11 @@ export function Header() {
                     </Link>
                   </Button>
                 ))}
+                 <Button variant="link" asChild className="text-foreground/80 hover:text-primary w-full justify-start text-left text-2xl py-6">
+                    <Link href="/admin">
+                      Admin Panel
+                    </Link>
+                  </Button>
               </nav>
             </div>
              <div className="absolute bottom-8 left-4 right-4 flex items-center gap-2">
