@@ -768,5 +768,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    

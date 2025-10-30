@@ -52,7 +52,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format, differenceInCalendarDays, formatDistanceToNowStrict, isWithinInterval } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { clientsData, initialProjects } from '../data';
+import { clientsData, initialProjects } from './data';
 import type { Timestamp } from 'firebase/firestore';
 
 export type Project = {
@@ -423,7 +423,6 @@ export default function ProjectsPage() {
             setProjects(projects.filter(p => p.id !== projectToDelete.id));
             setProjectToDelete(null);
             toast({
-                variant: 'success',
                 title: 'Project Removed',
                 description: `"${projectToDelete.title}" has been removed.`,
             });
@@ -439,7 +438,6 @@ export default function ProjectsPage() {
         setProjects([...projects, newProject]);
         setIsAddDialogOpen(false);
         toast({
-            variant: 'success',
             title: 'Project Added',
             description: `"${newProject.title}" has been added to 'Planning'.`,
         });
@@ -451,7 +449,6 @@ export default function ProjectsPage() {
         setProjects(projects.map(p => p.id === editingProject.id ? updatedProject : p));
         closeEditDialog();
         toast({
-            variant: 'success',
             title: 'Project Updated',
             description: `"${updatedProject.title}" has been updated.`,
         });
@@ -640,9 +637,3 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
-
-    
-
-    
-
-    
