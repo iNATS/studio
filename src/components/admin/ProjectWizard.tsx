@@ -144,15 +144,20 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     
     const title = form.watch('title');
     useEffect(() => {
-        if (title && !isEditing) {
-            form.setValue('slug', slugify(title));
+        if (title && !form.formState.dirtyFields.slug) {
+            form.setValue('slug', slugify(title), { shouldValidate: true });
         }
     }, [title, form, isEditing]);
     
-  const handleSubmit = async (data: any) => {
+  const processAndSubmit = async () => {
+    const isFinalStepValid = await form.trigger();
+    if (!isFinalStepValid) return;
+    
+    const finalData = { ...formData, ...form.getValues() };
+    
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      await onSubmit(finalData);
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +177,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         setDirection(1);
         setCurrentStep(step => step + 1);
     } else {
-      await handleSubmit(newFormData);
+      await processAndSubmit();
     }
   };
 
