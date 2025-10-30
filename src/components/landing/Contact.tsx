@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useInView } from '@/hooks/use-in-view';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { handleContactForm } from '@/lib/actions';
 
@@ -24,7 +25,7 @@ const SubmitButton = () => {
 const ContactForm = () => {
     const { toast } = useToast();
     const formRef = useRef<HTMLFormElement>(null);
-    const [state, formAction] = useFormState(handleContactForm, { success: false, message: ''});
+    const [state, formAction] = useActionState(handleContactForm, { success: false, message: ''});
 
     useEffect(() => {
         if(state.success) {

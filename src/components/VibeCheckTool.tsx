@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useState, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { getCodeFeedback, getVideoFeedback } from '@/app/vibe-check/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useEffect, useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Loader2, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -48,7 +48,7 @@ function FeedbackDisplay({ feedback }: { feedback: string | null }) {
 const CodeFeedbackForm = () => {
   const initialState = { message: null, errors: {}, feedback: null };
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, dispatch] = useFormState(getCodeFeedback, initialState);
+  const [state, dispatch] = useActionState(getCodeFeedback, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const CodeFeedbackForm = () => {
 const VideoFeedbackForm = () => {
   const initialState = { message: null, errors: {}, feedback: null };
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, dispatch] = useFormState(getVideoFeedback, initialState);
+  const [state, dispatch] = useActionState(getVideoFeedback, initialState);
   const { toast } = useToast();
   const [fileName, setFileName] = useState('');
   const [videoDataUri, setVideoDataUri] = useState('');
