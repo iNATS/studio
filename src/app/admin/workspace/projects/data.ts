@@ -1,0 +1,60 @@
+
+export const clientsData = [
+    { id: 'client-1', name: 'Innovate Inc.', avatar: 'https://picsum.photos/seed/innovate/100/100' },
+    { id: 'client-2', name: 'Tech Solutions', avatar: 'https://picsum.photos/seed/tech/100/100' },
+    { id: 'client-3', name: 'Quantum Creative', avatar: 'https://picsum.photos/seed/quantum/100/100' },
+    { id: 'client-4', name: 'Apex Digital', avatar: 'https://picsum.photos/seed/apex/100/100' },
+];
+
+export const initialProjects = [
+  {
+    id: 'project-1',
+    title: 'E-commerce Platform Relaunch',
+    description: 'Complete overhaul of the existing online store with a new design and improved user experience.',
+    status: 'in-progress' as const,
+    clientId: 'client-1',
+    budget: 50000,
+    startDate: new Date('2024-05-01'),
+    endDate: new Date('2024-09-30'),
+  },
+  {
+    id: 'project-2',
+    title: 'Mobile Banking App',
+    description: 'Develop a new mobile banking application for iOS and Android with a focus on security and ease of use.',
+    status: 'in-progress' as const,
+    clientId: 'client-2',
+    budget: 75000,
+    startDate: new Date('2024-06-15'),
+    endDate: new Date('2024-12-15'),
+  },
+  {
+    id: 'project-3',
+    title: 'Brand Identity for Startup',
+    description: 'Create a complete brand identity package, including logo, style guide, and marketing materials.',
+    status: 'planning' as const,
+    clientId: 'client-3',
+    budget: 15000,
+    startDate: new Date('2024-08-01'),
+    endDate: new Date('2024-10-01'),
+  },
+  {
+    id: 'project-4',
+    title: 'Portfolio Website Design',
+    description: 'Design and develop a personal portfolio website for a freelance photographer.',
+    status: 'completed' as const,
+    clientId: 'client-4',
+    budget: 8000,
+    startDate: new Date('2024-03-01'),
+    endDate: new Date('2024-04-30'),
+  },
+  {
+    id: 'project-5',
+    title: 'SaaS Dashboard UI/UX',
+    description: 'Redesign the user interface and experience for a complex data analytics SaaS platform.',
+    status: 'in-progress' as const,
+    clientId: 'client-1',
+    budget: 45000,
+    startDate: new Date('2024-07-20'),
+    endDate: new Date('2024-11-20'),
+  },
+];
