@@ -25,6 +25,11 @@ type Category = {
 type MailSettings = {
     provider: string;
     apiKey: string;
+    host?: string;
+    port?: string;
+    username?: string;
+    password?: string;
+    fromEmail?: string;
 };
 
 const PortfolioCategoryManager = () => {
@@ -115,6 +120,11 @@ const MailSettingsForm = () => {
         }
     }
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setSettings(prev => ({...prev, [name]: value}));
+    }
+
     return (
         <form onSubmit={onSave}>
              <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
@@ -135,10 +145,40 @@ const MailSettingsForm = () => {
                                 <SelectItem value="resend">Resend</SelectItem>
                             </SelectContent>
                         </Select>
-                        <div className="space-y-2">
-                            <Label htmlFor="mail-api-key">API Key</Label>
-                            <Input id="mail-api-key" name="apiKey" type="password" placeholder="Enter API Key" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" value={settings.apiKey} onChange={(e) => setSettings({...settings, apiKey: e.target.value})} />
-                        </div>
+
+                        {settings.provider === 'smtp' && (
+                            <div className="space-y-4 pt-2">
+                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="smtp-host">Host</Label>
+                                        <Input id="smtp-host" name="host" placeholder="smtp.example.com" value={settings.host || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="smtp-port">Port</Label>
+                                        <Input id="smtp-port" name="port" type="number" placeholder="587" value={settings.port || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="smtp-username">Username</Label>
+                                    <Input id="smtp-username" name="username" placeholder="your-username" value={settings.username || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="smtp-password">Password</Label>
+                                    <Input id="smtp-password" name="password" type="password" placeholder="••••••••" value={settings.password || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="smtp-from">From Email</Label>
+                                    <Input id="smtp-from" name="fromEmail" type="email" placeholder="you@example.com" value={settings.fromEmail || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                                </div>
+                            </div>
+                        )}
+
+                        {settings.provider === 'resend' && (
+                            <div className="space-y-2">
+                                <Label htmlFor="mail-api-key">Resend API Key</Label>
+                                <Input id="mail-api-key" name="apiKey" type="password" placeholder="Enter API Key" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" value={settings.apiKey} onChange={handleInputChange} />
+                            </div>
+                        )}
                     </div>
                      <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
                          <div className="flex items-center justify-between">
