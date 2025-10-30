@@ -82,6 +82,7 @@ export default function AdminLayout({
                       <SidebarMenuItem key={item.label}>
                         <SidebarMenuSub>
                           <SidebarMenuSubTrigger 
+                            tooltip={item.label}
                             className="text-zinc-600 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white data-[active=true]:bg-black/10 dark:data-[active=true]:bg-white/20 data-[active=true]:text-foreground dark:data-[active=true]:text-white rounded-lg" 
                             data-active={isSubActive}
                           >
@@ -90,7 +91,6 @@ export default function AdminLayout({
                           </SidebarMenuSubTrigger>
                           <SidebarMenuSubContent>
                             {item.subItems.map(subItem => {
-                                const SubIcon = Users; // Just an example for icon variety
                                 return (
                                 <SidebarMenuSubItem key={subItem.href}>
                                     <SidebarMenuSubButton asChild data-active={pathname === subItem.href}>
