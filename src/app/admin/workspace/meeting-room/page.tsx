@@ -492,7 +492,7 @@ export default function CommunicationsPage() {
                         <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
                             <item.icon className="h-5 w-5" />
                             {item.label}
-                        </TABS_TRIGGER>
+                        </TabsTrigger>
                     ))}
                 </TabsList>
             </Tabs>
