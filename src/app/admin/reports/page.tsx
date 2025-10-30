@@ -92,7 +92,7 @@ export default function ReportsPage() {
                     animate="visible"
                 >
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Total Revenue</CardTitle>
                                 <DollarSign className="h-5 w-5 text-green-500 dark:text-green-400" />
@@ -104,7 +104,7 @@ export default function ReportsPage() {
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Completed Projects</CardTitle>
                                 <Briefcase className="h-5 w-5 text-blue-500 dark:text-blue-400" />
@@ -116,7 +116,7 @@ export default function ReportsPage() {
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Total Clients</CardTitle>
                                 <Users className="h-5 w-5 text-purple-500 dark:text-purple-400" />
@@ -128,7 +128,7 @@ export default function ReportsPage() {
                         </Card>
                     </motion.div>
                     <motion.div variants={itemVariants}>
-                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105">
+                        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70 flex items-center justify-between">
                                     Active Projects

@@ -78,7 +78,7 @@ export default function AdminDashboard() {
             animate="visible"
           >
             <motion.div variants={itemVariants}>
-              <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
+              <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Active Projects</CardTitle>
                   <Briefcase className="h-5 w-5 text-zinc-500 dark:text-white/50" />
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
               </Card>
             </motion.div>
             <motion.div variants={itemVariants}>
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
+            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1 hover:shadow-2xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">Pending Tasks</CardTitle>
                 <ListTodo className="h-5 w-5 text-zinc-500 dark:text-white/50" />
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
             </Card>
             </motion.div>
             <motion.div variants={itemVariants}>
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:scale-105 hover:shadow-2xl">
+            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl transition-all duration-300 hover:border-zinc-300 dark:hover:border-white/20 hover:-translate-y-1 hover:shadow-2xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-zinc-600 dark:text-white/70">New Clients</CardTitle>
                 <Users className="h-5 w-5 text-zinc-500 dark:text-white/50" />
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
             </Card>
             </motion.div>
             <motion.div variants={itemVariants}>
-            <Card className="bg-red-500/10 dark:bg-red-500/10 backdrop-blur-2xl border-red-400/20 dark:border-red-400/20 shadow-xl rounded-2xl transition-all duration-300 hover:border-red-400/30 dark:hover:border-red-400/30 hover:scale-105 hover:shadow-2xl">
+            <Card className="bg-red-500/10 dark:bg-red-500/10 backdrop-blur-2xl border-red-400/20 dark:border-red-400/20 shadow-xl rounded-2xl transition-all duration-300 hover:border-red-400/30 dark:hover:border-red-400/30 hover:-translate-y-1 hover:shadow-2xl">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-red-500 dark:text-red-300">Overdue Tasks</CardTitle>
                 <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
