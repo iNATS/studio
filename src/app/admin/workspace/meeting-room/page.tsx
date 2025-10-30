@@ -219,10 +219,10 @@ const MailView = () => {
     )
 }
 
-const ScheduleMeetingForm = ({ onSave, onCancel }: { onSave: (meeting: Meeting) => void; onCancel: () => void }) => {
-    const [title, setTitle] = React.useState('');
-    const [date, setDate] = React.useState<Date | undefined>();
-    const [contactId, setContactId] = React.useState('');
+const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit }: { onSave: (meeting: Meeting) => void; onCancel: () => void, meetingToEdit?: Meeting | null }) => {
+    const [title, setTitle] = React.useState(meetingToEdit?.title || '');
+    const [date, setDate] = React.useState<Date | undefined>(meetingToEdit ? new Date(meetingToEdit.time) : undefined);
+    const [contactId, setContactId] = React.useState(meetingToEdit?.participants[0]?.name ? contacts.find(c => c.name === meetingToEdit.participants[0].name)?.id || '' : '');
     const [notes, setNotes] = React.useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -237,7 +237,7 @@ const ScheduleMeetingForm = ({ onSave, onCancel }: { onSave: (meeting: Meeting) 
         if (!contact) return;
 
         const newMeeting: Meeting = {
-            id: `meeting-${Date.now()}`,
+            id: meetingToEdit?.id || `meeting-${Date.now()}`,
             title,
             time: date,
             duration: '30 min',
@@ -245,7 +245,7 @@ const ScheduleMeetingForm = ({ onSave, onCancel }: { onSave: (meeting: Meeting) 
                 { name: contact.name, avatar: contact.avatar },
                 { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
             ],
-            meetLink: `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}` // Dummy link
+            meetLink: meetingToEdit?.meetLink || `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}` // Dummy link
         };
         onSave(newMeeting);
     };
@@ -305,10 +305,27 @@ const MeetingsView = () => {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [meetings, setMeetings] = React.useState<Meeting[]>(initialMeetings);
     const [isScheduling, setIsScheduling] = React.useState(false);
+    const [meetingToEdit, setMeetingToEdit] = React.useState<Meeting | null>(null);
 
-    const handleSaveMeeting = (newMeeting: Meeting) => {
-        setMeetings(prev => [...prev, newMeeting].sort((a,b) => a.time.getTime() - b.time.getTime()));
+    const handleSaveMeeting = (meeting: Meeting) => {
+        const isEditing = meetings.some(m => m.id === meeting.id);
+        if (isEditing) {
+            setMeetings(prev => prev.map(m => m.id === meeting.id ? meeting : m).sort((a,b) => a.time.getTime() - b.time.getTime()));
+        } else {
+            setMeetings(prev => [...prev, meeting].sort((a,b) => a.time.getTime() - b.time.getTime()));
+        }
         setIsScheduling(false);
+        setMeetingToEdit(null);
+    };
+
+    const handleEditClick = (meeting: Meeting) => {
+        setMeetingToEdit(meeting);
+        setIsScheduling(true);
+    };
+
+    const handleCloseDialog = () => {
+        setIsScheduling(false);
+        setMeetingToEdit(null);
     };
 
     const filteredMeetings = React.useMemo(() => {
@@ -346,12 +363,29 @@ const MeetingsView = () => {
                                             ))}
                                         </div>
                                     </div>
-                                    <Button asChild className="rounded-lg gap-2">
-                                        <Link href={meeting.meetLink || 'https://meet.google.com'} target="_blank" rel="noopener noreferrer">
-                                            <Video className="h-4 w-4" />
-                                            Join Meeting
-                                        </Link>
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <Button asChild className="rounded-lg gap-2">
+                                            <Link href={meeting.meetLink || 'https://meet.google.com'} target="_blank" rel="noopener noreferrer">
+                                                <Video className="h-4 w-4" />
+                                                Join Meeting
+                                            </Link>
+                                        </Button>
+                                         <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
+                                                <DropdownMenuItem onClick={() => handleEditClick(meeting)}>
+                                                    <Edit className="mr-2 h-4 w-4" /> Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="text-red-500 focus:text-red-500">
+                                                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </div>
                             )) : (
                                 <p className="text-muted-foreground text-center py-10">No meetings scheduled for this day.</p>
@@ -372,21 +406,21 @@ const MeetingsView = () => {
                         />
                     </CardContent>
                  </Card>
-                <Dialog open={isScheduling} onOpenChange={setIsScheduling}>
+                <Dialog open={isScheduling} onOpenChange={handleCloseDialog}>
                     <DialogTrigger asChild>
-                         <Button className="w-full mt-4 rounded-lg gap-2">
+                         <Button className="w-full mt-4 rounded-lg gap-2" onClick={() => setIsScheduling(true)}>
                             <Plus className="h-4 w-4" />
                             Schedule New Meeting
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
                         <DialogHeader>
-                            <DialogTitle>Schedule a New Meeting</DialogTitle>
+                            <DialogTitle>{meetingToEdit ? 'Edit Meeting' : 'Schedule a New Meeting'}</DialogTitle>
                             <DialogDescription>
-                                Fill in the details to add a new meeting to your calendar.
+                                {meetingToEdit ? 'Update the details for your meeting.' : 'Fill in the details to add a new meeting to your calendar.'}
                             </DialogDescription>
                         </DialogHeader>
-                        <ScheduleMeetingForm onSave={handleSaveMeeting} onCancel={() => setIsScheduling(false)} />
+                        <ScheduleMeetingForm onSave={handleSaveMeeting} onCancel={handleCloseDialog} meetingToEdit={meetingToEdit}/>
                     </DialogContent>
                 </Dialog>
             </div>
