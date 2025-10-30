@@ -37,7 +37,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow, format, isSameDay } from 'date-fns';
 import { emails, meetings, contacts } from './data';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -210,17 +210,24 @@ const MailView = () => {
 const MeetingsView = () => {
     const [date, setDate] = React.useState<Date | undefined>(new Date())
 
+    const filteredMeetings = React.useMemo(() => {
+        if (!date) return meetings;
+        return meetings.filter(meeting => isSameDay(meeting.time, date));
+    }, [date]);
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
             <div className="lg:col-span-2">
                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full">
                     <CardHeader>
-                        <CardTitle>Upcoming Meetings</CardTitle>
+                        <CardTitle>
+                            {date ? `Meetings on ${format(date, 'PPP')}` : 'Upcoming Meetings'}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ScrollArea className="h-[calc(100vh-20rem)]">
                         <div className="space-y-4">
-                            {meetings.map(meeting => (
+                            {filteredMeetings.length > 0 ? filteredMeetings.map(meeting => (
                                 <div key={meeting.id} className="flex items-center gap-4 p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-zinc-200/50 dark:border-white/10">
                                     <div className="flex flex-col items-center justify-center w-16">
                                         <span className="text-2xl font-bold">{format(meeting.time, 'h')}</span>
@@ -243,7 +250,9 @@ const MeetingsView = () => {
                                         Join Meeting
                                     </Button>
                                 </div>
-                            ))}
+                            )) : (
+                                <p className="text-muted-foreground text-center py-10">No meetings scheduled for this day.</p>
+                            )}
                         </div>
                         </ScrollArea>
                     </CardContent>
