@@ -159,14 +159,14 @@ const MailView = () => {
             </div>
 
             {/* Email List */}
-            <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col h-full">
+            <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col h-full overflow-hidden">
                 <div className="p-4 border-b border-zinc-200/80 dark:border-white/10">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-white/50" />
                         <Input placeholder="Search mail..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10 rounded-lg" />
                     </div>
                 </div>
-                <ScrollArea>
+                <ScrollArea className="flex-1 h-full">
                 <div className="flex flex-col gap-2 p-4 pt-0">
                     {emails.map((email) => (
                     <button
@@ -346,3 +346,5 @@ export default function CommunicationsPage() {
     </div>
   );
 }
+
+    
