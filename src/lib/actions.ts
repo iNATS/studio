@@ -121,8 +121,13 @@ export async function handleRemoveTestimonial(id: number) {
 
 export async function handleContactForm(prevState: any, formData: FormData) {
     // Here you would typically handle the form submission, e.g., send an email.
-    // For this example, we'll just simulate a success response.
+    // This now reads from environment variables.
     console.log('Contact form submitted with:', Object.fromEntries(formData.entries()));
+    console.log('Resend API Key:', process.env.RESEND_API_KEY);
+    console.log('SMTP Host:', process.env.SMTP_HOST);
+
+    // TODO: Add actual email sending logic using nodemailer or resend based on env variables.
+    
     return { success: true, message: "Thanks for reaching out. I'll get back to you soon." };
 }
 
@@ -199,14 +204,3 @@ export async function handleDeletePortfolioCategory(id: number) {
     }
     return result;
 }
-
-// Mail Settings
-export async function handleMailSettingsSave(formData: FormData) {
-    const content = Object.fromEntries(formData.entries());
-    const result = await updatePageContent('mail_settings', content);
-    if (result.success) {
-        revalidatePath('/admin/settings');
-    }
-    return result;
-}
-    

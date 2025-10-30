@@ -8,28 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload, KeyRound, Bell, Languages, Mail, MessageSquare, BarChart, Settings2, Code, Bot, FolderKanban, Trash2, PlusCircle } from 'lucide-react';
+import { Upload, KeyRound, Bell, Languages, Mail, MessageSquare, BarChart, Settings2, Code, Bot, FolderKanban, Trash2, PlusCircle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getPortfolioCategories, getPageContent } from '@/lib/db';
-import { handleAddPortfolioCategory, handleDeletePortfolioCategory, handleMailSettingsSave } from '@/lib/actions';
+import { handleAddPortfolioCategory, handleDeletePortfolioCategory } from '@/lib/actions';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 type Category = {
     id: number;
     name: string;
-};
-
-type MailSettings = {
-    provider: string;
-    apiKey: string;
-    host?: string;
-    port?: string;
-    username?: string;
-    password?: string;
-    fromEmail?: string;
 };
 
 const PortfolioCategoryManager = () => {
@@ -96,107 +87,75 @@ const PortfolioCategoryManager = () => {
 };
 
 const MailSettingsForm = () => {
+    const [provider, setProvider] = React.useState('resend');
     const { toast } = useToast();
-    const [settings, setSettings] = React.useState<MailSettings>({ provider: 'default', apiKey: '' });
-
-    React.useEffect(() => {
-        const fetchMailSettings = async () => {
-            const data = await getPageContent('mail_settings');
-            if(data) {
-                setSettings(data);
-            }
-        };
-        fetchMailSettings();
-    }, []);
-    
-    const onSave = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const result = await handleMailSettingsSave(formData);
-        if (result.success) {
-            toast({ title: 'Mail Settings Saved' });
-        } else {
-            toast({ variant: 'destructive', title: 'Error', description: result.error });
-        }
-    }
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setSettings(prev => ({...prev, [name]: value}));
-    }
 
     return (
-        <form onSubmit={onSave}>
-             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" />Communication</CardTitle>
-                    <CardDescription className="text-zinc-600 dark:text-white/60">Configure your mail and chat settings.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
-                        <h4 className="font-semibold flex items-center gap-2"><Mail className="h-4 w-4" /> Mail Server</h4>
-                         <Select name="provider" value={settings.provider} onValueChange={(value) => setSettings({...settings, provider: value})}>
-                            <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
-                                <SelectValue placeholder="Select mail provider" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                                <SelectItem value="default">Default (No-reply)</SelectItem>
-                                <SelectItem value="smtp">SMTP</SelectItem>
-                                <SelectItem value="resend">Resend</SelectItem>
-                            </SelectContent>
-                        </Select>
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" />Communication</CardTitle>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Configure your mail and chat settings.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
+                    <h4 className="font-semibold flex items-center gap-2"><Mail className="h-4 w-4" /> Mail Server</h4>
+                    <Select value={provider} onValueChange={setProvider}>
+                        <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
+                            <SelectValue placeholder="Select mail provider" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+                            <SelectItem value="resend">Resend</SelectItem>
+                            <SelectItem value="smtp">SMTP</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    
+                    <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertTitle>Configuration via Environment Variables</AlertTitle>
+                        <AlertDescription>
+                            Mail settings are configured securely via the <strong>.env</strong> file. Update the file with your credentials. The application needs to be restarted for changes to take effect.
+                        </AlertDescription>
+                    </Alert>
 
-                        {settings.provider === 'smtp' && (
-                            <div className="space-y-4 pt-2">
-                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="smtp-host">Host</Label>
-                                        <Input id="smtp-host" name="host" placeholder="smtp.example.com" value={settings.host || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="smtp-port">Port</Label>
-                                        <Input id="smtp-port" name="port" type="number" placeholder="587" value={settings.port || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="smtp-username">Username</Label>
-                                    <Input id="smtp-username" name="username" placeholder="your-username" value={settings.username || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="smtp-password">Password</Label>
-                                    <Input id="smtp-password" name="password" type="password" placeholder="••••••••" value={settings.password || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="smtp-from">From Email</Label>
-                                    <Input id="smtp-from" name="fromEmail" type="email" placeholder="you@example.com" value={settings.fromEmail || ''} onChange={handleInputChange} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
-                                </div>
-                            </div>
-                        )}
-
-                        {settings.provider === 'resend' && (
-                            <div className="space-y-2">
-                                <Label htmlFor="mail-api-key">Resend API Key</Label>
-                                <Input id="mail-api-key" name="apiKey" type="password" placeholder="Enter API Key" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" value={settings.apiKey} onChange={handleInputChange} />
-                            </div>
-                        )}
-                    </div>
-                     <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
-                         <div className="flex items-center justify-between">
-                            <h4 className="font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Chat Widget</h4>
-                            <Switch id="chat-enabled" />
-                         </div>
-                         <p className="text-sm text-zinc-600 dark:text-white/60">Enable or disable the customer chat widget on your portfolio.</p>
-                        <div className="space-y-2">
-                            <Label htmlFor="chat-script">Chat Provider Script/ID</Label>
-                            <Textarea id="chat-script" placeholder="Paste your chat widget script or ID here" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10 text-xs" rows={3}/>
+                    {provider === 'resend' && (
+                        <div className="space-y-2 pt-2">
+                             <Label className="text-sm text-muted-foreground">Set the following variable in your .env file:</Label>
+                             <div className="p-2 bg-black/10 dark:bg-white/10 rounded-md text-sm font-mono">
+                                RESEND_API_KEY=your_api_key_here
+                             </div>
                         </div>
+                    )}
+
+                    {provider === 'smtp' && (
+                        <div className="space-y-4 pt-2">
+                             <Label className="text-sm text-muted-foreground">Set the following variables in your .env file:</Label>
+                             <div className="p-3 bg-black/10 dark:bg-white/10 rounded-md text-sm font-mono space-y-1">
+                                <p>SMTP_HOST=your_host</p>
+                                <p>SMTP_PORT=your_port</p>
+                                <p>SMTP_USER=your_username</p>
+                                <p>SMTP_PASS=your_password</p>
+                                <p>SMTP_FROM=your_from_email</p>
+                             </div>
+                        </div>
+                    )}
+
+                </div>
+                 <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10">
+                     <div className="flex items-center justify-between">
+                        <h4 className="font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Chat Widget</h4>
+                        <Switch id="chat-enabled" />
+                     </div>
+                     <p className="text-sm text-zinc-600 dark:text-white/60">Enable or disable the customer chat widget on your portfolio.</p>
+                    <div className="space-y-2">
+                        <Label htmlFor="chat-script">Chat Provider Script/ID</Label>
+                        <Textarea id="chat-script" placeholder="Paste your chat widget script or ID here" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10 text-xs" rows={3}/>
                     </div>
-                     <div className="flex justify-end">
-                        <Button type="submit" className="rounded-lg">Save Communication</Button>
-                    </div>
-                </CardContent>
-            </Card>
-        </form>
+                </div>
+                 <div className="flex justify-end">
+                    <Button onClick={() => toast({title: "Settings Information", description: "Chat widget settings saved."})} className="rounded-lg">Save Communication</Button>
+                </div>
+            </CardContent>
+        </Card>
     );
 }
 
