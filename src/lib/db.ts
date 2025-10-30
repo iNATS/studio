@@ -73,7 +73,57 @@ db.exec(`
       endDate TEXT NOT NULL,
       FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE SET NULL
     );
+
+    CREATE TABLE IF NOT EXISTS portfolio_categories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+    );
 `);
+
+// Seed initial categories if table is empty
+const categoryCount = db.prepare('SELECT COUNT(*) as count FROM portfolio_categories').get() as { count: number };
+if (categoryCount.count === 0) {
+    const insert = db.prepare('INSERT INTO portfolio_categories (name) VALUES (?)');
+    const insertMany = db.transaction((categories) => {
+        for (const category of categories) insert.run(category);
+    });
+    insertMany(['Web', 'Mobile', 'Design']);
+}
+
+
+// --- Portfolio Categories ---
+export async function getPortfolioCategories() {
+    try {
+        const stmt = db.prepare('SELECT * FROM portfolio_categories ORDER BY name');
+        return stmt.all() as { id: number; name: string }[];
+    } catch (error) {
+        console.error("Failed to get portfolio categories:", error);
+        return [];
+    }
+}
+
+export async function addPortfolioCategory(name: string) {
+    try {
+        const stmt = db.prepare('INSERT INTO portfolio_categories (name) VALUES (?)');
+        const result = stmt.run(name);
+        return { success: true, id: result.lastInsertRowid };
+    } catch (error) {
+        console.error('Failed to add portfolio category:', error);
+        return { success: false, error: 'Category already exists or another database error occurred.' };
+    }
+}
+
+export async function deletePortfolioCategory(id: number) {
+    try {
+        const stmt = db.prepare('DELETE FROM portfolio_categories WHERE id = ?');
+        stmt.run(id);
+        return { success: true };
+    } catch (error) {
+        console.error(`Failed to delete portfolio category ${id}:`, error);
+        return { success: false, error: 'Database operation failed' };
+    }
+}
+
 
 // --- Generic Page Content ---
 export async function getPageContent(section: string) {
@@ -334,10 +384,11 @@ export async function getClients() {
     }
 }
 
-export async function addClient(client: any) {
+export async function addClient(formData: FormData) {
+    const client = Object.fromEntries(formData.entries());
     try {
         const stmt = db.prepare('INSERT INTO clients (name, email, avatar, status, company, phone, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-        const info = stmt.run(client.name, client.email, client.avatar, client.status, client.company, client.phone, client.address, client.notes);
+        const info = stmt.run(client.name, client.email, `https://picsum.photos/seed/${client.name}/100/100`, client.status, client.company, client.phone, client.address, client.notes);
         return { success: true, id: info.lastInsertRowid };
     } catch (e) {
         console.error("Failed to add client", e);
@@ -345,7 +396,8 @@ export async function addClient(client: any) {
     }
 }
 
-export async function updateClient(id: string, client: any) {
+export async function updateClient(id: string, formData: FormData) {
+    const client = Object.fromEntries(formData.entries());
     try {
         const stmt = db.prepare('UPDATE clients SET name = ?, email = ?, status = ?, company = ?, phone = ?, address = ?, notes = ? WHERE id = ?');
         stmt.run(client.name, client.email, client.status, client.company, client.phone, client.address, client.notes, id);
@@ -383,11 +435,12 @@ export async function getTasks() {
     }
 }
 
-export async function addTask(task: any) {
+export async function addTask(formData: FormData) {
+    const task = Object.fromEntries(formData.entries());
     try {
-        const tags = task.tags ? JSON.stringify(task.tags.split(',').map((t: string) => t.trim())) : '[]';
+        const tags = task.tags ? JSON.stringify((task.tags as string).split(',').map((t: string) => t.trim())) : '[]';
         const stmt = db.prepare('INSERT INTO tasks (title, description, status, priority, dueDate, clientId, tags) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        const info = stmt.run(task.title, task.description, 'todo', task.priority, task.dueDate, task.clientId || null, tags);
+        const info = stmt.run(task.title, task.description, 'todo', task.priority, task.dueDate || null, task.clientId || null, tags);
         return { success: true, id: info.lastInsertRowid };
     } catch (e) {
         console.error("Failed to add task", e);
@@ -395,9 +448,10 @@ export async function addTask(task: any) {
     }
 }
 
-export async function updateTask(id: string, task: any) {
+export async function updateTask(id: string, formData: FormData | { [key: string]: any }) {
+    const values = formData instanceof FormData ? Object.fromEntries(formData.entries()) : formData;
     try {
-        const fieldsToUpdate = { ...task };
+        const fieldsToUpdate: {[key: string]: any} = { ...values };
         if (fieldsToUpdate.tags && typeof fieldsToUpdate.tags === 'string') {
             fieldsToUpdate.tags = JSON.stringify(fieldsToUpdate.tags.split(',').map((t: string) => t.trim()));
         }
@@ -407,10 +461,10 @@ export async function updateTask(id: string, task: any) {
         
         if (columns.length === 0) return { success: true };
 
-        const values = columns.map(col => fieldsToUpdate[col]);
+        const dbValues = columns.map(col => fieldsToUpdate[col]);
 
         const stmt = db.prepare(`UPDATE tasks SET ${setClause} WHERE id = ?`);
-        stmt.run(...values, id);
+        stmt.run(...dbValues, id);
         
         return { success: true };
     } catch (e) {
@@ -553,3 +607,5 @@ export async function getReportsData() {
         };
     }
 }
+
+    

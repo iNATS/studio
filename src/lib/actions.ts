@@ -16,6 +16,8 @@ import {
   addTask,
   updateTask,
   deleteTask,
+  addPortfolioCategory,
+  deletePortfolioCategory,
 } from './db';
 import { revalidatePath } from 'next/cache';
 
@@ -126,12 +128,7 @@ export async function handleContactForm(prevState: any, formData: FormData) {
 
 // Client Actions
 export async function handleAddClient(formData: FormData) {
-    const values = Object.fromEntries(formData.entries());
-    const newClientData = {
-        ...values,
-        avatar: `https://picsum.photos/seed/${values.name}/100/100`,
-    };
-    const result = await addClient(newClientData);
+    const result = await addClient(formData);
     if (result.success) {
         revalidatePath('/admin/workspace/clients');
     }
@@ -139,8 +136,7 @@ export async function handleAddClient(formData: FormData) {
 }
 
 export async function handleUpdateClient(id: string, formData: FormData) {
-    const values = Object.fromEntries(formData.entries());
-    const result = await updateClient(id, values);
+    const result = await updateClient(id, formData);
     if (result.success) {
         revalidatePath('/admin/workspace/clients');
     }
@@ -158,8 +154,7 @@ export async function handleDeleteClient(id: string) {
 
 // Task Actions
 export async function handleAddTask(formData: FormData) {
-    const values = Object.fromEntries(formData.entries());
-    const result = await addTask(values);
+    const result = await addTask(formData);
     if (result.success) {
         revalidatePath('/admin/workspace/tasks');
     }
@@ -167,8 +162,7 @@ export async function handleAddTask(formData: FormData) {
 }
 
 export async function handleUpdateTask(id: string, formData: FormData | { [key: string]: any }) {
-    const values = formData instanceof FormData ? Object.fromEntries(formData.entries()) : formData;
-    const result = await updateTask(id, values);
+    const result = await updateTask(id, formData);
     if (result.success) {
         revalidatePath('/admin/workspace/tasks');
     }
@@ -182,3 +176,27 @@ export async function handleDeleteTask(id: string) {
     }
     return result;
 }
+
+
+// Portfolio Category Actions
+export async function handleAddPortfolioCategory(formData: FormData) {
+    const name = formData.get('name') as string;
+    if (!name || name.trim() === '') {
+        return { success: false, error: 'Category name cannot be empty.' };
+    }
+    const result = await addPortfolioCategory(name);
+    if (result.success) {
+        revalidatePath('/admin/settings');
+    }
+    return result;
+}
+
+export async function handleDeletePortfolioCategory(id: number) {
+    const result = await deletePortfolioCategory(id);
+    if (result.success) {
+        revalidatePath('/admin/settings');
+    }
+    return result;
+}
+
+    

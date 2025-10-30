@@ -7,12 +7,82 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload, KeyRound, Bell, Languages, Mail, MessageSquare, BarChart, Settings2, Code, Bot } from 'lucide-react';
+import { Upload, KeyRound, Bell, Languages, Mail, MessageSquare, BarChart, Settings2, Code, Bot, FolderKanban, Trash2, PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getPortfolioCategories } from '@/lib/db';
+import { handleAddPortfolioCategory, handleDeletePortfolioCategory } from '@/lib/actions';
+
+type Category = {
+    id: number;
+    name: string;
+};
+
+const PortfolioCategoryManager = () => {
+    const { toast } = useToast();
+    const [categories, setCategories] = React.useState<Category[]>([]);
+    const formRef = React.useRef<HTMLFormElement>(null);
+
+    const fetchCategories = React.useCallback(async () => {
+        const cats = await getPortfolioCategories();
+        setCategories(cats);
+    }, []);
+
+    React.useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
+
+    const handleAddCategory = async (formData: FormData) => {
+        const result = await handleAddPortfolioCategory(formData);
+        if (result.success) {
+            toast({ title: 'Category Added' });
+            fetchCategories();
+            formRef.current?.reset();
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: result.error });
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        const result = await handleDeletePortfolioCategory(id);
+        if (result.success) {
+            toast({ title: 'Category Deleted' });
+            fetchCategories();
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: result.error });
+        }
+    };
+
+    return (
+        <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><FolderKanban className="h-5 w-5" /> Portfolio Categories</CardTitle>
+                <CardDescription className="text-zinc-600 dark:text-white/60">Manage the categories for your portfolio projects.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form action={handleAddCategory} ref={formRef} className="flex items-center gap-2 mb-4">
+                    <Input name="name" placeholder="New category name..." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                    <Button type="submit" className="rounded-lg gap-2">
+                        <PlusCircle className="h-4 w-4" /> Add
+                    </Button>
+                </form>
+                <div className="space-y-2">
+                    {categories.map(cat => (
+                        <div key={cat.id} className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5">
+                            <span className="font-medium text-sm">{cat.name}</span>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive/70 hover:text-destructive" onClick={() => handleDelete(cat.id)}>
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
 
 export default function SettingsPage() {
     const { toast } = useToast();
@@ -46,11 +116,12 @@ export default function SettingsPage() {
       </div>
       <div className="flex-1 overflow-y-auto -mx-4 px-4 pt-4 pb-8">
          <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
             <TabsTrigger value="profile" className="rounded-lg">Profile</TabsTrigger>
             <TabsTrigger value="security" className="rounded-lg">Security</TabsTrigger>
             <TabsTrigger value="preferences" className="rounded-lg">Preferences</TabsTrigger>
             <TabsTrigger value="integrations" className="rounded-lg">Integrations</TabsTrigger>
+            <TabsTrigger value="portfolio" className="rounded-lg">Portfolio</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile">
@@ -248,8 +319,14 @@ export default function SettingsPage() {
             </div>
           </TabsContent>
 
+          <TabsContent value="portfolio">
+            <PortfolioCategoryManager />
+          </TabsContent>
+
         </Tabs>
       </div>
     </main>
   );
 }
+
+    

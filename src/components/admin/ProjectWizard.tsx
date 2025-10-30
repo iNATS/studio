@@ -29,6 +29,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import { getPortfolioCategories } from '@/lib/db';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE = 5000000; // 5MB
@@ -52,7 +53,7 @@ const stepSchemas = [
     removedScreenshots: z.array(z.string()).optional(),
   }),
   z.object({
-    category: z.enum(['web', 'mobile', 'design']),
+    category: z.string().min(1, 'Please select a category.'),
     tags: z.string().min(1, 'Please add at least one tag.'),
   }),
   z.object({})
@@ -113,7 +114,16 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [direction, setDirection] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [categories, setCategories] = useState<{id: number; name: string}[]>([]);
     
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const cats = await getPortfolioCategories();
+            setCategories(cats);
+        };
+        fetchCategories();
+    }, []);
+
     const isEditing = !!project?.id;
     
     const [formData, setFormData] = useState({
@@ -122,7 +132,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         description: project?.description || '',
         fullDescription: project?.fullDescription || '',
         link: project?.link || '',
-        category: project?.category || 'web',
+        category: project?.category || '',
         tags: project?.tags || '',
         imageFile: undefined,
         screenshotFiles: undefined,
@@ -193,7 +203,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
 
     if (currentStep > 0) {
         setDirection(-1);
-        setCurrentStep(step => step - 1);
+        setCurrentStep(step => step + 1);
     }
   }
   
@@ -437,9 +447,9 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                                        <SelectItem value="web">Web</SelectItem>
-                                        <SelectItem value="mobile">Mobile</SelectItem>
-                                        <SelectItem value="design">Design</SelectItem>
+                                        {categories.map(cat => (
+                                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                                        ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -530,3 +540,5 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
+
+    
