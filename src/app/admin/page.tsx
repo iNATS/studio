@@ -199,13 +199,13 @@ export default function AdminDashboard() {
           </motion.div>
 
            <motion.div 
-              className="grid gap-6 lg:grid-cols-3 mt-6"
+              className="grid gap-6 mt-6"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
             <motion.div variants={itemVariants}>
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl col-span-1">
+            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
                 </CardHeader>
@@ -231,5 +231,4 @@ export default function AdminDashboard() {
         </div>
     </main>
   );
-
-    
+}
