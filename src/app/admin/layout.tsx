@@ -119,7 +119,6 @@ export default function AdminLayout({
         <div className="flex items-center justify-between p-2 rounded-full shadow-lg backdrop-blur-lg bg-background/70 dark:bg-background/50 border border-foreground/10">
           <Link href="/admin" className="mr-4 flex items-center space-x-2 px-2">
             <Gem className="h-6 w-6 text-primary" />
-            <span className="font-bold hidden sm:inline-block">Admin Panel</span>
           </Link>
           
           {/* Desktop Navigation */}
