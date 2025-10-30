@@ -19,9 +19,10 @@ import {
   Paperclip,
   Smile,
   Edit,
-  Calendar,
+  Calendar as CalendarIcon,
   Video,
   Users,
+  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -36,17 +37,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, format, isSameDay } from 'date-fns';
-import { emails, meetings, contacts } from './data';
+import { emails, meetings as initialMeetings, contacts } from './data';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 type MailboxItem = (typeof emails)[number];
-type Meeting = (typeof meetings)[number];
+type Meeting = (typeof initialMeetings)[number];
 type Contact = (typeof contacts)[number];
 type NavItem = 'inbox' | 'meetings' | 'contacts';
 
@@ -207,13 +219,102 @@ const MailView = () => {
     )
 }
 
+const ScheduleMeetingForm = ({ onSave, onCancel }: { onSave: (meeting: Meeting) => void; onCancel: () => void }) => {
+    const [title, setTitle] = React.useState('');
+    const [date, setDate] = React.useState<Date | undefined>();
+    const [contactId, setContactId] = React.useState('');
+    const [notes, setNotes] = React.useState('');
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title || !date || !contactId) {
+            // Basic validation
+            alert('Please fill all required fields.');
+            return;
+        }
+
+        const contact = contacts.find(c => c.id === contactId);
+        if (!contact) return;
+
+        const newMeeting: Meeting = {
+            id: `meeting-${Date.now()}`,
+            title,
+            time: date,
+            duration: '30 min',
+            participants: [
+                { name: contact.name, avatar: contact.avatar },
+                { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
+            ],
+            meetLink: `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}` // Dummy link
+        };
+        onSave(newMeeting);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="title">Meeting Title</Label>
+                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Project Sync-up" required className="bg-black/5 dark:bg-white/10"/>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="contact">Contact</Label>
+                 <Select onValueChange={setContactId} value={contactId} required>
+                    <SelectTrigger id="contact" className="bg-black/5 dark:bg-white/10">
+                        <SelectValue placeholder="Select a contact" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
+                        {contacts.map(contact => (
+                            <SelectItem key={contact.id} value={contact.id}>{contact.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="space-y-2">
+                <Label>Date & Time</Label>
+                 <Popover>
+                    <PopoverTrigger asChild>
+                    <Button
+                        variant={"outline"}
+                        className={cn(
+                        "w-full justify-start text-left font-normal bg-black/5 dark:bg-white/10",
+                        !date && "text-muted-foreground"
+                        )}
+                    >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
+                        <CalendarComponent mode="single" selected={date} onSelect={setDate} initialFocus />
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="notes">Notes (Optional)</Label>
+                <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Agenda, topics to discuss, etc." className="bg-black/5 dark:bg-white/10"/>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-lg">Cancel</Button>
+                <Button type="submit" className="rounded-lg">Save Meeting</Button>
+            </div>
+        </form>
+    )
+}
+
 const MeetingsView = () => {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [meetings, setMeetings] = React.useState<Meeting[]>(initialMeetings);
+    const [isScheduling, setIsScheduling] = React.useState(false);
+
+    const handleSaveMeeting = (newMeeting: Meeting) => {
+        setMeetings(prev => [...prev, newMeeting].sort((a,b) => a.time.getTime() - b.time.getTime()));
+        setIsScheduling(false);
+    };
 
     const filteredMeetings = React.useMemo(() => {
         if (!date) return meetings;
         return meetings.filter(meeting => isSameDay(meeting.time, date));
-    }, [date]);
+    }, [date, meetings]);
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
@@ -245,9 +346,11 @@ const MeetingsView = () => {
                                             ))}
                                         </div>
                                     </div>
-                                    <Button className="rounded-lg gap-2">
-                                        <Video className="h-4 w-4" />
-                                        Join Meeting
+                                    <Button asChild className="rounded-lg gap-2">
+                                        <Link href={meeting.meetLink || 'https://meet.google.com'} target="_blank" rel="noopener noreferrer">
+                                            <Video className="h-4 w-4" />
+                                            Join Meeting
+                                        </Link>
                                     </Button>
                                 </div>
                             )) : (
@@ -269,12 +372,23 @@ const MeetingsView = () => {
                         />
                     </CardContent>
                  </Card>
-                 <Button asChild className="w-full mt-4 rounded-lg gap-2">
-                    <Link href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">
-                      <Calendar className="h-4 w-4" />
-                      Schedule New Meeting
-                    </Link>
-                </Button>
+                <Dialog open={isScheduling} onOpenChange={setIsScheduling}>
+                    <DialogTrigger asChild>
+                         <Button className="w-full mt-4 rounded-lg gap-2">
+                            <Plus className="h-4 w-4" />
+                            Schedule New Meeting
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
+                        <DialogHeader>
+                            <DialogTitle>Schedule a New Meeting</DialogTitle>
+                            <DialogDescription>
+                                Fill in the details to add a new meeting to your calendar.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <ScheduleMeetingForm onSave={handleSaveMeeting} onCancel={() => setIsScheduling(false)} />
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     )

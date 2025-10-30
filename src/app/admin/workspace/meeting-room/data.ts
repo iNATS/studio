@@ -56,7 +56,8 @@ export const meetings = [
         participants: [
             { name: 'Sarah Johnson', avatar: 'https://picsum.photos/seed/sarah/100/100' },
             { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
-        ]
+        ],
+        meetLink: 'https://meet.google.com/abc-def-ghi',
     },
     {
         id: '2',
@@ -66,7 +67,8 @@ export const meetings = [
         participants: [
             { name: 'Michael Chen', avatar: 'https://picsum.photos/seed/michael/100/100' },
             { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
-        ]
+        ],
+        meetLink: 'https://meet.google.com/jkl-mno-pqr',
     },
     {
         id: '3',
@@ -76,7 +78,8 @@ export const meetings = [
         participants: [
             { name: 'Emily Davis', avatar: 'https://picsum.photos/seed/emily/100/100' },
             { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
-        ]
+        ],
+        meetLink: 'https://meet.google.com/stu-vwx-yza',
     }
 ];
 
@@ -88,5 +91,3 @@ export const contacts = [
     { id: '5', name: 'Chris Brown', email: 'chris.brown@datasystems.com', avatar: 'https://picsum.photos/seed/chris/100/100' },
     { id: '6', name: 'David Wilson', email: 'david.w@apex.digital', avatar: 'https://picsum.photos/seed/david/100/100' },
 ];
-
-    
