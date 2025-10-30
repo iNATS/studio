@@ -634,7 +634,6 @@ export default function TasksPage() {
             <div className="sticky top-0 z-30 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-foreground dark:text-white flex-shrink-0">Tasks</h1>
-                    
                     <div className="ml-auto flex items-center gap-2">
                         <Popover>
                             <PopoverTrigger asChild>
@@ -723,12 +722,13 @@ export default function TasksPage() {
                 </div>
             </div>
             
-            <div className="flex-1 overflow-x-auto overflow-y-hidden -mx-4 px-4 pb-4">
+            <div className="flex-1 overflow-auto -mx-4 px-4 pb-4">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                    <div className="flex flex-row gap-6 h-full py-2">
-                        {columns.map(status => (
-                            <ScrollArea key={status} className="h-full">
+                    <ScrollArea className="w-full h-full" orientation="horizontal">
+                        <div className="flex flex-row gap-6 h-full py-2">
+                            {columns.map(status => (
                                 <TaskColumn
+                                    key={status}
                                     title={columnTitles[status]}
                                     status={status}
                                     tasks={filteredTasks.filter(t => t.status === status)}
@@ -737,9 +737,9 @@ export default function TasksPage() {
                                     onView={handleView}
                                     clients={clients}
                                 />
-                            </ScrollArea>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    </ScrollArea>
                     <DragOverlay>
                         {activeTask ? (
                             <div className="w-[300px] md:w-[340px]">
@@ -795,3 +795,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    
