@@ -1,3 +1,5 @@
+'use client';
+
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SocialFab } from '@/components/SocialFab';
@@ -10,13 +12,39 @@ import { Contact } from '@/components/landing/Contact';
 import { motion } from 'framer-motion';
 import { getPortfolioItems, getPageContent, getTestimonials } from '@/lib/db';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
+import { useEffect, useState } from 'react';
 
-export default async function Home() {
-  const portfolioItems: PortfolioItem[] = await getPortfolioItems();
-  const heroContent = await getPageContent('hero');
-  const aboutContent = await getPageContent('about');
-  const processContent = await getPageContent('process');
-  const testimonials = await getTestimonials();
+export default function Home() {
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [heroContent, setHeroContent] = useState(null);
+  const [aboutContent, setAboutContent] = useState(null);
+  const [processContent, setProcessContent] = useState(null);
+  const [testimonials, setTestimonials] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const [
+        items,
+        hero,
+        about,
+        process,
+        testimonialsData,
+      ] = await Promise.all([
+        getPortfolioItems(),
+        getPageContent('hero'),
+        getPageContent('about'),
+        getPageContent('process'),
+        getTestimonials(),
+      ]);
+      setPortfolioItems(items);
+      setHeroContent(hero);
+      setAboutContent(about);
+      setProcessContent(process);
+      setTestimonials(testimonialsData);
+    }
+    fetchData();
+  }, []);
+
 
   return (
     <motion.div
