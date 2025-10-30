@@ -60,7 +60,7 @@ export default function AdminLayout({
         <Sidebar
           variant="floating"
           collapsible="icon"
-          className="bg-background/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-border/40 dark:border-white/10 text-foreground z-40"
+          className="bg-white/60 dark:bg-zinc-900/80 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 text-foreground z-40"
         >
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
