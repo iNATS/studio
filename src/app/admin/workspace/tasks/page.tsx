@@ -630,7 +630,7 @@ export default function TasksPage() {
     }
 
     return (
-        <main className="flex flex-col h-full">
+        <main className="flex flex-col h-full mt-8">
             <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-foreground dark:text-white flex-shrink-0">Tasks</h1>
@@ -796,5 +796,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
