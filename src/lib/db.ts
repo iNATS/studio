@@ -246,6 +246,10 @@ export async function addPortfolioItem(values: any) {
         return { success: true, id: result.lastInsertRowid };
     } catch (error) {
         console.error('Failed to add portfolio item:', error);
+        const errorMessage = (error as Error).message;
+        if (errorMessage.includes('UNIQUE constraint failed: portfolio_items.slug')) {
+            return { success: false, error: 'This slug is already in use. Please choose a unique one.' };
+        }
         return { success: false, error: 'Database operation failed' };
     }
 }
@@ -297,6 +301,10 @@ export async function updatePortfolioItem(id: number, values: any) {
         return { success: true };
     } catch (error) {
         console.error(`Failed to update portfolio item ${id}:`, error);
+        const errorMessage = (error as Error).message;
+        if (errorMessage.includes('UNIQUE constraint failed: portfolio_items.slug')) {
+            return { success: false, error: 'This slug is already in use. Please choose a unique one.' };
+        }
         return { success: false, error: 'Database operation failed' };
     }
 }

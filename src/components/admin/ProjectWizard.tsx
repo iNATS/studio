@@ -96,6 +96,14 @@ const StepIndicator = ({ currentStep, steps }: { currentStep: number; steps: num
       ))}
     </div>
   );
+  
+const slugify = (str: string) =>
+    str
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 
 export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [currentStep, setCurrentStep] = useState(0);
@@ -133,6 +141,13 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         defaultValues: formData,
         mode: "onChange",
     });
+    
+    const title = form.watch('title');
+    useEffect(() => {
+        if (title && !isEditing) {
+            form.setValue('slug', slugify(title));
+        }
+    }, [title, form, isEditing]);
     
   const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
