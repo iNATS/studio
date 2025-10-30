@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -243,7 +242,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     
     const imageProps = { src: preview, alt: alt || "preview" };
 
-    return fill ? <Image {...imageProps} fill className={cn("object-cover", className)} /> : <Image {...imageProps} width={200} height={112} className={cn("aspect-video w-full object-cover", className)} />;
+    return <Image {...imageProps} fill className={cn("object-cover", className)} />;
   }
 
   const handleRemoveScreenshot = (screenshotUrl: string) => {
@@ -344,20 +343,15 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
                                             <FormLabel>Main Image</FormLabel>
-                                            {isEditing && project?.image && !value && (
+                                            {(isEditing && project?.image && !value) || value ? (
                                                 <div className="relative aspect-video rounded-md overflow-hidden border border-zinc-300 dark:border-white/20">
-                                                    <Image src={project.image} alt="Current main image" fill className="object-cover" />
+                                                    <ImagePreview file={value} src={isEditing && !value ? project?.image : undefined} alt="Main image preview" fill />
                                                 </div>
-                                            )}
-                                            {value && (
-                                                 <div className="relative aspect-video rounded-md overflow-hidden border border-zinc-300 dark:border-white/20">
-                                                    <ImagePreview file={value} alt="New main image" fill />
-                                                 </div>
-                                            )}
+                                            ) : null}
                                             <FormControl>
                                                 <label className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
                                                     <div className="text-center text-sm text-zinc-600 dark:text-white/60">
-                                                        {value ? "Change Image" : (isEditing ? "Upload New Image" : "Upload Image")}
+                                                        {value || (isEditing && project?.image) ? "Change Image" : "Upload Image"}
                                                     </div>
                                                     <Input type="file" className="sr-only" onChange={(e) => onChange(e.target.files?.[0])} {...rest} />
                                                 </label>
@@ -372,7 +366,9 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         {isEditing && project?.screenshots?.map((screenshot, index) => !removedScreenshots.includes(screenshot) && (
                                              <div key={index} className="p-2 bg-black/5 dark:bg-white/10 rounded-md flex items-center justify-between text-sm">
                                                 <div className="flex items-center gap-2 overflow-hidden">
-                                                    <Image src={screenshot} alt={`Screenshot ${index + 1}`} width={40} height={40} className="rounded aspect-video object-cover"/>
+                                                    <div className="relative w-10 h-10 rounded overflow-hidden">
+                                                        <Image src={screenshot} alt={`Screenshot ${index + 1}`} fill className="object-cover"/>
+                                                    </div>
                                                     <span className="truncate text-zinc-500">Existing Screenshot {index+1}</span>
                                                 </div>
                                                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleRemoveScreenshot(screenshot)}>
@@ -540,5 +536,3 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     </FormProvider>
   );
 }
-
-    
