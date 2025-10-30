@@ -65,10 +65,10 @@ export default function AdminLayout({
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white" />
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center transition-opacity duration-200 group-data-[state=collapsed]:opacity-0">
                 <LayoutGrid className="w-5 h-5 text-primary-foreground" />
               </div>
-              <h1 className="text-lg font-semibold">Dashboard</h1>
+              <h1 className="text-lg font-semibold transition-opacity duration-200 group-data-[state=collapsed]:opacity-0">Dashboard</h1>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-3">
