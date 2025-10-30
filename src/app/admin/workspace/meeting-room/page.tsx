@@ -22,8 +22,8 @@ import {
   Edit,
   Calendar as CalendarIcon,
   Video,
-  Users,
   Plus,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -409,7 +409,7 @@ const MeetingsView = () => {
                  </Card>
                 <Dialog open={isScheduling} onOpenChange={handleCloseDialog}>
                     <DialogTrigger asChild>
-                         <Button className="w-full mt-4 rounded-lg gap-2">
+                        <Button className="w-full mt-4 rounded-lg gap-2">
                             <Plus className="h-4 w-4" />
                             Schedule New Meeting
                         </Button>
@@ -429,56 +429,11 @@ const MeetingsView = () => {
     )
 }
 
-const ContactsView = () => {
-    const [searchTerm, setSearchTerm] = React.useState('');
-  
-    const filteredContacts = contacts.filter(contact =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  
-    return (
-      <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full">
-        <CardHeader>
-          <CardTitle>Contacts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-white/50" />
-              <Input 
-                  placeholder="Search contacts..." 
-                  className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10 rounded-lg"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-          </div>
-          <ScrollArea className="h-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredContacts.map(contact => (
-                <div key={contact.id} className="flex items-center gap-4 p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-zinc-200/50 dark:border-white/10">
-                  <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
-                    <AvatarImage src={contact.avatar} alt={contact.name} />
-                    <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">{contact.name}</p>
-                    <p className="text-xs text-muted-foreground">{contact.email}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-    )
-  }
-
 export default function CommunicationsPage() {
   
-  const navItems: { id: "inbox" | "meetings" | "contacts"; label: string; icon: React.ElementType }[] = [
+  const navItems: { id: "inbox" | "meetings"; label: string; icon: React.ElementType }[] = [
       { id: 'inbox', label: 'Inbox', icon: Mail },
       { id: 'meetings', label: 'Meetings', icon: Video },
-      { id: 'contacts', label: 'Contacts', icon: Users },
   ];
 
   return (
@@ -507,9 +462,6 @@ export default function CommunicationsPage() {
                 <TabsContent value="meetings" className="h-full mt-0">
                   <MeetingsView />
                 </TabsContent>
-                <TabsContent value="contacts" className="h-full mt-0">
-                  <ContactsView />
-                </TabsContent>
             </div>
       </Tabs>
     </div>
@@ -520,3 +472,4 @@ export default function CommunicationsPage() {
     
 
     
+
