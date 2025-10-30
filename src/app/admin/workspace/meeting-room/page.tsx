@@ -60,7 +60,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 type MailboxItem = (typeof emails)[number];
 type Meeting = (typeof initialMeetings)[number];
 type Contact = (typeof contacts)[number];
-type NavItem = 'inbox' | 'meetings' | 'contacts';
 
 const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) => {
     const [formattedDate, setFormattedDate] = React.useState('');
@@ -378,7 +377,7 @@ const MeetingsView = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
-                                                <DropdownMenuItem onClick={() => handleEditClick(meeting)}>
+                                                <DropdownMenuItem onClick={()={() => handleEditClick(meeting)}}>
                                                     <Edit className="mr-2 h-4 w-4" /> Edit
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem className="text-red-500 focus:text-red-500">
@@ -452,7 +451,7 @@ const ContactsView = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
           </div>
-          <ScrollArea className="h-[calc(100vh-22rem)]">
+          <ScrollArea>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredContacts.map(contact => (
                 <div key={contact.id} className="flex items-center gap-4 p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-zinc-200/50 dark:border-white/10">
@@ -475,7 +474,7 @@ const ContactsView = () => {
 
 export default function CommunicationsPage() {
   
-  const navItems: { id: NavItem; label: string; icon: React.ElementType }[] = [
+  const navItems: { id: "inbox" | "meetings" | "contacts"; label: string; icon: React.ElementType }[] = [
       { id: 'inbox', label: 'Inbox', icon: Mail },
       { id: 'meetings', label: 'Meetings', icon: Video },
       { id: 'contacts', label: 'Contacts', icon: Users },
@@ -483,35 +482,38 @@ export default function CommunicationsPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs defaultValue="inbox" className="h-full flex flex-col">
-        <div className="flex-shrink-0">
-            <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
-                <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
+        <Tabs defaultValue="inbox" className="h-full flex flex-col">
+            <div className="flex-shrink-0">
+                <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+                    <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
+                </div>
+                <div className="w-full -mx-4 px-4">
+                    <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
+                    {navItems.map(item => (
+                        <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
+                            <item.icon className="h-5 w-5" />
+                            {item.label}
+                        </TabsTrigger>
+                    ))}
+                    </TabsList>
+                </div>
             </div>
-            <div className="w-full -mx-4 px-4">
-                <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
-                {navItems.map(item => (
-                    <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
-                        <item.icon className="h-5 w-5" />
-                        {item.label}
-                    </TabsTrigger>
-                ))}
-                </TabsList>
-            </div>
-        </div>
 
-        <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
-            <TabsContent value="inbox" className="h-full mt-0">
-            <MailView />
-            </TabsContent>
-            <TabsContent value="meetings" className="h-full mt-0">
-            <MeetingsView />
-            </TabsContent>
-            <TabsContent value="contacts" className="h-full mt-0">
-            <ContactsView />
-            </TabsContent>
-        </ScrollArea>
+            <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
+                <TabsContent value="inbox" className="h-full mt-0">
+                <MailView />
+                </TabsContent>
+                <TabsContent value="meetings" className="h-full mt-0">
+                <MeetingsView />
+                </TabsContent>
+                <TabsContent value="contacts" className="h-full mt-0">
+                <ContactsView />
+                </TabsContent>
+            </ScrollArea>
       </Tabs>
     </div>
   );
 }
+
+
+    
