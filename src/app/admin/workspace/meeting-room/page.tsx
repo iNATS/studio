@@ -41,6 +41,8 @@ import { emails, meetings, contacts } from './data';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
 
 type MailboxItem = (typeof emails)[number];
 type Meeting = (typeof meetings)[number];
@@ -52,7 +54,7 @@ const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) =
 
     React.useEffect(() => {
         if (selectedEmail) {
-            setFormattedDate(format(selectedEmail.date, 'PPpp'));
+            setFormattedDate(format(new Date(selectedEmail.date), 'PPpp'));
         }
     }, [selectedEmail]);
 
@@ -297,7 +299,6 @@ const ContactsView = () => {
 }
 
 export default function CommunicationsPage() {
-  const [activeView, setActiveView] = React.useState<NavItem>('inbox');
   
   const navItems: { id: NavItem; label: string; icon: React.ElementType }[] = [
       { id: 'inbox', label: 'Inbox', icon: Mail },
@@ -310,35 +311,26 @@ export default function CommunicationsPage() {
       <div className="sticky top-0 z-20 backdrop-blur-md px-4 pb-4 -mx-4 -mt-4">
         <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
       </div>
-      <div className="flex-1 grid grid-cols-[60px_1fr] gap-6 h-[calc(100%-64px)] overflow-hidden -mx-4 px-4 pb-4">
-        
-        {/* Main Sidebar */}
-        <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col items-center py-4">
-          <nav className="flex flex-col items-center gap-2">
+      <Tabs defaultValue="inbox" className="flex-1 flex flex-col -mx-4 px-4 pb-4">
+        <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
             {navItems.map(item => (
-                <Button 
-                    key={item.id} 
-                    variant={activeView === item.id ? 'secondary': 'ghost'} 
-                    size="icon" 
-                    className="rounded-lg w-12 h-12"
-                    onClick={() => setActiveView(item.id)}
-                    aria-label={item.label}
-                >
-                    <item.icon className="h-6 w-6" />
-                </Button>
+                <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
+                    <item.icon className="h-5 w-5" />
+                    {item.label}
+                </TabsTrigger>
             ))}
-          </nav>
-        </div>
+        </TabsList>
         
-        {/* Main Content Area */}
-        <div className="h-full overflow-y-auto">
-            {activeView === 'inbox' && <MailView />}
-            {activeView === 'meetings' && <MeetingsView />}
-            {activeView === 'contacts' && <ContactsView />}
-        </div>
-      </div>
+        <TabsContent value="inbox" className="flex-1 h-full mt-0">
+          <MailView />
+        </TabsContent>
+        <TabsContent value="meetings" className="flex-1 h-full mt-0">
+          <MeetingsView />
+        </TabsContent>
+        <TabsContent value="contacts" className="flex-1 h-full mt-0">
+          <ContactsView />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
-
-    
