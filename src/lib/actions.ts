@@ -24,7 +24,7 @@ export async function handleAddWork(values: any) {
     if(result.success) {
         revalidatePath('/admin/projects');
         revalidatePath('/');
-        revalidatePath('/projects');
+        revalidatePath('/projects', 'layout');
     }
     return result;
 }
@@ -34,7 +34,7 @@ export async function handleEditWork(id: number, values: any) {
      if(result.success) {
         revalidatePath('/admin/projects');
         revalidatePath('/');
-        revalidatePath('/projects');
+        revalidatePath('/projects', 'layout');
     }
     return result;
 }
@@ -44,7 +44,7 @@ export async function handleDeleteWork(id: number) {
      if(result.success) {
         revalidatePath('/admin/projects');
         revalidatePath('/');
-        revalidatePath('/projects');
+        revalidatePath('/projects', 'layout');
     }
     return result;
 }
@@ -182,5 +182,3 @@ export async function handleDeleteTask(id: string) {
     }
     return result;
 }
-
-    

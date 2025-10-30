@@ -1,3 +1,4 @@
+
 'use server'
 
 import Database from 'better-sqlite3';
@@ -264,7 +265,11 @@ export async function updatePortfolioItem(id: number, values: any) {
             imageUrl = imageResult.path;
         }
 
-        let screenshotUrls = currentData?.screenshots ? JSON.parse(currentData.screenshots) : [];
+        let existingScreenshots = currentData?.screenshots ? JSON.parse(currentData.screenshots) : [];
+        if (values.removedScreenshots && values.removedScreenshots.length > 0) {
+            existingScreenshots = existingScreenshots.filter((s: string) => !values.removedScreenshots.includes(s));
+        }
+
         if (values.screenshotFiles && (values.screenshotFiles as FileList).length > 0) {
             const newScreenshotUrls = await Promise.all(
                 Array.from(values.screenshotFiles as FileList).map(async (file) => {
@@ -273,11 +278,11 @@ export async function updatePortfolioItem(id: number, values: any) {
                     return result.path;
                 })
             );
-            screenshotUrls = [...screenshotUrls, ...newScreenshotUrls];
+            existingScreenshots = [...existingScreenshots, ...newScreenshotUrls];
         }
         
         const tagsJson = JSON.stringify(values.tags.split(',').map((t: string) => t.trim()));
-        const screenshotsJson = JSON.stringify(screenshotUrls);
+        const screenshotsJson = JSON.stringify(existingScreenshots);
 
         const stmt = db.prepare(`
             UPDATE portfolio_items
@@ -461,10 +466,10 @@ export async function getDashboardData() {
         const recentClients = db.prepare(`SELECT * FROM clients ORDER BY id DESC LIMIT 5`).all();
 
         return {
-            activeProjectsCount: activeProjectsCount.count,
-            pendingTasksCount: pendingTasksCount.count,
-            newClientsCount: newClientsCount.count,
-            overdueTasksCount: overdueTasksCount.count,
+            activeProjectsCount: activeProjectsCount?.count || 0,
+            pendingTasksCount: pendingTasksCount?.count || 0,
+            newClientsCount: newClientsCount?.count || 0,
+            overdueTasksCount: overdueTasksCount?.count || 0,
             upcomingDeadlines,
             activeProjects,
             recentClients,

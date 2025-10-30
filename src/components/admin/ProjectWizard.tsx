@@ -49,6 +49,7 @@ const stepSchemas = [
         .refine((files) => files ? Array.from(files).every((file: any) => file.size <= MAX_IMAGE_SIZE) : true, `Max image size is 5MB.`)
         .refine((files) => files ? Array.from(files).every((file: any) => ACCEPTED_IMAGE_TYPES.includes(file.type)) : true, "optional"),
     link: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
+    removedScreenshots: z.array(z.string()).optional(),
   }),
   z.object({
     category: z.enum(['web', 'mobile', 'design']),
@@ -60,6 +61,9 @@ const stepSchemas = [
 
 interface ProjectWizardProps {
   project?: Omit<PortfolioItem, 'id' | 'image' | 'screenshots' | 'hint'> & {
+    id?: number;
+    image?: string;
+    screenshots?: string[];
     tags: string;
     imageFile?: File;
     screenshotFiles?: FileList;
@@ -110,7 +114,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     const [direction, setDirection] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    const isEditing = !!project;
+    const isEditing = !!project?.id;
     
     const [formData, setFormData] = useState({
         title: project?.title || '',
@@ -122,6 +126,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         tags: project?.tags || '',
         imageFile: undefined,
         screenshotFiles: undefined,
+        removedScreenshots: [] as string[],
     });
 
     // Use a different schema for editing to make file inputs optional
@@ -147,7 +152,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
         if (title && !form.formState.dirtyFields.slug) {
             form.setValue('slug', slugify(title), { shouldValidate: true });
         }
-    }, [title, form, isEditing]);
+    }, [title, form]);
     
   const processAndSubmit = async () => {
     const isFinalStepValid = await form.trigger();
@@ -209,25 +214,33 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
     }),
   };
   
-  const ImagePreview = ({file, className, fill, alt}: {file: File, className?: string, fill?: boolean, alt?: string}) => {
-    const [preview, setPreview] = useState<string | null>(null);
+  const ImagePreview = ({file, className, fill, alt, src}: {file?: File, className?: string, fill?: boolean, alt?: string, src?: string}) => {
+    const [preview, setPreview] = useState<string | null>(src || null);
+
     useEffect(() => {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-    }, [file]);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        } else if (src) {
+            setPreview(src);
+        }
+    }, [file, src]);
 
     if (!preview) return <div className={cn("bg-black/10 dark:bg-white/10 animate-pulse", className)} />;
     
-    if (fill) {
-        return <Image src={preview} alt={alt || "preview"} fill className={cn("object-cover", className)} />
-    }
+    const imageProps = { src: preview, alt: alt || "preview" };
 
-    return <Image src={preview} alt={alt || "preview"} width={200} height={112} className={cn("aspect-video w-full object-cover", className)} />
+    return fill ? <Image {...imageProps} fill className={cn("object-cover", className)} /> : <Image {...imageProps} width={200} height={112} className={cn("aspect-video w-full object-cover", className)} />;
   }
+
+  const handleRemoveScreenshot = (screenshotUrl: string) => {
+    form.setValue('removedScreenshots', [...form.getValues('removedScreenshots') || [], screenshotUrl]);
+  }
+
+  const removedScreenshots = form.watch('removedScreenshots') || [];
 
   return (
     <FormProvider {...form}>
@@ -313,7 +326,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                         </div>
                     )}
                     {currentStep === 1 && (
-                         <div className="space-y-4 px-1">
+                         <div className="space-y-4 px-1 h-full flex flex-col">
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                <FormField
                                     control={form.control}
@@ -321,52 +334,75 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
                                             <FormLabel>Main Image</FormLabel>
+                                            {isEditing && project?.image && !value && (
+                                                <div className="relative aspect-video rounded-md overflow-hidden border border-zinc-300 dark:border-white/20">
+                                                    <Image src={project.image} alt="Current main image" fill className="object-cover" />
+                                                </div>
+                                            )}
+                                            {value && (
+                                                 <div className="relative aspect-video rounded-md overflow-hidden border border-zinc-300 dark:border-white/20">
+                                                    <ImagePreview file={value} alt="New main image" fill />
+                                                 </div>
+                                            )}
                                             <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
-                                                    <div className="text-center">
-                                                        <Upload className="mx-auto h-8 w-8 text-zinc-500 dark:text-white/50" />
-                                                        <p className="mt-2 text-sm text-zinc-600 dark:text-white/60">Click or drag to upload</p>
+                                                <label className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
+                                                    <div className="text-center text-sm text-zinc-600 dark:text-white/60">
+                                                        {value ? "Change Image" : (isEditing ? "Upload New Image" : "Upload Image")}
                                                     </div>
                                                     <Input type="file" className="sr-only" onChange={(e) => onChange(e.target.files?.[0])} {...rest} />
                                                 </label>
                                             </FormControl>
-                                            {value && <FileUploadPreview file={value} onRemove={() => onChange(null)} />}
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="screenshotFiles"
-                                    render={({ field: { onChange, value, ...rest } }) => (
-                                        <FormItem>
-                                            <FormLabel>Screenshots</FormLabel>
-                                            <FormControl>
-                                                <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
-                                                    <div className="text-center">
-                                                    <Upload className="mx-auto h-8 w-8 text-zinc-500 dark:text-white/50" />
-                                                    <p className="mt-2 text-sm text-zinc-600 dark:text-white/60">Upload one or more files</p>
-                                                    </div>
-                                                    <Input type="file" multiple className="sr-only" {...screenshotsRef} onChange={(e) => onChange(e.target.files)} />
-                                                </label>
-                                            </FormControl>
-                                            {value && Array.from(value).map((file: any, index: number) => (
-                                            <FileUploadPreview 
-                                            key={index} 
-                                            file={file} 
-                                            onRemove={() => {
-                                                const newFiles = new DataTransfer();
-                                                const currentFiles = Array.from(value);
-                                                currentFiles.splice(index, 1);
-                                                currentFiles.forEach((f: any) => newFiles.items.add(f));
-                                                onChange(newFiles.files.length > 0 ? newFiles.files : null);
-                                            }} 
-                                        />
-                                            ))}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="space-y-2">
+                                    <FormLabel>Screenshots</FormLabel>
+                                    <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                                        {isEditing && project?.screenshots?.map((screenshot, index) => !removedScreenshots.includes(screenshot) && (
+                                             <div key={index} className="p-2 bg-black/5 dark:bg-white/10 rounded-md flex items-center justify-between text-sm">
+                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                    <Image src={screenshot} alt={`Screenshot ${index + 1}`} width={40} height={40} className="rounded aspect-video object-cover"/>
+                                                    <span className="truncate text-zinc-500">Existing Screenshot {index+1}</span>
+                                                </div>
+                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleRemoveScreenshot(screenshot)}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <FormField
+                                        control={form.control}
+                                        name="screenshotFiles"
+                                        render={({ field: { onChange, value, ...rest } }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                     <label className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-zinc-300 dark:border-white/20 bg-black/5 dark:bg-white/5 hover:border-zinc-400 dark:hover:border-white/40 transition-colors">
+                                                        <div className="text-center text-sm text-zinc-600 dark:text-white/60">
+                                                            <Upload className="mx-auto h-4 w-4 mb-1" />
+                                                            Upload New Screenshots
+                                                        </div>
+                                                        <Input type="file" multiple className="sr-only" {...screenshotsRef} onChange={(e) => onChange(e.target.files)} />
+                                                    </label>
+                                                </FormControl>
+                                                {value && Array.from(value).map((file: any, index: number) => (
+                                                <FileUploadPreview 
+                                                key={index} 
+                                                file={file} 
+                                                onRemove={() => {
+                                                    const newFiles = new DataTransfer();
+                                                    const currentFiles = Array.from(value);
+                                                    currentFiles.splice(index, 1);
+                                                    currentFiles.forEach((f: any) => newFiles.items.add(f));
+                                                    onChange(newFiles.files.length > 0 ? newFiles.files : null);
+                                                }} 
+                                            />
+                                                ))}
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                             </div>
                              <FormField
                                 control={form.control}
@@ -433,7 +469,7 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                             <h3 className="text-lg font-semibold text-center mb-4">Review &amp; Publish</h3>
                             <div className="bg-black/5 dark:bg-white/5 border border-zinc-200/80 dark:border-white/10 rounded-lg overflow-hidden">
                                 <div className="relative w-full h-48">
-                                    {formData.imageFile ? <ImagePreview file={formData.imageFile} alt={formData.title} fill /> : (project?.image ? <Image src={project.image} alt={project.title} fill className="object-cover" /> : <div className="w-full h-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-zinc-500 dark:text-white/50">No Image</div>)}
+                                    <ImagePreview file={formData.imageFile} src={project?.image} alt={formData.title} fill />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     <div className="absolute bottom-0 left-0 p-4">
                                         <h1 className="text-2xl font-bold text-white shadow-2xl">{formData.title}</h1>
@@ -449,12 +485,17 @@ export function ProjectWizard({ project, onSubmit }: ProjectWizardProps) {
                                         {formData.tags?.split(',').map((tag: string) => tag.trim() && <Badge key={tag} variant="secondary" className="bg-black/10 dark:bg-white/10 text-zinc-700 dark:text-white/80">{tag.trim()}</Badge>)}
                                     </div>
 
-                                    {formData.screenshotFiles && Array.from(formData.screenshotFiles as FileList).length > 0 && (
+                                    {((formData.screenshotFiles && Array.from(formData.screenshotFiles as FileList).length > 0) || (project?.screenshots && project.screenshots.length > 0)) && (
                                         <div>
                                             <h5 className="font-semibold text-sm mb-2 flex items-center gap-2"><GalleryHorizontal className="h-4 w-4"/> Screenshots</h5>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {Array.from(formData.screenshotFiles as FileList).map((file: any, index) => (
-                                                    <div key={index} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
+                                                {project?.screenshots?.map((screenshot, index) => !removedScreenshots.includes(screenshot) && (
+                                                     <div key={`existing-${index}`} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
+                                                      <Image src={screenshot} alt={`Screenshot ${index+1}`} fill className="object-cover" />
+                                                    </div>
+                                                ))}
+                                                {formData.screenshotFiles && Array.from(formData.screenshotFiles as FileList).map((file: any, index) => (
+                                                    <div key={`new-${index}`} className="relative aspect-video rounded-md overflow-hidden border border-zinc-200/80 dark:border-white/10">
                                                       <ImagePreview file={file} alt={`Screenshot ${index+1}`} fill />
                                                     </div>
                                                 ))}
