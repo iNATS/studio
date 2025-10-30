@@ -54,7 +54,8 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getClients, getTasks, addTask, updateTask, deleteTask } from '@/lib/db';
+import { getClients, getTasks } from '@/lib/db';
+import { handleAddTask, handleUpdateTask, handleDeleteTask } from '@/lib/actions';
 import type { Client } from '../clients/page';
 
 
@@ -260,8 +261,10 @@ const TaskForm = ({ task, onSubmit, onCancel, clients }: { task?: Task, onSubmit
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const values = Object.fromEntries(formData.entries());
-        onSubmit({...values, dueDate});
+        if (dueDate) {
+            formData.append('dueDate', dueDate.toISOString());
+        }
+        onSubmit(formData);
     }
     
     return (
@@ -473,28 +476,47 @@ export default function TasksPage() {
         const { active, over } = event;
 
         if (!over) return;
-        if (active.id === over.id) return;
 
-        const originalTask = tasks.find(t => t.id === active.id);
-        const newStatus = over.data.current?.status;
-        
+        const activeId = String(active.id);
+        const overId = String(over.id);
+
+        const originalTask = tasks.find(t => t.id === activeId);
+        const newStatus = (over.data.current?.status || over.data.current?.task?.status) as TaskStatus | undefined;
+
         if (originalTask && newStatus && originalTask.status !== newStatus) {
             const updatedTask = { ...originalTask, status: newStatus };
+            
             // Optimistically update UI
-            setTasks(tasks => tasks.map(t => t.id === active.id ? updatedTask : t));
+            setTasks(currentTasks => {
+                const activeIndex = currentTasks.findIndex(t => t.id === activeId);
+                const overIndex = over.data.current?.type === 'Column' 
+                    ? currentTasks.length // put at the end of the new column
+                    : currentTasks.findIndex(t => t.id === overId);
+                
+                let newTasks = [...currentTasks];
+                newTasks[activeIndex] = updatedTask;
 
-            const result = await updateTask(String(active.id), { status: newStatus });
+                if (over.data.current?.type === 'Task') {
+                    // reorder within the same column
+                    return arrayMove(newTasks, activeIndex, overIndex);
+                } else {
+                    // just update status and let it be re-rendered
+                     return newTasks;
+                }
+            });
+
+            const result = await handleUpdateTask(activeId, { status: newStatus });
             if (!result.success) {
                 // Revert on failure
-                setTasks(tasks);
                 toast({
                     variant: "destructive",
                     title: "Update failed",
                     description: "Could not update task status.",
                 });
+                fetchData(); // Refetch to get latest state
             }
         }
-    }, [tasks, toast]);
+    }, [tasks, toast, fetchData]);
 
 
     const handleDragOver = React.useCallback((event: DragOverEvent) => {
@@ -515,8 +537,10 @@ export default function TasksPage() {
                 if (currentTasks[activeIndex].status === over.data.current?.status) {
                     return currentTasks;
                 }
-                currentTasks[activeIndex].status = over.data.current?.status as TaskStatus;
-                return arrayMove(currentTasks, activeIndex, activeIndex);
+                const updatedTask = { ...currentTasks[activeIndex], status: over.data.current?.status as TaskStatus };
+                const newTasks = [...currentTasks];
+                newTasks[activeIndex] = updatedTask;
+                return arrayMove(newTasks, activeIndex, activeIndex);
             });
         }
         
@@ -527,8 +551,10 @@ export default function TasksPage() {
                 const overIndex = currentTasks.findIndex(t => t.id === overId);
                 
                 if (currentTasks[activeIndex].status !== currentTasks[overIndex].status) {
-                    currentTasks[activeIndex].status = currentTasks[overIndex].status;
-                    return arrayMove(currentTasks, activeIndex, overIndex);
+                    const updatedTask = {...currentTasks[activeIndex], status: currentTasks[overIndex].status };
+                    const newTasks = [...currentTasks];
+                    newTasks[activeIndex] = updatedTask;
+                    return arrayMove(newTasks, activeIndex, overIndex);
                 }
 
                 return arrayMove(currentTasks, activeIndex, overIndex);
@@ -542,9 +568,9 @@ export default function TasksPage() {
 
     const handleDeleteConfirm = async () => {
         if (taskToDelete) {
-            const result = await deleteTask(taskToDelete.id);
+            const result = await handleDeleteTask(taskToDelete.id);
             if (result.success) {
-                setTasks(tasks.filter(t => t.id !== taskToDelete.id));
+                await fetchData();
                 toast({
                     title: 'Task Removed',
                     description: `"${taskToDelete.title}" has been removed.`,
@@ -560,14 +586,15 @@ export default function TasksPage() {
         }
     };
 
-    const handleAddTask = async (values: any) => {
-        const result = await addTask(values);
+    const onAddTask = async (formData: FormData) => {
+        const title = formData.get('title') as string;
+        const result = await handleAddTask(formData);
         if (result.success) {
             await fetchData();
             setIsAddDialogOpen(false);
             toast({
                 title: 'Task Added',
-                description: `"${values.title}" has been added to 'To Do'.`,
+                description: `"${title}" has been added to 'To Do'.`,
             });
         } else {
              toast({
@@ -578,15 +605,16 @@ export default function TasksPage() {
         }
     };
 
-    const handleEditTask = async (values: any) => {
+    const onEditTask = async (formData: FormData) => {
         if (!editingTask) return;
-        const result = await updateTask(editingTask.id, values);
+        const title = formData.get('title') as string;
+        const result = await handleUpdateTask(editingTask.id, formData);
         if (result.success) {
             await fetchData();
             closeEditDialog();
             toast({
                 title: 'Task Updated',
-                description: `"${values.title}" has been updated.`,
+                description: `"${title}" has been updated.`,
             });
         } else {
              toast({
@@ -688,7 +716,7 @@ export default function TasksPage() {
                                     Enter the details for the new task.
                                 </DialogDescription>
                                 </DialogHeader>
-                                <TaskForm onSubmit={handleAddTask} onCancel={() => setIsAddDialogOpen(false)} clients={clients} />
+                                <TaskForm onSubmit={onAddTask} onCancel={() => setIsAddDialogOpen(false)} clients={clients} />
                             </DialogContent>
                         </Dialog>
                     </div>
@@ -740,7 +768,7 @@ export default function TasksPage() {
                         Update the details of your task below.
                     </DialogDescription>
                     </DialogHeader>
-                    <TaskForm task={editingTask!} onSubmit={handleEditTask} onCancel={closeEditDialog} clients={clients} />
+                    <TaskForm task={editingTask!} onSubmit={onEditTask} onCancel={closeEditDialog} clients={clients} />
                 </DialogContent>
             </Dialog>
 
@@ -768,3 +796,5 @@ export default function TasksPage() {
         </main>
     );
 }
+
+    

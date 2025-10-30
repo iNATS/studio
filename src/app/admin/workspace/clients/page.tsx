@@ -55,7 +55,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Pagination } from '@/components/ui/pagination';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { getClients, addClient, updateClient, deleteClient } from '@/lib/db';
+import { getClients } from '@/lib/db';
+import { handleAddClient, handleUpdateClient, handleDeleteClient } from '@/lib/actions';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
@@ -75,8 +76,7 @@ const ClientForm = ({ client, onSubmit, onCancel }: { client?: Client, onSubmit:
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const values = Object.fromEntries(formData.entries());
-        onSubmit(values);
+        onSubmit(formData);
     }
     
     return (
@@ -274,7 +274,7 @@ export default function ClientsPage() {
 
   const handleDeleteConfirm = async () => {
     if (clientToDelete) {
-      const result = await deleteClient(clientToDelete.id);
+      const result = await handleDeleteClient(clientToDelete.id);
       if (result.success) {
         setClients(clients.filter(c => c.id !== clientToDelete.id));
         toast({
@@ -292,18 +292,15 @@ export default function ClientsPage() {
     }
   };
 
-  const handleAddClient = async (values: any) => {
-    const newClientData = {
-        ...values,
-        avatar: `https://picsum.photos/seed/${values.name}/100/100`,
-    };
-    const result = await addClient(newClientData);
+  const onAddClient = async (formData: FormData) => {
+    const name = formData.get('name') as string;
+    const result = await handleAddClient(formData);
     if(result.success) {
         await fetchClients();
         setIsAddDialogOpen(false);
         toast({
             title: 'Client Added',
-            description: `"${values.name}" has been added.`,
+            description: `"${name}" has been added.`,
         });
     } else {
          toast({
@@ -314,16 +311,16 @@ export default function ClientsPage() {
     }
   }
 
-  const handleEditClient = async (values: any) => {
+  const onEditClient = async (formData: FormData) => {
     if(!editingClient) return;
-
-    const result = await updateClient(editingClient.id, values);
+    const name = formData.get('name') as string;
+    const result = await handleUpdateClient(editingClient.id, formData);
     if (result.success) {
         await fetchClients();
         closeEditDialog();
         toast({
             title: 'Client Updated',
-            description: `"${values.name}" has been updated.`,
+            description: `"${name}" has been updated.`,
         });
     } else {
         toast({
@@ -410,7 +407,7 @@ export default function ClientsPage() {
                         Enter the details for the new client.
                     </DialogDescription>
                     </DialogHeader>
-                    <ClientForm onSubmit={handleAddClient} onCancel={() => setIsAddDialogOpen(false)} />
+                    <ClientForm onSubmit={onAddClient} onCancel={() => setIsAddDialogOpen(false)} />
                 </DialogContent>
                 </Dialog>
             </div>
@@ -426,7 +423,7 @@ export default function ClientsPage() {
                  Update the details of your client below.
               </DialogDescription>
             </DialogHeader>
-            <ClientForm client={editingClient!} onSubmit={handleEditClient} onCancel={closeEditDialog} />
+            <ClientForm client={editingClient!} onSubmit={onEditClient} onCancel={closeEditDialog} />
           </DialogContent>
         </Dialog>
 
@@ -550,3 +547,5 @@ export default function ClientsPage() {
     </main>
   );
 }
+
+    
