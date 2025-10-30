@@ -458,7 +458,7 @@ export default function ProjectsPage() {
 
     return (
         <main className="flex flex-col h-full">
-             <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+             <div className="sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold flex-shrink-0">Projects</h1>
                     

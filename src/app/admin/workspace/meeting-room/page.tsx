@@ -93,7 +93,7 @@ export default function CommunicationsPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+      <div className="sticky top-0 z-20 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
       </div>
       <div className="flex-1 grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr] gap-6 -mx-4 px-4 pb-4 overflow-hidden h-[calc(100%-80px)]">
