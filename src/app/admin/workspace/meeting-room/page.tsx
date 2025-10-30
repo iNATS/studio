@@ -221,7 +221,7 @@ const MailView = () => {
 
 const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit }: { onSave: (meeting: Meeting) => void; onCancel: () => void, meetingToEdit?: Meeting | null }) => {
     const [title, setTitle] = React.useState(meetingToEdit?.title || '');
-    const [date, setDate] = React.useState<Date | undefined>(meetingToEdit ? new Date(meetingToEdit.time) : undefined);
+    const [date, setDate] = React.useState<Date | undefined>(meetingToEdit ? new Date(meetingToEdit.time) : new Date());
     const [contactId, setContactId] = React.useState(meetingToEdit?.participants[0]?.name ? contacts.find(c => c.name === meetingToEdit.participants[0].name)?.id || '' : '');
     const [notes, setNotes] = React.useState('');
 
@@ -320,6 +320,7 @@ const MeetingsView = () => {
 
     const handleEditClick = (meeting: Meeting) => {
         setMeetingToEdit(meeting);
+        setDate(new Date(meeting.time));
         setIsScheduling(true);
     };
 
@@ -329,7 +330,7 @@ const MeetingsView = () => {
     };
 
     const filteredMeetings = React.useMemo(() => {
-        if (!date) return meetings;
+        if (!date) return [];
         return meetings.filter(meeting => isSameDay(meeting.time, date));
     }, [date, meetings]);
 
@@ -482,37 +483,35 @@ export default function CommunicationsPage() {
 
   return (
     <div className="h-full flex flex-col">
+      <Tabs defaultValue="inbox" className="h-full flex flex-col">
         <div className="flex-shrink-0">
             <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                 <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
             </div>
-             <Tabs defaultValue="inbox" className="w-full -mx-4 px-4">
-                 <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
-                    {navItems.map(item => (
-                        <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
-                            <item.icon className="h-5 w-5" />
-                            {item.label}
-                        </TabsTrigger>
-                    ))}
+            <div className="w-full -mx-4 px-4">
+                <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
+                {navItems.map(item => (
+                    <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
+                        <item.icon className="h-5 w-5" />
+                        {item.label}
+                    </TabsTrigger>
+                ))}
                 </TabsList>
-            </Tabs>
+            </div>
         </div>
 
         <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
-             <Tabs defaultValue="inbox" className="h-full">
-                <TabsContent value="inbox" className="h-full mt-0">
-                <MailView />
-                </TabsContent>
-                <TabsContent value="meetings" className="h-full mt-0">
-                <MeetingsView />
-                </TabsContent>
-                <TabsContent value="contacts" className="h-full mt-0">
-                <ContactsView />
-                </TabsContent>
-            </Tabs>
+            <TabsContent value="inbox" className="h-full mt-0">
+            <MailView />
+            </TabsContent>
+            <TabsContent value="meetings" className="h-full mt-0">
+            <MeetingsView />
+            </TabsContent>
+            <TabsContent value="contacts" className="h-full mt-0">
+            <ContactsView />
+            </TabsContent>
         </ScrollArea>
+      </Tabs>
     </div>
   );
 }
-
-    
