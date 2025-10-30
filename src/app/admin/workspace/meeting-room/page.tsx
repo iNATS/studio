@@ -88,6 +88,73 @@ const emails = [
 
 type Email = (typeof emails)[number];
 
+const MailDisplay = ({ selectedEmail }: { selectedEmail: Email | null }) => {
+  const [formattedDate, setFormattedDate] = React.useState('');
+
+  React.useEffect(() => {
+    if (selectedEmail) {
+      setFormattedDate(format(selectedEmail.date, 'PPpp'));
+    }
+  }, [selectedEmail]);
+
+  if (!selectedEmail) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col">
+      <div className="flex items-center p-4 border-b border-zinc-200/80 dark:border-white/10">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
+            <AvatarImage src={selectedEmail.avatar} alt={selectedEmail.name} />
+            <AvatarFallback>{selectedEmail.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-semibold">{selectedEmail.name}</p>
+            <p className="text-sm text-muted-foreground">{`to me <mohamed.aref@example.com>`}</p>
+          </div>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          {formattedDate && <span className="text-xs text-muted-foreground">{formattedDate}</span>}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+              <DropdownMenuItem><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
+              <DropdownMenuItem><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
+              <DropdownMenuItem><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
+              <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white"><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+      <ScrollArea className="flex-1">
+        <div className="p-6">
+          <h2 className="text-xl font-bold mb-4">{selectedEmail.subject}</h2>
+          <div className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert">
+            {selectedEmail.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+          </div>
+        </div>
+      </ScrollArea>
+      <div className="p-4 border-t border-zinc-200/80 dark:border-white/10">
+        <Textarea placeholder="Click here to reply..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex gap-1">
+            <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Paperclip className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Smile className="h-4 w-4" /></Button>
+          </div>
+          <Button className="rounded-lg gap-2">Send <Send className="h-4 w-4" /></Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function CommunicationsPage() {
   const [selectedEmail, setSelectedEmail] = React.useState<Email | null>(emails[0]);
 
@@ -96,10 +163,10 @@ export default function CommunicationsPage() {
       <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
       </div>
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr] gap-6 -mx-4 px-4 pb-4 overflow-hidden h-[calc(100%-80px)]">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[280px_400px_1fr] gap-6 -mx-4 px-4 pb-4 overflow-hidden h-[calc(100%-80px)]">
         
         {/* Sidebar */}
-        <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col p-2">
+        <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2">
             <div className="p-2">
                  <Button className="w-full rounded-lg gap-2">
                     <Edit className="h-4 w-4" /> Compose
@@ -175,59 +242,12 @@ export default function CommunicationsPage() {
         </div>
 
         {/* Mail Display */}
-        {selectedEmail && (
-            <div className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col">
-                <div className="flex items-center p-4 border-b border-zinc-200/80 dark:border-white/10">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
-                            <AvatarImage src={selectedEmail.avatar} alt={selectedEmail.name} />
-                            <AvatarFallback>{selectedEmail.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">{selectedEmail.name}</p>
-                            <p className="text-sm text-muted-foreground">{`to me <mohamed.aref@example.com>`}</p>
-                        </div>
-                    </div>
-                    <div className="ml-auto flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{format(selectedEmail.date, 'PPpp')}</span>
-                        <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                            <DropdownMenuItem><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
-                            <DropdownMenuItem><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
-                            <DropdownMenuItem><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white"><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-                <ScrollArea className="flex-1">
-                    <div className="p-6">
-                        <h2 className="text-xl font-bold mb-4">{selectedEmail.subject}</h2>
-                        <div className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert">
-                           {selectedEmail.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-                        </div>
-                    </div>
-                </ScrollArea>
-                <div className="p-4 border-t border-zinc-200/80 dark:border-white/10">
-                    <Textarea placeholder="Click here to reply..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
-                    <div className="flex items-center justify-between mt-2">
-                        <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Paperclip className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Smile className="h-4 w-4" /></Button>
-                        </div>
-                        <Button className="rounded-lg gap-2">Send <Send className="h-4 w-4" /></Button>
-                    </div>
-                </div>
-            </div>
-        )}
+        <div className="hidden lg:flex">
+          <MailDisplay selectedEmail={selectedEmail} />
+        </div>
       </div>
     </div>
   );
 }
+
+    
