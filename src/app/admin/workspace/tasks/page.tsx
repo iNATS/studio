@@ -724,22 +724,20 @@ export default function TasksPage() {
             
             <div className="flex-1 overflow-auto -mx-4 px-4 pb-4">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                    <ScrollArea className="w-full h-full" orientation="horizontal">
-                        <div className="flex flex-row gap-6 h-full py-2">
-                            {columns.map(status => (
-                                <TaskColumn
-                                    key={status}
-                                    title={columnTitles[status]}
-                                    status={status}
-                                    tasks={filteredTasks.filter(t => t.status === status)}
-                                    onEdit={handleEdit}
-                                    onDelete={setTaskToDelete}
-                                    onView={handleView}
-                                    clients={clients}
-                                />
-                            ))}
-                        </div>
-                    </ScrollArea>
+                    <div className="flex flex-row gap-6 h-full py-2">
+                        {columns.map(status => (
+                            <TaskColumn
+                                key={status}
+                                title={columnTitles[status]}
+                                status={status}
+                                tasks={filteredTasks.filter(t => t.status === status)}
+                                onEdit={handleEdit}
+                                onDelete={setTaskToDelete}
+                                onView={handleView}
+                                clients={clients}
+                            />
+                        ))}
+                    </div>
                     <DragOverlay>
                         {activeTask ? (
                             <div className="w-[300px] md:w-[340px]">
@@ -795,5 +793,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-    
