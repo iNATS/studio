@@ -61,6 +61,7 @@ export default function AdminLayout({
       ]
     },
     { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
+    { href: '/admin/notifications', label: 'Notifications', icon: Bell },
   ];
 
   const NavLink = ({ item, isMobile = false }: { item: any, isMobile?: boolean }) => {
@@ -156,7 +157,9 @@ export default function AdminLayout({
                     </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="justify-center">View all notifications</DropdownMenuItem>
+                <DropdownMenuItem className="justify-center" asChild>
+                  <Link href="/admin/notifications">View all notifications</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
