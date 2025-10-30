@@ -11,7 +11,8 @@ import {
   BarChart3,
   LayoutGrid,
   Menu,
-  Gem
+  Gem,
+  Bell
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -125,6 +126,40 @@ export default function AdminLayout({
           
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                  <Bell className="h-5 w-5" />
+                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500"></span>
+                  <span className="sr-only">Notifications</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-80 bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white" align="end">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium">New Message</p>
+                        <p className="text-xs text-muted-foreground">You have a new message from Sarah Johnson.</p>
+                    </div>
+                </DropdownMenuItem>
+                 <DropdownMenuItem>
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium">Project Update</p>
+                        <p className="text-xs text-muted-foreground">Mobile App prototype has been approved.</p>
+                    </div>
+                </DropdownMenuItem>
+                 <DropdownMenuItem>
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium">Task Overdue</p>
+                        <p className="text-xs text-muted-foreground">"Finalize branding" is overdue by 2 days.</p>
+                    </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="justify-center">View all notifications</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
