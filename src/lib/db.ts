@@ -1,8 +1,10 @@
+
 'use server'
 
 import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
+import { subMonths, startOfToday } from 'date-fns';
 
 const db = new Database('local.db');
 
@@ -34,6 +36,42 @@ db.exec(`
         company TEXT NOT NULL,
         feedback TEXT NOT NULL,
         avatar TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS clients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        avatar TEXT,
+        status TEXT CHECK(status IN ('active', 'archived', 'new')) NOT NULL DEFAULT 'new',
+        company TEXT,
+        phone TEXT,
+        address TEXT,
+        notes TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        status TEXT CHECK(status IN ('todo', 'in-progress', 'done')) NOT NULL DEFAULT 'todo',
+        priority TEXT CHECK(priority IN ('low', 'medium', 'high')) NOT NULL DEFAULT 'medium',
+        dueDate TEXT,
+        clientId INTEGER,
+        tags TEXT,
+        FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE SET NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      status TEXT CHECK(status IN ('planning', 'in-progress', 'completed')) NOT NULL DEFAULT 'planning',
+      clientId INTEGER,
+      budget REAL,
+      startDate TEXT NOT NULL,
+      endDate TEXT NOT NULL,
+      FOREIGN KEY (clientId) REFERENCES clients (id) ON DELETE SET NULL
     );
 `);
 
@@ -217,7 +255,7 @@ export async function updatePortfolioItem(id: number, values: any) {
         const currentData = stmtSelect.get(id) as any;
         
         let imageUrl = currentData?.image;
-        if (values.imageFile) {
+        if (values.imageFile && values.imageFile.size > 0) {
             const imageResult = await uploadFile(values.imageFile as File);
             if (imageResult.error) throw new Error('Main image upload failed.');
             imageUrl = imageResult.path;
@@ -270,5 +308,236 @@ export async function deletePortfolioItem(id: number) {
     } catch (error) {
         console.error(`Failed to delete portfolio item ${id}:`, error);
         return { success: false, error: 'Database operation failed' };
+    }
+}
+
+// --- Clients ---
+export async function getClients() {
+    try {
+        const stmt = db.prepare('SELECT * FROM clients ORDER BY name');
+        return stmt.all();
+    } catch (e) {
+        console.error("Failed to get clients", e);
+        return [];
+    }
+}
+
+export async function addClient(client: any) {
+    try {
+        const stmt = db.prepare('INSERT INTO clients (name, email, avatar, status, company, phone, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+        const info = stmt.run(client.name, client.email, client.avatar, client.status, client.company, client.phone, client.address, client.notes);
+        return { success: true, id: info.lastInsertRowid };
+    } catch (e) {
+        console.error("Failed to add client", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+export async function updateClient(id: string, client: any) {
+    try {
+        const stmt = db.prepare('UPDATE clients SET name = ?, email = ?, status = ?, company = ?, phone = ?, address = ?, notes = ? WHERE id = ?');
+        stmt.run(client.name, client.email, client.status, client.company, client.phone, client.address, client.notes, id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to update client", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+export async function deleteClient(id: string) {
+    try {
+        const stmt = db.prepare('DELETE FROM clients WHERE id = ?');
+        stmt.run(id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to delete client", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+// --- Tasks ---
+export async function getTasks() {
+    try {
+        const stmt = db.prepare('SELECT * FROM tasks');
+        const tasks = stmt.all() as any[];
+        return tasks.map(task => ({
+            ...task,
+            tags: task.tags ? JSON.parse(task.tags) : [],
+            dueDate: task.dueDate ? new Date(task.dueDate) : undefined
+        }));
+    } catch (e) {
+        console.error("Failed to get tasks", e);
+        return [];
+    }
+}
+
+export async function addTask(task: any) {
+    try {
+        const tags = task.tags ? JSON.stringify(task.tags.split(',').map((t: string) => t.trim())) : '[]';
+        const stmt = db.prepare('INSERT INTO tasks (title, description, status, priority, dueDate, clientId, tags) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        const info = stmt.run(task.title, task.description, 'todo', task.priority, task.dueDate, task.clientId || null, tags);
+        return { success: true, id: info.lastInsertRowid };
+    } catch (e) {
+        console.error("Failed to add task", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+export async function updateTask(id: string, task: any) {
+    try {
+        const fieldsToUpdate = { ...task };
+        if (fieldsToUpdate.tags && typeof fieldsToUpdate.tags === 'string') {
+            fieldsToUpdate.tags = JSON.stringify(fieldsToUpdate.tags.split(',').map((t: string) => t.trim()));
+        }
+
+        const columns = Object.keys(fieldsToUpdate).filter(k => fieldsToUpdate[k] !== undefined);
+        const setClause = columns.map(col => `${col} = ?`).join(', ');
+        
+        if (columns.length === 0) return { success: true };
+
+        const values = columns.map(col => fieldsToUpdate[col]);
+
+        const stmt = db.prepare(`UPDATE tasks SET ${setClause} WHERE id = ?`);
+        stmt.run(...values, id);
+        
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to update task", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+
+export async function deleteTask(id: string) {
+    try {
+        const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
+        stmt.run(id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to delete task", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+
+// Dashboard and Reports
+
+export async function getDashboardData() {
+    try {
+        const today = startOfToday().toISOString();
+        const oneMonthAgo = subMonths(startOfToday(), 1).toISOString();
+
+        const activeProjectsCount = db.prepare(`SELECT COUNT(*) as count FROM projects WHERE status != 'completed'`).get() as { count: number };
+        const pendingTasksCount = db.prepare(`SELECT COUNT(*) as count FROM tasks WHERE status != 'done'`).get() as { count: number };
+        const newClientsCount = db.prepare(`SELECT COUNT(*) as count FROM clients WHERE status = 'new'`).get() as { count: number };
+        const overdueTasksCount = db.prepare(`SELECT COUNT(*) as count FROM tasks WHERE dueDate < ? AND status != 'done'`).get(today) as { count: number };
+
+        const upcomingDeadlines = db.prepare(`
+            SELECT t.id, t.title, t.dueDate, p.title as projectTitle 
+            FROM tasks t 
+            LEFT JOIN projects p ON t.projectId = p.id
+            WHERE t.dueDate >= ? AND t.status != 'done' 
+            ORDER BY t.dueDate ASC LIMIT 5
+        `).all(today);
+
+        const activeProjects = db.prepare(`
+            SELECT p.id, p.title, p.startDate, p.endDate, c.name as clientName, c.company as clientCompany, c.avatar as clientAvatar
+            FROM projects p 
+            LEFT JOIN clients c ON p.clientId = c.id
+            WHERE p.status = 'in-progress' 
+            ORDER BY p.endDate ASC LIMIT 5
+        `).all().map((p: any) => ({
+             ...p, 
+             client: { name: p.clientName, company: p.clientCompany, avatar: p.clientAvatar }
+        }));
+        
+        const recentClients = db.prepare(`SELECT * FROM clients ORDER BY id DESC LIMIT 5`).all();
+
+        return {
+            activeProjectsCount: activeProjectsCount.count,
+            pendingTasksCount: pendingTasksCount.count,
+            newClientsCount: newClientsCount.count,
+            overdueTasksCount: overdueTasksCount.count,
+            upcomingDeadlines,
+            activeProjects,
+            recentClients,
+        };
+    } catch (error) {
+        console.error("Failed to get dashboard data:", error);
+        return {
+            activeProjectsCount: 0,
+            pendingTasksCount: 0,
+            newClientsCount: 0,
+            overdueTasksCount: 0,
+            upcomingDeadlines: [],
+            activeProjects: [],
+            recentClients: [],
+        };
+    }
+}
+
+
+export async function getReportsData() {
+    try {
+        const totalBilled = db.prepare(`SELECT SUM(budget) as total FROM projects WHERE status = 'completed'`).get() as { total: number };
+        const completedProjectsCount = db.prepare(`SELECT COUNT(*) as count FROM projects WHERE status = 'completed'`).get() as { count: number };
+        const totalClientsCount = db.prepare(`SELECT COUNT(*) as count FROM clients`).get() as { count: number };
+        const activeProjectsCount = db.prepare(`SELECT COUNT(*) as count FROM projects WHERE status = 'in-progress'`).get() as { count: number };
+
+        const sixMonthsAgo = subMonths(new Date(), 5);
+        const incomeDataRaw = db.prepare(`
+            SELECT strftime('%Y-%m', endDate) as month, SUM(budget) as income
+            FROM projects
+            WHERE status = 'completed' AND endDate >= ?
+            GROUP BY month
+            ORDER BY month ASC
+        `).all(sixMonthsAgo.toISOString().slice(0, 7) + '-01');
+
+        // Ensure all last 6 months are present
+        const incomeData = [];
+        for (let i = 5; i >= 0; i--) {
+            const date = subMonths(new Date(), i);
+            const monthStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+            const monthName = date.toLocaleString('default', { month: 'short' });
+            const existingData = incomeDataRaw.find((d: any) => d.month === monthStr);
+            incomeData.push({ name: monthName, income: existingData ? existingData.income : 0 });
+        }
+        
+        const workloadData = [
+            { name: 'Web', value: db.prepare(`SELECT count(*) as count FROM portfolio_items WHERE category = 'web'`).get<{count: number}>()?.count || 0, fill: 'var(--chart-1)' },
+            { name: 'Mobile', value: db.prepare(`SELECT count(*) as count FROM portfolio_items WHERE category = 'mobile'`).get<{count: number}>()?.count || 0, fill: 'var(--chart-2)' },
+            { name: 'Design', value: db.prepare(`SELECT count(*) as count FROM portfolio_items WHERE category = 'design'`).get<{count: number}>()?.count || 0, fill: 'var(--chart-3)' },
+        ];
+        
+        const clientLeaderboard = db.prepare(`
+            SELECT c.id, c.name, c.company, SUM(p.budget) as totalValue
+            FROM clients c
+            JOIN projects p ON c.id = p.clientId
+            WHERE p.status = 'completed'
+            GROUP BY c.id
+            ORDER BY totalValue DESC
+            LIMIT 5
+        `).all();
+
+        return {
+            totalBilled: totalBilled.total || 0,
+            completedProjectsCount: completedProjectsCount.count,
+            totalClientsCount: totalClientsCount.count,
+            activeProjectsCount: activeProjectsCount.count,
+            incomeData,
+            workloadData,
+            clientLeaderboard,
+        };
+    } catch (error) {
+        console.error("Failed to get reports data:", error);
+        return {
+            totalBilled: 0,
+            completedProjectsCount: 0,
+            totalClientsCount: 0,
+            activeProjectsCount: 0,
+            incomeData: [],
+            workloadData: [],
+            clientLeaderboard: [],
+        };
     }
 }
