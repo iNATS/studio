@@ -68,8 +68,8 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 
 
 export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialItems);
-  const [loading, setLoading] = useState(false);
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialItems || []);
+  const [loading, setLoading] = useState(!initialItems);
 
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);
@@ -77,6 +77,13 @@ export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: 0.05 });
   const [cardsVisible, setCardsVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
+
+  useEffect(() => {
+    if (initialItems) {
+      setPortfolioItems(initialItems);
+      setLoading(false);
+    }
+  }, [initialItems]);
 
   useEffect(() => {
     if (inView) {
