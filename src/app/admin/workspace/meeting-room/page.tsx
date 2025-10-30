@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -131,7 +132,7 @@ const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) =
 const MailView = () => {
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(emails[0]);
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] lg:grid-cols-[320px_440px_1fr] gap-6 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
             {/* Mailbox Filters/Folders */}
             <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2 h-full">
                 <div className="p-2">
@@ -178,8 +179,8 @@ const MailView = () => {
                         <Input placeholder="Search mail..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10 rounded-lg" />
                     </div>
                 </div>
-                <div className="flex-1 overflow-hidden h-full">
-                    <ScrollArea className="h-full">
+                <div className="flex-1 overflow-hidden">
+                  <ScrollArea className="h-full">
                     <div className="flex flex-col gap-2 p-4 pt-0">
                         {emails.map((email) => (
                         <button
@@ -206,14 +207,10 @@ const MailView = () => {
                         </button>
                         ))}
                     </div>
-                    </ScrollArea>
+                  </ScrollArea>
                 </div>
             </div>
 
-            {/* Mail Display */}
-            <div className="hidden lg:flex h-full">
-                <MailDisplay selectedEmail={selectedEmail} />
-            </div>
         </div>
     )
 }
@@ -322,6 +319,10 @@ const MeetingsView = () => {
         setDate(new Date(meeting.time));
         setIsScheduling(true);
     };
+    
+    const handleDeleteMeeting = (meetingId: string) => {
+        setMeetings(prev => prev.filter(m => m.id !== meetingId));
+    };
 
     const handleCloseDialog = () => {
         setIsScheduling(false);
@@ -343,7 +344,7 @@ const MeetingsView = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ScrollArea className="h-[calc(100vh-20rem)]">
+                        <ScrollArea className="h-[calc(100vh-22rem)]">
                         <div className="space-y-4">
                             {filteredMeetings.length > 0 ? filteredMeetings.map(meeting => (
                                 <div key={meeting.id} className="flex items-center gap-4 p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-zinc-200/50 dark:border-white/10">
@@ -377,10 +378,10 @@ const MeetingsView = () => {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
-                                                <DropdownMenuItem onClick={()={() => handleEditClick(meeting)}}>
+                                                <DropdownMenuItem onClick={() => handleEditClick(meeting)}>
                                                     <Edit className="mr-2 h-4 w-4" /> Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="text-red-500 focus:text-red-500">
+                                                <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={() => handleDeleteMeeting(meeting.id)}>
                                                     <Trash2 className="mr-2 h-4 w-4" /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -451,7 +452,7 @@ const ContactsView = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
           </div>
-          <ScrollArea>
+          <ScrollArea className="h-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredContacts.map(contact => (
                 <div key={contact.id} className="flex items-center gap-4 p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-zinc-200/50 dark:border-white/10">
@@ -499,7 +500,7 @@ export default function CommunicationsPage() {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
+            <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
                 <TabsContent value="inbox" className="h-full mt-0">
                 <MailView />
                 </TabsContent>
@@ -509,7 +510,7 @@ export default function CommunicationsPage() {
                 <TabsContent value="contacts" className="h-full mt-0">
                 <ContactsView />
                 </TabsContent>
-            </ScrollArea>
+            </div>
       </Tabs>
     </div>
   );
