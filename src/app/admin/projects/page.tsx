@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -10,14 +9,6 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Trash2 } from 'lucide-react';
@@ -51,12 +42,13 @@ import { ProjectWizard } from '@/components/admin/ProjectWizard';
 import { useToast } from '@/hooks/use-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
-import { placeholderProjects } from '@/lib/placeholder-data';
+import { getPortfolioItems, deletePortfolioItem } from '@/lib/db';
+import { handleAddWork, handleEditWork, handleDeleteWork } from '@/lib/actions';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 
 export default function AdminProjectsPage() {
-  const [portfolioItems, setPortfolioItems] = React.useState<PortfolioItem[]>(placeholderProjects as PortfolioItem[]);
-  const [loading, setLoading] = React.useState(false);
+  const [portfolioItems, setPortfolioItems] = React.useState<PortfolioItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [editingProject, setEditingProject] = React.useState<PortfolioItem | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<PortfolioItem | null>(null);
@@ -65,9 +57,19 @@ export default function AdminProjectsPage() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
   
+  React.useEffect(() => {
+    const fetchItems = async () => {
+      setLoading(true);
+      const items = await getPortfolioItems();
+      setPortfolioItems(items);
+      setLoading(false);
+    };
+    fetchItems();
+  }, []);
+
   const paginatedItems = React.useMemo(() => {
     if (!portfolioItems) return [];
-    const sortedItems = [...portfolioItems].sort((a, b) => (a.title > b.title ? 1 : -1));
+    const sortedItems = [...portfolioItems].sort((a, b) => a.title.localeCompare(b.title));
     return sortedItems.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
@@ -80,23 +82,43 @@ export default function AdminProjectsPage() {
   }, [portfolioItems]);
 
 
-  const handleAddWork = async (values: any) => {
-    console.log("Adding work", values);
-    setIsAddDialogOpen(false);
-    toast({
-        title: "Work Published!",
-        description: "Your new work has been added to the portfolio.",
-    });
+  const onAddWork = async (values: any) => {
+    const result = await handleAddWork(values);
+    if(result.success) {
+        const items = await getPortfolioItems();
+        setPortfolioItems(items);
+        setIsAddDialogOpen(false);
+        toast({
+            title: "Work Published!",
+            description: "Your new work has been added to the portfolio.",
+        });
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: result.error,
+        });
+    }
   }
 
-  const handleEditWork = async (values: any) => {
+  const onEditWork = async (values: any) => {
     if (!editingProject?.id) return;
-    console.log("Editing work", values);
-    setEditingProject(null);
-    toast({
-        title: "Work Updated!",
-        description: "Your work has been successfully updated.",
-    });
+    const result = await handleEditWork(editingProject.id, values);
+    if(result.success) {
+        const items = await getPortfolioItems();
+        setPortfolioItems(items);
+        setEditingProject(null);
+        toast({
+            title: "Work Updated!",
+            description: "Your work has been successfully updated.",
+        });
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: result.error,
+        });
+    }
   }
 
   const handleEdit = (project: PortfolioItem) => {
@@ -109,12 +131,21 @@ export default function AdminProjectsPage() {
 
   const handleDeleteConfirm = async () => {
     if (projectToDelete?.id) {
-        setPortfolioItems(prev => prev.filter(p => p.id !== projectToDelete.id));
+        const result = await handleDeleteWork(projectToDelete.id);
+        if(result.success) {
+            setPortfolioItems(prev => prev.filter(p => p.id !== projectToDelete!.id));
+            toast({
+                title: 'Work Deleted',
+                description: `"${projectToDelete.title}" has been removed.`,
+            });
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Error",
+                description: result.error,
+            });
+        }
         setProjectToDelete(null);
-        toast({
-            title: 'Work Deleted',
-            description: `"${projectToDelete.title}" has been removed.`,
-        });
     }
   };
   
@@ -131,7 +162,7 @@ export default function AdminProjectsPage() {
   }
 
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-col h-full mt-8">
       <div className="sticky top-0 z-10 bg-background/50 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
         <div className="flex items-center">
             <h1 className="text-2xl font-bold">My Works</h1>
@@ -153,7 +184,7 @@ export default function AdminProjectsPage() {
                 </DialogDescription>
                 </DialogHeader>
                 <ProjectWizard
-                  onSubmit={handleAddWork}
+                  onSubmit={onAddWork}
                 />
             </DialogContent>
             </Dialog>
@@ -171,7 +202,7 @@ export default function AdminProjectsPage() {
             </DialogHeader>
             <ProjectWizard
               project={getProjectForForm(editingProject)}
-              onSubmit={handleEditWork}
+              onSubmit={onEditWork}
             />
           </DialogContent>
         </Dialog>
@@ -318,6 +349,4 @@ export default function AdminProjectsPage() {
         </div>
     </main>
   );
-
-    
-
+}

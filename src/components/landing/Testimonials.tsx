@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
@@ -9,44 +9,30 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Quote } from 'lucide-react';
 
-const testimonials = [
+const defaultTestimonials = [
     {
+      id: 1,
       name: 'Sarah Johnson',
       company: 'Innovate Inc.',
       feedback: 'Working with Mohamed was a game-changer. His creative vision and technical expertise brought our project to life in ways we couldn\'t have imagined. A true professional and a pleasure to collaborate with.',
       avatar: 'https://picsum.photos/seed/sarah/100/100',
     },
-    {
+    { 
+      id: 2,
       name: 'Michael Chen',
       company: 'Tech Solutions',
       feedback: 'The mobile app he developed for us exceeded all expectations. It\'s intuitive, fast, and beautifully designed. Our user engagement has skyrocketed since launch.',
       avatar: 'https://picsum.photos/seed/michael/100/100',
     },
-    {
-      name: 'Emily Davis',
-      company: 'Creative Studio',
-      feedback: 'I was blown away by the branding work. The new identity is modern, memorable, and perfectly captures our company\'s essence. I couldn\'t be happier with the result.',
-      avatar: 'https://picsum.photos/seed/emily/100/100',
-    },
-    {
-      name: 'David Rodriguez',
-      company: 'Startup Hub',
-      feedback: 'His ability to translate complex ideas into a simple, elegant user interface is remarkable. The SaaS dashboard he designed is both powerful and incredibly easy to use.',
-      avatar: 'https://picsum.photos/seed/david/100/100',
-    },
-    {
-      name: 'Jessica Lee',
-      company: 'E-commerce Co.',
-      feedback: 'Our new e-commerce platform is fantastic. It\'s robust, scalable, and the custom CMS is a dream to work with. Sales have increased significantly since we launched.',
-      avatar: 'https://picsum.photos/seed/jessica/100/100',
-    },
-    {
-      name: 'Chris Taylor',
-      company: 'Health & Wellness',
-      feedback: 'The fitness app has received overwhelmingly positive feedback from our users. The attention to detail in both design and functionality is evident throughout the entire experience.',
-      avatar: 'https://picsum.photos/seed/chris/100/100',
-    },
   ];
+
+type Testimonial = {
+    id: number;
+    name: string;
+    company: string;
+    feedback: string;
+    avatar: string;
+};
 
 const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: string, children: React.ReactNode, className?: string, threshold?: number }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -59,10 +45,12 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
     )
 }
 
-export function Testimonials() {
+export function Testimonials({ initialTestimonials }: { initialTestimonials: Testimonial[] | null }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  
+  const testimonials = initialTestimonials && initialTestimonials.length > 0 ? initialTestimonials : defaultTestimonials;
 
   const plugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: false })
@@ -99,7 +87,7 @@ export function Testimonials() {
         >
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={testimonial.id || index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full mx-auto max-w-[400px]">
                   <Card className="h-full flex flex-col justify-between backdrop-blur-3xl border border-border/30 dark:border-white/10 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:border-border/60 dark:hover:border-white/20 overflow-hidden">
                     <CardContent className="p-6 flex-grow relative">

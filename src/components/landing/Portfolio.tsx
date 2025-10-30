@@ -1,19 +1,15 @@
-
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
 import { ProjectDetailModal } from '@/components/ProjectDetailModal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { placeholderProjects } from '@/lib/placeholder-data';
-
 
 export type PortfolioItem = {
-  id?: string; // Realtime Database key
+  id: number;
   title: string;
   slug: string;
   description: string;
@@ -71,14 +67,9 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 };
 
 
-export function Portfolio() {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    setPortfolioItems(placeholderProjects as PortfolioItem[]);
-    setLoading(false);
-  }, []);
+export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialItems);
+  const [loading, setLoading] = useState(false);
 
   const [filter, setFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(6);

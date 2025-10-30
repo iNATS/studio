@@ -1,6 +1,5 @@
-
 'use client';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useFormState, useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
+import { handleContactForm } from '@/lib/actions';
 
 const SubmitButton = () => {
     const { pending } = useFormStatus();
@@ -23,18 +23,25 @@ const SubmitButton = () => {
 
 const ContactForm = () => {
     const { toast } = useToast();
+    const formRef = useRef<HTMLFormElement>(null);
+    const [state, formAction] = useFormState(handleContactForm, { success: false, message: ''});
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        
-        // Simulate form submission
-        toast({
-            variant: 'success',
-            title: "Message Sent!",
-            description: "Thanks for reaching out. I'll get back to you soon.",
-        });
-        (e.target as HTMLFormElement).reset();
-    }
+    useEffect(() => {
+        if(state.success) {
+            toast({
+                variant: 'success',
+                title: "Message Sent!",
+                description: state.message,
+            });
+            formRef.current?.reset();
+        } else if (state.message) {
+             toast({
+                variant: 'destructive',
+                title: "Error",
+                description: state.message,
+            });
+        }
+    }, [state, toast]);
     
     return (
       <div className="w-full max-w-4xl mx-auto px-4">
@@ -44,7 +51,7 @@ const ContactForm = () => {
             Have a project in mind or just want to say hello? Drop me a line.
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="grid gap-6 max-w-2xl mx-auto">
+        <form ref={formRef} action={formAction} className="grid gap-6 max-w-2xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-foreground/80 dark:text-white/80">Your Name</Label>

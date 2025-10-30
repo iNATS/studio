@@ -1,52 +1,60 @@
 'use client';
 
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useInView } from '@/hooks/use-in-view';
-import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowRight } from 'lucide-react';
+import { MessageCircle, Lightbulb, PencilRuler, Code, Combine, Rocket, ArrowRight, LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-const processSteps = [
+const iconMap: { [key: string]: LucideIcon } = {
+    MessageCircle,
+    Lightbulb,
+    PencilRuler,
+    Code,
+    Combine,
+    Rocket
+};
+
+const defaultProcessSteps = [
     {
-      icon: MessageCircle,
+      icon: "MessageCircle",
       title: "Let's Talk",
       description: "A friendly chat to understand your vision and project goals.",
       color: "text-cyan-400 border-cyan-400/50 shadow-cyan-400/20",
     },
     {
-      icon: Lightbulb,
+      icon: "Lightbulb",
       title: "Big Ideas",
       description: "Crafting a unique strategy and creative proposal tailored just for you.",
       color: "text-purple-400 border-purple-400/50 shadow-purple-400/20",
     },
     {
-      icon: PencilRuler,
+      icon: "PencilRuler",
       title: "Creative Design",
       description: "Designing beautiful mockups and interactive prototypes to bring your vision to life.",
       color: "text-pink-400 border-pink-400/50 shadow-pink-400/20",
     },
     {
-      icon: Code,
+      icon: "Code",
       title: "Magic Code",
       description: "Building your project with clean, efficient code using the latest tech.",
       color: "text-green-400 border-green-400/50 shadow-green-400/20",
     },
     {
-      icon: Combine,
+      icon: "Combine",
       title: "Polish & Perfect",
       description: "Testing for a bug-free, seamless experience on all devices.",
       color: "text-orange-400 border-orange-400/50 shadow-orange-400/20",
     },
     {
-      icon: Rocket,
+      icon: "Rocket",
       title: "Liftoff!",
       description: "Launching your project for the world to see.",
       color: "text-red-400 border-red-400/50 shadow-red-400/20",
     },
 ];
-
 
 const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: string, children: React.ReactNode, className?: string, threshold?: number }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -59,7 +67,9 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
   )
 }
 
-export function Process() {
+export function Process({ content }: { content: any[] | null }) {
+    const processSteps = content && content.length > 0 ? content : defaultProcessSteps;
+    
     return (
         <AnimatedSection id="process" threshold={0.1}>
             <div className="max-w-6xl mx-auto px-4">
@@ -72,7 +82,7 @@ export function Process() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
                     {processSteps.map((step, index) => {
-                        const Icon = step.icon;
+                        const Icon = iconMap[step.icon as keyof typeof iconMap] || PencilRuler;
                         const stepRef = useRef<HTMLDivElement>(null);
                         const stepInView = useInView(stepRef, { triggerOnce: true, threshold: 0.3 });
                         

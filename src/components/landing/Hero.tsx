@@ -1,19 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
-export function Hero() {
+export function Hero({ content }: { content: any }) {
   const [isMounted, setIsMounted] = useState(false);
-
+  
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const { title, subtitle, description, avatar } = content || {
+      title: 'Mohamed Aref',
+      subtitle: 'Creative Developer & Designer',
+      description: "I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.",
+      avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj'
+  };
+
 
   const FADE_UP_VARIANTS = {
     hidden: { opacity: 0, y: 20 },
@@ -53,19 +59,19 @@ export function Hero() {
           className="flex flex-col items-center"
         >
           <div className="relative w-32 h-32 sm:w-40 sm:h-40 mb-6">
-            <Image
-              src="https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj"
-              alt="Mohamed Aref"
+            {avatar && <Image
+              src={avatar}
+              alt={title}
               fill
               className="object-contain rounded-full"
               priority
-            />
+            />}
           </div>
           <p className="text-lg md:text-xl font-medium text-muted-foreground">
-            Creative Developer & Designer
+            {subtitle}
           </p>
           <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline mt-2 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary/80 to-primary/40 dark:from-white dark:via-white/80 dark:to-white/40">
-            Mohamed Aref
+            {title}
           </h1>
         </motion.div>
 
@@ -74,7 +80,7 @@ export function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut', delay: 0.4 }}
           className="mt-6 max-w-[600px] text-muted-foreground text-base sm:text-lg"
         >
-          I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.
+          {description}
         </motion.p>
         
         <motion.div

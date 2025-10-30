@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -16,82 +15,75 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from '@/hooks/use-toast';
 import { PlusCircle, Trash2, Upload } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
+import { getPageContent, getTestimonials } from '@/lib/db';
+import { handlePageContentSave, handleAddTestimonial, handleTestimonialSave, handleRemoveTestimonial } from '@/lib/actions';
 
-// Mock data for testimonials
-const initialTestimonials = [
-    {
-      name: 'Sarah Johnson',
-      company: 'Innovate Inc.',
-      feedback: 'Working with Mohamed was a game-changer. His creative vision and technical expertise brought our project to life in ways we couldn\'t have imagined.',
-      avatar: 'https://picsum.photos/seed/sarah/100/100',
-    },
-    {
-      name: 'Michael Chen',
-      company: 'Tech Solutions',
-      feedback: 'The mobile app he developed for us exceeded all expectations. It\'s intuitive, fast, and beautifully designed.',
-      avatar: 'https://picsum.photos/seed/michael/100/100',
-    },
-];
-
-// Mock data for process steps
-const initialProcessSteps = [
-    {
-      title: "Let's Talk",
-      description: "A friendly chat to understand your vision and project goals.",
-    },
-    {
-      title: "Big Ideas",
-      description: "Crafting a unique strategy and creative proposal tailored just for you.",
-    },
-    {
-      title: "Creative Design",
-      description: "Designing beautiful mockups and interactive prototypes to bring your vision to life.",
-    },
-];
-
+type Testimonial = {
+  id: number;
+  name: string;
+  company: string;
+  feedback: string;
+  avatar: string;
+};
 
 export default function PageContentPage() {
-    const [testimonials, setTestimonials] = React.useState(initialTestimonials);
-    const [processSteps, setProcessSteps] = React.useState(initialProcessSteps);
-    const [avatarPreview, setAvatarPreview] = React.useState<string | null>('https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj');
+    const [heroContent, setHeroContent] = React.useState({ title: '', subtitle: '', description: ''});
+    const [aboutContent, setAboutContent] = React.useState({ title: '', description: '', skills: [], avatar: '' });
+    const [processSteps, setProcessSteps] = React.useState<any[]>([]);
+    const [testimonials, setTestimonials] = React.useState<Testimonial[]>([]);
+    const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null);
 
-    const handleTestimonialSave = (index: number, data: any) => {
-        const newTestimonials = [...testimonials];
-        newTestimonials[index] = data;
-        setTestimonials(newTestimonials);
-        toast({ title: 'Success', description: 'Testimonial updated successfully!' });
-    };
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const [hero, about, process, testimonialsData] = await Promise.all([
+                getPageContent('hero'),
+                getPageContent('about'),
+                getPageContent('process'),
+                getTestimonials()
+            ]);
+            if (hero) setHeroContent(hero);
+            if (about) {
+                setAboutContent(about);
+                setAvatarPreview(about.avatar);
+            }
+            if (process) setProcessSteps(process);
+            if (testimonialsData) setTestimonials(testimonialsData as Testimonial[]);
+        };
+        fetchData();
+    }, []);
 
-    const handleAddTestimonial = () => {
-        setTestimonials([...testimonials, { name: '', company: '', feedback: '', avatar: 'https://picsum.photos/seed/new/100/100' }]);
-    };
+    const onGenericSave = async (e: React.FormEvent<HTMLFormElement>, section: string) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const result = await handlePageContentSave(section, formData);
+        if(result.success) {
+            toast({ title: 'Success', description: `${section} content updated!` });
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: `Failed to update ${section} content.` });
+        }
+    }
     
-    const handleRemoveTestimonial = (index: number) => {
-        setTestimonials(testimonials.filter((_, i) => i !== index));
+    const onAddTestimonial = async () => {
+        await handleAddTestimonial();
+        const data = await getTestimonials();
+        setTestimonials(data as Testimonial[]);
+        toast({ title: 'Success', description: 'New testimonial added.' });
+    };
+
+    const onRemoveTestimonial = async (id: number) => {
+        await handleRemoveTestimonial(id);
+        setTestimonials(testimonials.filter((t) => t.id !== id));
         toast({ title: 'Success', description: 'Testimonial removed.' });
     };
-    
-    const handleProcessStepSave = (index: number, data: any) => {
-        const newProcessSteps = [...processSteps];
-        newProcessSteps[index] = data;
-        setProcessSteps(newProcessSteps);
-        toast({ title: 'Success', description: 'Process step updated successfully!' });
-    };
-    
-    const handleAddProcessStep = () => {
-        setProcessSteps([...processSteps, { title: '', description: '' }]);
-    };
 
-    const handleRemoveProcessStep = (index: number) => {
-        setProcessSteps(processSteps.filter((_, i) => i !== index));
-        toast({ title: 'Success', description: 'Process step removed.' });
-    };
-    
-    const handleGenericSave = (e: React.FormEvent<HTMLFormElement>, section: string) => {
+    const onTestimonialSave = async (e: React.FormEvent<HTMLFormElement>, id: number) => {
         e.preventDefault();
-        toast({ title: 'Success', description: `${section} content updated!` });
-    }
+        const formData = new FormData(e.currentTarget);
+        await handleTestimonialSave(id, formData);
+        const data = await getTestimonials();
+        setTestimonials(data as Testimonial[]);
+        toast({ title: 'Success', description: 'Testimonial updated successfully!' });
+    };
     
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -120,23 +112,23 @@ export default function PageContentPage() {
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" defaultValue="hero">
                     
                     <AccordionItem value="hero">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">Hero Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => handleGenericSave(e, 'Hero')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => onGenericSave(e, 'hero')}>
                         <div className="space-y-2">
                             <Label htmlFor="hero-title" className="text-zinc-700 dark:text-white/70">Title</Label>
-                            <Input id="hero-title" defaultValue="Mohamed Aref" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Input id="hero-title" name="title" defaultValue={heroContent.title} onChange={(e) => setHeroContent({...heroContent, title: e.target.value})} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="hero-subtitle" className="text-zinc-700 dark:text-white/70">Subtitle</Label>
-                            <Input id="hero-subtitle" defaultValue="Creative Developer & Designer" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Input id="hero-subtitle" name="subtitle" defaultValue={heroContent.subtitle} onChange={(e) => setHeroContent({...heroContent, subtitle: e.target.value})} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="hero-description" className="text-zinc-700 dark:text-white/70">Description</Label>
-                            <Textarea id="hero-description" defaultValue="I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Textarea id="hero-description" name="description" defaultValue={heroContent.description} onChange={(e) => setHeroContent({...heroContent, description: e.target.value})} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <Button className="rounded-lg" type="submit">Save Hero Content</Button>
                         </form>
@@ -146,7 +138,8 @@ export default function PageContentPage() {
                     <AccordionItem value="about">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => handleGenericSave(e, 'About')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => onGenericSave(e, 'about')}>
+                        <input type="hidden" name="currentAvatar" value={aboutContent.avatar} />
                         <div className="space-y-2">
                             <Label className="text-zinc-700 dark:text-white/70">Avatar</Label>
                             <div className="flex items-center gap-4">
@@ -155,7 +148,7 @@ export default function PageContentPage() {
                                     <AvatarFallback>MA</AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
-                                    <Input id="avatar-upload" type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
+                                    <Input id="avatar-upload" name="avatar" type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
                                     <Label htmlFor="avatar-upload" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer">
                                         <Upload className="mr-2 h-4 w-4" />
                                         Upload New Image
@@ -166,15 +159,15 @@ export default function PageContentPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-title" className="text-zinc-700 dark:text-white/70">Title</Label>
-                            <Input id="about-title" defaultValue="Mohamed Aref" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Input id="about-title" name="about-title" defaultValue={aboutContent.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-description" className="text-zinc-700 dark:text-white/70">Description</Label>
-                            <Textarea id="about-description" rows={4} defaultValue="I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Textarea id="about-description" name="about-description" rows={4} defaultValue={aboutContent.description} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-skills" className="text-zinc-700 dark:text-white/70">Skills (comma-separated)</Label>
-                            <Textarea id="about-skills" rows={3} defaultValue="UI/UX Design, Web Design, Mobile Design, Logo Design, Visual Identity, Wire-framing, Prototyping, Figma, Adobe XD, Photoshop, Illustrator, Web Development, HTML, CSS, JavaScript, Bootstrap, Tailwind, Webflow, Wordpress, Restfull API, Google maps API, AI Vibe coding, dev ops, hosting, CPanel, VPS, Shared Host" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Textarea id="about-skills" name="about-skills" rows={3} defaultValue={Array.isArray(aboutContent.skills) ? aboutContent.skills.join(', ') : ''} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <Button className="rounded-lg" type="submit">Save About Content</Button>
                         </form>
@@ -185,23 +178,7 @@ export default function PageContentPage() {
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">Process Section</AccordionTrigger>
                     <AccordionContent>
                         <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10">
-                        {processSteps.map((step, index) => (
-                            <form key={index} className="space-y-3 p-3 rounded-md bg-black/5 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleProcessStepSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
-                                <div className="space-y-2">
-                                    <Label htmlFor={`process-title-${index}`} className="text-zinc-700 dark:text-white/70">Step {index + 1} Title</Label>
-                                    <Input id={`process-title-${index}`} name="title" defaultValue={step.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor={`process-desc-${index}`} className="text-zinc-700 dark:text-white/70">Description</Label>
-                                    <Input id={`process-desc-${index}`} name="description" defaultValue={step.description} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20" />
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <Button type="submit" size="sm" className="rounded-lg">Save Step</Button>
-                                    <Button type="button" variant="destructive" size="icon" className="rounded-full h-7 w-7" onClick={() => handleRemoveProcessStep(index)}><Trash2 className="h-4 w-4" /></Button>
-                                </div>
-                            </form>
-                        ))}
-                        <Button onClick={handleAddProcessStep} variant="outline" className="w-full rounded-lg mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Process Step</Button>
+                         <p className="text-sm text-muted-foreground">This section is not currently editable.</p>
                         </div>
                     </AccordionContent>
                     </AccordionItem>
@@ -211,7 +188,7 @@ export default function PageContentPage() {
                     <AccordionContent>
                         <div className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10">
                         {testimonials.map((testimonial, index) => (
-                            <form key={index} className="space-y-3 p-3 rounded-md bg-black/5 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative" onSubmit={(e) => { e.preventDefault(); handleTestimonialSave(index, Object.fromEntries(new FormData(e.currentTarget).entries())); }}>
+                            <form key={testimonial.id} className="space-y-3 p-3 rounded-md bg-black/5 dark:bg-white/5 border border-zinc-300 dark:border-white/10 relative" onSubmit={(e) => onTestimonialSave(e, testimonial.id)}>
                                 <div className="space-y-2">
                                     <Label htmlFor={`testimonial-name-${index}`} className="text-zinc-700 dark:text-white/70">Name</Label>
                                     <Input id={`testimonial-name-${index}`} name="name" defaultValue={testimonial.name} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
@@ -226,11 +203,11 @@ export default function PageContentPage() {
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <Button type="submit" size="sm" className="rounded-lg">Save Testimonial</Button>
-                                    <Button type="button" variant="destructive" size="icon" className="rounded-full h-7 w-7" onClick={() => handleRemoveTestimonial(index)}><Trash2 className="h-4 w-4" /></Button>
+                                    <Button type="button" variant="destructive" size="icon" className="rounded-full h-7 w-7" onClick={() => onRemoveTestimonial(testimonial.id)}><Trash2 className="h-4 w-4" /></Button>
                                 </div>
                             </form>
                         ))}
-                        <Button onClick={handleAddTestimonial} variant="outline" className="w-full rounded-lg mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Testimonial</Button>
+                        <Button onClick={onAddTestimonial} variant="outline" className="w-full rounded-lg mt-4"><PlusCircle className="mr-2 h-4 w-4" /> Add Testimonial</Button>
                         </div>
                     </AccordionContent>
                     </AccordionItem>
@@ -242,5 +219,3 @@ export default function PageContentPage() {
     </main>
   );
 }
-
-    

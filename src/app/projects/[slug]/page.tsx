@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound } from 'next/navigation';
@@ -10,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useMemo, use } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     Carousel,
     CarouselContent,
@@ -20,7 +19,7 @@ import {
   } from "@/components/ui/carousel"
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { Skeleton } from '@/components/ui/skeleton';
-import { placeholderProjects } from '@/lib/placeholder-data';
+import { getPortfolioItemBySlug } from '@/lib/db';
 
 const ImageLightbox = ({
     images,
@@ -141,12 +140,12 @@ const ImageLightbox = ({
                                 transition={{ duration: 0.3, ease: 'easeOut' }}
                                 >
                                 <div className="relative w-full h-full flex-grow">
-                                <Image
+                                {currentImage && <Image
                                     src={currentImage}
                                     alt="Project screenshot"
                                     fill
-                                    className="object-cover"
-                                />
+                                    className="object-contain"
+                                />}
                                 </div>
                             </motion.div>
                         </motion.div>
@@ -189,11 +188,14 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const foundProject = placeholderProjects.find(p => p.slug === params.slug);
-    if (foundProject) {
+    async function fetchProject() {
+      const foundProject = await getPortfolioItemBySlug(params.slug);
+      if (foundProject) {
         setProject(foundProject as PortfolioItem);
+      }
+      setLoading(false);
     }
-    setLoading(false);
+    fetchProject();
   }, [params.slug]);
 
 
@@ -258,14 +260,14 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
 
           <div className="bg-card/60 dark:bg-black/20 backdrop-blur-2xl border border-border/40 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden">
             <div className="relative w-full h-64 md:h-96">
-              <Image
+              {project.image && <Image
                 src={project.image}
                 alt={project.title}
                 fill
                 className="object-cover"
                 data-ai-hint={project.hint}
                 priority
-              />
+              />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 p-6 sm:p-10">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline text-white shadow-2xl">{project.title}</h1>
@@ -305,12 +307,12 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
                               className="relative aspect-video rounded-xl overflow-hidden border border-border/20 shadow-lg group cursor-pointer"
                               onClick={() => setLightboxIndex(index)}
                           >
-                              <Image
+                              {screenshot && <Image
                                   src={screenshot}
                                   alt={`${project.title} screenshot ${index + 1}`}
                                   fill
                                   className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
+                              />}
                           </div>
                       </CarouselItem>
                       ))}

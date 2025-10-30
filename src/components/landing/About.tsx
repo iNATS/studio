@@ -17,37 +17,32 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
     )
 }
 
-export function About() {
+export function About({ content }: { content: any }) {
+  const { title, description, skills, avatar } = content || { title: 'Mohamed Aref', description: "I'm a passionate developer...", skills: [], avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' };
+  
   return (
     <AnimatedSection id="about" threshold={0.4} className="px-4">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-3 gap-12 items-start">
           <div className="flex flex-col items-center text-center md:col-span-1">
             <Avatar className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-border/80 dark:border-white/20 shadow-2xl mb-4">
-              <AvatarImage src="https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj" alt="Mohamed Aref" />
-              <AvatarFallback>MA</AvatarFallback>
+              <AvatarImage src={avatar} alt={title} />
+              <AvatarFallback>{title.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
             </Avatar>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">Mohamed Aref</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter font-headline mt-4">{title}</h2>
             <p className="text-foreground/70 dark:text-white/70 mt-2 text-xl">Creative Developer & Designer</p>
           </div>
           <div className="md:col-span-2 space-y-10 mt-4 md:mt-0">
             <div className="space-y-4 text-center md:text-left">
               <h3 className="text-2xl font-bold tracking-tighter font-headline">About Me</h3>
               <p className="text-foreground/80 dark:text-white/80 text-base sm:text-lg leading-relaxed">
-                I'm a passionate developer and designer with a knack for crafting elegant solutions to complex problems. I thrive on bringing ideas to life, from the initial concept all the way to a polished, performant product. My goal is to create digital experiences that are not only functional but also beautiful and intuitive.
+                {description}
               </p>
             </div>
             <div>
               <h3 className="text-2xl font-bold tracking-tighter font-headline mb-4 text-center md:text-left">My Skills</h3>
               <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
-                {[
-                  'UI/UX Design', 'Web Design', 'Mobile Design', 'Logo Design', 
-                  'Visual Identity', 'Wire-framing', 'Prototyping', 'Figma', 
-                  'Adobe XD', 'Photoshop', 'Illustrator', 'Web Development', 'HTML', 
-                  'CSS', 'JavaScript', 'Bootstrap', 'Tailwind', 'Webflow', 
-                  'Wordpress', 'Restfull API', 'Google maps API', 'AI Vibe coding', 
-                  'dev ops', 'hosting', 'CPanel', 'VPS', 'Shared Host'
-                ].map(skill => (
+                {(skills || []).map((skill: string) => (
                     <Button key={skill} variant="ghost" size="sm" className="btn-glass rounded-full text-xs font-medium pointer-events-none h-auto px-3 py-1.5">
                         {skill}
                     </Button>

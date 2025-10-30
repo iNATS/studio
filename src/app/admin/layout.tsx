@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -18,6 +17,7 @@ import {
   SidebarMenuSubContent,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SheetTitle,
 } from '@/components/ui/sidebar';
 import { Home, Settings, Briefcase, Shield, Users, BarChart3, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
@@ -62,6 +62,7 @@ export default function AdminLayout({
           className="bg-background/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-border/40 dark:border-white/10 text-foreground"
         >
           <SidebarHeader className="p-3">
+             <SheetTitle className="hidden">Sidebar</SheetTitle>
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white" />
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
@@ -150,7 +151,7 @@ export default function AdminLayout({
         </Sidebar>
         <SidebarInset>
             <div className="flex flex-col h-full">
-                 <header className="md:hidden flex items-center justify-between p-4 border-b border-border/50">
+                <header className="md:hidden flex items-center justify-between p-4 border-b border-border/50">
                     <div className="flex items-center gap-3">
                         <SidebarTrigger />
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center">
