@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -9,6 +10,14 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Trash2 } from 'lucide-react';
@@ -350,3 +359,5 @@ export default function AdminProjectsPage() {
     </main>
   );
 }
+
+    
