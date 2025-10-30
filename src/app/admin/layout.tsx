@@ -62,7 +62,6 @@ export default function AdminLayout({
           collapsible="icon"
           className="bg-background/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-border/40 dark:border-white/10 text-foreground"
         >
-           <SheetTitle className="hidden">Sidebar</SheetTitle>
           <SidebarHeader className="p-3">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white" />
@@ -170,3 +169,5 @@ export default function AdminLayout({
     </div>
   );
 }
+
+    
