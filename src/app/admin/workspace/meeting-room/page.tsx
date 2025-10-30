@@ -23,6 +23,7 @@ import {
   Video,
   Users,
 } from 'lucide-react';
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -121,7 +122,7 @@ const MailView = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] lg:grid-cols-[320px_440px_1fr] gap-6 h-full">
             {/* Mailbox Filters/Folders */}
-            <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2">
+            <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2 h-full">
                 <div className="p-2">
                     <Button className="w-full rounded-lg gap-2">
                         <Edit className="h-4 w-4" /> Compose
@@ -166,34 +167,36 @@ const MailView = () => {
                         <Input placeholder="Search mail..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10 rounded-lg" />
                     </div>
                 </div>
-                <ScrollArea className="flex-1 h-full">
-                <div className="flex flex-col gap-2 p-4 pt-0">
-                    {emails.map((email) => (
-                    <button
-                        key={email.id}
-                        className={cn(
-                        "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-black/5 dark:hover:bg-white/5",
-                        selectedEmail?.id === email.id && "bg-black/10 dark:bg-white/10 border-zinc-300 dark:border-white/20"
-                        )}
-                        onClick={() => setSelectedEmail(email)}
-                    >
-                        <div className="flex w-full items-center">
-                        <div className="flex items-center gap-3">
-                            {!email.read && <span className="flex h-2 w-2 rounded-full bg-blue-500" />}
-                            <div className="font-semibold">{email.name}</div>
-                        </div>
-                        <div className={cn("ml-auto text-xs", selectedEmail?.id === email.id ? "text-foreground" : "text-muted-foreground")}>
-                            {formatDistanceToNow(new Date(email.date), { addSuffix: true })}
-                        </div>
-                        </div>
-                        <div className="text-xs font-medium">{email.subject}</div>
-                        <div className="line-clamp-2 text-xs text-muted-foreground">
-                        {email.text.substring(0, 300)}
-                        </div>
-                    </button>
-                    ))}
+                <div className="flex-1 overflow-hidden h-full">
+                    <ScrollArea className="h-full">
+                    <div className="flex flex-col gap-2 p-4 pt-0">
+                        {emails.map((email) => (
+                        <button
+                            key={email.id}
+                            className={cn(
+                            "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-black/5 dark:hover:bg-white/5",
+                            selectedEmail?.id === email.id && "bg-black/10 dark:bg-white/10 border-zinc-300 dark:border-white/20"
+                            )}
+                            onClick={() => setSelectedEmail(email)}
+                        >
+                            <div className="flex w-full items-center">
+                            <div className="flex items-center gap-3">
+                                {!email.read && <span className="flex h-2 w-2 rounded-full bg-blue-500" />}
+                                <div className="font-semibold">{email.name}</div>
+                            </div>
+                            <div className={cn("ml-auto text-xs", selectedEmail?.id === email.id ? "text-foreground" : "text-muted-foreground")}>
+                                {formatDistanceToNow(new Date(email.date), { addSuffix: true })}
+                            </div>
+                            </div>
+                            <div className="text-xs font-medium">{email.subject}</div>
+                            <div className="line-clamp-2 text-xs text-muted-foreground">
+                            {email.text.substring(0, 300)}
+                            </div>
+                        </button>
+                        ))}
+                    </div>
+                    </ScrollArea>
                 </div>
-                </ScrollArea>
             </div>
 
             {/* Mail Display */}
@@ -257,9 +260,11 @@ const MeetingsView = () => {
                         />
                     </CardContent>
                  </Card>
-                 <Button className="w-full mt-4 rounded-lg gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Schedule New Meeting
+                 <Button asChild className="w-full mt-4 rounded-lg gap-2">
+                    <Link href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">
+                      <Calendar className="h-4 w-4" />
+                      Schedule New Meeting
+                    </Link>
                 </Button>
             </div>
         </div>
@@ -346,5 +351,3 @@ export default function CommunicationsPage() {
     </div>
   );
 }
-
-    
