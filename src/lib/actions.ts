@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import {
@@ -199,4 +200,13 @@ export async function handleDeletePortfolioCategory(id: number) {
     return result;
 }
 
+// Mail Settings
+export async function handleMailSettingsSave(formData: FormData) {
+    const content = Object.fromEntries(formData.entries());
+    const result = await updatePageContent('mail_settings', content);
+    if (result.success) {
+        revalidatePath('/admin/settings');
+    }
+    return result;
+}
     

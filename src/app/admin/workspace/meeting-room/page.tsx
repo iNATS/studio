@@ -24,6 +24,7 @@ import {
   Video,
   Plus,
   X,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -45,6 +46,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogFooter,
   } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, format, isSameDay } from 'date-fns';
@@ -56,11 +58,47 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 
 type MailboxItem = (typeof emails)[number];
 type Meeting = (typeof initialMeetings)[number];
 type Contact = (typeof contacts)[number];
+
+const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) => {
+    const { toast } = useToast();
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        // Here you would handle email sending via a server action
+        toast({ title: "Email Sent!", description: "Your message has been sent successfully." });
+        onOpenChange(false);
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>New Message</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="to" className="text-right">To</Label>
+                        <Input id="to" name="to" type="email" required className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" placeholder="recipient@example.com" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="subject" className="text-right">Subject</Label>
+                        <Input id="subject" name="subject" required className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
+                    </div>
+                    <Textarea name="body" rows={10} className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" placeholder="Write your message here..."/>
+                    <DialogFooter>
+                        <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+                        <Button type="submit" className="gap-2"><Send className="h-4 w-4"/>Send</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) => {
     const [formattedDate, setFormattedDate] = React.useState('');
@@ -131,14 +169,17 @@ const MailDisplay = ({ selectedEmail }: { selectedEmail: MailboxItem | null }) =
 
 const MailView = () => {
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(emails[0]);
+    const [isComposeOpen, setIsComposeOpen] = React.useState(false);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
             {/* Mailbox Filters/Folders */}
             <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2 h-full">
                 <div className="p-2">
-                    <Button className="w-full rounded-lg gap-2">
+                    <Button className="w-full rounded-lg gap-2" onClick={() => setIsComposeOpen(true)}>
                         <Edit className="h-4 w-4" /> Compose
                     </Button>
+                    <ComposeDialog open={isComposeOpen} onOpenChange={setIsComposeOpen} />
                 </div>
                 <nav className="flex-1 space-y-1 p-2">
                     <a href="#" className="flex items-center gap-3 rounded-lg bg-black/10 dark:bg-white/20 px-3 py-2 text-foreground font-semibold">
@@ -407,7 +448,7 @@ const MeetingsView = () => {
                         />
                     </CardContent>
                  </Card>
-                <Dialog open={isScheduling} onOpenChange={handleCloseDialog}>
+                 <Dialog open={isScheduling} onOpenChange={handleCloseDialog}>
                     <DialogTrigger asChild>
                         <Button className="w-full mt-4 rounded-lg gap-2">
                             <Plus className="h-4 w-4" />
@@ -467,9 +508,3 @@ export default function CommunicationsPage() {
     </div>
   );
 }
-
-
-    
-
-    
-
