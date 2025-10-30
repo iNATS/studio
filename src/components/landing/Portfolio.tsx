@@ -67,8 +67,9 @@ const PortfolioCard = ({ item, index, isVisible, onClick }: { item: PortfolioIte
 };
 
 
-export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
+export function Portfolio({ initialItems, initialCategories }: { initialItems: PortfolioItem[], initialCategories: {id: number, name: string}[] }) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialItems || []);
+  const [categories, setCategories] = useState(initialCategories || []);
   const [loading, setLoading] = useState(!initialItems);
 
   const [filter, setFilter] = useState('all');
@@ -84,6 +85,12 @@ export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
       setLoading(false);
     }
   }, [initialItems]);
+
+  useEffect(() => {
+    if (initialCategories) {
+      setCategories(initialCategories);
+    }
+  }, [initialCategories]);
 
   useEffect(() => {
     if (inView) {
@@ -110,7 +117,7 @@ export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
   const filteredItems = React.useMemo(() => {
     if (!portfolioItems) return [];
     if (filter === 'all') return portfolioItems;
-    return portfolioItems.filter((item) => item.category === filter);
+    return portfolioItems.filter((item) => item.category.toLowerCase() === filter.toLowerCase());
   }, [portfolioItems, filter]);
 
   const visibleItems = React.useMemo(() => {
@@ -134,27 +141,16 @@ export function Portfolio({ initialItems }: { initialItems: PortfolioItem[] }) {
           >
             All
           </Button>
-          <Button
-             variant="ghost"
-             onClick={() => handleFilterChange('web')}
-             className={cn("btn-glass rounded-full text-base", filter === 'web' ? "btn-glass-active" : "")}
-          >
-            Web
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => handleFilterChange('mobile')}
-            className={cn("btn-glass rounded-full text-base", filter === 'mobile' ? "btn-glass-active" : "")}
-          >
-            Mobile
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => handleFilterChange('design')}
-            className={cn("btn-glass rounded-full text-base", filter === 'design' ? "btn-glass-active" : "")}
-          >
-            Design
-          </Button>
+          {categories.map(category => (
+            <Button
+              key={category.id}
+              variant="ghost"
+              onClick={() => handleFilterChange(category.name)}
+              className={cn("btn-glass rounded-full text-base", filter === category.name ? "btn-glass-active" : "")}
+            >
+              {category.name}
+            </Button>
+          ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
         {loading ? (

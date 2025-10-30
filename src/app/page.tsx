@@ -10,12 +10,13 @@ import { Process } from '@/components/landing/Process';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { Contact } from '@/components/landing/Contact';
 import { motion } from 'framer-motion';
-import { getPortfolioItems, getPageContent, getTestimonials } from '@/lib/db';
+import { getPortfolioItems, getPageContent, getTestimonials, getPortfolioCategories } from '@/lib/db';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
+  const [portfolioCategories, setPortfolioCategories] = useState<{id: number, name: string}[]>([]);
   const [heroContent, setHeroContent] = useState(null);
   const [aboutContent, setAboutContent] = useState(null);
   const [processContent, setProcessContent] = useState(null);
@@ -25,18 +26,21 @@ export default function Home() {
     async function fetchData() {
       const [
         items,
+        categories,
         hero,
         about,
         process,
         testimonialsData,
       ] = await Promise.all([
         getPortfolioItems(),
+        getPortfolioCategories(),
         getPageContent('hero'),
         getPageContent('about'),
         getPageContent('process'),
         getTestimonials(),
       ]);
       setPortfolioItems(items);
+      setPortfolioCategories(categories);
       setHeroContent(hero);
       setAboutContent(about);
       setProcessContent(process);
@@ -63,7 +67,7 @@ export default function Home() {
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <Portfolio initialItems={portfolioItems} />
+          <Portfolio initialItems={portfolioItems} initialCategories={portfolioCategories} />
           <About content={aboutContent} />
           <Process content={processContent} />
           <Testimonials initialTestimonials={testimonials} />
