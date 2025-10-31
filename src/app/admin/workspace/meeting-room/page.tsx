@@ -100,6 +100,7 @@ const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (o
 
 const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selectedEmail: MailboxItem | null; onOpenChange: (open: boolean) => void; onAction: (action: string, emailId: string) => void; }) => {
     const [formattedDate, setFormattedDate] = React.useState('');
+    const { toast } = useToast();
 
     React.useEffect(() => {
         if (selectedEmail) {
@@ -118,36 +119,38 @@ const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selectedEmail:
   return (
     <Dialog open={!!selectedEmail} onOpenChange={onOpenChange}>
         <DialogContent className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col h-[90vh] max-h-[800px] w-[90vw] max-w-4xl p-0">
-          <div className="flex items-center p-4 border-b border-zinc-200/80 dark:border-white/10">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
-                <AvatarImage src={selectedEmail.avatar} alt={selectedEmail.name} />
-                <AvatarFallback>{selectedEmail.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{selectedEmail.name}</p>
-                <p className="text-sm text-muted-foreground">{`to me <mohamed.aref@example.com>`}</p>
+          <DialogHeader className="p-4 border-b border-zinc-200/80 dark:border-white/10">
+            <div className="flex items-center">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
+                  <AvatarImage src={selectedEmail.avatar} alt={selectedEmail.name} />
+                  <AvatarFallback>{selectedEmail.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <DialogTitle className="font-semibold text-left">{selectedEmail.name}</DialogTitle>
+                  <DialogDescription className="text-sm text-muted-foreground text-left">{`to me <mohamed.aref@example.com>`}</DialogDescription>
+                </div>
+              </div>
+              <div className="ml-auto flex items-center gap-2">
+                {formattedDate && <span className="text-xs text-muted-foreground">{formattedDate}</span>}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+                    <DropdownMenuItem onClick={() => handleAction('reply')}><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleAction('reply-all')}><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleAction('forward')}><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleAction('archive')}><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white" onClick={() => handleAction('delete')}><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
-            <div className="ml-auto flex items-center gap-2">
-              {formattedDate && <span className="text-xs text-muted-foreground">{formattedDate}</span>}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                  <DropdownMenuItem onClick={() => handleAction('reply')}><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleAction('reply-all')}><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleAction('forward')}><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleAction('archive')}><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white" onClick={() => handleAction('delete')}><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+          </DialogHeader>
           <ScrollArea className="flex-1">
             <div className="p-6">
               <h2 className="text-xl font-bold mb-4">{selectedEmail.subject}</h2>
@@ -563,5 +566,7 @@ export default function CommunicationsPage() {
     </div>
   );
 }
+
+    
 
     
