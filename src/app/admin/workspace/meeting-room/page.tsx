@@ -223,9 +223,9 @@ const MailView = () => {
 
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[320px_1fr] gap-6 items-start">
             {/* Mailbox Filters/Folders */}
-            <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2 h-full">
+            <div className="hidden md:flex bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-col p-2">
                 <div className="p-2">
                     <Button className="w-full rounded-lg gap-2" onClick={() => setIsComposeOpen(true)}>
                         <Edit className="h-4 w-4" /> Compose
