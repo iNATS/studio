@@ -61,6 +61,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type MailboxItem = (typeof initialEmailsData)[number];
 type Meeting = (typeof initialMeetings)[number];
+type MailboxType = 'inbox' | 'starred' | 'sent' | 'snoozed' | 'archive' | 'trash';
 
 const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) => {
     const { toast } = useToast();
@@ -174,6 +175,7 @@ const MailView = () => {
     const [emails, setEmails] = React.useState(initialEmailsData);
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(null);
     const [isComposeOpen, setIsComposeOpen] = React.useState(false);
+    const [activeMailbox, setActiveMailbox] = React.useState<MailboxType>('inbox');
     const { toast } = useToast();
 
     const handleEmailAction = (action: string, emailId: string) => {
@@ -201,6 +203,23 @@ const MailView = () => {
                 break;
         }
     };
+    
+    const displayedEmails = React.useMemo(() => {
+        // In a real app, you'd fetch emails for the current mailbox
+        if (activeMailbox === 'inbox') {
+            return emails;
+        }
+        return [];
+    }, [activeMailbox, emails]);
+
+    const mailFolders = [
+        { id: 'inbox', label: 'Inbox', icon: Inbox, count: emails.filter(e => !e.read).length },
+        { id: 'starred', label: 'Starred', icon: Star, count: 0 },
+        { id: 'sent', label: 'Sent', icon: Send, count: 0 },
+        { id: 'snoozed', label: 'Snoozed', icon: Clock, count: 0 },
+        { id: 'archive', label: 'Archive', icon: Archive, count: 0 },
+        { id: 'trash', label: 'Trash', icon: Trash2, count: 0 },
+    ];
 
 
     return (
@@ -214,33 +233,28 @@ const MailView = () => {
                     <ComposeDialog open={isComposeOpen} onOpenChange={setIsComposeOpen} />
                 </div>
                 <nav className="flex-1 space-y-1 p-2">
-                    <a href="#" className="flex items-center gap-3 rounded-lg bg-black/10 dark:bg-white/20 px-3 py-2 text-foreground font-semibold">
-                        <Inbox className="h-4 w-4" />
-                        Inbox
-                        <span className="ml-auto flex h-6 w-9 items-center justify-center rounded-full bg-blue-500/80 text-white text-xs">
-                            {emails.filter(e => !e.read).length}
-                        </span>
-                    </a>
-                    <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                        <Star className="h-4 w-4" />
-                        Starred
-                    </a>
-                    <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                        <Send className="h-4 w-4" />
-                        Sent
-                    </a>
-                    <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                        <Clock className="h-4 w-4" />
-                        Snoozed
-                    </a>
-                    <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                        <Archive className="h-4 w-4" />
-                        Archive
-                    </a>
-                    <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                        <Trash2 className="h-4 w-4" />
-                        Trash
-                    </a>
+                   {mailFolders.map((folder) => {
+                       const Icon = folder.icon;
+                       const isActive = activeMailbox === folder.id;
+                       return (
+                            <button
+                                key={folder.id}
+                                onClick={() => setActiveMailbox(folder.id as MailboxType)}
+                                className={cn(
+                                    "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-white",
+                                    isActive && "bg-black/10 dark:bg-white/20 text-foreground font-semibold"
+                                )}
+                            >
+                                <Icon className="h-4 w-4" />
+                                {folder.label}
+                                {folder.count > 0 && (
+                                    <span className="ml-auto flex h-6 w-9 items-center justify-center rounded-full bg-blue-500/80 text-white text-xs">
+                                        {folder.count}
+                                    </span>
+                                )}
+                            </button>
+                       )
+                   })}
                 </nav>
             </div>
 
@@ -255,7 +269,7 @@ const MailView = () => {
                 <div className="flex-1 overflow-hidden">
                   <ScrollArea className="h-full">
                     <div className="flex flex-col gap-2 p-4 pt-0">
-                        {emails.map((email) => (
+                        {displayedEmails.map((email) => (
                         <button
                             key={email.id}
                             className={cn(
@@ -279,6 +293,11 @@ const MailView = () => {
                             </div>
                         </button>
                         ))}
+                         {displayedEmails.length === 0 && (
+                            <div className="text-center py-20 text-muted-foreground">
+                                <p>No emails in this folder.</p>
+                            </div>
+                         )}
                     </div>
                   </ScrollArea>
                 </div>
@@ -544,3 +563,5 @@ export default function CommunicationsPage() {
     </div>
   );
 }
+
+    
