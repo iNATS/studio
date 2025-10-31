@@ -23,7 +23,6 @@ import {
   Video,
   Plus,
   X,
-  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -49,7 +48,7 @@ import {
   } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, format, isSameDay } from 'date-fns';
-import { emails, meetings as initialMeetings, contacts } from './data';
+import { emails as initialEmailsData, meetings as initialMeetings, contacts } from './data';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -60,7 +59,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 
 
-type MailboxItem = (typeof emails)[number];
+type MailboxItem = (typeof initialEmailsData)[number];
 type Meeting = (typeof initialMeetings)[number];
 
 const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) => {
@@ -98,7 +97,7 @@ const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (o
     )
 }
 
-const MailDisplay = ({ selectedEmail, onOpenChange }: { selectedEmail: MailboxItem | null; onOpenChange: (open: boolean) => void; }) => {
+const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selectedEmail: MailboxItem | null; onOpenChange: (open: boolean) => void; onAction: (action: string, emailId: string) => void; }) => {
     const [formattedDate, setFormattedDate] = React.useState('');
 
     React.useEffect(() => {
@@ -109,6 +108,10 @@ const MailDisplay = ({ selectedEmail, onOpenChange }: { selectedEmail: MailboxIt
 
   if (!selectedEmail) {
     return null;
+  }
+
+  const handleAction = (action: string) => {
+      onAction(action, selectedEmail.id);
   }
 
   return (
@@ -134,12 +137,12 @@ const MailDisplay = ({ selectedEmail, onOpenChange }: { selectedEmail: MailboxIt
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                  <DropdownMenuItem><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
-                  <DropdownMenuItem><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
-                  <DropdownMenuItem><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleAction('reply')}><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleAction('reply-all')}><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleAction('forward')}><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white"><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleAction('archive')}><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
+                  <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white" onClick={() => handleAction('delete')}><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -159,7 +162,7 @@ const MailDisplay = ({ selectedEmail, onOpenChange }: { selectedEmail: MailboxIt
                 <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Paperclip className="h-4 w-4" /></Button>
                 <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Smile className="h-4 w-4" /></Button>
               </div>
-              <Button className="rounded-lg gap-2">Send <Send className="h-4 w-4" /></Button>
+              <Button onClick={() => handleAction('send-reply')} className="rounded-lg gap-2">Send <Send className="h-4 w-4" /></Button>
             </div>
           </div>
         </DialogContent>
@@ -168,8 +171,37 @@ const MailDisplay = ({ selectedEmail, onOpenChange }: { selectedEmail: MailboxIt
 };
 
 const MailView = () => {
+    const [emails, setEmails] = React.useState(initialEmailsData);
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(null);
     const [isComposeOpen, setIsComposeOpen] = React.useState(false);
+    const { toast } = useToast();
+
+    const handleEmailAction = (action: string, emailId: string) => {
+        const email = emails.find(e => e.id === emailId);
+        if (!email) return;
+
+        switch (action) {
+            case 'delete':
+                setEmails(emails.filter(e => e.id !== emailId));
+                setSelectedEmail(null);
+                toast({ title: "Email Deleted", description: `"${email.subject}" moved to trash.` });
+                break;
+            case 'archive':
+                // Here you would move the email to an archive state
+                setEmails(emails.filter(e => e.id !== emailId));
+                setSelectedEmail(null);
+                toast({ title: "Email Archived", description: `"${email.subject}" has been archived.` });
+                break;
+             case 'send-reply':
+                toast({ title: "Reply Sent!", description: `Your reply to "${email.subject}" has been sent.` });
+                // Note: Does not close the modal automatically
+                break;
+            default:
+                toast({ title: `Action: ${action}`, description: `Performed on "${email.subject}"` });
+                break;
+        }
+    };
+
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[320px_1fr] gap-6 h-full">
@@ -251,7 +283,11 @@ const MailView = () => {
                   </ScrollArea>
                 </div>
             </div>
-             <MailDisplay selectedEmail={selectedEmail} onOpenChange={(open) => !open && setSelectedEmail(null)} />
+             <MailDisplay 
+                selectedEmail={selectedEmail} 
+                onOpenChange={(open) => !open && setSelectedEmail(null)} 
+                onAction={handleEmailAction}
+             />
         </div>
     )
 }
