@@ -251,7 +251,7 @@ const MailView = () => {
                   </ScrollArea>
                 </div>
             </div>
-
+             <MailDisplay selectedEmail={selectedEmail} />
         </div>
     )
 }
