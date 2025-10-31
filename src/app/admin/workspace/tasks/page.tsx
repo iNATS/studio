@@ -244,7 +244,7 @@ const TaskColumn = ({ title, status, tasks, ...props }: { title: string, status:
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
 
     return (
-        <div ref={setNodeRef} className={cn("w-full sm:w-[340px] flex-shrink-0", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
+        <div ref={setNodeRef} className={cn("w-[340px] flex-shrink-0", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
             <h3 className="text-lg font-semibold text-foreground dark:text-white/90 mb-4 px-1">{title}</h3>
             <div className="bg-white/50 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10 rounded-2xl p-4 h-full">
                 <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
@@ -630,7 +630,7 @@ export default function TasksPage() {
     }
 
     return (
-        <main className="flex flex-col h-full">
+        <main className="h-full">
             <div className="sticky top-0 z-30 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-foreground dark:text-white flex-shrink-0">Tasks</h1>
@@ -723,7 +723,6 @@ export default function TasksPage() {
             </div>
             
             <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
-              <div className="h-full">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                     <div className="flex flex-row gap-6 h-full py-2">
                         {columns.map(status => (
@@ -747,7 +746,6 @@ export default function TasksPage() {
                         ) : null}
                     </DragOverlay>
                 </DndContext>
-              </div>
             </ScrollArea>
 
 
