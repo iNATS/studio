@@ -168,7 +168,13 @@ export async function handleAddTask(formData: FormData) {
 }
 
 export async function handleUpdateTask(id: string, formData: FormData | { [key: string]: any }) {
-    const result = await updateTask(id, formData);
+    const values = formData instanceof FormData ? Object.fromEntries(formData.entries()) : formData;
+    
+    if (values.clientId === 'none') {
+        values.clientId = null;
+    }
+    
+    const result = await updateTask(id, values);
     if (result.success) {
         revalidatePath('/admin/workspace/tasks');
     }
@@ -204,3 +210,4 @@ export async function handleDeletePortfolioCategory(id: number) {
     }
     return result;
 }
+

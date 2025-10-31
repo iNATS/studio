@@ -290,7 +290,7 @@ const TaskForm = ({ task, onSubmit, onCancel, clients }: { task?: Task, onSubmit
                     <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {clients.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
                 </SelectContent>
                 </Select>
@@ -630,7 +630,7 @@ export default function TasksPage() {
     }
 
     return (
-        <main className="h-full">
+        <main className="h-full flex flex-col">
             <div className="sticky top-0 z-30 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-foreground dark:text-white flex-shrink-0">Tasks</h1>
@@ -793,3 +793,4 @@ export default function TasksPage() {
         </main>
     );
 }
+

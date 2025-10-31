@@ -439,8 +439,9 @@ export async function addTask(formData: FormData) {
     const task = Object.fromEntries(formData.entries());
     try {
         const tags = task.tags ? JSON.stringify((task.tags as string).split(',').map((t: string) => t.trim())) : '[]';
+        const clientId = task.clientId === 'none' ? null : task.clientId;
         const stmt = db.prepare('INSERT INTO tasks (title, description, status, priority, dueDate, clientId, tags) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        const info = stmt.run(task.title, task.description, 'todo', task.priority, task.dueDate || null, task.clientId || null, tags);
+        const info = stmt.run(task.title, task.description, 'todo', task.priority, task.dueDate || null, clientId, tags);
         return { success: true, id: info.lastInsertRowid };
     } catch (e) {
         console.error("Failed to add task", e);
@@ -448,8 +449,7 @@ export async function addTask(formData: FormData) {
     }
 }
 
-export async function updateTask(id: string, formData: FormData | { [key: string]: any }) {
-    const values = formData instanceof FormData ? Object.fromEntries(formData.entries()) : formData;
+export async function updateTask(id: string, values: { [key: string]: any }) {
     try {
         const fieldsToUpdate: {[key: string]: any} = { ...values };
         if (fieldsToUpdate.tags && typeof fieldsToUpdate.tags === 'string') {
@@ -608,4 +608,3 @@ export async function getReportsData() {
     }
 }
 
-    
