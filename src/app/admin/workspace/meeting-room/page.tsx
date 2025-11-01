@@ -57,10 +57,11 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { MailDisplay } from '@/components/admin/MailDisplay';
 
 
-type MailboxItem = (typeof initialEmailsData)[number];
-type Meeting = (typeof initialMeetings)[number];
+export type MailboxItem = (typeof initialEmailsData)[number] & { starred?: boolean; sent?: boolean; archived?: boolean; trash?: boolean;};
+export type Meeting = (typeof initialMeetings)[number];
 type MailboxType = 'inbox' | 'starred' | 'sent' | 'snoozed' | 'archive' | 'trash';
 
 const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) => {
@@ -98,84 +99,8 @@ const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (o
     )
 }
 
-const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selectedEmail: MailboxItem | null; onOpenChange: (open: boolean) => void; onAction: (action: string, emailId: string) => void; }) => {
-    const [formattedDate, setFormattedDate] = React.useState('');
-    const { toast } = useToast();
-
-    React.useEffect(() => {
-        if (selectedEmail) {
-            setFormattedDate(format(new Date(selectedEmail.date), 'PPpp'));
-        }
-    }, [selectedEmail]);
-
-  if (!selectedEmail) {
-    return null;
-  }
-
-  const handleAction = (action: string) => {
-      onAction(action, selectedEmail.id);
-  }
-
-  return (
-    <Dialog open={!!selectedEmail} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex flex-col h-[90vh] max-h-[800px] w-[90vw] max-w-4xl p-0">
-          <DialogHeader className="p-4 border-b border-zinc-200/80 dark:border-white/10">
-            <div className="flex items-center">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
-                  <AvatarImage src={selectedEmail.avatar} alt={selectedEmail.name} />
-                  <AvatarFallback>{selectedEmail.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <DialogTitle className="font-semibold text-left">{selectedEmail.name}</DialogTitle>
-                  <DialogDescription className="text-sm text-muted-foreground text-left">{`to me <mohamed.aref@example.com>`}</DialogDescription>
-                </div>
-              </div>
-              <div className="ml-auto flex items-center gap-2">
-                {formattedDate && <span className="text-xs text-muted-foreground">{formattedDate}</span>}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                    <DropdownMenuItem onClick={() => handleAction('reply')}><Reply className="mr-2 h-4 w-4" />Reply</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleAction('reply-all')}><ReplyAll className="mr-2 h-4 w-4" />Reply All</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleAction('forward')}><Forward className="mr-2 h-4 w-4" />Forward</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleAction('archive')}><Archive className="mr-2 h-4 w-4" />Archive</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:text-red-500 dark:focus:text-white" onClick={() => handleAction('delete')}><Trash2 className="mr-2 h-4 w-4" />Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-          </DialogHeader>
-          <ScrollArea className="flex-1">
-            <div className="p-6">
-              <h2 className="text-xl font-bold mb-4">{selectedEmail.subject}</h2>
-              <div className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert">
-                {selectedEmail.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-              </div>
-            </div>
-          </ScrollArea>
-          <div className="p-4 border-t border-zinc-200/80 dark:border-white/10">
-            <Textarea placeholder="Click here to reply..." className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10" />
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Paperclip className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8"><Smile className="h-4 w-4" /></Button>
-              </div>
-              <Button onClick={() => handleAction('send-reply')} className="rounded-lg gap-2">Send <Send className="h-4 w-4" /></Button>
-            </div>
-          </div>
-        </DialogContent>
-    </Dialog>
-  );
-};
-
 const MailView = () => {
-    const [emails, setEmails] = React.useState(initialEmailsData);
+    const [emails, setEmails] = React.useState<MailboxItem[]>(initialEmailsData.map(e => ({...e, starred: false, sent: false, archived: false, trash: false})));
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(null);
     const [isComposeOpen, setIsComposeOpen] = React.useState(false);
     const [activeMailbox, setActiveMailbox] = React.useState<MailboxType>('inbox');
@@ -187,19 +112,22 @@ const MailView = () => {
 
         switch (action) {
             case 'delete':
-                setEmails(emails.filter(e => e.id !== emailId));
+                setEmails(emails.map(e => e.id === emailId ? {...e, trash: true} : e));
                 setSelectedEmail(null);
                 toast({ title: "Email Deleted", description: `"${email.subject}" moved to trash.` });
                 break;
             case 'archive':
-                // Here you would move the email to an archive state
-                setEmails(emails.filter(e => e.id !== emailId));
+                setEmails(emails.map(e => e.id === emailId ? {...e, archived: true} : e));
                 setSelectedEmail(null);
                 toast({ title: "Email Archived", description: `"${email.subject}" has been archived.` });
                 break;
+            case 'reply':
+            case 'reply-all':
+            case 'forward':
+                setIsComposeOpen(true);
+                break;
              case 'send-reply':
                 toast({ title: "Reply Sent!", description: `Your reply to "${email.subject}" has been sent.` });
-                // Note: Does not close the modal automatically
                 break;
             default:
                 toast({ title: `Action: ${action}`, description: `Performed on "${email.subject}"` });
@@ -208,20 +136,32 @@ const MailView = () => {
     };
     
     const displayedEmails = React.useMemo(() => {
-        // In a real app, you'd fetch emails for the current mailbox
         if (activeMailbox === 'inbox') {
-            return emails;
+            return emails.filter(e => !e.archived && !e.trash);
+        }
+        if (activeMailbox === 'starred') {
+            return emails.filter(e => e.starred && !e.trash);
+        }
+        if (activeMailbox === 'sent') {
+            // Mocking sent emails for demonstration
+            return emails.slice(0, 2).map(e => ({...e, sent: true}));
+        }
+        if (activeMailbox === 'archive') {
+            return emails.filter(e => e.archived && !e.trash);
+        }
+        if (activeMailbox === 'trash') {
+            return emails.filter(e => e.trash);
         }
         return [];
     }, [activeMailbox, emails]);
 
     const mailFolders = [
-        { id: 'inbox', label: 'Inbox', icon: Inbox, count: emails.filter(e => !e.read).length },
-        { id: 'starred', label: 'Starred', icon: Star, count: 0 },
-        { id: 'sent', label: 'Sent', icon: Send, count: 0 },
+        { id: 'inbox', label: 'Inbox', icon: Inbox, count: emails.filter(e => !e.read && !e.archived && !e.trash).length },
+        { id: 'starred', label: 'Starred', icon: Star, count: emails.filter(e => e.starred && !e.trash).length },
+        { id: 'sent', label: 'Sent', icon: Send, count: 2 },
         { id: 'snoozed', label: 'Snoozed', icon: Clock, count: 0 },
-        { id: 'archive', label: 'Archive', icon: Archive, count: 0 },
-        { id: 'trash', label: 'Trash', icon: Trash2, count: 0 },
+        { id: 'archive', label: 'Archive', icon: Archive, count: emails.filter(e => e.archived && !e.trash).length },
+        { id: 'trash', label: 'Trash', icon: Trash2, count: emails.filter(e => e.trash).length },
     ];
 
 
@@ -566,7 +506,3 @@ export default function CommunicationsPage() {
     </div>
   );
 }
-
-    
-
-    
