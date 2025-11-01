@@ -1,4 +1,5 @@
 
+
 'use server'
 
 import Database from 'better-sqlite3';
@@ -501,7 +502,7 @@ export async function getDashboardData() {
         const upcomingDeadlines = db.prepare(`
             SELECT t.id, t.title, t.dueDate, p.title as projectTitle
             FROM tasks t
-            LEFT JOIN projects p ON t.clientId = p.clientId 
+            LEFT JOIN projects p ON t.clientId = p.clientId
             WHERE t.dueDate >= ? AND t.status != 'done' 
             ORDER BY t.dueDate ASC LIMIT 5
         `).all(today);
@@ -607,4 +608,3 @@ export async function getReportsData() {
         };
     }
 }
-
