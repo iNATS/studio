@@ -57,10 +57,9 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { MailDisplay } from '@/components/admin/MailDisplay';
+import { MailDisplay, type MailboxItem } from '@/components/admin/MailDisplay';
 
 
-export type MailboxItem = (typeof initialEmailsData)[number] & { starred?: boolean; sent?: boolean; archived?: boolean; trash?: boolean;};
 export type Meeting = (typeof initialMeetings)[number];
 type MailboxType = 'inbox' | 'starred' | 'sent' | 'snoozed' | 'archive' | 'trash';
 

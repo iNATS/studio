@@ -32,7 +32,9 @@ import {
     DialogTitle,
   } from '@/components/ui/dialog';
 import { format } from 'date-fns';
-import type { MailboxItem } from '@/app/admin/workspace/meeting-room/page';
+import { emails } from '@/app/admin/workspace/meeting-room/data';
+
+export type MailboxItem = (typeof emails)[number] & { starred?: boolean; sent?: boolean; archived?: boolean; trash?: boolean;};
 
 
 export const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selectedEmail: MailboxItem | null; onOpenChange: (open: boolean) => void; onAction: (action: string, emailId: string) => void; }) => {
@@ -109,4 +111,3 @@ export const MailDisplay = ({ selectedEmail, onOpenChange, onAction }: { selecte
     </Dialog>
   );
 };
-
