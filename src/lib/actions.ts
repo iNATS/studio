@@ -67,10 +67,13 @@ export async function handlePageContentSave(section: string, formData: FormData)
                 return { success: false, error: result.error || 'File upload failed' };
             }
         }
+        
+        const skillsValue = formData.get('skills') as string | null;
+
         content = {
             title: formData.get('title'),
             description: formData.get('description'),
-            skills: (formData.get('skills') as string).split(',').map(s => s.trim()),
+            skills: skillsValue ? skillsValue.split(',').map(s => s.trim()) : [],
             avatar: avatarUrl
         };
     } else {
