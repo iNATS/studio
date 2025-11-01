@@ -160,15 +160,15 @@ export default function PageContentPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-title" className="text-zinc-700 dark:text-white/70">Title</Label>
-                            <Input id="about-title" name="about-title" defaultValue={aboutContent.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Input id="about-title" name="title" defaultValue={aboutContent.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-description" className="text-zinc-700 dark:text-white/70">Description</Label>
-                            <Textarea id="about-description" name="about-description" rows={4} defaultValue={aboutContent.description} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Textarea id="about-description" name="description" rows={4} defaultValue={aboutContent.description} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="about-skills" className="text-zinc-700 dark:text-white/70">Skills (comma-separated)</Label>
-                            <Textarea id="about-skills" name="about-skills" rows={3} defaultValue={Array.isArray(aboutContent.skills) ? aboutContent.skills.join(', ') : ''} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                            <Textarea id="about-skills" name="skills" rows={3} defaultValue={Array.isArray(aboutContent.skills) ? aboutContent.skills.join(', ') : ''} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
                         </div>
                         <Button className="rounded-lg" type="submit">Save About Content</Button>
                         </form>

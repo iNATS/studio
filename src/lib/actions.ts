@@ -68,9 +68,9 @@ export async function handlePageContentSave(section: string, formData: FormData)
             }
         }
         content = {
-            title: formData.get('about-title'),
-            description: formData.get('about-description'),
-            skills: (formData.get('about-skills') as string).split(',').map(s => s.trim()),
+            title: formData.get('title'),
+            description: formData.get('description'),
+            skills: (formData.get('skills') as string).split(',').map(s => s.trim()),
             avatar: avatarUrl
         };
     } else {
