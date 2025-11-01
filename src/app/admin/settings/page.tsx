@@ -3,6 +3,7 @@
 'use client';
 
 import * as React from 'react';
+import { useActionState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getPortfolioCategories, getPageContent } from '@/lib/db';
-import { handleAddPortfolioCategory, handleDeletePortfolioCategory } from '@/lib/actions';
+import { handleAddPortfolioCategory, handleDeletePortfolioCategory, handleProfileUpdate } from '@/lib/actions';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 type Category = {
@@ -161,8 +162,37 @@ const MailSettingsForm = () => {
 
 export default function SettingsPage() {
     const { toast } = useToast();
-    const [avatarPreview, setAvatarPreview] = React.useState<string | null>('https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj');
+    const [profileState, formAction] = useActionState(handleProfileUpdate, { success: false, message: ''});
+    const [profile, setProfile] = React.useState({
+        name: 'Mohamed Aref',
+        title: 'Creative Developer & Designer',
+        bio: "I build beautiful, functional, and user-centric digital experiences.",
+        avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj'
+    });
+
+    const [avatarPreview, setAvatarPreview] = React.useState<string | null>(profile.avatar);
+
+    React.useEffect(() => {
+        const fetchProfile = async () => {
+            const data = await getPageContent('profile');
+            if (data) {
+                setProfile(data);
+                setAvatarPreview(data.avatar);
+            }
+        };
+        fetchProfile();
+    }, []);
     
+    React.useEffect(() => {
+        if (profileState.message) {
+            if (profileState.success) {
+                toast({ title: 'Success', description: profileState.message });
+            } else {
+                toast({ variant: 'destructive', title: 'Error', description: profileState.message });
+            }
+        }
+    }, [profileState, toast]);
+
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>, section: string) => {
         e.preventDefault();
         toast({
@@ -206,7 +236,8 @@ export default function SettingsPage() {
                 <CardDescription className="text-zinc-600 dark:text-white/60">Update your public profile details.</CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-6" onSubmit={(e) => handleFormSubmit(e, 'Profile')}>
+                <form className="space-y-6" action={formAction}>
+                     <input type="hidden" name="currentAvatar" value={profile.avatar} />
                     <div className="space-y-2">
                         <Label>Avatar</Label>
                         <div className="flex items-center gap-4">
@@ -215,7 +246,7 @@ export default function SettingsPage() {
                                 <AvatarFallback>MA</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                                <Input id="avatar-upload" type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
+                                <Input id="avatar-upload" name="avatar" type="file" className="hidden" onChange={handleAvatarChange} accept="image/*" />
                                 <Label htmlFor="avatar-upload" className="inline-flex items-center justify-center rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer">
                                     <Upload className="mr-2 h-4 w-4" />
                                     Upload New Image
@@ -227,16 +258,16 @@ export default function SettingsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="name">Full Name</Label>
-                            <Input id="name" defaultValue="Mohamed Aref" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                            <Input id="name" name="name" defaultValue={profile.name} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="title">Professional Title</Label>
-                            <Input id="title" defaultValue="Creative Developer & Designer" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                            <Input id="title" name="title" defaultValue={profile.title} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="bio">Public Bio</Label>
-                        <Textarea id="bio" defaultValue="I build beautiful, functional, and user-centric digital experiences." className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
+                        <Textarea id="bio" name="bio" defaultValue={profile.bio} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/10" />
                     </div>
                     <div className="flex justify-end">
                         <Button type="submit" className="rounded-lg">Save Profile</Button>

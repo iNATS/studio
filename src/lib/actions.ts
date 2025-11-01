@@ -85,6 +85,36 @@ export async function handlePageContentSave(section: string, formData: FormData)
     return result;
 }
 
+export async function handleProfileUpdate(prevState: any, formData: FormData) {
+    const avatarFile = formData.get('avatar') as File;
+    let avatarUrl = formData.get('currentAvatar') as string;
+
+    if (avatarFile && avatarFile.size > 0) {
+        const result = await uploadFile(avatarFile);
+        if (result.path) {
+            avatarUrl = result.path;
+        } else {
+            return { success: false, message: result.error || 'File upload failed' };
+        }
+    }
+
+    const content = {
+        name: formData.get('name'),
+        title: formData.get('title'),
+        bio: formData.get('bio'),
+        avatar: avatarUrl,
+    };
+
+    const result = await updatePageContent('profile', content);
+    if (result.success) {
+        revalidatePath('/admin/settings');
+        revalidatePath('/admin/layout'); // To update avatar in layout
+        revalidatePath('/admin');
+        return { success: true, message: 'Profile updated successfully!' };
+    }
+    return { success: false, message: 'Failed to update profile.' };
+}
+
 export async function handleTestimonialSave(id: number, formData: FormData) {
     const data = Object.fromEntries(formData.entries());
     const result = await updateTestimonial(id, data);
@@ -210,4 +240,3 @@ export async function handleDeletePortfolioCategory(id: number) {
     }
     return result;
 }
-
