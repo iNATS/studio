@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, Trash2, Upload } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getPageContent, getTestimonials } from '@/lib/db';
@@ -28,6 +28,7 @@ type Testimonial = {
 };
 
 export default function PageContentPage() {
+    const { toast } = useToast();
     const [heroContent, setHeroContent] = React.useState({ title: '', subtitle: '', description: ''});
     const [aboutContent, setAboutContent] = React.useState({ title: '', description: '', skills: [], avatar: '' });
     const [processSteps, setProcessSteps] = React.useState<any[]>([]);
@@ -60,7 +61,7 @@ export default function PageContentPage() {
         if(result.success) {
             toast({ title: 'Success', description: `${section} content updated!` });
         } else {
-            toast({ variant: 'destructive', title: 'Error', description: `Failed to update ${section} content.` });
+            toast({ variant: 'destructive', title: 'Error', description: result.error || `Failed to update ${section} content.` });
         }
     }
     
@@ -139,7 +140,7 @@ export default function PageContentPage() {
                     <AccordionItem value="about">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => onGenericSave(e, 'about')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" action={(formData) => onGenericSave({ currentTarget: event.target, preventDefault: () => {} } as unknown as React.FormEvent<HTMLFormElement>, 'about')}>
                         <input type="hidden" name="currentAvatar" value={aboutContent.avatar} />
                         <div className="space-y-2">
                             <Label className="text-zinc-700 dark:text-white/70">Avatar</Label>
