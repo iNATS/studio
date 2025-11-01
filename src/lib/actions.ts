@@ -53,7 +53,7 @@ export async function handleDeleteWork(id: number) {
 }
 
 export async function handlePageContentSave(section: string, formData: FormData) {
-    let content: any = {};
+    let content: any;
 
     if (section === 'about') {
         const avatarFile = formData.get('avatar') as File;
