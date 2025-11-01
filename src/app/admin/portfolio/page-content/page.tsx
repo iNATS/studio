@@ -140,7 +140,7 @@ export default function PageContentPage() {
                     <AccordionItem value="about">
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
-                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" action={(formData) => onGenericSave({ currentTarget: event.target, preventDefault: () => {} } as unknown as React.FormEvent<HTMLFormElement>, 'about')}>
+                        <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => onGenericSave(e, 'about')}>
                         <input type="hidden" name="currentAvatar" value={aboutContent.avatar} />
                         <div className="space-y-2">
                             <Label className="text-zinc-700 dark:text-white/70">Avatar</Label>
@@ -221,5 +221,3 @@ export default function PageContentPage() {
     </main>
   );
 }
-
-    
