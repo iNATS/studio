@@ -27,10 +27,12 @@ type Testimonial = {
   avatar: string;
 };
 
+const defaultAboutContent = { title: '', description: '', skills: [], avatar: '' };
+
 export default function PageContentPage() {
     const { toast } = useToast();
     const [heroContent, setHeroContent] = React.useState({ title: '', subtitle: '', description: ''});
-    const [aboutContent, setAboutContent] = React.useState({ title: '', description: '', skills: [], avatar: '' });
+    const [aboutContent, setAboutContent] = React.useState(defaultAboutContent);
     const [processSteps, setProcessSteps] = React.useState<any[]>([]);
     const [testimonials, setTestimonials] = React.useState<Testimonial[]>([]);
     const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null);
@@ -141,7 +143,7 @@ export default function PageContentPage() {
                     <AccordionTrigger className="hover:no-underline text-lg font-semibold text-foreground/80">About Me Section</AccordionTrigger>
                     <AccordionContent>
                         <form className="space-y-4 p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10" onSubmit={(e) => onGenericSave(e, 'about')}>
-                        <input type="hidden" name="currentAvatar" value={aboutContent.avatar} />
+                        <input type="hidden" name="currentAvatar" value={aboutContent.avatar || ''} />
                         <div className="space-y-2">
                             <Label className="text-zinc-700 dark:text-white/70">Avatar</Label>
                             <div className="flex items-center gap-4">

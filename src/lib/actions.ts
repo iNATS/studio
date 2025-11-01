@@ -243,5 +243,3 @@ export async function handleDeletePortfolioCategory(id: number) {
     }
     return result;
 }
-
-    
