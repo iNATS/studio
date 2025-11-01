@@ -205,49 +205,14 @@ export default function AdminLayout({
           
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500"></span>
-                  <span className="sr-only">Notifications</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-[360px] sm:w-[420px] bg-background/90 backdrop-blur-xl p-0">
-                <SheetHeader className="p-6 border-b border-zinc-200/80 dark:border-white/10">
-                  <SheetTitle className="flex items-center gap-2"><Bell className="h-5 w-5"/> Notifications</SheetTitle>
-                </SheetHeader>
-                <ScrollArea className="h-[calc(100%-4.5rem)]">
-                    <motion.div 
-                        className="space-y-2 p-6"
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                      {notifications.map((notification) => (
-                        <motion.div
-                          key={notification.id}
-                          variants={itemVariants}
-                          className={`flex items-start gap-4 p-4 rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/5 ${!notification.read ? 'bg-blue-500/5' : ''}`}
-                        >
-                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center">
-                                {getNotificationIcon(notification.type)}
-                            </div>
-                          <div className="flex-grow">
-                            <div className="flex justify-between items-center">
-                                <p className="font-semibold">{notification.title}</p>
-                                <p className="text-xs text-muted-foreground">{notification.time}</p>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{notification.description}</p>
-                          </div>
-                          {!notification.read && <div className="flex-shrink-0 h-2 w-2 rounded-full bg-blue-500 mt-2"></div>}
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
-
+            <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full" asChild>
+                <Link href="/admin/notifications">
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500"></span>
+                    <span className="sr-only">Notifications</span>
+                </Link>
+            </Button>
+           
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -267,6 +232,9 @@ export default function AdminLayout({
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                    <Link href="/admin/notifications"><Bell className="mr-2 h-4 w-4" /><span>Notifications</span></Link>
+                  </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                   <Link href="/admin/settings"><Settings className="mr-2 h-4 w-4" /><span>Settings</span></Link>
                 </DropdownMenuItem>
