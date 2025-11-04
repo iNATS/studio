@@ -104,7 +104,7 @@ export default function PageContentPage() {
 
   return (
     <>
-        <div className="sticky top-24 z-20 backdrop-blur-md py-4">
+        <div className="flex items-center mb-6">
             <h1 className="text-2xl font-bold">Page Content</h1>
         </div>
         <div className="flex-1 overflow-y-auto pb-8">

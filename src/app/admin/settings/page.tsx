@@ -216,8 +216,8 @@ export default function SettingsPage() {
 
   return (
     <>
-      <div className="sticky top-24 z-20 backdrop-blur-md py-4">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+      <div className="flex items-center mb-6">
+        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
       </div>
       <div className="flex-1 overflow-y-auto pb-8">
          <Tabs defaultValue="profile" className="w-full">

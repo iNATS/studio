@@ -334,85 +334,83 @@ export default function ClientsPage() {
   
   return (
     <>
-      <div className="sticky top-24 z-20 backdrop-blur-md py-4">
-        <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold flex-shrink-0">Clients</h1>
-            <div className="ml-auto flex items-center gap-2">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="ghost" className="gap-1.5 rounded-lg text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 relative">
-                            <Filter className="h-4 w-4" />
-                            <span>Filter</span>
-                            {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white" align="end">
-                        <div className="grid gap-4">
-                            <div className="space-y-2">
-                                <h4 className="font-medium leading-none">Filters</h4>
-                                <p className="text-sm text-zinc-600 dark:text-white/60">
-                                Refine your client list.
-                                </p>
-                            </div>
-                            <div className="grid gap-2">
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label>Search</Label>
-                                  <div className="relative col-span-2">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-white/50" />
-                                    <Input 
-                                        placeholder="Name, email, company..."
-                                        value={filters.searchTerm}
-                                        onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-                                        className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10"
-                                    />
-                                  </div>
+      <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold flex-shrink-0">Clients</h1>
+          <div className="ml-auto flex items-center gap-2">
+              <Popover>
+                  <PopoverTrigger asChild>
+                      <Button variant="ghost" className="gap-1.5 rounded-lg text-zinc-600 dark:text-white/80 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 relative">
+                          <Filter className="h-4 w-4" />
+                          <span>Filter</span>
+                          {hasActiveFilters && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-400"></span>}
+                      </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white" align="end">
+                      <div className="grid gap-4">
+                          <div className="space-y-2">
+                              <h4 className="font-medium leading-none">Filters</h4>
+                              <p className="text-sm text-zinc-600 dark:text-white/60">
+                              Refine your client list.
+                              </p>
+                          </div>
+                          <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label>Search</Label>
+                                <div className="relative col-span-2">
+                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 dark:text-white/50" />
+                                  <Input 
+                                      placeholder="Name, email, company..."
+                                      value={filters.searchTerm}
+                                      onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                                      className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 pl-10"
+                                  />
                                 </div>
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Label>Status</Label>
-                                    <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                                        <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 col-span-2">
-                                            <SelectValue placeholder="Status..." />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                                            <SelectItem value="all">All Statuses</SelectItem>
-                                            <SelectItem value="new">New</SelectItem>
-                                            <SelectItem value="active">Active</SelectItem>
-                                            <SelectItem value="archived">Archived</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                            {hasActiveFilters && (
-                                <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-zinc-600 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 w-full justify-center">
-                                    <X className="mr-2 h-4 w-4" /> Clear Filters
-                                </Button>
-                            )}
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                              </div>
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label>Status</Label>
+                                  <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                                      <SelectTrigger className="bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10 col-span-2">
+                                          <SelectValue placeholder="Status..." />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+                                          <SelectItem value="all">All Statuses</SelectItem>
+                                          <SelectItem value="new">New</SelectItem>
+                                          <SelectItem value="active">Active</SelectItem>
+                                          <SelectItem value="archived">Archived</SelectItem>
+                                      </SelectContent>
+                                  </Select>
+                              </div>
+                          </div>
+                          {hasActiveFilters && (
+                              <Button variant="ghost" onClick={clearFilters} className="rounded-lg text-zinc-600 dark:text-white/70 hover:text-foreground dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 w-full justify-center">
+                                  <X className="mr-2 h-4 w-4" /> Clear Filters
+                              </Button>
+                          )}
+                      </div>
+                  </PopoverContent>
+              </Popover>
 
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                    <Button
-                    size="sm"
-                    className="gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg flex-shrink-0"
-                    >
-                    <PlusCircle className="h-4 w-4" />
-                    Add Client
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-lg">
-                    <DialogHeader>
-                    <DialogTitle>Add New Client</DialogTitle>
-                    <DialogDescription className="text-zinc-600 dark:text-white/60">
-                        Enter the details for the new client.
-                    </DialogDescription>
-                    </DialogHeader>
-                    <ClientForm onSubmit={onAddClient} onCancel={() => setIsAddDialogOpen(false)} />
-                </DialogContent>
-                </Dialog>
-            </div>
-        </div>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                  <Button
+                  size="sm"
+                  className="gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg flex-shrink-0"
+                  >
+                  <PlusCircle className="h-4 w-4" />
+                  Add Client
+                  </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-lg">
+                  <DialogHeader>
+                  <DialogTitle>Add New Client</DialogTitle>
+                  <DialogDescription className="text-zinc-600 dark:text-white/60">
+                      Enter the details for the new client.
+                  </DialogDescription>
+                  </DialogHeader>
+                  <ClientForm onSubmit={onAddClient} onCancel={() => setIsAddDialogOpen(false)} />
+              </DialogContent>
+              </Dialog>
+          </div>
       </div>
 
         {/* Edit Client Dialog */}
@@ -465,7 +463,7 @@ export default function ClientsPage() {
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto">
                 <Table>
-                    <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                    <TableHeader>
                     <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
                         <TableHead className="text-zinc-700 dark:text-white/80">Client</TableHead>
                         <TableHead className="text-zinc-700 dark:text-white/80 hidden md:table-cell">Email</TableHead>

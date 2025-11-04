@@ -172,32 +172,30 @@ export default function AdminProjectsPage() {
 
   return (
     <>
-      <div className="sticky top-24 z-20 backdrop-blur-md py-4">
-        <div className="flex items-center">
-            <h1 className="text-2xl font-bold">My Works</h1>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-                <Button
-                size="sm"
-                className="ml-auto gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg"
-                >
-                <PlusCircle className="h-4 w-4" />
-                Add Work
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-2xl">
-                <DialogHeader>
-                <DialogTitle>Add New Work</DialogTitle>
-                <DialogDescription className="text-zinc-600 dark:text-white/60">
-                    Follow the steps to add a new work to your portfolio.
-                </DialogDescription>
-                </DialogHeader>
-                <ProjectWizard
-                  onSubmit={onAddWork}
-                />
-            </DialogContent>
-            </Dialog>
-        </div>
+      <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold">My Works</h1>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+              <Button
+              size="sm"
+              className="ml-auto gap-1 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-foreground dark:text-white rounded-lg"
+              >
+              <PlusCircle className="h-4 w-4" />
+              Add Work
+              </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-2xl">
+              <DialogHeader>
+              <DialogTitle>Add New Work</DialogTitle>
+              <DialogDescription className="text-zinc-600 dark:text-white/60">
+                  Follow the steps to add a new work to your portfolio.
+              </DialogDescription>
+              </DialogHeader>
+              <ProjectWizard
+                onSubmit={onAddWork}
+              />
+          </DialogContent>
+          </Dialog>
       </div>
 
         {/* Edit Project Dialog */}
@@ -247,7 +245,7 @@ export default function AdminProjectsPage() {
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto">
                 <Table>
-                    <TableHeader className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                    <TableHeader>
                     <TableRow className="border-zinc-200/80 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10">
                         <TableHead className="hidden w-[100px] sm:table-cell text-zinc-700 dark:text-white/80">
                         <span className="sr-only">Image</span>
@@ -257,7 +255,7 @@ export default function AdminProjectsPage() {
                         <TableHead className="hidden md:table-cell text-zinc-700 dark:text-white/80">
                         Tags
                         </TableHead>
-                        <TableHead className="sticky top-0 bg-white/60 dark:bg-white/5 backdrop-blur-xl">
+                        <TableHead>
                         <span className="sr-only">Actions</span>
                         </TableHead>
                     </TableRow>

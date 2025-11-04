@@ -52,36 +52,13 @@ export default function ReportsPage() {
     };
     
     if (loading || !data) {
-        return (
-             <>
-                <div className="sticky top-24 z-20 backdrop-blur-md py-4">
-                    <motion.h1 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, ease: 'easeOut' }}
-                        className="text-3xl font-bold tracking-tight"
-                    >
-                        Analytics & Insights
-                    </motion.h1>
-                </div>
-                <div className="flex-1 overflow-y-auto pb-4">
-                    <p>Loading...</p>
-                </div>
-            </>
-        )
+        return <p>Loading...</p>;
     }
 
     return (
         <>
-            <div className="sticky top-24 z-20 backdrop-blur-md py-4">
-                <motion.h1 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="text-3xl font-bold tracking-tight"
-                >
-                    Analytics & Insights
-                </motion.h1>
+            <div className="flex items-center mb-6">
+                <h1 className="text-2xl font-bold tracking-tight">Analytics & Insights</h1>
             </div>
             
             <div className="flex-1 overflow-y-auto pb-4">

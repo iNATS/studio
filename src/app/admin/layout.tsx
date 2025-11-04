@@ -16,7 +16,8 @@ import {
   User,
   AlertTriangle,
   CheckCheck,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -29,10 +30,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -230,7 +227,7 @@ export default function AdminLayout({
                                    <CheckCheck className="h-4 w-4"/> Mark all as read
                                 </Button>
                                 <Button variant="ghost" size="sm" onClick={clearAll} className="rounded-lg gap-1 text-xs">
-                                    <X className="h-4 w-4"/> Clear
+                                    <X className="h-4 w-4 mr-1"/> Clear
                                 </Button>
                             </div>
                         </SheetTitle>
@@ -339,15 +336,9 @@ export default function AdminLayout({
           </div>
         </div>
       </header>
-      <div className="pt-24 px-4 sm:px-6 lg:px-8">
+      <main className="pt-24 px-4 sm:px-6 lg:px-8">
           {children}
-      </div>
+      </main>
     </div>
   );
 }
-
-const ChevronDown = (props: any) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m6 9 6 6 6-6"/></svg>
-)
-
-    
