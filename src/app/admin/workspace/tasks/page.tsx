@@ -244,12 +244,14 @@ const TaskColumn = ({ title, status, tasks, ...props }: { title: string, status:
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
 
     return (
-        <div ref={setNodeRef} className={cn("w-[340px] flex-shrink-0", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
+        <div ref={setNodeRef} className={cn("w-[340px] flex-shrink-0 flex flex-col", isOver ? "ring-2 ring-primary ring-offset-2 ring-offset-background/50 rounded-2xl" : "")}>
             <h3 className="text-lg font-semibold text-foreground dark:text-white/90 mb-4 px-1">{title}</h3>
-            <div className="bg-white/50 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10 rounded-2xl p-4 h-full">
-                <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => <TaskCard key={task.id} task={task} {...props} />)}
-                </SortableContext>
+            <div className="bg-white/50 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10 rounded-2xl p-4 h-full flex-1 overflow-hidden">
+                <ScrollArea className="h-full pr-2 -mr-2">
+                    <SortableContext items={tasksById} strategy={verticalListSortingStrategy}>
+                        {tasks.map(task => <TaskCard key={task.id} task={task} {...props} />)}
+                    </SortableContext>
+                </ScrollArea>
             </div>
         </div>
     );
@@ -722,31 +724,33 @@ export default function TasksPage() {
                 </div>
             </div>
             
-            <ScrollArea className="flex-1 -mx-4 px-4 pb-4">
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+            <div className="flex-1 overflow-hidden">
+                <ScrollArea className="h-full -mx-4 px-4">
                     <div className="flex flex-row gap-6 h-full py-2">
-                        {columns.map(status => (
-                            <TaskColumn
-                                key={status}
-                                title={columnTitles[status]}
-                                status={status}
-                                tasks={filteredTasks.filter(t => t.status === status)}
-                                onEdit={handleEdit}
-                                onDelete={setTaskToDelete}
-                                onView={handleView}
-                                clients={clients}
-                            />
-                        ))}
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+                            {columns.map(status => (
+                                <TaskColumn
+                                    key={status}
+                                    title={columnTitles[status]}
+                                    status={status}
+                                    tasks={filteredTasks.filter(t => t.status === status)}
+                                    onEdit={handleEdit}
+                                    onDelete={setTaskToDelete}
+                                    onView={handleView}
+                                    clients={clients}
+                                />
+                            ))}
+                            <DragOverlay>
+                                {activeTask ? (
+                                    <div className="w-[340px]">
+                                    <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} clients={clients} />
+                                    </div>
+                                ) : null}
+                            </DragOverlay>
+                        </DndContext>
                     </div>
-                    <DragOverlay>
-                        {activeTask ? (
-                            <div className="w-[300px] md:w-[340px]">
-                            <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} clients={clients} />
-                            </div>
-                        ) : null}
-                    </DragOverlay>
-                </DndContext>
-            </ScrollArea>
+                </ScrollArea>
+            </div>
 
 
              <TaskViewDialog 
@@ -793,6 +797,3 @@ export default function TasksPage() {
         </main>
     );
 }
-
-
-    
