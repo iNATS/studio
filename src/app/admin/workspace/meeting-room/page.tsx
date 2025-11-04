@@ -98,6 +98,20 @@ const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (o
     )
 }
 
+const MailTimeDisplay = ({ date }: { date: Date }) => {
+    const [relativeTime, setRelativeTime] = React.useState('');
+  
+    React.useEffect(() => {
+      setRelativeTime(formatDistanceToNow(new Date(date), { addSuffix: true }));
+    }, [date]);
+  
+    if (!relativeTime) {
+      return null;
+    }
+  
+    return <div className={cn("ml-auto text-xs", "text-muted-foreground")}>{relativeTime}</div>;
+};
+
 const MailView = () => {
     const [emails, setEmails] = React.useState<MailboxItem[]>(initialEmailsData.map(e => ({...e, starred: false, sent: false, archived: false, trash: false})));
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(null);
@@ -225,9 +239,7 @@ const MailView = () => {
                                 {!email.read && <span className="flex h-2 w-2 rounded-full bg-blue-500" />}
                                 <div className="font-semibold">{email.name}</div>
                             </div>
-                            <div className={cn("ml-auto text-xs", "text-muted-foreground")}>
-                                {formatDistanceToNow(new Date(email.date), { addSuffix: true })}
-                            </div>
+                            <MailTimeDisplay date={email.date} />
                             </div>
                             <div className="text-xs font-medium">{email.subject}</div>
                             <div className="line-clamp-2 text-xs text-muted-foreground">
