@@ -14,7 +14,9 @@ import {
   Gem,
   Bell,
   User,
-  AlertTriangle
+  AlertTriangle,
+  CheckCheck,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -36,9 +38,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import * as React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const notifications = [
+const initialNotifications = [
   {
     id: 1,
     type: 'message',
@@ -87,30 +89,20 @@ const notifications = [
 ];
 
 const getNotificationIcon = (type: string) => {
+    const iconClass = "h-6 w-6";
     switch (type) {
-        case 'message': return <User className="h-5 w-5 text-blue-500" />;
-        case 'project': return <Briefcase className="h-5 w-5 text-purple-500" />;
-        case 'task': return <AlertTriangle className="h-5 w-5 text-red-500" />;
-        case 'client': return <User className="h-5 w-5 text-green-500" />;
-        default: return <Bell className="h-5 w-5 text-zinc-500" />;
+        case 'message': return <User className={cn(iconClass, "text-blue-500")} />;
+        case 'project': return <Briefcase className={cn(iconClass, "text-purple-500")} />;
+        case 'task': return <AlertTriangle className={cn(iconClass, "text-red-500")} />;
+        case 'client': return <User className={cn(iconClass, "text-green-500")} />;
+        default: return <Bell className={cn(iconClass, "text-zinc-500")} />;
     }
 }
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.07 },
-    },
-};
-
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: { type: 'spring', stiffness: 100 },
-    },
+    visible: { y: 0, opacity: 1 },
+    exit: { opacity: 0, x: -50, transition: { duration: 0.3 } },
 };
 
 export default function AdminLayout({
@@ -120,6 +112,21 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
+  const [notifications, setNotifications] = React.useState(initialNotifications);
+  
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAsRead = (id: number) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+    
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => ({...n, read: true})));
+  };
+
+  const clearAll = () => {
+      setNotifications([]);
+  }
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
@@ -205,13 +212,78 @@ export default function AdminLayout({
           
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full" asChild>
-                <Link href="/admin/notifications">
-                    <Bell className="h-5 w-5" />
-                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500"></span>
-                    <span className="sr-only">Notifications</span>
-                </Link>
-            </Button>
+            
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                        <Bell className="h-5 w-5" />
+                        {unreadCount > 0 && <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>}
+                        <span className="sr-only">Notifications</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent className="w-full sm:max-w-md bg-background/90 backdrop-blur-xl p-0">
+                    <SheetHeader className="p-4 border-b border-border">
+                        <SheetTitle className="flex justify-between items-center">
+                            <span>Notifications</span>
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="sm" onClick={markAllAsRead} className="rounded-lg gap-1 text-xs">
+                                   <CheckCheck className="h-4 w-4"/> Mark all as read
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={clearAll} className="rounded-lg gap-1 text-xs">
+                                    <X className="h-4 w-4"/> Clear
+                                </Button>
+                            </div>
+                        </SheetTitle>
+                    </SheetHeader>
+                    <ScrollArea className="h-[calc(100vh-4.5rem)]">
+                        <div className="p-4 space-y-3">
+                             <AnimatePresence>
+                                {notifications.length > 0 ? (
+                                    notifications.map(notification => (
+                                    <motion.div
+                                        key={notification.id}
+                                        layout
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        onClick={() => markAsRead(notification.id)}
+                                        className={cn(
+                                            "flex items-start gap-4 p-4 rounded-xl transition-all cursor-pointer border",
+                                            notification.read 
+                                                ? "bg-transparent border-transparent hover:bg-black/5 dark:hover:bg-white/5" 
+                                                : "bg-blue-500/10 border-blue-500/20 hover:border-blue-500/40"
+                                        )}
+                                    >
+                                        <div className="flex-shrink-0 h-12 w-12 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center">
+                                            {getNotificationIcon(notification.type)}
+                                        </div>
+                                        <div className="flex-grow">
+                                            <div className="flex justify-between items-center">
+                                                <p className="font-semibold text-base">{notification.title}</p>
+                                                <p className="text-xs text-muted-foreground">{notification.time}</p>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground">{notification.description}</p>
+                                        </div>
+                                        {!notification.read && <div className="flex-shrink-0 h-2.5 w-2.5 rounded-full bg-blue-500 mt-2.5"></div>}
+                                    </motion.div>
+                                ))
+                                ) : (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-center py-16 text-muted-foreground"
+                                    >
+                                        <Bell className="mx-auto h-12 w-12 mb-4 text-zinc-400 dark:text-zinc-600"/>
+                                        <h3 className="text-lg font-semibold">All caught up!</h3>
+                                        <p>You have no notifications.</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </ScrollArea>
+                </SheetContent>
+            </Sheet>
            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -232,9 +304,6 @@ export default function AdminLayout({
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                 <DropdownMenuItem asChild>
-                    <Link href="/admin/notifications"><Bell className="mr-2 h-4 w-4" /><span>Notifications</span></Link>
-                  </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                   <Link href="/admin/settings"><Settings className="mr-2 h-4 w-4" /><span>Settings</span></Link>
                 </DropdownMenuItem>
