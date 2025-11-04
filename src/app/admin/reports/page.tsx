@@ -53,8 +53,8 @@ export default function ReportsPage() {
     
     if (loading || !data) {
         return (
-             <main className="flex flex-col h-full mt-8">
-                <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+             <>
+                <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
                     <motion.h1 
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -64,16 +64,16 @@ export default function ReportsPage() {
                         Analytics & Insights
                     </motion.h1>
                 </div>
-                <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
+                <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
                     <p>Loading...</p>
                 </div>
-            </main>
+            </>
         )
     }
 
     return (
-        <main className="flex flex-col h-full mt-8">
-            <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+        <>
+            <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
                 <motion.h1 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ export default function ReportsPage() {
                 </motion.h1>
             </div>
             
-            <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
                 <motion.div 
                     className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6"
                     variants={containerVariants}
@@ -246,6 +246,6 @@ export default function ReportsPage() {
                     </Card>
                 </motion.div>
             </div>
-        </main>
+        </>
     );
 }

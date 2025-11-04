@@ -215,11 +215,11 @@ export default function SettingsPage() {
     };
 
   return (
-    <main className="flex flex-col h-full">
-      <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+    <>
+      <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
-      <div className="flex-1 overflow-y-auto -mx-4 px-4 pt-4 pb-8">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-8">
          <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-5 max-w-3xl mb-8 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl">
             <TabsTrigger value="profile" className="rounded-lg">Profile</TabsTrigger>
@@ -393,6 +393,6 @@ export default function SettingsPage() {
 
         </Tabs>
       </div>
-    </main>
+    </>
   );
 }

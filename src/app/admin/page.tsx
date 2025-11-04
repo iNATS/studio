@@ -55,23 +55,23 @@ export default function AdminDashboard() {
 
   if (loading || !data) {
     return (
-        <main className="flex flex-col h-full">
-            <div className="sticky top-0 z-10 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+        <>
+            <div className="sticky top-24 z-10 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
                 <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             </div>
-             <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4 mt-6">
+             <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
                 <p>Loading...</p>
              </div>
-        </main>
+        </>
     );
   }
   
   return (
-    <main className="flex flex-col h-full">
-        <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+    <>
+        <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         </div>
-        <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4 mt-6">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
           <motion.div 
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
             variants={containerVariants}
@@ -247,6 +247,6 @@ export default function AdminDashboard() {
             </motion.div>
           </motion.div>
         </div>
-    </main>
+    </>
   );
 }

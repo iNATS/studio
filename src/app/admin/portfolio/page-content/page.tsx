@@ -103,11 +103,11 @@ export default function PageContentPage() {
     };
 
   return (
-    <main className="flex flex-col h-full mt-8">
-        <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+    <>
+        <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
             <h1 className="text-2xl font-bold">Page Content</h1>
         </div>
-        <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-8">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-8">
             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                 <CardHeader>
                 <CardTitle>Manage Landing Page</CardTitle>
@@ -220,6 +220,6 @@ export default function PageContentPage() {
                 </CardContent>
             </Card>
         </div>
-    </main>
+    </>
   );
 }

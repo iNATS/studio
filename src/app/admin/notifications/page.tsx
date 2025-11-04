@@ -124,8 +124,8 @@ export default function NotificationsPage() {
     };
 
     return (
-        <main className="flex flex-col h-full">
-            <div className="sticky top-0 z-20 backdrop-blur-md px-4 pt-4 pb-4 -mx-4 -mt-4">
+        <>
+            <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
                      <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto -mx-4 px-4 pb-4 mt-6">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                     <CardHeader>
                         <Tabs value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
@@ -205,6 +205,6 @@ export default function NotificationsPage() {
                     </CardContent>
                 </Card>
             </div>
-        </main>
+        </>
     );
 }

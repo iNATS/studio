@@ -270,9 +270,9 @@ export default function AdminLayout({
           </div>
         </div>
       </header>
-      <main className="pt-24 px-4 sm:px-8">
-        {children}
-      </main>
+      <div className="pt-24 flex flex-col h-screen">
+          {children}
+      </div>
     </div>
   );
 }
@@ -280,7 +280,3 @@ export default function AdminLayout({
 const ChevronDown = (props: any) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m6 9 6 6 6-6"/></svg>
 )
-
-    
-
-    
