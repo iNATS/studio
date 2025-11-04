@@ -172,7 +172,7 @@ export default function AdminProjectsPage() {
 
   return (
     <>
-      <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+      <div className="sticky top-24 z-20 backdrop-blur-md py-4">
         <div className="flex items-center">
             <h1 className="text-2xl font-bold">My Works</h1>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -237,7 +237,7 @@ export default function AdminProjectsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-8">
+        <div className="flex-1 overflow-y-auto pb-8">
             <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl flex-1 flex flex-col min-h-0">
                 <CardHeader>
                 <CardTitle>Manage Your Portfolio</CardTitle>
@@ -359,3 +359,5 @@ export default function AdminProjectsPage() {
     </>
   );
 }
+
+    

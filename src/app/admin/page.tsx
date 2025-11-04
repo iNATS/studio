@@ -56,10 +56,10 @@ export default function AdminDashboard() {
   if (loading || !data) {
     return (
         <>
-            <div className="sticky top-24 z-10 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+            <div className="sticky top-24 z-10 backdrop-blur-md py-4">
                 <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             </div>
-             <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
+             <div className="flex-1 overflow-y-auto pb-4">
                 <p>Loading...</p>
              </div>
         </>
@@ -68,10 +68,10 @@ export default function AdminDashboard() {
   
   return (
     <>
-        <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+        <div className="sticky top-24 z-20 backdrop-blur-md py-4">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
+        <div className="flex-1 overflow-y-auto pb-4">
           <motion.div 
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
             variants={containerVariants}
@@ -250,3 +250,5 @@ export default function AdminDashboard() {
     </>
   );
 }
+
+    

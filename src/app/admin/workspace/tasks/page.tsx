@@ -642,8 +642,8 @@ export default function TasksPage() {
     }
 
     return (
-        <>
-            <div className="sticky top-24 z-30 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+        <div className="h-full flex flex-col">
+            <div className="sticky top-24 z-30 backdrop-blur-md py-4">
                  <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold text-foreground dark:text-white flex-shrink-0">Tasks</h1>
                     <div className="ml-auto flex items-center gap-2">
@@ -734,8 +734,8 @@ export default function TasksPage() {
                 </div>
             </div>
             
-            <div className="flex-1 overflow-hidden">
-                <ScrollArea className="h-full px-4 sm:px-8" orientation="horizontal">
+            <div className="flex-1 overflow-hidden pb-4">
+                <ScrollArea className="h-full" orientation="horizontal">
                     <div className="flex flex-row gap-6 h-full py-2">
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                             {columns.map(status => (
@@ -818,6 +818,8 @@ export default function TasksPage() {
                 </AlertDialogContent>
             </AlertDialog>
             <CreativeNotesWidget />
-        </>
+        </div>
     );
 }
+
+    

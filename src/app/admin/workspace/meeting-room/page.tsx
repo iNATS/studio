@@ -490,10 +490,10 @@ export default function CommunicationsPage() {
     <>
         <Tabs defaultValue="inbox" className="h-full flex flex-col">
             <div className="flex-shrink-0">
-                <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+                <div className="sticky top-24 z-20 backdrop-blur-md py-4">
                     <h1 className="text-3xl font-bold tracking-tight">Communications</h1>
                 </div>
-                <div className="w-full px-4 sm:px-8">
+                <div className="w-full">
                     <TabsList className="mb-4 bg-white/60 dark:bg-white/5 backdrop-blur-2xl border border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-auto p-2 w-full max-w-sm">
                     {navItems.map(item => (
                         <TabsTrigger key={item.id} value={item.id} className="w-full flex items-center gap-2 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary dark:data-[state=active]:text-white">
@@ -505,7 +505,7 @@ export default function CommunicationsPage() {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-4">
+            <div className="flex-1 overflow-y-auto pb-4">
                 <TabsContent value="inbox" className="h-full mt-0">
                   <MailView />
                 </TabsContent>
@@ -517,3 +517,5 @@ export default function CommunicationsPage() {
     </>
   );
 }
+
+    

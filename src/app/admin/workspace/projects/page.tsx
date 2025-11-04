@@ -458,7 +458,7 @@ export default function ProjectsPage() {
 
     return (
         <>
-             <div className="sticky top-24 z-20 backdrop-blur-md px-4 sm:px-8 py-4 -mx-4 sm:-mx-8">
+             <div className="sticky top-24 z-20 backdrop-blur-md py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold flex-shrink-0">Projects</h1>
                     
@@ -554,7 +554,7 @@ export default function ProjectsPage() {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto px-4 sm:px-8 pb-4">
+            <div className="flex-1 overflow-auto pb-4">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                   <div className="flex flex-col lg:flex-row gap-6 h-full">
                       {columns.map(status => (
@@ -637,3 +637,5 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
+
+    
