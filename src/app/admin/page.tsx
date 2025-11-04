@@ -167,16 +167,18 @@ export default function AdminDashboard() {
                         {data.upcomingDeadlines.map((task) => {
                             const dueDate = new Date(task.dueDate);
                             return (
-                                <div key={task.id} className="flex items-start gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
-                                    <div className="flex-1">
-                                    <p className="text-sm font-semibold">{task.title}</p>
-                                    <p className="text-xs text-zinc-600 dark:text-white/50">{task.projectTitle || 'General Task'}</p>
+                                <Link href="/admin/workspace/tasks" key={task.id} className="block -m-2 p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                    <div className="flex items-start gap-4">
+                                        <div className="flex-1">
+                                        <p className="text-sm font-semibold">{task.title}</p>
+                                        <p className="text-xs text-zinc-600 dark:text-white/50">{task.projectTitle || 'General Task'}</p>
+                                        </div>
+                                        <div className="text-right flex-shrink-0">
+                                            <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{formatDistanceToNow(dueDate, { addSuffix: true })}</span>
+                                            <p className="text-xs text-zinc-500 dark:text-white/50">{dueDate.toLocaleDateString()}</p>
+                                        </div>
                                     </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">{formatDistanceToNow(dueDate, { addSuffix: true })}</span>
-                                        <p className="text-xs text-zinc-500 dark:text-white/50">{dueDate.toLocaleDateString()}</p>
-                                    </div>
-                                </div>
+                                </Link>
                             )
                         })}
                         {data.upcomingDeadlines.length === 0 && <p className="text-sm text-zinc-500 dark:text-white/50 text-center py-8">No upcoming deadlines. Great job!</p>}
