@@ -201,37 +201,6 @@ export async function handleAddTask(formData: FormData) {
     return result;
 }
 
-export async function handleDuplicateTask(taskId: string) {
-    try {
-        const originalTask = await getTaskById(taskId);
-        if (!originalTask) {
-            return { success: false, error: 'Original task not found.' };
-        }
-        
-        const newTitle = `${originalTask.title} - Copy`;
-        
-        const formData = new FormData();
-        formData.append('title', newTitle);
-        formData.append('description', originalTask.description || '');
-        formData.append('priority', originalTask.priority);
-        if (originalTask.dueDate) {
-            formData.append('dueDate', new Date(originalTask.dueDate).toISOString());
-        }
-        if (originalTask.clientId) {
-            formData.append('clientId', String(originalTask.clientId));
-        }
-        if (originalTask.tags && originalTask.tags.length > 0) {
-            formData.append('tags', originalTask.tags.join(', '));
-        }
-
-        return await addTask(formData);
-
-    } catch (e) {
-        console.error("Failed to duplicate task", e);
-        return { success: false, error: 'Failed to duplicate task.' };
-    }
-}
-
 export async function handleUpdateTask(id: string, formData: FormData | { [key: string]: any }) {
     const values = formData instanceof FormData ? Object.fromEntries(formData.entries()) : formData;
     

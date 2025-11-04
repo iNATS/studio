@@ -57,7 +57,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getClients, getTasks } from '@/lib/db';
-import { handleAddTask, handleUpdateTask, handleDeleteTask, handleDuplicateTask } from '@/lib/actions';
+import { handleAddTask, handleUpdateTask, handleDeleteTask } from '@/lib/actions';
 import type { Client } from '../clients/page';
 
 
@@ -424,6 +424,7 @@ export default function TasksPage() {
     const [activeTask, setActiveTask] = React.useState<Task | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
     const [editingTask, setEditingTask] = React.useState<Task | null>(null);
+    const [duplicatingTask, setDuplicatingTask] = React.useState<Task | null>(null);
     const [viewingTask, setViewingTask] = React.useState<Task | null>(null);
     const [taskToDelete, setTaskToDelete] = React.useState<Task | null>(null);
     const { toast } = useToast();
@@ -572,21 +573,8 @@ export default function TasksPage() {
     const handleEdit = (task: Task) => setEditingTask(task);
     const closeEditDialog = () => setEditingTask(null);
 
-    const handleDuplicate = async (task: Task) => {
-        const result = await handleDuplicateTask(task.id);
-        if (result.success) {
-            await fetchData();
-            toast({
-                title: 'Task Duplicated',
-                description: `"${task.title} - Copy" has been created.`,
-            });
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: result.error,
-            });
-        }
+    const handleDuplicate = (task: Task) => {
+        setDuplicatingTask({ ...task, title: `${task.title} - Copy` });
     };
 
     const handleDeleteConfirm = async () => {
@@ -615,6 +603,7 @@ export default function TasksPage() {
         if (result.success) {
             await fetchData();
             setIsAddDialogOpen(false);
+            setDuplicatingTask(null);
             toast({
                 title: 'Task Added',
                 description: `"${title}" has been added to 'To Do'.`,
@@ -792,6 +781,19 @@ export default function TasksPage() {
                     </DialogDescription>
                     </DialogHeader>
                     <TaskForm task={editingTask!} onSubmit={onEditTask} onCancel={closeEditDialog} clients={clients} />
+                </DialogContent>
+            </Dialog>
+            
+            {/* Duplicate Task Dialog */}
+            <Dialog open={!!duplicatingTask} onOpenChange={(isOpen) => !isOpen && setDuplicatingTask(null)}>
+                <DialogContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white sm:max-w-lg">
+                    <DialogHeader>
+                    <DialogTitle>Duplicate Task</DialogTitle>
+                    <DialogDescription className="text-zinc-600 dark:text-white/60">
+                        Modify the details below and save to create a new task.
+                    </DialogDescription>
+                    </DialogHeader>
+                    <TaskForm task={duplicatingTask!} onSubmit={onAddTask} onCancel={() => setDuplicatingTask(null)} clients={clients} />
                 </DialogContent>
             </Dialog>
 
