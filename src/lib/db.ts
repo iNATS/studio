@@ -436,6 +436,25 @@ export async function getTasks() {
     }
 }
 
+export async function getTaskById(id: string) {
+    try {
+        const stmt = db.prepare('SELECT * FROM tasks WHERE id = ?');
+        const task = stmt.get(id) as any;
+        if (task) {
+            return {
+                ...task,
+                tags: task.tags ? JSON.parse(task.tags) : [],
+                dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
+            };
+        }
+        return null;
+    } catch (e) {
+        console.error(`Failed to get task ${id}`, e);
+        return null;
+    }
+}
+
+
 export async function addTask(formData: FormData) {
     const task = Object.fromEntries(formData.entries());
     try {

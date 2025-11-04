@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -11,7 +12,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye, User, Tag, FileText, Filter } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, X as XIcon, Lightbulb, Eye, User, Tag, FileText, Filter, Copy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
@@ -55,7 +57,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getClients, getTasks } from '@/lib/db';
-import { handleAddTask, handleUpdateTask, handleDeleteTask } from '@/lib/actions';
+import { handleAddTask, handleUpdateTask, handleDeleteTask, handleDuplicateTask } from '@/lib/actions';
 import type { Client } from '../clients/page';
 
 
@@ -161,7 +163,7 @@ const CreativeNotesWidget = () => {
 };
 
 
-const TaskCard = ({ task, onEdit, onDelete, onView, clients }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, clients: Client[] }) => {
+const TaskCard = ({ task, onEdit, onDelete, onView, onDuplicate, clients }: { task: Task, onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, onDuplicate: (task: Task) => void, clients: Client[] }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: {type: 'Task', task} });
     const client = clients.find(c => c.id === task.clientId);
 
@@ -226,6 +228,8 @@ const TaskCard = ({ task, onEdit, onDelete, onView, clients }: { task: Task, onE
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onView(task); }}><Eye className="mr-2 h-4 w-4" />View</DropdownMenuItem>
                             <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onEdit(task); }}><Edit className="mr-2 h-4 w-4" />Edit</DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onDuplicate(task); }}><Copy className="mr-2 h-4 w-4" />Duplicate</DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-500 dark:text-red-400 focus:bg-red-400/20 focus:text-red-500 dark:focus:text-white" onSelect={(e) => { e.preventDefault(); onDelete(task); }}>
                               <Trash2 className="mr-2 h-4 w-4" />Delete
                             </DropdownMenuItem>
@@ -238,7 +242,7 @@ const TaskCard = ({ task, onEdit, onDelete, onView, clients }: { task: Task, onE
     );
 };
 
-const TaskColumn = ({ title, status, tasks, ...props }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, clients: Client[] }) => {
+const TaskColumn = ({ title, status, tasks, ...props }: { title: string, status: TaskStatus, tasks: Task[], onEdit: (task: Task) => void, onDelete: (task: Task) => void, onView: (task: Task) => void, onDuplicate: (task: Task) => void, clients: Client[] }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
 
     const tasksById = React.useMemo(() => tasks.map(t => t.id), [tasks]);
@@ -568,6 +572,23 @@ export default function TasksPage() {
     const handleEdit = (task: Task) => setEditingTask(task);
     const closeEditDialog = () => setEditingTask(null);
 
+    const handleDuplicate = async (task: Task) => {
+        const result = await handleDuplicateTask(task.id);
+        if (result.success) {
+            await fetchData();
+            toast({
+                title: 'Task Duplicated',
+                description: `"${task.title} - Copy" has been created.`,
+            });
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: result.error,
+            });
+        }
+    };
+
     const handleDeleteConfirm = async () => {
         if (taskToDelete) {
             const result = await handleDeleteTask(taskToDelete.id);
@@ -725,7 +746,7 @@ export default function TasksPage() {
             </div>
             
             <div className="flex-1 overflow-hidden">
-                <ScrollArea className="h-full -mx-4 px-4">
+                <ScrollArea className="h-full -mx-4 px-4" orientation="horizontal">
                     <div className="flex flex-row gap-6 h-full py-2">
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
                             {columns.map(status => (
@@ -737,13 +758,14 @@ export default function TasksPage() {
                                     onEdit={handleEdit}
                                     onDelete={setTaskToDelete}
                                     onView={handleView}
+                                    onDuplicate={handleDuplicate}
                                     clients={clients}
                                 />
                             ))}
                             <DragOverlay>
                                 {activeTask ? (
                                     <div className="w-[340px]">
-                                    <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} clients={clients} />
+                                    <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} onView={() => {}} onDuplicate={() => {}} clients={clients} />
                                     </div>
                                 ) : null}
                             </DragOverlay>
