@@ -128,7 +128,7 @@ export default function AdminDashboard() {
           </motion.div>
 
           <motion.div 
-            className="grid gap-6 mt-6 md:grid-cols-1"
+            className="grid gap-6 mt-6 md:grid-cols-1 lg:grid-cols-3"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
