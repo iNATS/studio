@@ -128,12 +128,12 @@ export default function AdminDashboard() {
           </motion.div>
 
           <motion.div 
-            className="grid gap-6 mt-6"
+            className="grid gap-6 mt-6 md:grid-cols-2 xl:grid-cols-3"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-             <motion.div variants={itemVariants}>
+             <motion.div variants={itemVariants} className="xl:col-span-1">
                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                     <CardHeader>
                     <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                 </Card>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
+            <motion.div variants={itemVariants} className="xl:col-span-1">
                 <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Active Projects</CardTitle>
@@ -196,38 +196,30 @@ export default function AdminDashboard() {
                 </CardContent>
                 </Card>
             </motion.div>
-          </motion.div>
-
-           <motion.div 
-              className="grid gap-6 mt-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-            <motion.div variants={itemVariants}>
-            <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        {data.recentClients.map(client => (
-                            <div key={client.id} className="flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
-                                <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
-                                    <AvatarImage src={client.avatar} alt={client.name} />
-                                    <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="text-sm font-semibold">{client.name}</p>
-                                    <p className="text-xs text-zinc-600 dark:text-white/50">{client.company}</p>
+            <motion.div variants={itemVariants} className="md:col-span-2 xl:col-span-1">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {data.recentClients.map(client => (
+                                <div key={client.id} className="flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
+                                    <Avatar className="h-10 w-10 border-2 border-zinc-200 dark:border-white/20">
+                                        <AvatarImage src={client.avatar} alt={client.name} />
+                                        <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="text-sm font-semibold">{client.name}</p>
+                                        <p className="text-xs text-zinc-600 dark:text-white/50">{client.company}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </motion.div>
-           </motion.div>
+          </motion.div>
         </div>
     </main>
   );
