@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -53,7 +54,7 @@ export function useActiveSection(sectionIds: string[], options?: IntersectionObs
       currentObserver.disconnect();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionIds]);
+  }, [JSON.stringify(sectionIds)]);
 
   return activeSection;
 }
