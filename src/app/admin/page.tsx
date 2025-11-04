@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus } from 'lucide-react';
+import { Briefcase, ListTodo, Users, AlertTriangle, ArrowRight, CalendarClock, UserPlus, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format, formatDistanceToNow, isPast, isAfter } from 'date-fns';
 import { motion } from 'framer-motion';
 import { getDashboardData } from '@/lib/db';
+import { cn } from '@/lib/utils';
 
 interface DashboardData {
     activeProjectsCount: number;
@@ -114,14 +115,37 @@ export default function AdminDashboard() {
             </Card>
             </motion.div>
             <motion.div variants={itemVariants}>
-            <Card className="bg-red-500/10 dark:bg-red-500/10 backdrop-blur-2xl border-red-400/20 dark:border-red-400/20 shadow-xl rounded-2xl">
+            <Card className={cn(
+                "backdrop-blur-2xl shadow-xl rounded-2xl",
+                data.overdueTasksCount > 0 
+                    ? "bg-red-500/10 dark:bg-red-500/10 border-red-400/20 dark:border-red-400/20"
+                    : "bg-green-500/10 dark:bg-green-500/10 border-green-400/20 dark:border-green-400/20"
+            )}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-red-500 dark:text-red-300">Overdue Tasks</CardTitle>
-                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <CardTitle className={cn(
+                    "text-sm font-medium",
+                     data.overdueTasksCount > 0 
+                        ? "text-red-500 dark:text-red-300"
+                        : "text-green-600 dark:text-green-300"
+                )}>Overdue Tasks</CardTitle>
+                 {data.overdueTasksCount > 0 
+                    ? <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                    : <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                }
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-bold text-red-600 dark:text-red-400">{data.overdueTasksCount}</div>
-                <p className="text-xs text-red-600/80 dark:text-red-400/70">{data.overdueTasksCount > 0 ? "Action required" : "All tasks on track"}</p>
+                <div className={cn(
+                    "text-4xl font-bold",
+                     data.overdueTasksCount > 0 
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-green-600 dark:text-green-400"
+                )}>{data.overdueTasksCount}</div>
+                <p className={cn(
+                    "text-xs",
+                    data.overdueTasksCount > 0
+                        ? "text-red-600/80 dark:text-red-400/70"
+                        : "text-green-600/80 dark:text-green-400/70"
+                )}>{data.overdueTasksCount > 0 ? "Action required" : "All tasks on track"}</p>
               </CardContent>
             </Card>
             </motion.div>
@@ -133,8 +157,8 @@ export default function AdminDashboard() {
             initial="hidden"
             animate="visible"
           >
-             <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
+             <motion.div variants={itemVariants} className="flex">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col w-full">
                     <CardHeader>
                     <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
                     </CardHeader>
@@ -161,8 +185,8 @@ export default function AdminDashboard() {
                 </Card>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
+            <motion.div variants={itemVariants} className="flex">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col w-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Active Projects</CardTitle>
                     <Button variant="ghost" size="sm" asChild className="rounded-lg">
@@ -196,8 +220,8 @@ export default function AdminDashboard() {
                 </CardContent>
                 </Card>
             </motion.div>
-            <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
+            <motion.div variants={itemVariants} className="flex">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col w-full">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
                     </CardHeader>
