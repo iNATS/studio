@@ -134,11 +134,11 @@ export default function AdminDashboard() {
             animate="visible"
           >
              <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
                     <CardHeader>
                     <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5"/>Upcoming Deadlines</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex-grow">
                     <div className="space-y-4">
                         {data.upcomingDeadlines.map((task) => {
                             const dueDate = new Date(task.dueDate);
@@ -162,14 +162,14 @@ export default function AdminDashboard() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Active Projects</CardTitle>
                     <Button variant="ghost" size="sm" asChild className="rounded-lg">
                         <Link href="/admin/workspace/projects">View All <ArrowRight className="ml-2 h-4 w-4"/></Link>
                     </Button>
                 </CardHeader>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid gap-6 flex-grow">
                     {data.activeProjects.map(project => {
                         const startDate = new Date(project.startDate);
                         const endDate = new Date(project.endDate);
@@ -197,11 +197,11 @@ export default function AdminDashboard() {
                 </Card>
             </motion.div>
             <motion.div variants={itemVariants}>
-                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl">
+                <Card className="bg-white/60 dark:bg-white/5 backdrop-blur-2xl border-zinc-200/50 dark:border-white/10 shadow-xl rounded-2xl h-full flex flex-col">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5"/>Recent Clients</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex-grow">
                         <div className="space-y-4">
                             {data.recentClients.map(client => (
                                 <div key={client.id} className="flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 p-2 rounded-lg -m-2 transition-colors">
