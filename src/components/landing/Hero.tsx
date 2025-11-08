@@ -33,7 +33,7 @@ export function Hero({ content }: { content: any }) {
       id="home"
       className="relative w-full h-[80vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden"
     >
-        <div className="absolute inset-0 -z-20 opacity-70">
+        <div className="absolute inset-0 -z-10 opacity-70">
             <Orb
                 hoverIntensity={0.5}
                 rotateOnHover={true}
@@ -41,9 +41,7 @@ export function Hero({ content }: { content: any }) {
                 forceHoverState={false}
             />
         </div>
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-background/80" />
-      </div>
+      <div className="absolute inset-0 -z-10 bg-background/80" />
 
       <motion.div
         initial="hidden"
