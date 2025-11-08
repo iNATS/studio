@@ -76,12 +76,16 @@ const Orb: React.FC<OrbProps> = ({
 
     const scene = new Transform();
     const geometry = new Sphere(gl, { radius: 1, widthSegments: 64, heightSegments: 64 });
+    
+    const orbColor = new Color();
+    orbColor.setHSL(hue, 0.8, 0.6);
+
     const program = new Program(gl, {
       vertex,
       fragment,
       uniforms: {
         uTime: { value: 0 },
-        uColor: { value: new Color().setHSL(hue, 0.8, 0.6) },
+        uColor: { value: orbColor },
         uMouse: { value: new Vec2(0.5, 0.5) },
         uHover: { value: 0 },
         uRotate: { value: rotateOnHover ? 1 : 0 },
