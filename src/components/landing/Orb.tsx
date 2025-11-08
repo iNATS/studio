@@ -78,7 +78,7 @@ const Orb: React.FC<OrbProps> = ({
     const geometry = new Sphere(gl, { radius: 1, widthSegments: 64, heightSegments: 64 });
     
     const orbColor = new Color();
-    orbColor.setFromHSL(hue, 0.8, 0.6);
+    orbColor.set(`hsl(${hue}, 80%, 60%)`);
 
     const program = new Program(gl, {
       vertex,
