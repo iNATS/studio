@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Orb from './Orb';
 
 export function Hero({ content }: { content: any }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -31,20 +32,16 @@ export function Hero({ content }: { content: any }) {
       id="home"
       className="relative w-full h-[80vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden"
     >
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-background" />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 50% 50%, hsl(var(--primary-rgb) / 0.1), transparent 70%)',
-          }}
-        />
-        <div className="aurora-bg">
-          <div className="aurora-outer">
-            <div className="aurora-inner"></div>
-          </div>
+        <div className="absolute inset-0 -z-20">
+            <Orb
+                hoverIntensity={0.5}
+                rotateOnHover={true}
+                hue={0}
+                forceHoverState={false}
+            />
         </div>
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-background/80" />
       </div>
 
       <motion.div

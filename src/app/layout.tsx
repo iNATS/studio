@@ -27,13 +27,6 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen font-sans')}>
         <AppProviders>
-          <div className="fixed inset-0 -z-50">
-            <div className="absolute inset-0 -z-40 bg-background"></div>
-            <div className="absolute inset-0 -z-30 bg-grid-pattern opacity-10"></div>
-            <div className="absolute inset-x-0 top-0 h-1/2 -z-20 bg-gradient-to-b from-primary/10 to-transparent"></div>
-            <div className="blob-c animation-delay-200"></div>
-            <div className="blob-c animation-delay-400"></div>
-          </div>
           {children}
           <Toaster />
         </AppProviders>
