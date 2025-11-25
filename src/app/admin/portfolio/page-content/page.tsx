@@ -146,6 +146,7 @@ export default function PageContentPage() {
                                     <SelectItem value="gradient">Gradient</SelectItem>
                                     <SelectItem value="starfield">Starfield</SelectItem>
                                     <SelectItem value="noise">Noise</SelectItem>
+                                    <SelectItem value="floatingLines">Floating Lines</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -238,5 +239,3 @@ export default function PageContentPage() {
     </>
   );
 }
-
-    

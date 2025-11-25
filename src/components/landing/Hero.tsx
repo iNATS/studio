@@ -10,12 +10,14 @@ import Orb from './Orb';
 import { Noise } from '../backgrounds/Noise';
 import { Starfield } from '../backgrounds/Starfield';
 import { Gradient } from '../backgrounds/Gradient';
+import FloatingLines from '../backgrounds/FloatingLines';
 
 const backgroundComponents = {
     orb: Orb,
     noise: Noise,
     starfield: Starfield,
     gradient: Gradient,
+    floatingLines: FloatingLines,
 };
 
 export function Hero({ content }: { content: any }) {
@@ -111,5 +113,3 @@ export function Hero({ content }: { content: any }) {
     </section>
   );
 }
-
-    
