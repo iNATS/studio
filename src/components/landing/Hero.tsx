@@ -33,13 +33,13 @@ export function Hero({ content }: { content: any }) {
       id="home"
       className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden"
     >
-      <div className="absolute inset-0 -z-10">
-          <Orb
-              hoverIntensity={0.5}
-              rotateOnHover={true}
-              hue={200}
-              forceHoverState={false}
-          />
+      <div className="absolute inset-0 z-0">
+        <Orb
+          hoverIntensity={0.5}
+          rotateOnHover={true}
+          hue={200}
+          forceHoverState={false}
+        />
       </div>
       
       <motion.div
