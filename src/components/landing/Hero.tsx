@@ -46,7 +46,7 @@ export function Hero({ content }: { content: any }) {
         initial="hidden"
         animate={isMounted ? 'visible' : 'hidden'}
         transition={{ staggerChildren: 0.2, delayChildren: 0.1 }}
-        className="relative z-30 w-full max-w-4xl mx-auto flex flex-col items-center"
+        className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center"
       >
         <motion.div
           variants={FADE_UP_VARIANTS}
