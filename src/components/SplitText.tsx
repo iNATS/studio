@@ -4,7 +4,7 @@
 import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useInView } from 'react-intersection-observer';
+import { useInView } from '@/hooks/use-in-view';
 import { cn } from '@/lib/utils';
 
 interface SplitTextProps {
@@ -39,7 +39,8 @@ const SplitText: React.FC<SplitTextProps> = ({
   onLetterAnimationComplete,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { ref: inViewRef, inView } = useInView({
+  const inViewRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(inViewRef, {
     threshold,
     rootMargin,
     triggerOnce: true,
