@@ -11,6 +11,7 @@ import { Noise } from '../backgrounds/Noise';
 import { Starfield } from '../backgrounds/Starfield';
 import { Gradient } from '../backgrounds/Gradient';
 import FloatingLines from '../backgrounds/FloatingLines';
+import SplitText from '../SplitText';
 
 const backgroundComponents = {
     orb: Orb,
@@ -48,7 +49,7 @@ export function Hero({ content }: { content: any }) {
       id="home"
       className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden"
     >
-       <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 h-full w-full">
           <BackgroundComponent />
       </div>
       
@@ -75,9 +76,16 @@ export function Hero({ content }: { content: any }) {
           <p className="text-lg md:text-xl font-medium text-muted-foreground">
             {subtitle}
           </p>
-          <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline mt-2 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary/80 to-primary/40 dark:from-white dark:via-white/80 dark:to-white/40">
-            {title}
-          </h1>
+          <SplitText
+            text={title}
+            className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl font-headline mt-2 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary/80 to-primary/40 dark:from-white dark:via-white/80 dark:to-white/40"
+            splitType="chars"
+            from={{ opacity: 0, y: 40, scale: 0.8 }}
+            to={{ opacity: 1, y: 0, scale: 1 }}
+            stagger={0.05}
+            duration={0.6}
+            ease="power3.out"
+          />
         </motion.div>
 
         <motion.p
