@@ -33,8 +33,7 @@ export function Hero({ content }: { content: any }) {
       id="home"
       className="relative w-full h-[80vh] min-h-[700px] flex items-center justify-center text-center px-4 overflow-hidden"
     >
-      <div className="absolute inset-0 z-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-      <div className="absolute inset-0 z-10">
+      <div className="absolute inset-0 z-20">
           <Orb
               hoverIntensity={0.5}
               rotateOnHover={true}
@@ -42,12 +41,13 @@ export function Hero({ content }: { content: any }) {
               forceHoverState={false}
           />
       </div>
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-background via-background/80 to-transparent" />
 
       <motion.div
         initial="hidden"
         animate={isMounted ? 'visible' : 'hidden'}
         transition={{ staggerChildren: 0.2, delayChildren: 0.1 }}
-        className="relative z-20 w-full max-w-4xl mx-auto flex flex-col items-center"
+        className="relative z-30 w-full max-w-4xl mx-auto flex flex-col items-center"
       >
         <motion.div
           variants={FADE_UP_VARIANTS}
