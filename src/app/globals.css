@@ -5,7 +5,6 @@
 
 body {
   font-family: 'Geist', sans-serif;
-  @apply bg-zinc-100 dark:bg-zinc-950;
 }
 
 @layer base {

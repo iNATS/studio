@@ -61,7 +61,7 @@ export default function Home() {
       <main className="flex-1 w-full">
         <Hero content={heroContent} />
         <motion.div 
-          className="w-full"
+          className="w-full bg-background"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
