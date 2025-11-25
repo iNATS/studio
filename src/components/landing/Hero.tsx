@@ -1,12 +1,22 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Orb from './Orb';
+import { Noise } from '../backgrounds/Noise';
+import { Starfield } from '../backgrounds/Starfield';
+import { Gradient } from '../backgrounds/Gradient';
+
+const backgroundComponents = {
+    orb: Orb,
+    noise: Noise,
+    starfield: Starfield,
+    gradient: Gradient,
+};
 
 export function Hero({ content }: { content: any }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -15,12 +25,15 @@ export function Hero({ content }: { content: any }) {
     setIsMounted(true);
   }, []);
 
-  const { title, subtitle, description, avatar } = content || {
+  const { title, subtitle, description, avatar, background = 'orb' } = content || {
       title: 'Mohamed Aref',
       subtitle: 'Creative Developer & Designer',
       description: "I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.",
-      avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj'
+      avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj',
+      background: 'orb'
   };
+
+  const BackgroundComponent = backgroundComponents[background as keyof typeof backgroundComponents] || Orb;
 
 
   const FADE_UP_VARIANTS = {
@@ -34,12 +47,14 @@ export function Hero({ content }: { content: any }) {
       className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden"
     >
       <div className="absolute inset-0 z-0">
-        <Orb
-          hoverIntensity={0.5}
-          rotateOnHover={true}
-          hue={200}
-          forceHoverState={false}
-        />
+          <Suspense fallback={<div className="bg-background w-full h-full" />}>
+            <BackgroundComponent
+                hoverIntensity={0.5}
+                rotateOnHover={true}
+                hue={200}
+                forceHoverState={false}
+            />
+          </Suspense>
       </div>
       
       <motion.div
@@ -96,4 +111,5 @@ export function Hero({ content }: { content: any }) {
     </section>
   );
 }
+
     

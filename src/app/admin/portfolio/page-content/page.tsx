@@ -18,6 +18,7 @@ import { PlusCircle, Trash2, Upload } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getPageContent, getTestimonials } from '@/lib/db';
 import { handlePageContentSave, handleAddTestimonial, handleTestimonialSave, handleRemoveTestimonial } from '@/lib/actions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type Testimonial = {
   id: number;
@@ -31,7 +32,7 @@ const defaultAboutContent = { title: '', description: '', skills: [], avatar: ''
 
 export default function PageContentPage() {
     const { toast } = useToast();
-    const [heroContent, setHeroContent] = React.useState({ title: '', subtitle: '', description: ''});
+    const [heroContent, setHeroContent] = React.useState({ title: '', subtitle: '', description: '', background: 'orb' });
     const [aboutContent, setAboutContent] = React.useState(defaultAboutContent);
     const [processSteps, setProcessSteps] = React.useState<any[]>([]);
     const [testimonials, setTestimonials] = React.useState<Testimonial[]>([]);
@@ -133,6 +134,20 @@ export default function PageContentPage() {
                         <div className="space-y-2">
                             <Label htmlFor="hero-description" className="text-zinc-700 dark:text-white/70">Description</Label>
                             <Textarea id="hero-description" name="description" defaultValue={heroContent.description} onChange={(e) => setHeroContent({...heroContent, description: e.target.value})} className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20"/>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="hero-background" className="text-zinc-700 dark:text-white/70">Background</Label>
+                            <Select name="background" value={heroContent.background} onValueChange={(value) => setHeroContent({ ...heroContent, background: value })}>
+                                <SelectTrigger id="hero-background" className="bg-black/5 dark:bg-white/10 border-zinc-300 dark:border-white/20">
+                                    <SelectValue placeholder="Select a background" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
+                                    <SelectItem value="orb">Orb</SelectItem>
+                                    <SelectItem value="gradient">Gradient</SelectItem>
+                                    <SelectItem value="starfield">Starfield</SelectItem>
+                                    <SelectItem value="noise">Noise</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <Button className="rounded-lg" type="submit">Save Hero Content</Button>
                         </form>
