@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -46,9 +46,17 @@ export function Hero({ content }: { content: any }) {
     <section
       id="home"
       className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden"
+      style={{
+        backgroundImage: avatar ? `url(${avatar})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
       <div className="absolute inset-0 z-0 h-full w-full">
-          <BackgroundComponent />
+          <Suspense fallback={<div className="w-full h-full bg-background" />}>
+            <BackgroundComponent />
+          </Suspense>
       </div>
       
       <motion.div
@@ -62,15 +70,7 @@ export function Hero({ content }: { content: any }) {
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="flex flex-col items-center"
         >
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 mb-6">
-            {avatar && <Image
-              src={avatar}
-              alt={title}
-              fill
-              className="object-contain rounded-full"
-              priority
-            />}
-          </div>
+          
           <p className="text-lg md:text-xl font-medium text-muted-foreground">
             {subtitle}
           </p>
