@@ -7,8 +7,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Trash2, Edit, GripVertical, CalendarIcon, DollarSign, User, FileText, X as XIcon, Filter } from 'lucide-react';
@@ -52,18 +50,19 @@ import { Calendar } from '@/components/ui/calendar';
 import { format, differenceInCalendarDays, formatDistanceToNowStrict, isWithinInterval } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { clientsData, initialProjects } from './data';
-import type { Timestamp } from 'firebase/firestore';
+import { getProjects, getClients, addProject, updateProject, deleteProject } from '@/lib/db';
+import type { Client } from '../clients/page';
+
 
 export type Project = {
-  id: string;
+  id: number;
   title: string;
   description: string;
   status: 'planning' | 'in-progress' | 'completed';
-  clientId: string;
+  clientId: number;
   budget: number;
-  startDate: Date | Timestamp;
-  endDate: Date | Timestamp;
+  startDate: Date;
+  endDate: Date;
 };
 
 export type ProjectStatus = 'planning' | 'in-progress' | 'completed';
@@ -79,16 +78,9 @@ const getStatusBadge = (status: ProjectStatus) => {
     }
 }
 
-const toDate = (date: Date | Timestamp | undefined): Date => {
-    if (!date) {
-        return new Date();
-    }
-    return date instanceof Date ? date : date.toDate();
-}
-
-const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
+const ProjectCard = ({ project, onEdit, onDelete, onView, clients }: { project: Project, onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void, clients: Client[] }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id, data: {type: 'Project', project} });
-    const client = clientsData.find(c => c.id === project.clientId);
+    const client = clients.find(c => c.id === project.clientId);
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -96,8 +88,8 @@ const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, 
         opacity: isDragging ? 0.5 : 1,
     };
     
-    const startDate = toDate(project.startDate);
-    const endDate = toDate(project.endDate);
+    const startDate = new Date(project.startDate);
+    const endDate = new Date(project.endDate);
 
     const totalDays = differenceInCalendarDays(endDate, startDate);
     const daysPassed = differenceInCalendarDays(new Date(), startDate);
@@ -160,7 +152,7 @@ const ProjectCard = ({ project, onEdit, onDelete, onView }: { project: Project, 
     );
 };
 
-const ProjectColumn = ({ title, status, projects, onEdit, onDelete, onView }: { title: string, status: ProjectStatus, projects: Project[], onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void }) => {
+const ProjectColumn = ({ title, status, projects, onEdit, onDelete, onView, clients }: { title: string, status: ProjectStatus, projects: Project[], onEdit: (project: Project) => void, onDelete: (project: Project) => void, onView: (project: Project) => void, clients: Client[] }) => {
     const { setNodeRef, isOver } = useSortable({ id: status, data: { type: 'Column', status }});
     const projectsById = React.useMemo(() => projects.map(p => p.id), [projects]);
 
@@ -169,16 +161,16 @@ const ProjectColumn = ({ title, status, projects, onEdit, onDelete, onView }: { 
             <h3 className="text-lg font-semibold text-foreground dark:text-white/90 mb-4 px-1">{title} <Badge variant="outline" className="ml-2 bg-black/5 dark:bg-white/10 border-zinc-200 dark:border-white/20 text-zinc-600 dark:text-white/70">{projects.length}</Badge></h3>
             <div className="bg-white/60 dark:bg-white/5 border border-zinc-200/50 dark:border-white/10 rounded-2xl p-2 sm:p-4 min-h-[600px]">
                 <SortableContext items={projectsById} strategy={verticalListSortingStrategy}>
-                    {projects.map(project => <ProjectCard key={project.id} project={project} onEdit={onEdit} onDelete={onDelete} onView={onView} />)}
+                    {projects.map(project => <ProjectCard key={project.id} project={project} onEdit={onEdit} onDelete={onDelete} onView={onView} clients={clients} />)}
                 </SortableContext>
             </div>
         </div>
     );
 };
 
-const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSubmit: (values: any) => void, onCancel: () => void }) => {
-    const [startDate, setStartDate] = React.useState<Date | undefined>(project ? toDate(project.startDate) : undefined);
-    const [endDate, setEndDate] = React.useState<Date | undefined>(project ? toDate(project.endDate) : undefined);
+const ProjectForm = ({ project, onSubmit, onCancel, clients }: { project?: Project, onSubmit: (values: any) => void, onCancel: () => void, clients: Client[] }) => {
+    const [startDate, setStartDate] = React.useState<Date | undefined>(project ? new Date(project.startDate) : undefined);
+    const [endDate, setEndDate] = React.useState<Date | undefined>(project ? new Date(project.endDate) : undefined);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -199,12 +191,12 @@ const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSub
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="clientId" className="text-right">Client</Label>
-               <Select name="clientId" defaultValue={project?.clientId} required>
+               <Select name="clientId" defaultValue={String(project?.clientId || '')} required>
                 <SelectTrigger id="clientId" className="col-span-3 bg-black/5 dark:bg-white/5 border-zinc-300 dark:border-white/10">
                     <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
-                    {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                    {clients.map(client => <SelectItem key={client.id} value={String(client.id)}>{client.name}</SelectItem>)}
                 </SelectContent>
                 </Select>
             </div>
@@ -247,13 +239,13 @@ const ProjectForm = ({ project, onSubmit, onCancel }: { project?: Project, onSub
     );
 };
 
-const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+const ProjectViewDialog = ({ project, open, onOpenChange, clients }: { project: Project | null, open: boolean, onOpenChange: (open: boolean) => void, clients: Client[] }) => {
     if (!project) return null;
     
-    const client = clientsData.find(c => c.id === project.clientId);
+    const client = clients.find(c => c.id === project.clientId);
 
-    const startDate = toDate(project.startDate);
-    const endDate = toDate(project.endDate);
+    const startDate = new Date(project.startDate);
+    const endDate = new Date(project.endDate);
 
     const totalDays = differenceInCalendarDays(endDate, startDate);
     const daysPassed = differenceInCalendarDays(new Date(), startDate);
@@ -310,7 +302,8 @@ const ProjectViewDialog = ({ project, open, onOpenChange }: { project: Project |
 }
 
 export default function ProjectsPage() {
-    const [projects, setProjects] = React.useState<Project[]>(initialProjects);
+    const [projects, setProjects] = React.useState<Project[]>([]);
+    const [clients, setClients] = React.useState<Client[]>([]);
     const [activeProject, setActiveProject] = React.useState<Project | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
     const [editingProject, setEditingProject] = React.useState<Project | null>(null);
@@ -333,6 +326,17 @@ export default function ProjectsPage() {
 
     const columns: ProjectStatus[] = ['planning', 'in-progress', 'completed'];
     const columnTitles = { planning: 'Planning', 'in-progress': 'In Progress', completed: 'Completed' };
+
+    const fetchProjects = React.useCallback(async () => {
+        const projectsData = await getProjects();
+        const clientsData = await getClients();
+        setProjects(projectsData as Project[]);
+        setClients(clientsData as Client[]);
+    }, []);
+
+    React.useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
     
     const handleFilterChange = (filterType: keyof typeof filters, value: any) => {
         setFilters(prev => ({ ...prev, [filterType]: value }));
@@ -349,7 +353,7 @@ export default function ProjectsPage() {
 
     const filteredProjects = React.useMemo(() => {
         return projects.filter(project => {
-            const clientMatch = filters.clientId === 'all' || project.clientId === filters.clientId;
+            const clientMatch = filters.clientId === 'all' || String(project.clientId) === filters.clientId;
             const statusMatch = filters.status === 'all' || project.status === filters.status;
             
             const budgetMinMatch = filters.budgetMin === '' || project.budget >= filters.budgetMin;
@@ -389,8 +393,10 @@ export default function ProjectsPage() {
                 const updatedProject = { ...currentProjects[activeIndex], status: newStatus };
                 const newProjects = [...currentProjects];
                 newProjects[activeIndex] = updatedProject;
+                
+                updateProject(activeId as number, { status: newStatus });
 
-                return arrayMove(newProjects, activeIndex, activeIndex); // Keep position but update status
+                return arrayMove(newProjects, activeIndex, activeIndex);
             });
         }
         
@@ -401,8 +407,12 @@ export default function ProjectsPage() {
                 const overIndex = currentProjects.findIndex(p => p.id === overId);
                 
                 if (currentProjects[activeIndex].status !== currentProjects[overIndex].status) {
-                    currentProjects[activeIndex].status = currentProjects[overIndex].status;
-                    return arrayMove(currentProjects, activeIndex, overIndex);
+                    const newStatus = currentProjects[overIndex].status
+                    const updatedProject = {...currentProjects[activeIndex], status: newStatus };
+                    updateProject(activeId as number, { status: newStatus });
+                    const newProjects = [...currentProjects];
+                    newProjects[activeIndex] = updatedProject;
+                    return arrayMove(newProjects, activeIndex, overIndex);
                 }
 
                 return arrayMove(currentProjects, activeIndex, overIndex);
@@ -418,9 +428,10 @@ export default function ProjectsPage() {
     const closeEditDialog = () => setEditingProject(null);
     const handleView = (project: Project) => setViewingProject(project);
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (projectToDelete) {
-            setProjects(projects.filter(p => p.id !== projectToDelete.id));
+            await deleteProject(projectToDelete.id);
+            await fetchProjects();
             setProjectToDelete(null);
             toast({
                 title: 'Project Removed',
@@ -429,28 +440,24 @@ export default function ProjectsPage() {
         }
     };
 
-    const handleAddProject = (values: any) => {
-        const newProject: Project = {
-            id: `project-${Date.now()}`,
-            status: 'planning',
-            ...values
-        };
-        setProjects([...projects, newProject]);
+    const handleAddProject = async (values: any) => {
+        await addProject(values);
+        await fetchProjects();
         setIsAddDialogOpen(false);
         toast({
             title: 'Project Added',
-            description: `"${newProject.title}" has been added to 'Planning'.`,
+            description: `"${values.title}" has been added to 'Planning'.`,
         });
     };
 
-    const handleEditProject = (values: any) => {
+    const handleEditProject = async (values: any) => {
         if (!editingProject) return;
-        const updatedProject = { ...editingProject, ...values };
-        setProjects(projects.map(p => p.id === editingProject.id ? updatedProject : p));
+        await updateProject(editingProject.id, values);
+        await fetchProjects();
         closeEditDialog();
         toast({
             title: 'Project Updated',
-            description: `"${updatedProject.title}" has been updated.`,
+            description: `"${values.title}" has been updated.`,
         });
     };
 
@@ -487,7 +494,7 @@ export default function ProjectsPage() {
                                             </SelectTrigger>
                                             <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10 text-foreground dark:text-white">
                                                 <SelectItem value="all">All Clients</SelectItem>
-                                                {clientsData.map(client => <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>)}
+                                                {clients.map(client => <SelectItem key={client.id} value={String(client.id)}>{client.name}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -546,7 +553,7 @@ export default function ProjectsPage() {
                                 <DialogTitle>Add New Project</DialogTitle>
                                 <DialogDescription className="text-zinc-600 dark:text-white/60">Enter the details for the new project.</DialogDescription>
                             </DialogHeader>
-                            <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} />
+                            <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsAddDialogOpen(false)} clients={clients} />
                         </DialogContent>
                     </Dialog>
                 </div>
@@ -564,13 +571,14 @@ export default function ProjectsPage() {
                               onEdit={handleEdit}
                               onDelete={setProjectToDelete}
                               onView={handleView}
+                              clients={clients}
                           />
                       ))}
                   </div>
                   <DragOverlay>
                       {activeProject ? (
                           <div className="w-[300px] md:w-[400px]">
-                              <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} onView={() => {}} />
+                              <ProjectCard project={activeProject} onEdit={() => {}} onDelete={() => {}} onView={() => {}} clients={clients} />
                           </div>
                       ) : null}
                   </DragOverlay>
@@ -584,7 +592,7 @@ export default function ProjectsPage() {
                         <DialogTitle>Edit Project</DialogTitle>
                         <DialogDescription className="text-zinc-600 dark:text-white/60">Update the details of your project.</DialogDescription>
                     </DialogHeader>
-                    <ProjectForm project={editingProject!} onSubmit={handleEditProject} onCancel={closeEditDialog} />
+                    <ProjectForm project={editingProject!} onSubmit={handleEditProject} onCancel={closeEditDialog} clients={clients} />
                 </DialogContent>
             </Dialog>
 
@@ -592,7 +600,8 @@ export default function ProjectsPage() {
              <ProjectViewDialog 
                 project={viewingProject} 
                 open={!!viewingProject} 
-                onOpenChange={(isOpen) => !isOpen && setViewingProject(null)} 
+                onOpenChange={(isOpen) => !isOpen && setViewingProject(null)}
+                clients={clients}
             />
 
             {/* Delete Confirmation Dialog */}
@@ -635,5 +644,3 @@ const ProgressWithIndicator = ({ indicatorClassName, ...props }: React.Component
   const originalProgress = Progress;
   // @ts-ignore
   originalProgress.Indicator = Progress.Indicator;
-
-    

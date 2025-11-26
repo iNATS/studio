@@ -43,12 +43,10 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
     DialogFooter,
   } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow, format, isSameDay } from 'date-fns';
-import { emails as initialEmailsData, meetings as initialMeetings, contacts } from './data';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -58,9 +56,19 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { MailDisplay, type MailboxItem } from '@/components/admin/MailDisplay';
+import { getMeetings, getClients, addMeeting, updateMeeting, deleteMeeting } from '@/lib/db';
+import type { Client } from '../clients/page';
 
 
-export type Meeting = (typeof initialMeetings)[number];
+export type Meeting = {
+    id: number,
+    title: string,
+    time: Date,
+    duration: string,
+    participants: { name: string, avatar: string }[],
+    meetLink: string,
+    clientId: number,
+}
 type MailboxType = 'inbox' | 'starred' | 'sent' | 'snoozed' | 'archive' | 'trash';
 
 const ComposeDialog = ({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) => {
@@ -113,12 +121,13 @@ const MailTimeDisplay = ({ date }: { date: Date }) => {
 };
 
 const MailView = () => {
-    const [emails, setEmails] = React.useState<MailboxItem[]>(initialEmailsData.map(e => ({...e, starred: false, sent: false, archived: false, trash: false})));
+    const [emails, setEmails] = React.useState<MailboxItem[]>([]);
     const [selectedEmail, setSelectedEmail] = React.useState<MailboxItem | null>(null);
     const [isComposeOpen, setIsComposeOpen] = React.useState(false);
     const [activeMailbox, setActiveMailbox] = React.useState<MailboxType>('inbox');
     const { toast } = useToast();
 
+    // This is now a placeholder as we don't have an email table.
     const handleEmailAction = (action: string, emailId: string) => {
         const email = emails.find(e => e.id === emailId);
         if (!email) return;
@@ -152,26 +161,13 @@ const MailView = () => {
         if (activeMailbox === 'inbox') {
             return emails.filter(e => !e.archived && !e.trash);
         }
-        if (activeMailbox === 'starred') {
-            return emails.filter(e => e.starred && !e.trash);
-        }
-        if (activeMailbox === 'sent') {
-            // Mocking sent emails for demonstration
-            return emails.slice(0, 2).map(e => ({...e, sent: true}));
-        }
-        if (activeMailbox === 'archive') {
-            return emails.filter(e => e.archived && !e.trash);
-        }
-        if (activeMailbox === 'trash') {
-            return emails.filter(e => e.trash);
-        }
         return [];
     }, [activeMailbox, emails]);
 
     const mailFolders = [
         { id: 'inbox', label: 'Inbox', icon: Inbox, count: emails.filter(e => !e.read && !e.archived && !e.trash).length },
-        { id: 'starred', label: 'Starred', icon: Star, count: emails.filter(e => e.starred && !e.trash).length },
-        { id: 'sent', label: 'Sent', icon: Send, count: 2 },
+        { id: 'starred', label: 'Starred', icon: Star, count: 0 },
+        { id: 'sent', label: 'Sent', icon: Send, count: 0 },
         { id: 'snoozed', label: 'Snoozed', icon: Clock, count: 0 },
         { id: 'archive', label: 'Archive', icon: Archive, count: emails.filter(e => e.archived && !e.trash).length },
         { id: 'trash', label: 'Trash', icon: Trash2, count: emails.filter(e => e.trash).length },
@@ -224,34 +220,10 @@ const MailView = () => {
                 </div>
                 <div className="flex-1 overflow-hidden">
                   <ScrollArea className="h-full">
-                    <div className="flex flex-col gap-2 p-4 pt-0">
-                        {displayedEmails.map((email) => (
-                        <button
-                            key={email.id}
-                            className={cn(
-                            "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-black/5 dark:hover:bg-white/5",
-                            "border-transparent"
-                            )}
-                            onClick={() => setSelectedEmail(email)}
-                        >
-                            <div className="flex w-full items-center">
-                            <div className="flex items-center gap-3">
-                                {!email.read && <span className="flex h-2 w-2 rounded-full bg-blue-500" />}
-                                <div className="font-semibold">{email.name}</div>
-                            </div>
-                            <MailTimeDisplay date={email.date} />
-                            </div>
-                            <div className="text-xs font-medium">{email.subject}</div>
-                            <div className="line-clamp-2 text-xs text-muted-foreground">
-                            {email.text.substring(0, 300)}
-                            </div>
-                        </button>
-                        ))}
-                         {displayedEmails.length === 0 && (
-                            <div className="text-center py-20 text-muted-foreground">
-                                <p>No emails in this folder.</p>
-                            </div>
-                         )}
+                    <div className="text-center py-20 text-muted-foreground">
+                        <Mail className="mx-auto h-12 w-12 mb-4 text-zinc-400 dark:text-zinc-600"/>
+                        <h3 className="text-lg font-semibold">No Email Integration</h3>
+                        <p>Email functionality is not yet configured.</p>
                     </div>
                   </ScrollArea>
                 </div>
@@ -265,33 +237,26 @@ const MailView = () => {
     )
 }
 
-const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit }: { onSave: (meeting: Meeting) => void; onCancel: () => void, meetingToEdit?: Meeting | null }) => {
+const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit, clients }: { onSave: (meeting: Omit<Meeting, 'id' | 'participants' | 'meetLink'> & {id?: number, meetLink?: string}) => void; onCancel: () => void, meetingToEdit?: Meeting | null, clients: Client[] }) => {
     const [title, setTitle] = React.useState(meetingToEdit?.title || '');
     const [date, setDate] = React.useState<Date | undefined>(meetingToEdit ? new Date(meetingToEdit.time) : new Date());
-    const [contactId, setContactId] = React.useState(meetingToEdit?.participants[0]?.name ? contacts.find(c => c.name === meetingToEdit.participants[0].name)?.id || '' : '');
+    const [contactId, setContactId] = React.useState(String(meetingToEdit?.clientId || ''));
     const [notes, setNotes] = React.useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title || !date || !contactId) {
-            // Basic validation
             alert('Please fill all required fields.');
             return;
         }
 
-        const contact = contacts.find(c => c.id === contactId);
-        if (!contact) return;
-
-        const newMeeting: Meeting = {
-            id: meetingToEdit?.id || `meeting-${Date.now()}`,
+        const newMeeting = {
+            id: meetingToEdit?.id,
             title,
             time: date,
             duration: '30 min',
-            participants: [
-                { name: contact.name, avatar: contact.avatar },
-                { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
-            ],
-            meetLink: meetingToEdit?.meetLink || `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}` // Dummy link
+            clientId: Number(contactId),
+            meetLink: meetingToEdit?.meetLink
         };
         onSave(newMeeting);
     };
@@ -309,8 +274,8 @@ const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit }: { onSave: (mee
                         <SelectValue placeholder="Select a contact" />
                     </SelectTrigger>
                     <SelectContent className="bg-background/80 backdrop-blur-xl border-zinc-200/50 dark:border-white/10">
-                        {contacts.map(contact => (
-                            <SelectItem key={contact.id} value={contact.id}>{contact.name}</SelectItem>
+                        {clients.map(contact => (
+                            <SelectItem key={contact.id} value={String(contact.id)}>{contact.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -349,17 +314,44 @@ const ScheduleMeetingForm = ({ onSave, onCancel, meetingToEdit }: { onSave: (mee
 
 const MeetingsView = () => {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
-    const [meetings, setMeetings] = React.useState<Meeting[]>(initialMeetings);
+    const [meetings, setMeetings] = React.useState<Meeting[]>([]);
+    const [clients, setClients] = React.useState<Client[]>([]);
     const [isScheduling, setIsScheduling] = React.useState(false);
     const [meetingToEdit, setMeetingToEdit] = React.useState<Meeting | null>(null);
+    const { toast } = useToast();
 
-    const handleSaveMeeting = (meeting: Meeting) => {
-        const isEditing = meetings.some(m => m.id === meeting.id);
-        if (isEditing) {
-            setMeetings(prev => prev.map(m => m.id === meeting.id ? meeting : m).sort((a,b) => a.time.getTime() - b.time.getTime()));
+    const fetchMeetings = React.useCallback(async () => {
+        const meetingsData = await getMeetings();
+        const clientsData = await getClients();
+        setClients(clientsData);
+
+        const populatedMeetings = meetingsData.map(m => {
+            const client = clientsData.find(c => c.id === m.clientId);
+            return {
+                ...m,
+                time: new Date(m.time),
+                participants: client ? [
+                    { name: client.name, avatar: client.avatar },
+                    { name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }
+                ] : [{ name: 'You', avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' }]
+            };
+        });
+        setMeetings(populatedMeetings);
+    }, []);
+
+    React.useEffect(() => {
+        fetchMeetings();
+    }, [fetchMeetings]);
+
+    const handleSaveMeeting = async (meeting: Omit<Meeting, 'id' | 'participants' | 'meetLink'> & {id?: number, meetLink?: string}) => {
+        if (meeting.id) {
+            await updateMeeting(meeting.id, meeting);
+            toast({ title: "Meeting Updated!" });
         } else {
-            setMeetings(prev => [...prev, meeting].sort((a,b) => a.time.getTime() - b.time.getTime()));
+            await addMeeting(meeting);
+            toast({ title: "Meeting Scheduled!" });
         }
+        await fetchMeetings();
         setIsScheduling(false);
         setMeetingToEdit(null);
     };
@@ -370,8 +362,10 @@ const MeetingsView = () => {
         setIsScheduling(true);
     };
     
-    const handleDeleteMeeting = (meetingId: string) => {
-        setMeetings(prev => prev.filter(m => m.id !== meetingId));
+    const handleDeleteMeeting = async (meetingId: number) => {
+        await deleteMeeting(meetingId);
+        await fetchMeetings();
+        toast({ title: "Meeting Canceled" });
     };
 
     const handleCloseDialog = () => {
@@ -471,7 +465,7 @@ const MeetingsView = () => {
                                 {meetingToEdit ? 'Update the details for your meeting.' : 'Fill in the details to add a new meeting to your calendar.'}
                             </DialogDescription>
                         </DialogHeader>
-                        <ScheduleMeetingForm onSave={handleSaveMeeting} onCancel={handleCloseDialog} meetingToEdit={meetingToEdit}/>
+                        <ScheduleMeetingForm onSave={handleSaveMeeting} onCancel={handleCloseDialog} meetingToEdit={meetingToEdit} clients={clients} />
                     </DialogContent>
                 </Dialog>
             </div>
@@ -488,7 +482,7 @@ export default function CommunicationsPage() {
 
   return (
     <>
-        <Tabs defaultValue="inbox" className="h-full flex flex-col">
+        <Tabs defaultValue="meetings" className="h-full flex flex-col">
             <div className="flex-shrink-0">
                 <div className="flex items-center mb-6">
                     <h1 className="text-2xl font-bold tracking-tight">Communications</h1>
@@ -517,5 +511,3 @@ export default function CommunicationsPage() {
     </>
   );
 }
-
-    

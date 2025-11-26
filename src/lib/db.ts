@@ -79,6 +79,16 @@ db.exec(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE
     );
+    
+    CREATE TABLE IF NOT EXISTS meetings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        time TEXT NOT NULL,
+        duration TEXT,
+        meetLink TEXT,
+        clientId INTEGER,
+        FOREIGN KEY (clientId) REFERENCES clients(id) ON DELETE SET NULL
+    );
 `);
 
 // Seed initial categories if table is empty
@@ -505,14 +515,122 @@ export async function deleteTask(id: string) {
     }
 }
 
+// --- Projects ---
+export async function getProjects() {
+    try {
+        const stmt = db.prepare('SELECT * FROM projects');
+        const projects = stmt.all() as any[];
+        return projects.map(p => ({
+            ...p,
+            startDate: new Date(p.startDate),
+            endDate: new Date(p.endDate)
+        }));
+    } catch (e) {
+        console.error("Failed to get projects", e);
+        return [];
+    }
+}
+
+export async function addProject(values: any) {
+    try {
+        const stmt = db.prepare('INSERT INTO projects (title, description, status, clientId, budget, startDate, endDate) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        const info = stmt.run(values.title, values.description, 'planning', values.clientId, values.budget, values.startDate.toISOString(), values.endDate.toISOString());
+        return { success: true, id: info.lastInsertRowid };
+    } catch(e) {
+        console.error("Failed to add project", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+export async function updateProject(id: number, values: any) {
+    try {
+        const fieldsToUpdate: {[key: string]: any} = { ...values };
+
+        if (fieldsToUpdate.startDate && fieldsToUpdate.startDate instanceof Date) {
+            fieldsToUpdate.startDate = fieldsToUpdate.startDate.toISOString();
+        }
+         if (fieldsToUpdate.endDate && fieldsToUpdate.endDate instanceof Date) {
+            fieldsToUpdate.endDate = fieldsToUpdate.endDate.toISOString();
+        }
+
+        const columns = Object.keys(fieldsToUpdate).filter(k => fieldsToUpdate[k] !== undefined);
+        const setClause = columns.map(col => `${col} = ?`).join(', ');
+
+        if (columns.length === 0) return { success: true };
+
+        const dbValues = columns.map(col => fieldsToUpdate[col]);
+
+        const stmt = db.prepare(`UPDATE projects SET ${setClause} WHERE id = ?`);
+        stmt.run(...dbValues, id);
+
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to update project", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+export async function deleteProject(id: number) {
+    try {
+        const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
+        stmt.run(id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to delete project", e);
+        return { success: false, error: 'Database operation failed.' };
+    }
+}
+
+// Meetings
+export async function getMeetings() {
+    try {
+        const stmt = db.prepare('SELECT * FROM meetings');
+        return stmt.all() as any[];
+    } catch (e) {
+        console.error("Failed to get meetings", e);
+        return [];
+    }
+}
+export async function addMeeting(values: any) {
+    try {
+        const stmt = db.prepare('INSERT INTO meetings (title, time, duration, meetLink, clientId) VALUES (?, ?, ?, ?, ?)');
+        const info = stmt.run(values.title, values.time.toISOString(), values.duration, `https://meet.google.com/${Math.random().toString(36).substring(2, 12)}`, values.clientId);
+        return { success: true, id: info.lastInsertRowid };
+    } catch (e) {
+        console.error("Failed to add meeting", e);
+        return { success: false, error: 'Database operation failed' };
+    }
+}
+
+export async function updateMeeting(id: number, values: any) {
+    try {
+        const stmt = db.prepare('UPDATE meetings SET title = ?, time = ?, clientId = ? WHERE id = ?');
+        stmt.run(values.title, values.time.toISOString(), values.clientId, id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to update meeting", e);
+        return { success: false, error: 'Database operation failed' };
+    }
+}
+
+export async function deleteMeeting(id: number) {
+    try {
+        const stmt = db.prepare('DELETE FROM meetings WHERE id = ?');
+        stmt.run(id);
+        return { success: true };
+    } catch (e) {
+        console.error("Failed to delete meeting", e);
+        return { success: false, error: 'Database operation failed' };
+    }
+}
+
 
 // Dashboard and Reports
 
 export async function getDashboardData() {
     try {
         const today = startOfToday().toISOString();
-        const oneMonthAgo = subMonths(startOfToday(), 1).toISOString();
-
+        
         const activeProjectsCount = db.prepare(`SELECT COUNT(*) as count FROM projects WHERE status != 'completed'`).get() as { count: number };
         const pendingTasksCount = db.prepare(`SELECT COUNT(*) as count FROM tasks WHERE status != 'done'`).get() as { count: number };
         const newClientsCount = db.prepare(`SELECT COUNT(*) as count FROM clients WHERE status = 'new'`).get() as { count: number };
@@ -527,14 +645,16 @@ export async function getDashboardData() {
         `).all(today);
 
         const activeProjects = db.prepare(`
-            SELECT p.id, p.title, p.startDate, p.endDate, c.name as clientName, c.company as clientCompany, c.avatar as clientAvatar
+            SELECT p.id, p.title, p.startDate, p.endDate, c.id as clientId, c.name as clientName, c.company as clientCompany, c.avatar as clientAvatar
             FROM projects p 
             LEFT JOIN clients c ON p.clientId = c.id
             WHERE p.status = 'in-progress' 
             ORDER BY p.endDate ASC LIMIT 5
         `).all().map((p: any) => ({
-             ...p, 
-             client: { name: p.clientName, company: p.clientCompany, avatar: p.clientAvatar }
+             ...p,
+             startDate: new Date(p.startDate),
+             endDate: new Date(p.endDate),
+             client: p.clientId ? { id: p.clientId, name: p.clientName, company: p.clientCompany, avatar: p.clientAvatar } : null
         }));
         
         const recentClients = db.prepare(`SELECT * FROM clients ORDER BY id DESC LIMIT 5`).all();

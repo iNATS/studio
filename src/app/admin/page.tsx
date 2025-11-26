@@ -12,6 +12,7 @@ import { format, formatDistanceToNow, isPast, isAfter } from 'date-fns';
 import { motion } from 'framer-motion';
 import { getDashboardData } from '@/lib/db';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DashboardData {
     activeProjectsCount: number;
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
 
   React.useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const dashboardData = await getDashboardData();
       setData(dashboardData);
       setLoading(false);
@@ -54,7 +56,24 @@ export default function AdminDashboard() {
   };
 
   if (loading || !data) {
-    return <p>Loading...</p>;
+    return (
+        <>
+            <div className="flex items-center mb-6">
+                <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+            </div>
+             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Skeleton className="h-28 rounded-2xl" />
+                <Skeleton className="h-28 rounded-2xl" />
+                <Skeleton className="h-28 rounded-2xl" />
+                <Skeleton className="h-28 rounded-2xl" />
+            </div>
+            <div className="grid gap-6 mt-6 md:grid-cols-1 lg:grid-cols-3">
+                <Skeleton className="h-96 rounded-2xl" />
+                <Skeleton className="h-96 rounded-2xl" />
+                <Skeleton className="h-96 rounded-2xl" />
+            </div>
+        </>
+    )
   }
   
   return (
@@ -210,6 +229,7 @@ export default function AdminDashboard() {
                           </div>
                       )
                   })}
+                  {data.activeProjects.length === 0 && <p className="text-sm text-zinc-500 dark:text-white/50 text-center py-8">No active projects.</p>}
               </CardContent>
               </Card>
           </motion.div>
@@ -232,6 +252,7 @@ export default function AdminDashboard() {
                                   </div>
                               </div>
                           ))}
+                           {data.recentClients.length === 0 && <p className="text-sm text-zinc-500 dark:text-white/50 text-center py-8">No recent clients found.</p>}
                       </div>
                   </CardContent>
               </Card>
@@ -241,5 +262,3 @@ export default function AdminDashboard() {
     </>
   );
 }
-
-    
