@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -28,13 +28,11 @@ export function Hero({ content }: { content: any }) {
     setIsMounted(true);
   }, []);
 
-  const { title, subtitle, description, avatar, background = 'orb' } = content || {
-      title: 'Mohamed Aref',
-      subtitle: 'Creative Developer & Designer',
-      description: "I build beautiful, functional, and user-centric digital experiences. Let's create something amazing together.",
-      avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj',
-      background: 'orb'
-  };
+  if (!content) {
+    return <section id="home" className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden" />;
+  }
+
+  const { title, subtitle, description, avatar, background = 'orb' } = content;
 
   const BackgroundComponent = backgroundComponents[background as keyof typeof backgroundComponents] || Orb;
 

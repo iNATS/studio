@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef } from 'react';
@@ -17,45 +18,6 @@ const iconMap: { [key: string]: LucideIcon } = {
     Rocket
 };
 
-const defaultProcessSteps = [
-    {
-      icon: "MessageCircle",
-      title: "Let's Talk",
-      description: "A friendly chat to understand your vision and project goals.",
-      color: "text-cyan-400 border-cyan-400/50 shadow-cyan-400/20",
-    },
-    {
-      icon: "Lightbulb",
-      title: "Big Ideas",
-      description: "Crafting a unique strategy and creative proposal tailored just for you.",
-      color: "text-purple-400 border-purple-400/50 shadow-purple-400/20",
-    },
-    {
-      icon: "PencilRuler",
-      title: "Creative Design",
-      description: "Designing beautiful mockups and interactive prototypes to bring your vision to life.",
-      color: "text-pink-400 border-pink-400/50 shadow-pink-400/20",
-    },
-    {
-      icon: "Code",
-      title: "Magic Code",
-      description: "Building your project with clean, efficient code using the latest tech.",
-      color: "text-green-400 border-green-400/50 shadow-green-400/20",
-    },
-    {
-      icon: "Combine",
-      title: "Polish & Perfect",
-      description: "Testing for a bug-free, seamless experience on all devices.",
-      color: "text-orange-400 border-orange-400/50 shadow-orange-400/20",
-    },
-    {
-      icon: "Rocket",
-      title: "Liftoff!",
-      description: "Launching your project for the world to see.",
-      color: "text-red-400 border-red-400/50 shadow-red-400/20",
-    },
-];
-
 const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: string, children: React.ReactNode, className?: string, threshold?: number }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { triggerOnce: false, threshold: threshold });
@@ -68,7 +30,10 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
 }
 
 export function Process({ content }: { content: any[] | null }) {
-    const processSteps = content && content.length > 0 ? content : defaultProcessSteps;
+    if (!content || content.length === 0) {
+      return <AnimatedSection id="process" />;
+    }
+    const processSteps = content;
     
     return (
         <AnimatedSection id="process" threshold={0.1}>

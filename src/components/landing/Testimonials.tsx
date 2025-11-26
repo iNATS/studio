@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -8,23 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Quote } from 'lucide-react';
-
-const defaultTestimonials = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      company: 'Innovate Inc.',
-      feedback: 'Working with Mohamed was a game-changer. His creative vision and technical expertise brought our project to life in ways we couldn\'t have imagined. A true professional and a pleasure to collaborate with.',
-      avatar: 'https://picsum.photos/seed/sarah/100/100',
-    },
-    { 
-      id: 2,
-      name: 'Michael Chen',
-      company: 'Tech Solutions',
-      feedback: 'The mobile app he developed for us exceeded all expectations. It\'s intuitive, fast, and beautifully designed. Our user engagement has skyrocketed since launch.',
-      avatar: 'https://picsum.photos/seed/michael/100/100',
-    },
-  ];
 
 type Testimonial = {
     id: number;
@@ -50,7 +34,7 @@ export function Testimonials({ initialTestimonials }: { initialTestimonials: Tes
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
   
-  const testimonials = initialTestimonials && initialTestimonials.length > 0 ? initialTestimonials : defaultTestimonials;
+  const testimonials = initialTestimonials;
 
   const plugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: false })
@@ -66,6 +50,10 @@ export function Testimonials({ initialTestimonials }: { initialTestimonials: Tes
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
+  if (!testimonials || testimonials.length === 0) {
+    return <AnimatedSection id="testimonials" />;
+  }
 
   return (
     <AnimatedSection id="testimonials" threshold={0.1} className="px-4">

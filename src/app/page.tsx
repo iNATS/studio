@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Header } from '@/components/Header';
@@ -13,6 +14,7 @@ import { motion } from 'framer-motion';
 import { getPortfolioItems, getPageContent, getTestimonials, getPortfolioCategories } from '@/lib/db';
 import type { PortfolioItem } from '@/components/landing/Portfolio';
 import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
@@ -21,9 +23,11 @@ export default function Home() {
   const [aboutContent, setAboutContent] = useState(null);
   const [processContent, setProcessContent] = useState(null);
   const [testimonials, setTestimonials] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const [
         items,
         categories,
@@ -45,15 +49,31 @@ export default function Home() {
       setAboutContent(about);
       setProcessContent(process);
       setTestimonials(testimonialsData);
+      setLoading(false);
     }
     fetchData();
   }, []);
 
+  if (loading) {
+    return (
+       <div className="flex min-h-screen flex-col bg-background">
+        <Header />
+        <main className="flex-1 w-full pt-24 sm:pt-32 pb-24 flex items-center justify-center">
+            <div className="container max-w-5xl mx-auto px-4 space-y-8 text-center">
+                <Skeleton className="h-40 w-40 rounded-full mx-auto" />
+                <Skeleton className="h-12 w-3/4 mx-auto" />
+                <Skeleton className="h-6 w-1/2 mx-auto" />
+            </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className='flex min-h-screen flex-col bg-background'
     >

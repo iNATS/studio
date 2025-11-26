@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRef } from 'react';
@@ -18,7 +19,10 @@ const AnimatedSection = ({ id, children, className, threshold = 0.2 }: { id?: st
 }
 
 export function About({ content }: { content: any }) {
-  const { title, description, skills, avatar } = content || { title: 'Mohamed Aref', description: "I'm a passionate developer...", skills: [], avatar: 'https://yt3.googleusercontent.com/-ZvNMRTRJAdZN2n4mi8C32PvY_atHV3Zsrn1IAHthDnjxIGjwr9KTg9ww9mWS-5A-E3IPwbpSA=s900-c-k-c0x00ffffff-no-rj' };
+  if (!content) {
+    return <AnimatedSection id="about" className="px-4" />;
+  }
+  const { title, description, skills, avatar } = content;
   
   return (
     <AnimatedSection id="about" threshold={0.4} className="px-4">
