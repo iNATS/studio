@@ -46,18 +46,21 @@ export function Hero({ content }: { content: any }) {
     <section
       id="home"
       className="relative w-full h-screen flex items-center justify-center text-center px-4 overflow-hidden"
-      style={{
-        backgroundImage: avatar ? `url(${avatar})` : 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-      }}
     >
-      <div className="absolute inset-0 z-0 h-full w-full">
-          <Suspense fallback={<div className="w-full h-full bg-background" />}>
+        <div className="absolute inset-0 z-0 h-full w-full">
             <BackgroundComponent />
-          </Suspense>
-      </div>
+        </div>
+        {avatar && (
+            <div
+                className="absolute inset-0 z-0 opacity-20"
+                style={{
+                    backgroundImage: `url(${avatar})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                }}
+            />
+        )}
       
       <motion.div
         initial="hidden"
