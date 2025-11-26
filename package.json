@@ -52,6 +52,7 @@
     "genkit": "latest",
     "gsap": "^3.12.5",
     "lucide-react": "^0.475.0",
+    "motion": "latest",
     "next": "15.3.3",
     "next-themes": "^0.3.0",
     "ogl": "^1.0.0",
